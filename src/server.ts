@@ -6,6 +6,8 @@ import {
   OpenDashboardInput,
   FamilyFriendlyInput,
   CorporateDemandInput,
+  ComparePrefecturesInput,
+  DrillDownInput,
 } from './schemas.js';
 import { crossAnalyze } from './tools/cross_analyze_real_estate_market.js';
 import { assessPropertyRisk } from './tools/assess_property_risk.js';
@@ -13,6 +15,8 @@ import { generateAreaReport } from './tools/generate_area_report.js';
 import { openDashboard } from './tools/open_dashboard.js';
 import { assessFamilyFriendlyScore } from './tools/assess_family_friendly_score.js';
 import { predictCorporateDemand } from './tools/predict_corporate_demand.js';
+import { comparePrefectures } from './tools/compare_prefectures.js';
+import { drillDownLocalAnalysis } from './tools/drill_down_local_analysis.js';
 import { getLandPriceResource } from './resources/land_price.js';
 import { getFloodResource } from './resources/flood.js';
 import { getPopulationResource } from './resources/population.js';
@@ -23,7 +27,7 @@ import './data-loaders/index.js';
 export function createServer(): McpServer {
   const server = new McpServer({
     name: 'japan-real-estate-intel-mcp',
-    version: '2.0.0',
+    version: '2.1.0',
   });
 
   // ── Tools (6) ──
@@ -126,6 +130,38 @@ export function createServer(): McpServer {
         _meta: {
           ui: { uri: 'ui://japan-real-estate-intel/dashboard' },
         },
+      };
+    },
+  );
+
+  server.tool(
+    'compare_prefectures',
+    '最大5都道府県を価格・リスク・人流・教育・法人需要で並列比較。レーダーチャート用データとランキング、差分ハイライト、用途別おすすめ（投資/安全/成長）をMarkdownレポートとともに返す。（v2.1: 愛知県・東京都 + StubLoader 対応）',
+    ComparePrefecturesInput.shape,
+    async (args) => {
+      const input = ComparePrefecturesInput.parse(args);
+      const result = comparePrefectures(input);
+      return {
+        content: [
+          { type: 'text' as const, text: JSON.stringify(result, null, 2) },
+        ],
+        structuredContent: { ...result, attribution: ATTRIBUTION },
+      };
+    },
+  );
+
+  server.tool(
+    'drill_down_local_analysis',
+    '市区町村・町丁目レベルで不動産データをドリルダウン。地価・人口・災害リスク・人流・競合密度をクロス集計してローカル不動産屋向けのセールスピッチとMarkdownレポートを生成。（v2.1: neighborhood はラベルとして使用、実町丁目データは v2.2 以降）',
+    DrillDownInput.shape,
+    async (args) => {
+      const input = DrillDownInput.parse(args);
+      const result = drillDownLocalAnalysis(input);
+      return {
+        content: [
+          { type: 'text' as const, text: JSON.stringify(result, null, 2) },
+        ],
+        structuredContent: { ...result, attribution: ATTRIBUTION },
       };
     },
   );

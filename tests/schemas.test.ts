@@ -9,6 +9,8 @@ import {
   OpenDashboardInput,
   FamilyFriendlyInput,
   CorporateDemandInput,
+  ComparePrefecturesInput,
+  DrillDownInput,
 } from '../src/schemas.js';
 
 describe('CrossAnalyzeInput', () => {
@@ -176,5 +178,72 @@ describe('CorporateDemandInput', () => {
     const r = CorporateDemandInput.parse({ area: '名古屋市中区' });
     expect(r.prefecture).toBe('愛知県');
     expect(r.propertyType).toBe('office');
+  });
+});
+
+describe('neighborhood field on existing tools', () => {
+  it('CrossAnalyzeInput accepts neighborhood as optional', () => {
+    const r = CrossAnalyzeInput.parse({
+      area: '名古屋市中村区',
+      neighborhood: '名駅南1丁目',
+      propertyType: 'residential',
+      timeRange: '3y',
+    });
+    expect(r.neighborhood).toBe('名駅南1丁目');
+  });
+
+  it('CrossAnalyzeInput still works without neighborhood', () => {
+    const r = CrossAnalyzeInput.parse({
+      area: '名古屋市中村区',
+      propertyType: 'residential',
+      timeRange: '3y',
+    });
+    expect(r.neighborhood).toBeUndefined();
+  });
+
+  it('OpenDashboardInput accepts neighborhood', () => {
+    const r = OpenDashboardInput.parse({ neighborhood: '大須2丁目' });
+    expect(r.neighborhood).toBe('大須2丁目');
+  });
+});
+
+describe('ComparePrefecturesInput', () => {
+  it('requires minimum 2 prefectures', () => {
+    expect(() => ComparePrefecturesInput.parse({ prefectures: ['愛知県'] })).toThrow();
+  });
+
+  it('rejects more than 5 prefectures', () => {
+    expect(() =>
+      ComparePrefecturesInput.parse({
+        prefectures: ['a', 'b', 'c', 'd', 'e', 'f'],
+      }),
+    ).toThrow();
+  });
+
+  it('defaults propertyType to mixed and includeMarkdown to true', () => {
+    const r = ComparePrefecturesInput.parse({ prefectures: ['愛知県', '東京都'] });
+    expect(r.propertyType).toBe('mixed');
+    expect(r.includeMarkdown).toBe(true);
+    expect(r.metrics).toEqual(['price', 'risk', 'investment']);
+  });
+});
+
+describe('DrillDownInput', () => {
+  it('requires city field', () => {
+    expect(() => DrillDownInput.parse({ prefecture: '愛知県' })).toThrow();
+  });
+
+  it('defaults focus to all', () => {
+    const r = DrillDownInput.parse({ prefecture: '愛知県', city: '名古屋市中村区' });
+    expect(r.focus).toBe('all');
+  });
+
+  it('accepts neighborhood as optional', () => {
+    const r = DrillDownInput.parse({
+      prefecture: '愛知県',
+      city: '名古屋市中村区',
+      neighborhood: '名駅南1丁目',
+    });
+    expect(r.neighborhood).toBe('名駅南1丁目');
   });
 });

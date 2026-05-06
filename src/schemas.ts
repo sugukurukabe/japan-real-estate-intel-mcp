@@ -1,12 +1,14 @@
 import { z } from 'zod';
 
 const prefectureField = z.string().default('愛知県').describe('都道府県名（和名/英名/ISO 3166-2 コード対応）');
+const neighborhoodField = z.string().optional().describe("町丁目（例: '名駅南1丁目'）。v2.1 ではラベルとしてレポートに反映。実データ対応は v2.2 以降");
 
 // ── cross_analyze_real_estate_market (v2.0 unified) ──
 
 export const CrossAnalyzeInput = z.object({
   prefecture: prefectureField,
   area: z.string().describe("エリア（例: '名古屋市中村区', '世田谷区'）"),
+  neighborhood: neighborhoodField,
   propertyType: z.enum(['residential', 'commercial', 'logistics', 'office', 'mixed']),
   timeRange: z.enum(['1y', '3y', '5y']),
   includeRisk: z.boolean().default(true).describe('災害リスクを考慮するか'),
@@ -66,6 +68,7 @@ export type CrossAnalyzeOutput = z.infer<typeof CrossAnalyzeOutput>;
 export const AssessRiskInput = z.object({
   prefecture: prefectureField,
   address: z.string().describe('住所または地番'),
+  neighborhood: neighborhoodField,
   latlng: z
     .object({ lat: z.number(), lng: z.number() })
     .optional(),
@@ -95,6 +98,7 @@ export type AssessRiskOutput = z.infer<typeof AssessRiskOutput>;
 export const GenerateReportInput = z.object({
   prefecture: prefectureField,
   area: z.string(),
+  neighborhood: neighborhoodField,
   purpose: z.enum(['investment', 'development', 'rental', 'management']),
   includeCharts: z.boolean().default(true),
 });
@@ -112,6 +116,7 @@ export type GenerateReportOutput = z.infer<typeof GenerateReportOutput>;
 export const FamilyFriendlyInput = z.object({
   prefecture: prefectureField,
   area: z.string().describe('エリア'),
+  neighborhood: neighborhoodField,
   address: z.string().optional().describe('具体的な住所（任意）'),
   latlng: z.object({ lat: z.number(), lng: z.number() }).optional(),
   childAge: z.enum(['preschool', 'elementary', 'junior_high', 'high_school', 'all']).default('all'),
@@ -149,6 +154,7 @@ export type FamilyFriendlyOutput = z.infer<typeof FamilyFriendlyOutput>;
 export const CorporateDemandInput = z.object({
   prefecture: prefectureField,
   area: z.string().describe('エリア'),
+  neighborhood: neighborhoodField,
   propertyType: z.enum(['office', 'logistics', 'commercial', 'mixed']).default('office'),
   includeCommuteAnalysis: z.boolean().default(true).describe('通勤時間分析を含むか'),
 });
@@ -179,6 +185,7 @@ export type CorporateDemandOutput = z.infer<typeof CorporateDemandOutput>;
 export const OpenDashboardInput = z.object({
   prefecture: prefectureField,
   area: z.string().optional().describe('初期表示エリア'),
+  neighborhood: neighborhoodField,
   layer: z
     .enum(['land_price', 'transaction', 'flood_risk', 'population', 'human_flow', 'school_district', 'corporate_density', 'plateau_3d'])
     .optional()
@@ -196,3 +203,95 @@ export const OpenDashboardOutput = z.object({
   attribution: z.string(),
 });
 export type OpenDashboardOutput = z.infer<typeof OpenDashboardOutput>;
+
+// ── compare_prefectures (v2.1 new) ──
+
+export const ComparePrefecturesInput = z.object({
+  prefectures: z.array(z.string()).min(2).max(5)
+    .describe('比較対象都道府県（2-5県）。例: ["愛知県", "東京都"]'),
+  area: z.string().optional()
+    .describe('各都道府県の代表エリア（省略時は県庁所在地相当。愛知=名古屋市中区、東京=千代田区）'),
+  neighborhood: neighborhoodField,
+  propertyType: z.enum(['residential', 'commercial', 'logistics', 'office', 'mixed']).default('mixed'),
+  metrics: z.array(z.enum(['price', 'risk', 'humanFlow', 'education', 'corporate', 'investment']))
+    .default(['price', 'risk', 'investment']),
+  includeMarkdown: z.boolean().default(true),
+});
+export type ComparePrefecturesInput = z.infer<typeof ComparePrefecturesInput>;
+
+export const PrefectureScore = z.object({
+  prefecture: z.string(),
+  prefectureKey: z.string(),
+  area: z.string(),
+  capabilities: z.object({
+    humanFlow: z.boolean(), education: z.boolean(),
+    corporate: z.boolean(), crime: z.boolean(), plateau: z.boolean(),
+  }),
+  metrics: z.object({
+    price: z.number().nullable(),
+    priceChangeRate: z.number().nullable(),
+    riskScore: z.number().nullable(),
+    humanFlowScore: z.number().nullable(),
+    educationScore: z.number().nullable(),
+    corporateScore: z.number().nullable(),
+    investmentScore: z.number(),
+  }),
+  rank: z.number(),
+});
+export type PrefectureScore = z.infer<typeof PrefectureScore>;
+
+export const ComparePrefecturesOutput = z.object({
+  summary: z.string(),
+  scores: z.array(PrefectureScore),
+  ranking: z.array(z.object({ rank: z.number(), prefecture: z.string(), score: z.number() })),
+  radarData: z.array(z.object({
+    metric: z.string(),
+    values: z.array(z.object({ prefecture: z.string(), value: z.number() })),
+  })),
+  diffs: z.array(z.object({
+    metric: z.string(),
+    base: z.string(),
+    target: z.string(),
+    delta: z.number(),
+    direction: z.enum(['up', 'down', 'flat']),
+  })),
+  bestFor: z.object({ investment: z.string(), safety: z.string(), growth: z.string() }),
+  markdownReport: z.string().optional(),
+  unsupportedNotes: z.array(z.string()),
+});
+export type ComparePrefecturesOutput = z.infer<typeof ComparePrefecturesOutput>;
+
+// ── drill_down_local_analysis (v2.1 new) ──
+
+export const DrillDownInput = z.object({
+  prefecture: prefectureField,
+  city: z.string().describe("市区町村（例: '名古屋市中村区'）"),
+  neighborhood: neighborhoodField,
+  focus: z.enum(['price', 'risk', 'demand', 'all']).default('all'),
+});
+export type DrillDownInput = z.infer<typeof DrillDownInput>;
+
+export const DrillDownOutput = z.object({
+  scope: z.object({
+    prefecture: z.string(),
+    city: z.string(),
+    neighborhood: z.string().optional(),
+  }),
+  granularity: z.enum(['city', 'neighborhood']),
+  granularityNote: z.string(),
+  pricePerSqm: z.number().nullable(),
+  priceChangeRate: z.number().nullable(),
+  population: z.object({
+    total: z.number(),
+    households: z.number(),
+    aging: z.number(),
+  }).nullable(),
+  riskScore: z.number().nullable(),
+  floodLevel: z.enum(['low', 'medium', 'high']).nullable(),
+  humanFlowScore: z.number().nullable(),
+  competitorDensity: z.string(),
+  localPitch: z.string(),
+  keyInsights: z.array(z.string()),
+  markdownReport: z.string(),
+});
+export type DrillDownOutput = z.infer<typeof DrillDownOutput>;

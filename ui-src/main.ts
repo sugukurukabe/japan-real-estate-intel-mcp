@@ -174,19 +174,19 @@ const PREFECTURES: Record<string, PrefectureConfig> = {
 };
 
 let map: any;
+let mapSecondary: any = null;
 let currentLayer = 'land_price';
 let currentPrefecture = 'aichi';
 let selectedArea = '';
 let currentOverlayGroup: any = null;
+let secondaryOverlayGroup: any = null;
 let comparisonMode = false;
 
-function pref(): PrefectureConfig { return PREFECTURES[currentPrefecture]; }
+function pref(key?: string): PrefectureConfig { return PREFECTURES[key ?? currentPrefecture]; }
+function secondaryPrefKey(): string { return currentPrefecture === 'aichi' ? 'tokyo' : 'aichi'; }
 
 function priceToColor(price: number): string {
-  for (const bucket of pref().priceBuckets) {
-    if (price >= bucket.min) return bucket.color;
-  }
-  return '#69b7eb';
+  return priceToColorFor(price, currentPrefecture);
 }
 
 function riskToColor(overall: number): string {
@@ -196,57 +196,91 @@ function riskToColor(overall: number): string {
   return '#34d399';
 }
 
-function initMap() {
-  const config = pref();
-  map = L.map('map-container', {
-    center: config.center,
-    zoom: config.zoom,
-    zoomControl: true,
-  });
-
+function createLeafletMap(containerId: string, prefKey: string): any {
+  const cfg = pref(prefKey);
+  const m = L.map(containerId, { center: cfg.center, zoom: cfg.zoom, zoomControl: true });
   L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
     attribution: '&copy; <a href="https://carto.com/">CARTO</a>',
     maxZoom: 18,
-  }).addTo(map);
+  }).addTo(m);
+  return m;
+}
 
+function initMap() {
+  map = createLeafletMap('map-container', currentPrefecture);
   renderLandPriceLayer();
   renderLayerControl();
   renderLegend();
 }
 
-function clearOverlay() {
-  if (currentOverlayGroup) {
-    map.removeLayer(currentOverlayGroup);
-    currentOverlayGroup = null;
+function enableComparisonLayout() {
+  const wrapper = document.getElementById('map-wrapper');
+  if (!wrapper) return;
+  wrapper.classList.add('comparison-split');
+  let secondary = document.getElementById('map-container-secondary');
+  if (!secondary) {
+    secondary = document.createElement('div');
+    secondary.id = 'map-container-secondary';
+    secondary.className = 'map-container-secondary';
+    wrapper.appendChild(secondary);
   }
+  const secKey = secondaryPrefKey();
+  mapSecondary = createLeafletMap('map-container-secondary', secKey);
+  setTimeout(() => { if (mapSecondary) mapSecondary.invalidateSize(); }, 200);
 }
 
-function renderLandPriceLayer() {
-  clearOverlay();
-  currentOverlayGroup = L.layerGroup();
-  const config = pref();
+function disableComparisonLayout() {
+  const wrapper = document.getElementById('map-wrapper');
+  if (!wrapper) return;
+  wrapper.classList.remove('comparison-split');
+  if (mapSecondary) {
+    mapSecondary.remove();
+    mapSecondary = null;
+    secondaryOverlayGroup = null;
+  }
+  const secondary = document.getElementById('map-container-secondary');
+  if (secondary) secondary.remove();
+}
+
+function clearOverlayOn(mapInst: any, group: any): null {
+  if (group) mapInst.removeLayer(group);
+  return null;
+}
+
+function clearOverlay() {
+  currentOverlayGroup = clearOverlayOn(map, currentOverlayGroup);
+  if (mapSecondary) secondaryOverlayGroup = clearOverlayOn(mapSecondary, secondaryOverlayGroup);
+}
+
+function addLayerToMap(mapInst: any, group: any): any {
+  group.addTo(mapInst);
+  return group;
+}
+
+function buildLandPriceGroup(prefKey: string, onClickArea?: (name: string) => void): any {
+  const group = L.layerGroup();
+  const config = pref(prefKey);
   for (const [name, center] of Object.entries(config.municipalities)) {
     const data = config.landPrices[name];
     if (!data) continue;
+    const color = priceToColorFor(data.price, prefKey);
     const circle = L.circle(center, {
-      radius: 1200, fillColor: priceToColor(data.price), fillOpacity: 0.6,
-      color: priceToColor(data.price), weight: 1, opacity: 0.8,
+      radius: 1200, fillColor: color, fillOpacity: 0.6, color, weight: 1, opacity: 0.8,
     });
     circle.bindPopup(`
       <div class="popup-title">${name}</div>
       <div class="popup-row"><span>平均地価</span><span>${(data.price / 10000).toFixed(1)}万円/㎡</span></div>
       <div class="popup-row"><span>変化率</span><span style="color:${data.change >= 0 ? '#34d399' : '#ff4d6a'}">${data.change >= 0 ? '+' : ''}${data.change}%</span></div>
     `);
-    circle.on('click', () => selectArea(name));
-    currentOverlayGroup.addLayer(circle);
+    if (onClickArea) circle.on('click', () => onClickArea(name));
+    group.addLayer(circle);
   }
-  currentOverlayGroup.addTo(map);
+  return group;
 }
 
-function renderFloodRiskLayer() {
-  clearOverlay();
-  currentOverlayGroup = L.layerGroup();
-  const config = pref();
+function buildFloodRiskGroup(prefKey: string, onClickArea?: (name: string) => void): any {
+  const group = L.layerGroup();
+  const config = pref(prefKey);
   for (const [name, center] of Object.entries(config.municipalities)) {
     const risk = config.risk[name];
     if (!risk) continue;
@@ -259,52 +293,43 @@ function renderFloodRiskLayer() {
       <div class="popup-row"><span>想定震度</span><span>${risk.earthquake}</span></div>
       <div class="popup-row"><span>総合リスク</span><span style="color:${riskToColor(risk.overall)}">${risk.overall}/100</span></div>
     `);
-    circle.on('click', () => selectArea(name));
-    currentOverlayGroup.addLayer(circle);
+    if (onClickArea) circle.on('click', () => onClickArea(name));
+    group.addLayer(circle);
   }
-  currentOverlayGroup.addTo(map);
+  return group;
 }
 
-function renderTransactionLayer() {
-  clearOverlay();
-  currentOverlayGroup = L.layerGroup();
-  const config = pref();
+function buildTransactionGroup(prefKey: string, onClickArea?: (name: string) => void): any {
+  const group = L.layerGroup();
+  const config = pref(prefKey);
   for (const [name, center] of Object.entries(config.municipalities)) {
-    const data = config.landPrices[name];
-    if (!data) continue;
+    if (!config.landPrices[name]) continue;
     const txCount = Math.floor(5 + Math.random() * 20);
     const circle = L.circle(center, {
       radius: 300 + txCount * 50, fillColor: '#4f8cff', fillOpacity: 0.3, color: '#4f8cff', weight: 1,
     });
-    circle.bindPopup(`
-      <div class="popup-title">${name}</div>
-      <div class="popup-row"><span>取引件数</span><span>${txCount}件</span></div>
-    `);
-    circle.on('click', () => selectArea(name));
-    currentOverlayGroup.addLayer(circle);
+    circle.bindPopup(`<div class="popup-title">${name}</div><div class="popup-row"><span>取引件数</span><span>${txCount}件</span></div>`);
+    if (onClickArea) circle.on('click', () => onClickArea(name));
+    group.addLayer(circle);
   }
-  currentOverlayGroup.addTo(map);
+  return group;
 }
 
-function renderPopulationLayer() {
-  clearOverlay();
-  currentOverlayGroup = L.layerGroup();
-  const config = pref();
+function buildPopulationGroup(prefKey: string, onClickArea?: (name: string) => void): any {
+  const group = L.layerGroup();
+  const config = pref(prefKey);
   for (const [name, center] of Object.entries(config.municipalities)) {
-    const circle = L.circle(center, {
-      radius: 1000, fillColor: '#34d399', fillOpacity: 0.3, color: '#34d399', weight: 1,
-    });
+    const circle = L.circle(center, { radius: 1000, fillColor: '#34d399', fillOpacity: 0.3, color: '#34d399', weight: 1 });
     circle.bindPopup(`<div class="popup-title">${name}</div>`);
-    circle.on('click', () => selectArea(name));
-    currentOverlayGroup.addLayer(circle);
+    if (onClickArea) circle.on('click', () => onClickArea(name));
+    group.addLayer(circle);
   }
-  currentOverlayGroup.addTo(map);
+  return group;
 }
 
-function renderHumanFlowLayer() {
-  clearOverlay();
-  currentOverlayGroup = L.layerGroup();
-  const config = pref();
+function buildHumanFlowGroup(prefKey: string, onClickArea?: (name: string) => void): any {
+  const group = L.layerGroup();
+  const config = pref(prefKey);
   for (const [name, center] of Object.entries(config.municipalities)) {
     const flow = config.humanFlow[name];
     if (!flow) continue;
@@ -313,8 +338,7 @@ function renderHumanFlowLayer() {
     const intensity = Math.min(1, avgFlow / 150000);
     const borderColor = flow.trend === 'increasing' ? '#34d399' : flow.trend === 'decreasing' ? '#ff4d6a' : '#4f8cff';
     const circle = L.circle(center, {
-      radius, fillColor: `rgba(79, 140, 255, ${0.2 + intensity * 0.6})`,
-      fillOpacity: 0.5, color: borderColor, weight: 2,
+      radius, fillColor: `rgba(79,140,255,${0.2 + intensity * 0.6})`, fillOpacity: 0.5, color: borderColor, weight: 2,
     });
     circle.bindPopup(`
       <div class="popup-title">${name}</div>
@@ -323,46 +347,41 @@ function renderHumanFlowLayer() {
       <div class="popup-row"><span>平均滞在</span><span>${flow.stay}分</span></div>
       <div class="popup-row"><span>トレンド</span><span style="color:${borderColor}">${flow.trend === 'increasing' ? '↑増加' : flow.trend === 'decreasing' ? '↓減少' : '→安定'}</span></div>
     `);
-    circle.on('click', () => selectArea(name));
-    currentOverlayGroup.addLayer(circle);
+    if (onClickArea) circle.on('click', () => onClickArea(name));
+    group.addLayer(circle);
   }
-  currentOverlayGroup.addTo(map);
+  return group;
 }
 
-function renderSchoolDistrictLayer() {
-  clearOverlay();
-  currentOverlayGroup = L.layerGroup();
-  const config = pref();
+function buildSchoolGroup(prefKey: string, onClickArea?: (name: string) => void): any {
+  const group = L.layerGroup();
+  const config = pref(prefKey);
   for (const [name, center] of Object.entries(config.municipalities)) {
     const school = config.school[name];
     if (!school) continue;
     const color = school.score >= 75 ? '#34d399' : school.score >= 60 ? '#ffb340' : '#ff4d6a';
-    const circle = L.circle(center, {
-      radius: 1000, fillColor: color, fillOpacity: 0.4, color, weight: 2,
-    });
+    const circle = L.circle(center, { radius: 1000, fillColor: color, fillOpacity: 0.4, color, weight: 2 });
     circle.bindPopup(`
       <div class="popup-title">${name}</div>
       <div class="popup-row"><span>教育スコア</span><span style="color:${color}">${school.score}/100</span></div>
       <div class="popup-row"><span>大学進学率</span><span>${school.advancement}%</span></div>
     `);
-    circle.on('click', () => selectArea(name));
-    currentOverlayGroup.addLayer(circle);
+    if (onClickArea) circle.on('click', () => onClickArea(name));
+    group.addLayer(circle);
   }
-  currentOverlayGroup.addTo(map);
+  return group;
 }
 
-function renderCorporateDensityLayer() {
-  clearOverlay();
-  currentOverlayGroup = L.layerGroup();
-  const config = pref();
+function buildCorporateGroup(prefKey: string, onClickArea?: (name: string) => void): any {
+  const group = L.layerGroup();
+  const config = pref(prefKey);
   for (const [name, center] of Object.entries(config.municipalities)) {
     const corp = config.corporate[name];
     if (!corp) continue;
     const radius = Math.max(500, Math.sqrt(corp.employees) * 1.5);
     const intensity = Math.min(0.8, corp.major / 200);
     const circle = L.circle(center, {
-      radius, fillColor: `rgba(168, 85, 247, ${0.2 + intensity})`,
-      fillOpacity: 0.5, color: '#a855f7', weight: 1,
+      radius, fillColor: `rgba(168,85,247,${0.2 + intensity})`, fillOpacity: 0.5, color: '#a855f7', weight: 1,
     });
     circle.bindPopup(`
       <div class="popup-title">${name}</div>
@@ -370,16 +389,15 @@ function renderCorporateDensityLayer() {
       <div class="popup-row"><span>大企業</span><span>${corp.major}社</span></div>
       <div class="popup-row"><span>従業者</span><span>${corp.employees.toLocaleString()}人</span></div>
     `);
-    circle.on('click', () => selectArea(name));
-    currentOverlayGroup.addLayer(circle);
+    if (onClickArea) circle.on('click', () => onClickArea(name));
+    group.addLayer(circle);
   }
-  currentOverlayGroup.addTo(map);
+  return group;
 }
 
-function renderPlateau3DLayer() {
-  clearOverlay();
-  currentOverlayGroup = L.layerGroup();
-  const config = pref();
+function buildPlateauGroup(prefKey: string): any {
+  const group = L.layerGroup();
+  const config = pref(prefKey);
   for (const bldg of config.plateau) {
     const heightScale = bldg.height / 250;
     const radius = 80 + bldg.height * 0.8;
@@ -392,9 +410,94 @@ function renderPlateau3DLayer() {
       <div class="popup-row"><span>高さ</span><span>${bldg.height}m</span></div>
       <div class="popup-row"><span>エリア</span><span>${bldg.city}</span></div>
     `);
-    currentOverlayGroup.addLayer(circle);
+    group.addLayer(circle);
   }
-  currentOverlayGroup.addTo(map);
+  return group;
+}
+
+function priceToColorFor(price: number, prefKey: string): string {
+  for (const bucket of pref(prefKey).priceBuckets) {
+    if (price >= bucket.min) return bucket.color;
+  }
+  return '#69b7eb';
+}
+
+function renderLayerOn(mapInst: any, layer: string, prefKey: string, onClickArea?: (name: string) => void): any {
+  switch (layer) {
+    case 'land_price': return addLayerToMap(mapInst, buildLandPriceGroup(prefKey, onClickArea));
+    case 'flood_risk': return addLayerToMap(mapInst, buildFloodRiskGroup(prefKey, onClickArea));
+    case 'transaction': return addLayerToMap(mapInst, buildTransactionGroup(prefKey, onClickArea));
+    case 'population': return addLayerToMap(mapInst, buildPopulationGroup(prefKey, onClickArea));
+    case 'human_flow': return addLayerToMap(mapInst, buildHumanFlowGroup(prefKey, onClickArea));
+    case 'school_district': return addLayerToMap(mapInst, buildSchoolGroup(prefKey, onClickArea));
+    case 'corporate_density': return addLayerToMap(mapInst, buildCorporateGroup(prefKey, onClickArea));
+    case 'plateau_3d': return addLayerToMap(mapInst, buildPlateauGroup(prefKey));
+    default: return null;
+  }
+}
+
+function renderLandPriceLayer() {
+  clearOverlay();
+  currentOverlayGroup = renderLayerOn(map, 'land_price', currentPrefecture, selectArea);
+  if (comparisonMode && mapSecondary) {
+    secondaryOverlayGroup = renderLayerOn(mapSecondary, 'land_price', secondaryPrefKey());
+  }
+}
+
+function renderFloodRiskLayer() {
+  clearOverlay();
+  currentOverlayGroup = renderLayerOn(map, 'flood_risk', currentPrefecture, selectArea);
+  if (comparisonMode && mapSecondary) {
+    secondaryOverlayGroup = renderLayerOn(mapSecondary, 'flood_risk', secondaryPrefKey());
+  }
+}
+
+function renderTransactionLayer() {
+  clearOverlay();
+  currentOverlayGroup = renderLayerOn(map, 'transaction', currentPrefecture, selectArea);
+  if (comparisonMode && mapSecondary) {
+    secondaryOverlayGroup = renderLayerOn(mapSecondary, 'transaction', secondaryPrefKey());
+  }
+}
+
+function renderPopulationLayer() {
+  clearOverlay();
+  currentOverlayGroup = renderLayerOn(map, 'population', currentPrefecture, selectArea);
+  if (comparisonMode && mapSecondary) {
+    secondaryOverlayGroup = renderLayerOn(mapSecondary, 'population', secondaryPrefKey());
+  }
+}
+
+function renderHumanFlowLayer() {
+  clearOverlay();
+  currentOverlayGroup = renderLayerOn(map, 'human_flow', currentPrefecture, selectArea);
+  if (comparisonMode && mapSecondary) {
+    secondaryOverlayGroup = renderLayerOn(mapSecondary, 'human_flow', secondaryPrefKey());
+  }
+}
+
+function renderSchoolDistrictLayer() {
+  clearOverlay();
+  currentOverlayGroup = renderLayerOn(map, 'school_district', currentPrefecture, selectArea);
+  if (comparisonMode && mapSecondary) {
+    secondaryOverlayGroup = renderLayerOn(mapSecondary, 'school_district', secondaryPrefKey());
+  }
+}
+
+function renderCorporateDensityLayer() {
+  clearOverlay();
+  currentOverlayGroup = renderLayerOn(map, 'corporate_density', currentPrefecture, selectArea);
+  if (comparisonMode && mapSecondary) {
+    secondaryOverlayGroup = renderLayerOn(mapSecondary, 'corporate_density', secondaryPrefKey());
+  }
+}
+
+function renderPlateau3DLayer() {
+  clearOverlay();
+  currentOverlayGroup = renderLayerOn(map, 'plateau_3d', currentPrefecture);
+  if (comparisonMode && mapSecondary) {
+    secondaryOverlayGroup = renderLayerOn(mapSecondary, 'plateau_3d', secondaryPrefKey());
+  }
 }
 
 const CAPABILITY_LAYERS: Record<string, keyof PrefectureConfig['capabilities']> = {
@@ -409,6 +512,8 @@ function isLayerAvailable(layer: string): boolean {
   if (!capKey) return true;
   return pref().capabilities[capKey];
 }
+
+function renderCurrentLayer() { switchLayer(currentLayer); }
 
 function switchLayer(layer: string) {
   if (!isLayerAvailable(layer)) return;
@@ -524,6 +629,255 @@ function selectArea(name: string) {
   updateInsightPanel(name);
   const sel = document.getElementById('area-select') as HTMLSelectElement | null;
   if (sel) sel.value = name;
+
+  // inject drill-down panel below the insight panel
+  const existingDd = document.getElementById('drilldown-panel');
+  if (existingDd) existingDd.remove();
+  const panel = document.getElementById('insight-panel');
+  if (panel && name) {
+    const ddDiv = document.createElement('div');
+    ddDiv.innerHTML = buildDrillDownPanel(name);
+    panel.appendChild(ddDiv.firstElementChild as HTMLElement);
+    attachDrillDownEvents();
+  }
+}
+
+// ── SVG Radar Chart (5 axes: 価格/安全/人流/教育/企業) ──
+
+function buildRadarSVG(
+  datasets: { label: string; color: string; values: number[] }[],
+  axes: string[],
+  size = 220,
+): string {
+  const cx = size / 2, cy = size / 2, r = (size / 2) * 0.72;
+  const n = axes.length;
+  const PI2 = Math.PI * 2;
+  const startAngle = -Math.PI / 2;
+
+  const getXY = (angle: number, radius: number) => ({
+    x: cx + radius * Math.cos(angle),
+    y: cy + radius * Math.sin(angle),
+  });
+
+  const axisLines = axes.map((label, i) => {
+    const angle = startAngle + (PI2 / n) * i;
+    const { x: x2, y: y2 } = getXY(angle, r);
+    const labelPt = getXY(angle, r + 18);
+    return `<line x1="${cx}" y1="${cy}" x2="${x2.toFixed(1)}" y2="${y2.toFixed(1)}" stroke="rgba(255,255,255,0.2)" stroke-width="1"/>`
+      + `<text x="${labelPt.x.toFixed(1)}" y="${labelPt.y.toFixed(1)}" text-anchor="middle" dominant-baseline="middle" font-size="9" fill="rgba(255,255,255,0.7)">${label}</text>`;
+  }).join('');
+
+  const gridLines = [0.25, 0.5, 0.75, 1].map((ratio) => {
+    const pts = axes.map((_, i) => {
+      const angle = startAngle + (PI2 / n) * i;
+      const { x, y } = getXY(angle, r * ratio);
+      return `${x.toFixed(1)},${y.toFixed(1)}`;
+    }).join(' ');
+    return `<polygon points="${pts}" fill="none" stroke="rgba(255,255,255,0.12)" stroke-width="1"/>`;
+  }).join('');
+
+  const polygons = datasets.map((ds) => {
+    const pts = ds.values.map((v, i) => {
+      const angle = startAngle + (PI2 / n) * i;
+      const { x, y } = getXY(angle, r * Math.min(1, Math.max(0, v / 100)));
+      return `${x.toFixed(1)},${y.toFixed(1)}`;
+    }).join(' ');
+    return `<polygon points="${pts}" fill="${ds.color}" fill-opacity="0.18" stroke="${ds.color}" stroke-width="2"/>`;
+  }).join('');
+
+  const legendItems = datasets.map((ds, i) =>
+    `<rect x="${8 + i * 90}" y="${size - 18}" width="10" height="10" fill="${ds.color}" rx="2"/>`
+    + `<text x="${22 + i * 90}" y="${size - 9}" font-size="9" fill="rgba(255,255,255,0.8)">${ds.label}</text>`,
+  ).join('');
+
+  return `<svg xmlns="http://www.w3.org/2000/svg" width="${size}" height="${size}" viewBox="0 0 ${size} ${size}" style="display:block;margin:0 auto">`
+    + gridLines + axisLines + polygons + legendItems + `</svg>`;
+}
+
+// ── Comparison Panel ──
+
+interface ComparisonData {
+  prefA: string;
+  prefB: string;
+  dataA: PrefectureConfig;
+  dataB: PrefectureConfig;
+}
+
+function buildComparisonPanel(): string {
+  const prefA = currentPrefecture;
+  const prefB = secondaryPrefKey();
+  const cfgA = pref(prefA);
+  const cfgB = pref(prefB);
+
+  const getAvgPrice = (cfg: PrefectureConfig) => {
+    const prices = Object.values(cfg.landPrices);
+    if (prices.length === 0) return null;
+    return prices.reduce((s, p) => s + p.price, 0) / prices.length;
+  };
+  const getAvgChange = (cfg: PrefectureConfig) => {
+    const prices = Object.values(cfg.landPrices);
+    if (prices.length === 0) return null;
+    return prices.reduce((s, p) => s + p.change, 0) / prices.length;
+  };
+  const getAvgRisk = (cfg: PrefectureConfig) => {
+    const risks = Object.values(cfg.risk);
+    if (risks.length === 0) return null;
+    return risks.reduce((s, r) => s + r.overall, 0) / risks.length;
+  };
+  const getAvgHumanFlow = (cfg: PrefectureConfig) => {
+    const flows = Object.values(cfg.humanFlow);
+    if (flows.length === 0) return null;
+    return flows.reduce((s, f) => s + f.weekday, 0) / flows.length;
+  };
+  const getAvgEdu = (cfg: PrefectureConfig) => {
+    const schools = Object.values(cfg.school);
+    if (schools.length === 0) return null;
+    return schools.reduce((s, sc) => s + sc.score, 0) / schools.length;
+  };
+  const getAvgCorp = (cfg: PrefectureConfig) => {
+    const corps = Object.values(cfg.corporate);
+    if (corps.length === 0) return null;
+    return corps.reduce((s, c) => s + c.establishments, 0) / corps.length;
+  };
+
+  const priceA = getAvgPrice(cfgA), priceB = getAvgPrice(cfgB);
+  const changeA = getAvgChange(cfgA), changeB = getAvgChange(cfgB);
+  const riskA = getAvgRisk(cfgA), riskB = getAvgRisk(cfgB);
+  const flowA = getAvgHumanFlow(cfgA), flowB = getAvgHumanFlow(cfgB);
+  const eduA = getAvgEdu(cfgA), eduB = getAvgEdu(cfgB);
+  const corpA = getAvgCorp(cfgA), corpB = getAvgCorp(cfgB);
+
+  const norm2 = (a: number | null, b: number | null, invert = false) => {
+    if (a == null || b == null) return [50, 50];
+    const max = Math.max(Math.abs(a), Math.abs(b), 1);
+    const na = Math.round((a / max) * 100);
+    const nb = Math.round((b / max) * 100);
+    return invert ? [100 - na, 100 - nb] : [na, nb];
+  };
+
+  const [priceNA, priceNB] = norm2(priceA, priceB, true);
+  const [riskNA, riskNB] = norm2(riskA, riskB, true);
+  const [flowNA, flowNB] = norm2(flowA, flowB);
+  const [eduNA, eduNB] = norm2(eduA, eduB);
+  const [corpNA, corpNB] = norm2(corpA, corpB);
+
+  const radar = buildRadarSVG(
+    [
+      { label: cfgA.displayName, color: '#4f8cff', values: [priceNA, riskNA, flowNA, eduNA, corpNA] },
+      { label: cfgB.displayName, color: '#ff6b35', values: [priceNB, riskNB, flowNB, eduNB, corpNB] },
+    ],
+    ['価格手頃', '安全', '人流', '教育', '企業'],
+    220,
+  );
+
+  const scoreA = Math.round((priceNA + riskNA + flowNA + eduNA + corpNA) / 5);
+  const scoreB = Math.round((priceNB + riskNB + flowNB + eduNB + corpNB) / 5);
+
+  const fmtPrice = (v: number | null) => v ? `${(v / 10000).toFixed(0)}万円/㎡` : '-';
+  const fmtChange = (v: number | null) => v != null ? `${v >= 0 ? '+' : ''}${v.toFixed(1)}%` : '-';
+  const fmtRisk = (v: number | null) => v != null ? `${v.toFixed(0)}/100` : '-';
+
+  const rows = [
+    { label: '投資スコア', va: `${scoreA}/100`, vb: `${scoreB}/100` },
+    { label: '平均地価', va: fmtPrice(priceA), vb: fmtPrice(priceB) },
+    { label: '価格変化率', va: fmtChange(changeA), vb: fmtChange(changeB) },
+    { label: 'リスクスコア', va: fmtRisk(riskA), vb: fmtRisk(riskB) },
+    { label: '人流データ', va: cfgA.capabilities.humanFlow ? '対応' : '未対応', vb: cfgB.capabilities.humanFlow ? '対応' : '未対応' },
+    { label: '教育データ', va: cfgA.capabilities.education ? '対応' : '未対応', vb: cfgB.capabilities.education ? '対応' : '未対応' },
+  ];
+
+  return `
+    <div class="comparison-section">
+      <div class="comparison-header">
+        <span class="pref-badge pref-a">${cfgA.displayName}</span>
+        <span class="vs-label">vs</span>
+        <span class="pref-badge pref-b">${cfgB.displayName}</span>
+      </div>
+      ${radar}
+      <div class="ranking-table-wrapper">
+        <table class="ranking-table">
+          <thead><tr><th>指標</th><th class="pref-a-col">${cfgA.displayName}</th><th class="pref-b-col">${cfgB.displayName}</th></tr></thead>
+          <tbody>
+            ${rows.map((r) => {
+              const win = r.label === '投資スコア' ? (scoreA >= scoreB ? 'a' : 'b') : null;
+              return `<tr>
+                <td>${r.label}</td>
+                <td class="${win === 'a' ? 'highlight-best' : ''}">${r.va}</td>
+                <td class="${win === 'b' ? 'highlight-best' : ''}">${r.vb}</td>
+              </tr>`;
+            }).join('')}
+          </tbody>
+        </table>
+      </div>
+      <div class="bestfor-row">
+        <div class="bestfor-item"><span class="bestfor-label">投資</span><span class="bestfor-val">${scoreA >= scoreB ? cfgA.displayName : cfgB.displayName}</span></div>
+        <div class="bestfor-item"><span class="bestfor-label">安全</span><span class="bestfor-val">${(riskA ?? 100) <= (riskB ?? 100) ? cfgA.displayName : cfgB.displayName}</span></div>
+        <div class="bestfor-item"><span class="bestfor-label">成長</span><span class="bestfor-val">${(changeA ?? -999) >= (changeB ?? -999) ? cfgA.displayName : cfgB.displayName}</span></div>
+      </div>
+    </div>`;
+}
+
+// ── Drill-down panel (city click) ──
+
+function buildDrillDownPanel(area: string): string {
+  const config = pref();
+  const price = config.landPrices[area];
+  const risk = config.risk[area];
+  const flow = config.humanFlow[area];
+  const school = config.school[area];
+  const corp = config.corporate[area];
+
+  const riskBadge = risk
+    ? `<span style="color:${riskToColor(risk.overall)}">${risk.overall}/100</span>`
+    : '-';
+  const floodBadge = risk ? `<span style="color:${riskToColor(risk.flood)}">${risk.flood}/100</span>` : '-';
+
+  return `
+    <div class="drilldown-panel" id="drilldown-panel">
+      <div class="drilldown-header">
+        <strong>${config.displayName} / ${area}</strong>
+        <button class="drilldown-close" id="drilldown-close">✕</button>
+      </div>
+      <table class="drilldown-table">
+        <tr><th colspan="2">価格</th></tr>
+        <tr><td>平均地価</td><td>${price ? `${(price.price / 10000).toFixed(1)} 万円/㎡` : '-'}</td></tr>
+        <tr><td>変化率</td><td>${price ? `${price.change >= 0 ? '+' : ''}${price.change}%` : '-'}</td></tr>
+        <tr><th colspan="2">災害リスク</th></tr>
+        <tr><td>総合</td><td>${riskBadge}</td></tr>
+        <tr><td>浸水</td><td>${floodBadge}</td></tr>
+        <tr><td>震度</td><td>${risk?.earthquake ?? '-'}</td></tr>
+        ${flow ? `<tr><th colspan="2">人流</th></tr>
+        <tr><td>平日</td><td>${flow.weekday.toLocaleString()} 人/日</td></tr>
+        <tr><td>休日</td><td>${flow.weekend.toLocaleString()} 人/日</td></tr>` : ''}
+        ${school ? `<tr><th colspan="2">教育</th></tr>
+        <tr><td>教育スコア</td><td>${school.score}/100</td></tr>
+        <tr><td>進学率</td><td>${school.advancement}%</td></tr>` : ''}
+        ${corp ? `<tr><th colspan="2">企業立地</th></tr>
+        <tr><td>事業所数</td><td>${corp.establishments.toLocaleString()}</td></tr>
+        <tr><td>大企業</td><td>${corp.major}社</td></tr>` : ''}
+      </table>
+      <div class="neighborhood-input-row">
+        <label>町丁目で絞り込み（v2.1: ラベルのみ）</label>
+        <input type="text" id="neighborhood-input" placeholder="例: 名駅南1丁目" class="neighborhood-input"/>
+        <div id="neighborhood-note" class="neighborhood-note"></div>
+      </div>
+    </div>`;
+}
+
+function attachDrillDownEvents() {
+  document.getElementById('drilldown-close')?.addEventListener('click', () => {
+    document.getElementById('drilldown-panel')?.remove();
+  });
+  const nbInput = document.getElementById('neighborhood-input') as HTMLInputElement | null;
+  const nbNote = document.getElementById('neighborhood-note');
+  nbInput?.addEventListener('input', () => {
+    const val = nbInput.value.trim();
+    if (nbNote) {
+      nbNote.textContent = val
+        ? `「${val}」の詳細データはv2.2以降対応予定。現在は市区町村レベル集計を表示中。`
+        : '';
+    }
+  });
 }
 
 function updateInsightPanel(area: string) {
@@ -544,17 +898,11 @@ function updateInsightPanel(area: string) {
   const riskClass = (risk?.overall ?? 0) >= 60 ? 'high' : (risk?.overall ?? 0) >= 30 ? 'medium' : 'low';
 
   let comparisonHtml = '';
-  if (comparisonMode && area) {
-    const otherKey = currentPrefecture === 'aichi' ? 'tokyo' : 'aichi';
-    const other = PREFECTURES[otherKey];
+  if (comparisonMode) {
     comparisonHtml = `
-    <div class="panel-section" style="border-top:1px solid var(--border);padding-top:12px;margin-top:12px">
-      <h3>比較: ${other.displayName}</h3>
-      <div style="font-size:12px;color:var(--text-muted)">比較モードは v2.1 でフル機能化予定</div>
-      <div style="font-size:12px;margin:4px 0">対応データ: 地価/人口/災害/地震</div>
-      <div style="font-size:12px;margin:4px 0">人流: ${other.capabilities.humanFlow ? '対応' : '未対応'}</div>
-      <div style="font-size:12px;margin:4px 0">教育: ${other.capabilities.education ? '対応' : '未対応'}</div>
-      <div style="font-size:12px;margin:4px 0">企業: ${other.capabilities.corporate ? '対応' : '未対応'}</div>
+    <div class="panel-section comparison-panel-section">
+      <h3>都道府県比較</h3>
+      ${buildComparisonPanel()}
     </div>`;
   }
 
@@ -757,7 +1105,13 @@ function initSearchPanel() {
     const el = e.target as HTMLElement;
     el.classList.toggle('on');
     comparisonMode = el.classList.contains('on');
-    if (selectedArea) updateInsightPanel(selectedArea);
+    if (comparisonMode) {
+      enableComparisonLayout();
+      renderCurrentLayer();
+    } else {
+      disableComparisonLayout();
+    }
+    updateInsightPanel(selectedArea);
   });
 
   document.getElementById('btn-analyze')?.addEventListener('click', () => {

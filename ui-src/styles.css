@@ -193,12 +193,19 @@ select:focus, input[type="text"]:focus {
 }
 
 /* Map */
+#map-wrapper {
+  flex: 1;
+  position: relative;
+  display: flex;
+}
+
 #map-container {
   flex: 1;
   position: relative;
 }
 
-#map-container .leaflet-container {
+#map-container .leaflet-container,
+.map-container-secondary .leaflet-container {
   height: 100%;
   width: 100%;
   background: var(--bg);
@@ -452,4 +459,161 @@ select:focus, input[type="text"]:focus {
   padding: 6px 14px;
   border-radius: var(--radius);
   cursor: pointer;
+}
+
+/* ── Comparison mode: 2-split map layout ── */
+#map-wrapper {
+  display: flex;
+  flex: 1;
+  position: relative;
+}
+
+#map-wrapper.comparison-split #map-container {
+  width: 50%;
+}
+
+.map-container-secondary {
+  width: 50%;
+  height: 100%;
+  position: relative;
+  z-index: 1;
+}
+
+/* ── Comparison panel in insight sidebar ── */
+.comparison-panel-section {
+  border-top: 1px solid var(--border);
+  padding-top: 12px;
+  margin-top: 12px;
+}
+
+.comparison-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 10px;
+  justify-content: center;
+}
+
+.pref-badge {
+  padding: 3px 10px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.pref-a { background: rgba(79,140,255,0.18); color: #4f8cff; border: 1px solid rgba(79,140,255,0.4); }
+.pref-b { background: rgba(255,107,53,0.18); color: #ff6b35; border: 1px solid rgba(255,107,53,0.4); }
+.vs-label { color: var(--text-muted); font-size: 12px; }
+
+/* ── Ranking table ── */
+.ranking-table-wrapper { overflow-x: auto; margin: 10px 0; }
+.ranking-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 11px;
+}
+.ranking-table th, .ranking-table td {
+  padding: 5px 8px;
+  border-bottom: 1px solid var(--border);
+  text-align: center;
+}
+.ranking-table th { color: var(--text-muted); }
+.ranking-table .pref-a-col { color: #4f8cff; }
+.ranking-table .pref-b-col { color: #ff6b35; }
+.highlight-best {
+  background: rgba(52,211,153,0.12);
+  color: var(--success);
+  font-weight: 600;
+  border-radius: 4px;
+}
+
+/* ── Best-for row ── */
+.bestfor-row {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  margin-top: 8px;
+}
+.bestfor-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 5px 10px;
+  flex: 1;
+  min-width: 60px;
+}
+.bestfor-label { font-size: 10px; color: var(--text-muted); }
+.bestfor-val { font-size: 11px; font-weight: 600; color: var(--success); }
+
+/* ── Drill-down panel ── */
+.drilldown-panel {
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 12px;
+  margin-top: 12px;
+}
+.drilldown-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+  font-size: 13px;
+}
+.drilldown-close {
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  font-size: 14px;
+  line-height: 1;
+}
+.drilldown-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 11px;
+  margin-bottom: 10px;
+}
+.drilldown-table th {
+  background: var(--surface);
+  padding: 4px 6px;
+  text-align: left;
+  color: var(--accent);
+  font-size: 10px;
+  letter-spacing: 0.04em;
+}
+.drilldown-table td {
+  padding: 4px 6px;
+  border-bottom: 1px solid var(--border);
+}
+.neighborhood-input-row {
+  margin-top: 8px;
+}
+.neighborhood-input-row label {
+  display: block;
+  font-size: 10px;
+  color: var(--text-muted);
+  margin-bottom: 4px;
+}
+.neighborhood-input {
+  width: 100%;
+  padding: 6px 10px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  color: var(--text);
+  font-size: 12px;
+}
+.neighborhood-input:focus {
+  outline: none;
+  border-color: var(--accent);
+}
+.neighborhood-note {
+  font-size: 10px;
+  color: var(--text-muted);
+  margin-top: 4px;
+  line-height: 1.4;
 }
