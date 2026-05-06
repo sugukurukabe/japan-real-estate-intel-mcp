@@ -82,6 +82,73 @@ const MUNICIPALITY_CENTERS: Record<string, [number, number]> = {
   '小牧市': [35.2917, 136.9222],
 };
 
+// v1.2 Sample data
+const SAMPLE_HUMAN_FLOW: Record<string, { weekday: number; weekend: number; stay: number; trend: string }> = {
+  '名古屋市中区': { weekday: 185000, weekend: 210000, stay: 95, trend: 'increasing' },
+  '名古屋市中村区': { weekday: 165000, weekend: 140000, stay: 45, trend: 'increasing' },
+  '名古屋市東区': { weekday: 72000, weekend: 55000, stay: 60, trend: 'stable' },
+  '名古屋市千種区': { weekday: 48000, weekend: 52000, stay: 70, trend: 'stable' },
+  '名古屋市名東区': { weekday: 28000, weekend: 32000, stay: 85, trend: 'stable' },
+  '名古屋市緑区': { weekday: 22000, weekend: 28000, stay: 90, trend: 'increasing' },
+  '名古屋市港区': { weekday: 35000, weekend: 18000, stay: 40, trend: 'decreasing' },
+  '名古屋市熱田区': { weekday: 55000, weekend: 68000, stay: 75, trend: 'increasing' },
+  '名古屋市中川区': { weekday: 20000, weekend: 15000, stay: 55, trend: 'stable' },
+  '名古屋市昭和区': { weekday: 38000, weekend: 35000, stay: 65, trend: 'stable' },
+  '豊田市': { weekday: 45000, weekend: 30000, stay: 50, trend: 'stable' },
+  '岡崎市': { weekday: 32000, weekend: 28000, stay: 55, trend: 'stable' },
+  '豊橋市': { weekday: 28000, weekend: 22000, stay: 50, trend: 'decreasing' },
+  '一宮市': { weekday: 25000, weekend: 20000, stay: 45, trend: 'stable' },
+  '春日井市': { weekday: 20000, weekend: 18000, stay: 60, trend: 'stable' },
+  '刈谷市': { weekday: 38000, weekend: 12000, stay: 35, trend: 'increasing' },
+};
+
+const SAMPLE_SCHOOL: Record<string, { score: number; advancement: number }> = {
+  '名古屋市千種区': { score: 82, advancement: 78 },
+  '名古屋市昭和区': { score: 80, advancement: 76 },
+  '名古屋市名東区': { score: 78, advancement: 74 },
+  '名古屋市瑞穂区': { score: 76, advancement: 72 },
+  '名古屋市東区': { score: 73, advancement: 70 },
+  '名古屋市天白区': { score: 68, advancement: 66 },
+  '名古屋市緑区': { score: 65, advancement: 63 },
+  '名古屋市中区': { score: 60, advancement: 62 },
+  '名古屋市中村区': { score: 55, advancement: 58 },
+  '名古屋市港区': { score: 48, advancement: 52 },
+  '名古屋市中川区': { score: 50, advancement: 54 },
+  '名古屋市南区': { score: 52, advancement: 55 },
+  '豊田市': { score: 62, advancement: 64 },
+  '岡崎市': { score: 60, advancement: 60 },
+  '春日井市': { score: 64, advancement: 62 },
+  '安城市': { score: 63, advancement: 61 },
+};
+
+const SAMPLE_CORPORATE: Record<string, { establishments: number; major: number; employees: number }> = {
+  '名古屋市中区': { establishments: 18500, major: 245, employees: 380000 },
+  '名古屋市中村区': { establishments: 8200, major: 120, employees: 195000 },
+  '名古屋市東区': { establishments: 4500, major: 55, employees: 85000 },
+  '豊田市': { establishments: 5200, major: 35, employees: 165000 },
+  '刈谷市': { establishments: 2800, major: 28, employees: 95000 },
+  '岡崎市': { establishments: 3200, major: 18, employees: 72000 },
+  '一宮市': { establishments: 2600, major: 12, employees: 45000 },
+  '名古屋市港区': { establishments: 3500, major: 22, employees: 65000 },
+  '小牧市': { establishments: 2200, major: 15, employees: 52000 },
+  '春日井市': { establishments: 2400, major: 10, employees: 42000 },
+  '豊橋市': { establishments: 3000, major: 15, employees: 58000 },
+  '安城市': { establishments: 1800, major: 12, employees: 48000 },
+};
+
+const SAMPLE_PLATEAU: { name: string; city: string; height: number; lat: number; lng: number }[] = [
+  { name: 'ミッドランドスクエア', city: '名古屋市中村区', height: 247, lat: 35.1709, lng: 136.8816 },
+  { name: 'JRセントラルタワーズ', city: '名古屋市中村区', height: 245, lat: 35.1706, lng: 136.8826 },
+  { name: 'モード学園スパイラルタワーズ', city: '名古屋市中村区', height: 170, lat: 35.1695, lng: 136.8835 },
+  { name: '大名古屋ビルヂング', city: '名古屋市中村区', height: 174, lat: 35.1718, lng: 136.8838 },
+  { name: 'ルーセントタワー', city: '名古屋市西区', height: 180, lat: 35.1748, lng: 136.8782 },
+  { name: 'スカイプロムナード', city: '名古屋市中区', height: 180, lat: 35.1680, lng: 136.9060 },
+  { name: 'NTTドコモ名古屋ビル', city: '名古屋市東区', height: 150, lat: 35.1800, lng: 136.9250 },
+  { name: '名古屋プライムセントラルタワー', city: '名古屋市西区', height: 138, lat: 35.1752, lng: 136.8795 },
+  { name: '御園座タワー', city: '名古屋市中区', height: 150, lat: 35.1685, lng: 136.8985 },
+  { name: 'グローバルゲート', city: '名古屋市中村区', height: 170, lat: 35.1640, lng: 136.8780 },
+];
+
 let map: any;
 let currentLayer = 'land_price';
 let selectedArea = '';
@@ -300,6 +367,145 @@ function renderPopulationLayer() {
   currentOverlayGroup.addTo(map);
 }
 
+function renderHumanFlowLayer() {
+  clearOverlay();
+  currentOverlayGroup = L.layerGroup();
+
+  for (const [name, center] of Object.entries(MUNICIPALITY_CENTERS)) {
+    const flow = SAMPLE_HUMAN_FLOW[name];
+    if (!flow) continue;
+
+    const avgFlow = (flow.weekday + flow.weekend) / 2;
+    const radius = Math.max(500, Math.sqrt(avgFlow) * 2);
+    const intensity = Math.min(1, avgFlow / 150000);
+    const color = `rgba(79, 140, 255, ${0.2 + intensity * 0.6})`;
+    const borderColor = flow.trend === 'increasing' ? '#34d399' : flow.trend === 'decreasing' ? '#ff4d6a' : '#4f8cff';
+
+    const circle = L.circle(center, {
+      radius,
+      fillColor: color,
+      fillOpacity: 0.5,
+      color: borderColor,
+      weight: 2,
+    });
+
+    circle.bindPopup(`
+      <div class="popup-title">${name}</div>
+      <div class="popup-row"><span>平日人流</span><span>${flow.weekday.toLocaleString()}人/日</span></div>
+      <div class="popup-row"><span>休日人流</span><span>${flow.weekend.toLocaleString()}人/日</span></div>
+      <div class="popup-row"><span>平均滞在</span><span>${flow.stay}分</span></div>
+      <div class="popup-row"><span>トレンド</span><span style="color:${borderColor}">${flow.trend === 'increasing' ? '↑増加' : flow.trend === 'decreasing' ? '↓減少' : '→安定'}</span></div>
+    `);
+
+    circle.on('click', () => selectArea(name));
+    currentOverlayGroup.addLayer(circle);
+  }
+
+  currentOverlayGroup.addTo(map);
+}
+
+function renderSchoolDistrictLayer() {
+  clearOverlay();
+  currentOverlayGroup = L.layerGroup();
+
+  for (const [name, center] of Object.entries(MUNICIPALITY_CENTERS)) {
+    const school = SAMPLE_SCHOOL[name];
+    if (!school) continue;
+
+    const color = school.score >= 75 ? '#34d399' : school.score >= 60 ? '#ffb340' : '#ff4d6a';
+
+    const circle = L.circle(center, {
+      radius: 1000,
+      fillColor: color,
+      fillOpacity: 0.4,
+      color,
+      weight: 2,
+    });
+
+    circle.bindPopup(`
+      <div class="popup-title">${name}</div>
+      <div class="popup-row"><span>教育スコア</span><span style="color:${color}">${school.score}/100</span></div>
+      <div class="popup-row"><span>大学進学率</span><span>${school.advancement}%</span></div>
+    `);
+
+    circle.on('click', () => selectArea(name));
+    currentOverlayGroup.addLayer(circle);
+  }
+
+  currentOverlayGroup.addTo(map);
+}
+
+function renderCorporateDensityLayer() {
+  clearOverlay();
+  currentOverlayGroup = L.layerGroup();
+
+  for (const [name, center] of Object.entries(MUNICIPALITY_CENTERS)) {
+    const corp = SAMPLE_CORPORATE[name];
+    if (!corp) continue;
+
+    const radius = Math.max(500, Math.sqrt(corp.employees) * 1.5);
+    const intensity = Math.min(0.8, corp.major / 200);
+
+    const circle = L.circle(center, {
+      radius,
+      fillColor: `rgba(168, 85, 247, ${0.2 + intensity})`,
+      fillOpacity: 0.5,
+      color: '#a855f7',
+      weight: 1,
+    });
+
+    circle.bindPopup(`
+      <div class="popup-title">${name}</div>
+      <div class="popup-row"><span>事業所数</span><span>${corp.establishments.toLocaleString()}</span></div>
+      <div class="popup-row"><span>大企業</span><span>${corp.major}社</span></div>
+      <div class="popup-row"><span>従業者</span><span>${corp.employees.toLocaleString()}人</span></div>
+    `);
+
+    circle.on('click', () => selectArea(name));
+    currentOverlayGroup.addLayer(circle);
+  }
+
+  currentOverlayGroup.addTo(map);
+}
+
+function renderPlateau3DLayer() {
+  clearOverlay();
+  currentOverlayGroup = L.layerGroup();
+
+  for (const bldg of SAMPLE_PLATEAU) {
+    const heightScale = bldg.height / 250;
+    const radius = 80 + bldg.height * 0.8;
+    const color = bldg.height >= 200 ? '#ff2d55' : bldg.height >= 150 ? '#ff6b35' : '#ffb340';
+
+    const circle = L.circle([bldg.lat, bldg.lng], {
+      radius,
+      fillColor: color,
+      fillOpacity: 0.5 + heightScale * 0.3,
+      color: '#fff',
+      weight: 1,
+    });
+
+    const shadowLen = bldg.height * 1.5;
+    const shadowEnd: [number, number] = [bldg.lat - shadowLen * 0.000005, bldg.lng + shadowLen * 0.000008];
+    const shadow = L.polyline([[bldg.lat, bldg.lng], shadowEnd], {
+      color: 'rgba(0,0,0,0.3)',
+      weight: Math.max(2, bldg.height / 30),
+      dashArray: '5, 5',
+    });
+
+    circle.bindPopup(`
+      <div class="popup-title">${bldg.name}</div>
+      <div class="popup-row"><span>高さ</span><span>${bldg.height}m</span></div>
+      <div class="popup-row"><span>エリア</span><span>${bldg.city}</span></div>
+    `);
+
+    currentOverlayGroup.addLayer(shadow);
+    currentOverlayGroup.addLayer(circle);
+  }
+
+  currentOverlayGroup.addTo(map);
+}
+
 function switchLayer(layer: string) {
   currentLayer = layer;
   switch (layer) {
@@ -307,6 +513,10 @@ function switchLayer(layer: string) {
     case 'flood_risk': renderFloodRiskLayer(); break;
     case 'transaction': renderTransactionLayer(); break;
     case 'population': renderPopulationLayer(); break;
+    case 'human_flow': renderHumanFlowLayer(); break;
+    case 'school_district': renderSchoolDistrictLayer(); break;
+    case 'corporate_density': renderCorporateDensityLayer(); break;
+    case 'plateau_3d': renderPlateau3DLayer(); break;
   }
   renderLegend();
   document.querySelectorAll('.layer-btn').forEach(btn => {
@@ -319,9 +529,13 @@ function renderLayerControl() {
   ctrl.className = 'layer-control';
   ctrl.innerHTML = `
     <button class="layer-btn active" data-layer="land_price">地価</button>
-    <button class="layer-btn" data-layer="flood_risk">災害リスク</button>
+    <button class="layer-btn" data-layer="flood_risk">災害</button>
     <button class="layer-btn" data-layer="transaction">取引</button>
     <button class="layer-btn" data-layer="population">人口</button>
+    <button class="layer-btn" data-layer="human_flow">人流</button>
+    <button class="layer-btn" data-layer="school_district">学区</button>
+    <button class="layer-btn" data-layer="corporate_density">企業</button>
+    <button class="layer-btn" data-layer="plateau_3d">3D建物</button>
   `;
   ctrl.addEventListener('click', (e) => {
     const target = e.target as HTMLElement;
@@ -363,6 +577,37 @@ function renderLegend() {
       <div class="legend-item"><div class="legend-color" style="background:#34d399"></div> 人口増加</div>
       <div class="legend-item"><div class="legend-color" style="background:#ff4d6a"></div> 人口減少</div>
       <div class="legend-item"><div class="legend-color" style="opacity:0.3">⭕</div> 円の大きさ＝人口規模</div>
+    `;
+  } else if (currentLayer === 'human_flow') {
+    legend.innerHTML = `
+      <div class="legend-title">人流量（人/日）</div>
+      <div class="legend-item"><div class="legend-color" style="background:rgba(79,140,255,0.8)"></div> 高人流</div>
+      <div class="legend-item"><div class="legend-color" style="background:rgba(79,140,255,0.4)"></div> 中人流</div>
+      <div class="legend-item"><div class="legend-color" style="background:rgba(79,140,255,0.2)"></div> 低人流</div>
+      <div class="legend-item"><div class="legend-color" style="border:2px solid #34d399;background:transparent"></div> 増加傾向</div>
+      <div class="legend-item"><div class="legend-color" style="border:2px solid #ff4d6a;background:transparent"></div> 減少傾向</div>
+    `;
+  } else if (currentLayer === 'school_district') {
+    legend.innerHTML = `
+      <div class="legend-title">教育環境スコア</div>
+      <div class="legend-item"><div class="legend-color" style="background:#34d399"></div> 75〜 優秀</div>
+      <div class="legend-item"><div class="legend-color" style="background:#ffb340"></div> 60〜74 標準</div>
+      <div class="legend-item"><div class="legend-color" style="background:#ff4d6a"></div> 〜59 低め</div>
+    `;
+  } else if (currentLayer === 'corporate_density') {
+    legend.innerHTML = `
+      <div class="legend-title">企業集積度</div>
+      <div class="legend-item"><div class="legend-color" style="background:rgba(168,85,247,0.8)"></div> 大企業集積</div>
+      <div class="legend-item"><div class="legend-color" style="background:rgba(168,85,247,0.4)"></div> 中程度</div>
+      <div class="legend-item"><div class="legend-color" style="opacity:0.3">⭕</div> 円の大きさ＝従業者数</div>
+    `;
+  } else if (currentLayer === 'plateau_3d') {
+    legend.innerHTML = `
+      <div class="legend-title">建物高さ</div>
+      <div class="legend-item"><div class="legend-color" style="background:#ff2d55"></div> 200m〜</div>
+      <div class="legend-item"><div class="legend-color" style="background:#ff6b35"></div> 150m〜200m</div>
+      <div class="legend-item"><div class="legend-color" style="background:#ffb340"></div> 〜150m</div>
+      <div class="legend-item"><div class="legend-color" style="background:rgba(0,0,0,0.3)"></div> 影の方向</div>
     `;
   } else {
     legend.innerHTML = `
@@ -425,13 +670,33 @@ function updateInsightPanel(area: string) {
     </div>
     ` : ''}
 
+    ${SAMPLE_HUMAN_FLOW[area] ? `
+    <div class="panel-section">
+      <h3>人流データ</h3>
+      <div style="font-size:12px;margin:4px 0">平日: ${SAMPLE_HUMAN_FLOW[area].weekday.toLocaleString()}人/日</div>
+      <div style="font-size:12px;margin:4px 0">休日: ${SAMPLE_HUMAN_FLOW[area].weekend.toLocaleString()}人/日</div>
+      <div style="font-size:12px;margin:4px 0">滞在: ${SAMPLE_HUMAN_FLOW[area].stay}分</div>
+    </div>
+    ` : ''}
+
+    ${SAMPLE_SCHOOL[area] ? `
+    <div class="panel-section">
+      <h3>教育環境</h3>
+      <div style="font-size:12px;margin:4px 0">教育スコア: <span style="color:${SAMPLE_SCHOOL[area].score >= 75 ? '#34d399' : SAMPLE_SCHOOL[area].score >= 60 ? '#ffb340' : '#ff4d6a'}">${SAMPLE_SCHOOL[area].score}/100</span></div>
+      <div style="font-size:12px;margin:4px 0">大学進学率: ${SAMPLE_SCHOOL[area].advancement}%</div>
+    </div>
+    ` : ''}
+
     <div class="panel-section">
       <h3>インサイト</h3>
       <ul class="insight-list">
         ${price && price.change > 3 ? `<li>地価上昇が顕著。再開発や交通インフラ改善が要因。</li>` : ''}
         ${price && price.change < 0 ? `<li>地価が下落傾向。底値買いの機会か構造的リスクか要精査。</li>` : ''}
         ${risk && risk.overall >= 60 ? `<li>災害リスクが高め。保険コスト増を価格に織り込む必要あり。</li>` : ''}
-        ${risk && risk.flood >= 50 ? `<li>浸水リスク注意。水害保険と止水対策を推奨。</li>` : ''}
+        ${SAMPLE_HUMAN_FLOW[area] && SAMPLE_HUMAN_FLOW[area].weekday > 50000 ? `<li>高人流エリア。商業・オフィス需要が堅調。</li>` : ''}
+        ${SAMPLE_HUMAN_FLOW[area] && SAMPLE_HUMAN_FLOW[area].trend === 'increasing' ? `<li>人流増加中。エリアの活性化が進行。</li>` : ''}
+        ${SAMPLE_SCHOOL[area] && SAMPLE_SCHOOL[area].score >= 75 ? `<li>教育環境優秀。ファミリー物件にプレミアム。</li>` : ''}
+        ${SAMPLE_CORPORATE[area] && SAMPLE_CORPORATE[area].major >= 50 ? `<li>大企業${SAMPLE_CORPORATE[area].major}社集積。法人需要が厚い。</li>` : ''}
         ${!price ? `<li>エリアを選択するとインサイトが表示されます。</li>` : ''}
         <li>詳細は「レポート生成」で確認できます。</li>
       </ul>

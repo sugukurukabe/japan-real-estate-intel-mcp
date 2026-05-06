@@ -34,11 +34,11 @@ jobs:
 
       - name: Package
         run: |
-          tar -czf aichi-real-estate-intel-mcp-${{ github.ref_name }}.tar.gz \
+          tar -czf japan-real-estate-intel-mcp-${{ github.ref_name }}.tar.gz \
             dist/ data/ ui/ package.json README.md LICENSE
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
-          files: aichi-real-estate-intel-mcp-${{ github.ref_name }}.tar.gz
+          files: japan-real-estate-intel-mcp-${{ github.ref_name }}.tar.gz
           generate_release_notes: true

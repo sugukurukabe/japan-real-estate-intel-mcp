@@ -117,6 +117,67 @@ export interface EarthquakeRecord {
   description: string;
 }
 
+// ── v1.2 Domain Types ──
+
+export interface HumanFlowRecord {
+  city: string;
+  district: string;
+  weekday_avg_flow: number;
+  weekend_avg_flow: number;
+  avg_stay_minutes: number;
+  peak_hour: string;
+  flow_trend: 'increasing' | 'stable' | 'decreasing';
+  year: number;
+}
+
+export interface SchoolDistrictRecord {
+  city: string;
+  district: string;
+  elementary_school: string;
+  junior_high_school: string;
+  education_score: number;
+  university_advancement_rate: number;
+  nearby_school_count: number;
+  avg_deviation_value: number;
+}
+
+export interface CorporateLocationRecord {
+  city: string;
+  district: string;
+  total_establishments: number;
+  major_company_count: number;
+  employee_total: number;
+  avg_commute_minutes: number;
+  top_industry: string;
+  industry_share: number;
+  office_vacancy_rate: number;
+}
+
+export interface CrimeStatsRecord {
+  city: string;
+  total_crimes: number;
+  crime_rate_per_1000: number;
+  theft_count: number;
+  violent_count: number;
+  fraud_count: number;
+  safety_score: number;
+  dominant_crime_type: string;
+  year: number;
+}
+
+export interface PlateauBuildingRecord {
+  city: string;
+  district: string;
+  building_name: string;
+  height_m: number;
+  floors: number;
+  lat: number;
+  lng: number;
+  use: string;
+  built_year: number;
+  shadow_impact: 'high' | 'medium' | 'low';
+}
+
 // ── Public API ──
 
 export function getLandPrices(): LandPriceRecord[] {
@@ -207,4 +268,54 @@ export function getLandslideFeatureAtPoint(lat: number, lng: number): Feature<Ge
       return false;
     }
   });
+}
+
+// ── v1.2 Public API: Human Flow ──
+
+export function getHumanFlow(): HumanFlowRecord[] {
+  return loadCsv<HumanFlowRecord>('human_flow_aichi.csv');
+}
+
+export function getHumanFlowForCity(city: string): HumanFlowRecord[] {
+  return getHumanFlow().filter((r) => r.city.includes(city) || city.includes(r.city));
+}
+
+// ── v1.2 Public API: School Districts ──
+
+export function getSchoolDistricts(): SchoolDistrictRecord[] {
+  return loadCsv<SchoolDistrictRecord>('school_districts_aichi.csv');
+}
+
+export function getSchoolDistrictsForCity(city: string): SchoolDistrictRecord[] {
+  return getSchoolDistricts().filter((r) => r.city.includes(city) || city.includes(r.city));
+}
+
+// ── v1.2 Public API: Corporate Locations ──
+
+export function getCorporateLocations(): CorporateLocationRecord[] {
+  return loadCsv<CorporateLocationRecord>('corporate_locations_aichi.csv');
+}
+
+export function getCorporateForCity(city: string): CorporateLocationRecord[] {
+  return getCorporateLocations().filter((r) => r.city.includes(city) || city.includes(r.city));
+}
+
+// ── v1.2 Public API: Crime Stats ──
+
+export function getCrimeStats(): CrimeStatsRecord[] {
+  return loadCsv<CrimeStatsRecord>('crime_stats_aichi.csv');
+}
+
+export function getCrimeStatsForCity(city: string): CrimeStatsRecord | undefined {
+  return getCrimeStats().find((r) => r.city.includes(city) || city.includes(r.city));
+}
+
+// ── v1.2 Public API: PLATEAU Buildings ──
+
+export function getPlateauBuildings(): PlateauBuildingRecord[] {
+  return loadJson<PlateauBuildingRecord[]>('plateau_buildings_aichi.json');
+}
+
+export function getPlateauBuildingsForCity(city: string): PlateauBuildingRecord[] {
+  return getPlateauBuildings().filter((r) => r.city.includes(city) || city.includes(r.city));
 }

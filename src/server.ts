@@ -1,18 +1,20 @@
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import {
   CrossAnalyzeInput,
-  CrossAnalyzeOutput,
   AssessRiskInput,
-  AssessRiskOutput,
   GenerateReportInput,
-  GenerateReportOutput,
   OpenDashboardInput,
-  OpenDashboardOutput,
+  HumanFlowAnalyzeInput,
+  FamilyFriendlyInput,
+  CorporateDemandInput,
 } from './schemas.js';
 import { crossAnalyze } from './tools/cross_analyze_real_estate_market.js';
 import { assessPropertyRisk } from './tools/assess_property_risk.js';
 import { generateAreaReport } from './tools/generate_area_report.js';
 import { openDashboard } from './tools/open_dashboard.js';
+import { crossAnalyzeWithHumanFlow } from './tools/cross_analyze_with_human_flow.js';
+import { assessFamilyFriendlyScore } from './tools/assess_family_friendly_score.js';
+import { predictCorporateDemand } from './tools/predict_corporate_demand.js';
 import { getLandPriceResource } from './resources/land_price.js';
 import { getFloodResource } from './resources/flood.js';
 import { getPopulationResource } from './resources/population.js';
@@ -21,8 +23,8 @@ import { ATTRIBUTION } from './data/attribution.js';
 
 export function createServer(): McpServer {
   const server = new McpServer({
-    name: 'aichi-real-estate-intel-mcp',
-    version: '1.0.0',
+    name: 'japan-real-estate-intel-mcp',
+    version: '1.2.0',
   });
 
   // ── Tools ──
@@ -75,9 +77,59 @@ export function createServer(): McpServer {
     },
   );
 
+  // ── v1.2 Tools ──
+
+  server.tool(
+    'cross_analyze_with_human_flow',
+    '人流データ（モバイル位置情報統計）を加味した不動産クロス分析。実需要・空室リスクを科学的に予測する。',
+    HumanFlowAnalyzeInput.shape,
+    async (args) => {
+      const input = HumanFlowAnalyzeInput.parse(args);
+      const result = crossAnalyzeWithHumanFlow(input);
+      return {
+        content: [
+          { type: 'text' as const, text: JSON.stringify(result, null, 2) },
+        ],
+        structuredContent: { ...result, attribution: ATTRIBUTION },
+      };
+    },
+  );
+
+  server.tool(
+    'assess_family_friendly_score',
+    '学区・教育環境・犯罪統計を加味したファミリー物件評価。子育て世帯向け資産価値を算出。',
+    FamilyFriendlyInput.shape,
+    async (args) => {
+      const input = FamilyFriendlyInput.parse(args);
+      const result = assessFamilyFriendlyScore(input);
+      return {
+        content: [
+          { type: 'text' as const, text: JSON.stringify(result, null, 2) },
+        ],
+        structuredContent: { ...result, attribution: ATTRIBUTION },
+      };
+    },
+  );
+
+  server.tool(
+    'predict_corporate_demand',
+    '企業立地・事業所統計・通勤データで法人需要を予測。オフィス・物流投資の意思決定を支援。',
+    CorporateDemandInput.shape,
+    async (args) => {
+      const input = CorporateDemandInput.parse(args);
+      const result = predictCorporateDemand(input);
+      return {
+        content: [
+          { type: 'text' as const, text: JSON.stringify(result, null, 2) },
+        ],
+        structuredContent: { ...result, attribution: ATTRIBUTION },
+      };
+    },
+  );
+
   server.tool(
     'open_dashboard',
-    '愛知県不動産ダッシュボード（地図・ヒートマップ・リスクレイヤー）を開く。MCP Apps対応ホストではインタラクティブUIを表示。',
+    '不動産ダッシュボード（地図・ヒートマップ・リスク・人流・学区・企業レイヤー）を開く。MCP Apps対応ホストではインタラクティブUIを表示。',
     OpenDashboardInput.shape,
     async (args) => {
       const input = OpenDashboardInput.parse(args);
@@ -86,12 +138,12 @@ export function createServer(): McpServer {
         content: [
           {
             type: 'text' as const,
-            text: `愛知県不動産ダッシュボード: ${result.area} (レイヤー: ${result.layer})`,
+            text: `不動産ダッシュボード: ${result.area} (レイヤー: ${result.layer})`,
           },
         ],
         structuredContent: { ...result, attribution: ATTRIBUTION },
         _meta: {
-          ui: { uri: 'ui://aichi-real-estate-intel/dashboard' },
+          ui: { uri: 'ui://japan-real-estate-intel/dashboard' },
         },
       };
     },
@@ -155,8 +207,8 @@ export function createServer(): McpServer {
 
   server.resource(
     'dashboard',
-    'ui://aichi-real-estate-intel/dashboard',
-    { description: '愛知県不動産インテリジェンスダッシュボード', mimeType: 'text/html' },
+    'ui://japan-real-estate-intel/dashboard',
+    { description: '日本不動産インテリジェンスダッシュボード（愛知県先行）', mimeType: 'text/html' },
     async (uri) => {
       return {
         contents: [

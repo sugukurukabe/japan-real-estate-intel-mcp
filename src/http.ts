@@ -63,7 +63,7 @@ async function main() {
   });
 
   app.listen(PORT, HOST, () => {
-    console.error(`Aichi Real Estate Intel MCP (HTTP) listening on ${HOST}:${PORT}`);
+    console.error(`Japan Real Estate Intel MCP (HTTP) listening on ${HOST}:${PORT}`);
     console.error(`  POST/GET/DELETE ${HOST}:${PORT}/mcp`);
   });
 }

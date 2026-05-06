@@ -1,12 +1,12 @@
 {
-  "name": "@sugukuru/aichi-real-estate-intel-mcp",
-  "version": "1.0.0",
-  "description": "愛知県の不動産投資・仲介・開発・管理向けに地価・取引価格・人口統計・災害リスクをクロス分析するMCPサーバー",
+  "name": "@sugukuru/japan-real-estate-intel-mcp",
+  "version": "1.2.0",
+  "description": "日本全国（愛知県先行）の不動産投資・仲介・開発・管理向けに地価・取引価格・人口統計・災害リスク・人流・教育・企業立地をクロス分析するMCPサーバー",
   "type": "module",
   "main": "dist/index.js",
   "bin": {
-    "aichi-real-estate-intel-mcp": "dist/index.js",
-    "aichi-real-estate-intel-mcp-http": "dist/http.js"
+    "japan-real-estate-intel-mcp": "dist/index.js",
+    "japan-real-estate-intel-mcp-http": "dist/http.js"
   },
   "files": [
     "dist",
@@ -31,6 +31,10 @@
     "mcp",
     "real-estate",
     "aichi",
+    "japan",
+    "human-flow",
+    "education",
+    "corporate",
     "land-price",
     "hazard",
     "investment",

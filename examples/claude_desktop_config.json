@@ -1,9 +1,9 @@
 {
   "mcpServers": {
-    "aichi-real-estate-intel": {
+    "japan-real-estate-intel": {
       "command": "node",
       "args": ["dist/index.js"],
-      "cwd": "/path/to/aichi-real-estate-intel-mcp"
+      "cwd": "/path/to/japan-real-estate-intel-mcp"
     }
   }
 }

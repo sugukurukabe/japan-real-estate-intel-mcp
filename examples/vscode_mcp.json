@@ -1,6 +1,6 @@
 {
   "servers": {
-    "aichi-real-estate-intel": {
+    "japan-real-estate-intel": {
       "type": "stdio",
       "command": "node",
       "args": ["dist/index.js"],
