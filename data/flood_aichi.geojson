@@ -1,0 +1,215 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "庄内川下流域浸水想定区域",
+        "river": "庄内川",
+        "max_depth_m": 5.0,
+        "risk_level": "high",
+        "area_name": "名古屋市中川区・港区"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[136.835, 35.125], [136.895, 35.125], [136.895, 35.155], [136.835, 35.155], [136.835, 35.125]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "庄内川中流域浸水想定区域",
+        "river": "庄内川",
+        "max_depth_m": 3.0,
+        "risk_level": "high",
+        "area_name": "名古屋市北区・西区"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[136.875, 35.185], [136.920, 35.185], [136.920, 35.210], [136.875, 35.210], [136.875, 35.185]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "庄内川河口域浸水想定区域",
+        "river": "庄内川",
+        "max_depth_m": 4.5,
+        "risk_level": "high",
+        "area_name": "名古屋市港区南部"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[136.840, 35.065], [136.900, 35.065], [136.900, 35.095], [136.840, 35.095], [136.840, 35.065]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "天白川流域浸水想定区域",
+        "river": "天白川",
+        "max_depth_m": 2.5,
+        "risk_level": "medium",
+        "area_name": "名古屋市天白区・緑区"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[136.935, 35.095], [136.985, 35.095], [136.985, 35.130], [136.935, 35.130], [136.935, 35.095]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "天白川上流域浸水想定区域",
+        "river": "天白川",
+        "max_depth_m": 1.5,
+        "risk_level": "medium",
+        "area_name": "日進市・名古屋市天白区北部"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[136.960, 35.130], [136.995, 35.130], [136.995, 35.155], [136.960, 35.155], [136.960, 35.130]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "日光川流域浸水想定区域",
+        "river": "日光川",
+        "max_depth_m": 4.0,
+        "risk_level": "high",
+        "area_name": "弥富市・津島市・愛西市"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[136.720, 35.050], [136.790, 35.050], [136.790, 35.100], [136.720, 35.100], [136.720, 35.050]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "日光川中流域浸水想定区域",
+        "river": "日光川",
+        "max_depth_m": 3.0,
+        "risk_level": "high",
+        "area_name": "稲沢市・一宮市南部"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[136.750, 35.100], [136.810, 35.100], [136.810, 35.145], [136.750, 35.145], [136.750, 35.100]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "矢作川下流域浸水想定区域",
+        "river": "矢作川",
+        "max_depth_m": 3.5,
+        "risk_level": "high",
+        "area_name": "西尾市・安城市南部"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[137.020, 34.875], [137.080, 34.875], [137.080, 34.920], [137.020, 34.920], [137.020, 34.875]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "矢作川中流域浸水想定区域",
+        "river": "矢作川",
+        "max_depth_m": 2.0,
+        "risk_level": "medium",
+        "area_name": "岡崎市南部"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[137.130, 34.920], [137.185, 34.920], [137.185, 34.960], [137.130, 34.960], [137.130, 34.920]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "矢作川上流域浸水想定区域",
+        "river": "矢作川",
+        "max_depth_m": 1.5,
+        "risk_level": "medium",
+        "area_name": "豊田市街地"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[137.140, 35.060], [137.180, 35.060], [137.180, 35.095], [137.140, 35.095], [137.140, 35.060]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "豊川下流域浸水想定区域",
+        "river": "豊川",
+        "max_depth_m": 3.5,
+        "risk_level": "high",
+        "area_name": "豊橋市南部・豊川市"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[137.340, 34.730], [137.410, 34.730], [137.410, 34.780], [137.340, 34.780], [137.340, 34.730]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "豊川中流域浸水想定区域",
+        "river": "豊川",
+        "max_depth_m": 2.0,
+        "risk_level": "medium",
+        "area_name": "新城市南部"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[137.480, 34.870], [137.530, 34.870], [137.530, 34.910], [137.480, 34.910], [137.480, 34.870]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "境川流域浸水想定区域",
+        "river": "境川",
+        "max_depth_m": 2.0,
+        "risk_level": "medium",
+        "area_name": "刈谷市・安城市"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[136.975, 34.960], [137.020, 34.960], [137.020, 35.000], [136.975, 35.000], [136.975, 34.960]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "新川流域浸水想定区域",
+        "river": "新川",
+        "max_depth_m": 2.5,
+        "risk_level": "medium",
+        "area_name": "清須市・北名古屋市"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[136.835, 35.195], [136.870, 35.195], [136.870, 35.240], [136.835, 35.240], [136.835, 35.195]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "名古屋市南部低地浸水想定区域",
+        "river": "山崎川",
+        "max_depth_m": 1.0,
+        "risk_level": "low",
+        "area_name": "名古屋市南区・瑞穂区南部"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[136.895, 35.095], [136.935, 35.095], [136.935, 35.125], [136.895, 35.125], [136.895, 35.095]]]
+      }
+    }
+  ]
+}

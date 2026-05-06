@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>愛知県不動産インテリジェンス</title>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <style>*{margin:0;padding:0;box-sizing:border-box}:root{--bg: #0f1419;--surface: #1a1f2e;--surface-2: #232a3b;--border: #2d3548;--text: #e4e8f1;--text-muted: #8892a6;--accent: #4f8cff;--accent-hover: #6ba0ff;--danger: #ff4d6a;--warning: #ffb340;--success: #34d399;--radius: 8px}body{font-family:-apple-system,BlinkMacSystemFont,Segoe UI,Noto Sans JP,sans-serif;background:var(--bg);color:var(--text);height:100vh;overflow:hidden}#app{display:flex;flex-direction:column;height:100vh}#header{display:flex;align-items:center;gap:16px;padding:10px 20px;background:var(--surface);border-bottom:1px solid var(--border);flex-shrink:0}#header h1{font-size:16px;font-weight:700;color:var(--accent)}#header .subtitle{font-size:12px;color:var(--text-muted)}#main{display:flex;flex:1;overflow:hidden}#search-panel{width:280px;min-width:240px;background:var(--surface);border-right:1px solid var(--border);padding:16px;overflow-y:auto;flex-shrink:0}.panel-section{margin-bottom:20px}.panel-section h3{font-size:12px;text-transform:uppercase;letter-spacing:.5px;color:var(--text-muted);margin-bottom:8px}.form-group{margin-bottom:12px}.form-group label{display:block;font-size:12px;color:var(--text-muted);margin-bottom:4px}select,input[type=text]{width:100%;padding:8px 10px;background:var(--surface-2);border:1px solid var(--border);border-radius:var(--radius);color:var(--text);font-size:13px;outline:none;transition:border-color .2s}select:focus,input[type=text]:focus{border-color:var(--accent)}.toggle-group{display:flex;gap:4px;flex-wrap:wrap}.toggle-btn{padding:6px 10px;font-size:11px;border:1px solid var(--border);border-radius:var(--radius);background:var(--surface-2);color:var(--text-muted);cursor:pointer;transition:all .2s}.toggle-btn.active{background:var(--accent);color:#fff;border-color:var(--accent)}.switch-row{display:flex;align-items:center;justify-content:space-between;padding:8px 0}.switch-row label{font-size:13px;color:var(--text)}.switch{width:40px;height:22px;background:var(--border);border-radius:11px;position:relative;cursor:pointer;transition:background .2s}.switch.on{background:var(--accent)}.switch:after{content:"";position:absolute;top:2px;left:2px;width:18px;height:18px;background:#fff;border-radius:50%;transition:transform .2s}.switch.on:after{transform:translate(18px)}.btn-primary{width:100%;padding:10px;background:var(--accent);color:#fff;border:none;border-radius:var(--radius);font-size:13px;font-weight:600;cursor:pointer;transition:background .2s}.btn-primary:hover{background:var(--accent-hover)}#map-container{flex:1;position:relative}#map-container .leaflet-container{height:100%;width:100%;background:var(--bg)}.layer-control{position:absolute;top:12px;right:12px;z-index:1000;display:flex;gap:4px;background:var(--surface);padding:6px;border-radius:var(--radius);border:1px solid var(--border)}.layer-btn{padding:6px 10px;font-size:11px;border:1px solid transparent;border-radius:4px;background:transparent;color:var(--text-muted);cursor:pointer;transition:all .2s;white-space:nowrap}.layer-btn.active{background:var(--accent);color:#fff}#insight-panel{width:260px;min-width:220px;background:var(--surface);border-left:1px solid var(--border);padding:16px;overflow-y:auto;flex-shrink:0}.score-card{text-align:center;padding:16px;background:var(--surface-2);border-radius:var(--radius);margin-bottom:16px}.score-value{font-size:42px;font-weight:800;line-height:1}.score-value.high{color:var(--success)}.score-value.medium{color:var(--warning)}.score-value.low{color:var(--danger)}.score-label{font-size:12px;color:var(--text-muted);margin-top:4px}.score-sublabel{font-size:11px;color:var(--text-muted)}.insight-list{list-style:none;padding:0}.insight-list li{padding:8px 0;border-bottom:1px solid var(--border);font-size:12px;line-height:1.5}.insight-list li:last-child{border-bottom:none}.risk-badge{display:inline-block;padding:2px 8px;border-radius:4px;font-size:11px;font-weight:600}.risk-badge.high{background:#ff4d6a26;color:var(--danger)}.risk-badge.medium{background:#ffb34026;color:var(--warning)}.risk-badge.low{background:#34d39926;color:var(--success)}.price-info{background:var(--surface-2);border-radius:var(--radius);padding:12px;margin-bottom:12px}.price-info .price-current{font-size:20px;font-weight:700}.price-info .price-change{font-size:13px}.price-change.up{color:var(--success)}.price-change.down{color:var(--danger)}.btn-report{width:100%;padding:10px;background:var(--surface-2);color:var(--accent);border:1px solid var(--accent);border-radius:var(--radius);font-size:13px;cursor:pointer;margin-top:12px;transition:all .2s}.btn-report:hover{background:var(--accent);color:#fff}.btn-gateway{width:100%;padding:10px;background:var(--surface-2);color:var(--text-muted);border:1px solid var(--border);border-radius:var(--radius);font-size:12px;cursor:not-allowed;margin-top:8px;opacity:.6}.legend{position:absolute;bottom:24px;left:12px;z-index:1000;background:var(--surface);padding:10px 14px;border-radius:var(--radius);border:1px solid var(--border);font-size:11px}.legend-title{font-weight:600;margin-bottom:6px}.legend-item{display:flex;align-items:center;gap:6px;margin-bottom:3px}.legend-color{width:16px;height:12px;border-radius:2px}.leaflet-popup-content-wrapper{background:var(--surface)!important;color:var(--text)!important;border-radius:var(--radius)!important;border:1px solid var(--border)!important;box-shadow:0 8px 32px #0006!important}.leaflet-popup-tip{background:var(--surface)!important}.popup-title{font-size:14px;font-weight:700;margin-bottom:6px}.popup-row{display:flex;justify-content:space-between;font-size:12px;padding:2px 0}#report-overlay{position:fixed;inset:0;background:#000000b3;z-index:2000;display:none;align-items:center;justify-content:center}#report-overlay.visible{display:flex}#report-content{background:var(--surface);border:1px solid var(--border);border-radius:12px;width:90%;max-width:800px;max-height:80vh;overflow-y:auto;padding:24px}#report-content h1{font-size:18px;margin-bottom:12px}#report-content h2{font-size:15px;margin:16px 0 8px;color:var(--accent)}#report-content table{width:100%;border-collapse:collapse;margin:8px 0}#report-content th,#report-content td{padding:6px 10px;text-align:left;border-bottom:1px solid var(--border);font-size:13px}#report-content th{color:var(--text-muted)}#report-content ul{padding-left:20px}#report-content li{font-size:13px;margin:4px 0}#report-content hr{border:none;border-top:1px solid var(--border);margin:16px 0}.report-close{float:right;background:var(--surface-2);border:1px solid var(--border);color:var(--text);padding:6px 14px;border-radius:var(--radius);cursor:pointer}
+</style>
+</head>
+<body>
+  <div id="app">
+    <header id="header">
+      <h1>愛知県不動産インテリジェンス</h1>
+      <span class="subtitle">地価・取引・災害リスク クロス分析ダッシュボード</span>
+    </header>
+    <div id="main">
+      <aside id="search-panel"></aside>
+      <div id="map-container"></div>
+      <aside id="insight-panel"></aside>
+    </div>
+  </div>
+  <script>"use strict";(()=>{var g={\u540D\u53E4\u5C4B\u5E02\u4E2D\u6751\u533A:{price:58e4,change:5.2},\u540D\u53E4\u5C4B\u5E02\u4E2D\u533A:{price:185e4,change:8.1},\u540D\u53E4\u5C4B\u5E02\u6771\u533A:{price:72e4,change:6.3},\u540D\u53E4\u5C4B\u5E02\u5343\u7A2E\u533A:{price:45e4,change:3.8},\u540D\u53E4\u5C4B\u5E02\u540D\u6771\u533A:{price:28e4,change:2.1},\u540D\u53E4\u5C4B\u5E02\u7DD1\u533A:{price:165e3,change:1.5},\u540D\u53E4\u5C4B\u5E02\u6E2F\u533A:{price:12e4,change:-.8},\u540D\u53E4\u5C4B\u5E02\u662D\u548C\u533A:{price:38e4,change:3.2},\u540D\u53E4\u5C4B\u5E02\u5929\u767D\u533A:{price:21e4,change:1.8},\u540D\u53E4\u5C4B\u5E02\u745E\u7A42\u533A:{price:34e4,change:2.9},\u540D\u53E4\u5C4B\u5E02\u71B1\u7530\u533A:{price:29e4,change:2.5},\u540D\u53E4\u5C4B\u5E02\u4E2D\u5DDD\u533A:{price:155e3,change:.5},\u540D\u53E4\u5C4B\u5E02\u5317\u533A:{price:24e4,change:2.3},\u540D\u53E4\u5C4B\u5E02\u897F\u533A:{price:26e4,change:2.8},\u540D\u53E4\u5C4B\u5E02\u5357\u533A:{price:17e4,change:-.3},\u540D\u53E4\u5C4B\u5E02\u5B88\u5C71\u533A:{price:175e3,change:1.2},\u8C4A\u7530\u5E02:{price:13e4,change:1.5},\u5CA1\u5D0E\u5E02:{price:105e3,change:.8},\u4E00\u5BAE\u5E02:{price:115e3,change:1},\u6625\u65E5\u4E95\u5E02:{price:14e4,change:1.8},\u8C4A\u6A4B\u5E02:{price:95e3,change:.3},\u5B89\u57CE\u5E02:{price:12e4,change:2},\u5208\u8C37\u5E02:{price:135e3,change:2.5},\u5C0F\u7267\u5E02:{price:11e4,change:.9}},u={\u540D\u53E4\u5C4B\u5E02\u4E2D\u6751\u533A:{flood:60,earthquake:"6\u5F37",overall:62},\u540D\u53E4\u5C4B\u5E02\u4E2D\u533A:{flood:30,earthquake:"6\u5F37",overall:48},\u540D\u53E4\u5C4B\u5E02\u6771\u533A:{flood:15,earthquake:"6\u5F31",overall:35},\u540D\u53E4\u5C4B\u5E02\u6E2F\u533A:{flood:85,earthquake:"6\u5F37",overall:78},\u540D\u53E4\u5C4B\u5E02\u4E2D\u5DDD\u533A:{flood:70,earthquake:"6\u5F37",overall:68},\u540D\u53E4\u5C4B\u5E02\u5357\u533A:{flood:55,earthquake:"6\u5F31",overall:52},\u540D\u53E4\u5C4B\u5E02\u7DD1\u533A:{flood:25,earthquake:"6\u5F31",overall:38},\u540D\u53E4\u5C4B\u5E02\u71B1\u7530\u533A:{flood:45,earthquake:"6\u5F31",overall:45},\u8C4A\u6A4B\u5E02:{flood:40,earthquake:"6\u5F31",overall:42},\u8C4A\u7530\u5E02:{flood:20,earthquake:"5\u5F37",overall:28}},c={\u540D\u53E4\u5C4B\u5E02\u4E2D\u6751\u533A:[35.1709,136.8716],\u540D\u53E4\u5C4B\u5E02\u4E2D\u533A:[35.1709,136.9066],\u540D\u53E4\u5C4B\u5E02\u6771\u533A:[35.1815,136.9274],\u540D\u53E4\u5C4B\u5E02\u5343\u7A2E\u533A:[35.1676,136.9486],\u540D\u53E4\u5C4B\u5E02\u540D\u6771\u533A:[35.1825,136.9906],\u540D\u53E4\u5C4B\u5E02\u7DD1\u533A:[35.0734,136.9539],\u540D\u53E4\u5C4B\u5E02\u6E2F\u533A:[35.0828,136.8472],\u540D\u53E4\u5C4B\u5E02\u662D\u548C\u533A:[35.1509,136.9331],\u540D\u53E4\u5C4B\u5E02\u5929\u767D\u533A:[35.1204,136.968],\u540D\u53E4\u5C4B\u5E02\u745E\u7A42\u533A:[35.1333,136.9347],\u540D\u53E4\u5C4B\u5E02\u71B1\u7530\u533A:[35.1268,136.9039],\u540D\u53E4\u5C4B\u5E02\u4E2D\u5DDD\u533A:[35.1338,136.8538],\u540D\u53E4\u5C4B\u5E02\u5317\u533A:[35.1985,136.9195],\u540D\u53E4\u5C4B\u5E02\u897F\u533A:[35.1887,136.8753],\u540D\u53E4\u5C4B\u5E02\u5357\u533A:[35.0984,136.9104],\u540D\u53E4\u5C4B\u5E02\u5B88\u5C71\u533A:[35.2154,136.9688],\u8C4A\u7530\u5E02:[35.0833,137.1557],\u5CA1\u5D0E\u5E02:[34.9552,137.1733],\u4E00\u5BAE\u5E02:[35.3015,136.803],\u6625\u65E5\u4E95\u5E02:[35.2512,136.9722],\u8C4A\u6A4B\u5E02:[34.7694,137.3916],\u5B89\u57CE\u5E02:[34.9587,137.0778],\u5208\u8C37\u5E02:[34.9891,137.0042],\u5C0F\u7267\u5E02:[35.2917,136.9222]},r,p="land_price",$="",i=null;function h(e){return e>=1e6?"#ff2d55":e>=5e5?"#ff6b35":e>=3e5?"#ffb340":e>=2e5?"#ffe066":e>=15e4?"#a8e6cf":"#69b7eb"}function f(e){return e>=70?"#ff2d55":e>=50?"#ff6b35":e>=30?"#ffb340":"#34d399"}function w(e){return e>=3?"rgba(255, 45, 85, 0.6)":e>=2?"rgba(255, 107, 53, 0.5)":e>=1?"rgba(255, 179, 64, 0.4)":e>=.5?"rgba(255, 224, 102, 0.3)":"rgba(105, 183, 235, 0.2)"}function E(){r=L.map("map-container",{center:[35.1,136.95],zoom:11,zoomControl:!0}),L.tileLayer("https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png",{attribution:'&copy; <a href="https://carto.com/">CARTO</a>',maxZoom:18}).addTo(r),m(),C(),y()}function v(){i&&(r.removeLayer(i),i=null)}function m(){v(),i=L.layerGroup();for(let[e,a]of Object.entries(c)){let n=g[e];if(!n)continue;let t=L.circle(a,{radius:1200,fillColor:h(n.price),fillOpacity:.6,color:h(n.price),weight:1,opacity:.8});t.bindPopup(`
+      <div class="popup-title">${e}</div>
+      <div class="popup-row"><span>\u5E73\u5747\u5730\u4FA1</span><span>${(n.price/1e4).toFixed(1)}\u4E07\u5186/\u33A1</span></div>
+      <div class="popup-row"><span>\u5909\u5316\u7387</span><span style="color:${n.change>=0?"#34d399":"#ff4d6a"}">${n.change>=0?"+":""}${n.change}%</span></div>
+    `),t.on("click",()=>s(e)),i.addLayer(t)}i.addTo(r)}function M(){v(),i=L.layerGroup();let e=[{name:"\u5E84\u5185\u5DDD\u6D41\u57DF",bounds:[[35.12,136.82],[35.2,136.92]],depth:3.5,river:"\u5E84\u5185\u5DDD"},{name:"\u5929\u767D\u5DDD\u6D41\u57DF",bounds:[[35.08,136.92],[35.14,137]],depth:2,river:"\u5929\u767D\u5DDD"},{name:"\u65E5\u5149\u5DDD\u6D41\u57DF",bounds:[[35.04,136.76],[35.12,136.86]],depth:4,river:"\u65E5\u5149\u5DDD"},{name:"\u540D\u53E4\u5C4B\u6E2F\u5468\u8FBA",bounds:[[35.02,136.83],[35.1,136.9]],depth:5,river:"\u4F0A\u52E2\u6E7E"},{name:"\u77E2\u4F5C\u5DDD\u6D41\u57DF",bounds:[[34.9,137.05],[34.98,137.2]],depth:2.5,river:"\u77E2\u4F5C\u5DDD"},{name:"\u8C4A\u5DDD\u6D41\u57DF",bounds:[[34.72,137.3],[34.82,137.42]],depth:1.5,river:"\u8C4A\u5DDD"}];for(let a of e){let n=L.rectangle(a.bounds,{fillColor:w(a.depth),fillOpacity:.5,color:"#ff6b35",weight:1});n.bindPopup(`
+      <div class="popup-title">${a.name}</div>
+      <div class="popup-row"><span>\u6CB3\u5DDD</span><span>${a.river}</span></div>
+      <div class="popup-row"><span>\u6700\u5927\u6D78\u6C34\u6DF1</span><span style="color:${a.depth>=3?"#ff4d6a":"#ffb340"}">${a.depth}m</span></div>
+    `),i.addLayer(n)}for(let[a,n]of Object.entries(c)){let t=u[a];if(!t)continue;let o=L.circleMarker(n,{radius:8,fillColor:f(t.overall),fillOpacity:.8,color:"#fff",weight:1});o.bindPopup(`
+      <div class="popup-title">${a}</div>
+      <div class="popup-row"><span>\u6D78\u6C34\u30EA\u30B9\u30AF</span><span>${t.flood}/100</span></div>
+      <div class="popup-row"><span>\u60F3\u5B9A\u9707\u5EA6</span><span>${t.earthquake}</span></div>
+      <div class="popup-row"><span>\u7DCF\u5408\u30EA\u30B9\u30AF</span><span style="color:${f(t.overall)}">${t.overall}/100</span></div>
+    `),o.on("click",()=>s(a)),i.addLayer(o)}i.addTo(r)}function T(){v(),i=L.layerGroup();for(let[e,a]of Object.entries(c)){let n=g[e];if(!n)continue;let t=Math.floor(5+Math.random()*20),o=n.price*(.8+Math.random()*.4),l=L.circle(a,{radius:300+t*50,fillColor:"#4f8cff",fillOpacity:.3,color:"#4f8cff",weight:1});l.bindPopup(`
+      <div class="popup-title">${e}</div>
+      <div class="popup-row"><span>\u53D6\u5F15\u4EF6\u6570</span><span>${t}\u4EF6</span></div>
+      <div class="popup-row"><span>\u5E73\u5747\u53D6\u5F15\u4FA1\u683C</span><span>${(o/1e4).toFixed(1)}\u4E07\u5186/\u33A1</span></div>
+    `),l.on("click",()=>s(e)),i.addLayer(l)}i.addTo(r)}function S(){v(),i=L.layerGroup();let e={\u540D\u53E4\u5C4B\u5E02\u4E2D\u6751\u533A:{pop:14e4,growth:2.1},\u540D\u53E4\u5C4B\u5E02\u4E2D\u533A:{pop:1e5,growth:5.8},\u540D\u53E4\u5C4B\u5E02\u6771\u533A:{pop:88e3,growth:3.2},\u540D\u53E4\u5C4B\u5E02\u5343\u7A2E\u533A:{pop:167e3,growth:1.5},\u540D\u53E4\u5C4B\u5E02\u540D\u6771\u533A:{pop:164e3,growth:-.5},\u540D\u53E4\u5C4B\u5E02\u7DD1\u533A:{pop:248e3,growth:1.2},\u540D\u53E4\u5C4B\u5E02\u6E2F\u533A:{pop:142e3,growth:-1.8},\u540D\u53E4\u5C4B\u5E02\u662D\u548C\u533A:{pop:112e3,growth:.8},\u8C4A\u7530\u5E02:{pop:425e3,growth:.3},\u5CA1\u5D0E\u5E02:{pop:385e3,growth:.1},\u4E00\u5BAE\u5E02:{pop:38e4,growth:-.5},\u8C4A\u6A4B\u5E02:{pop:372e3,growth:-.8}};for(let[a,n]of Object.entries(c)){let t=e[a];if(!t)continue;let o=Math.max(400,Math.sqrt(t.pop)*3),l=t.growth>=0?"#34d399":"#ff4d6a",d=L.circle(n,{radius:o,fillColor:l,fillOpacity:.35,color:l,weight:1});d.bindPopup(`
+      <div class="popup-title">${a}</div>
+      <div class="popup-row"><span>\u4EBA\u53E3</span><span>${t.pop.toLocaleString()}\u4EBA</span></div>
+      <div class="popup-row"><span>\u4EBA\u53E3\u5897\u6E1B\u7387</span><span style="color:${l}">${t.growth>=0?"+":""}${t.growth}%</span></div>
+    `),d.on("click",()=>s(a)),i.addLayer(d)}i.addTo(r)}function q(e){switch(p=e,e){case"land_price":m();break;case"flood_risk":M();break;case"transaction":T();break;case"population":S();break}y(),document.querySelectorAll(".layer-btn").forEach(a=>{a.classList.toggle("active",a.getAttribute("data-layer")===e)})}function C(){let e=document.createElement("div");e.className="layer-control",e.innerHTML=`
+    <button class="layer-btn active" data-layer="land_price">\u5730\u4FA1</button>
+    <button class="layer-btn" data-layer="flood_risk">\u707D\u5BB3\u30EA\u30B9\u30AF</button>
+    <button class="layer-btn" data-layer="transaction">\u53D6\u5F15</button>
+    <button class="layer-btn" data-layer="population">\u4EBA\u53E3</button>
+  `,e.addEventListener("click",a=>{let t=a.target.getAttribute("data-layer");t&&q(t)}),document.getElementById("map-container").appendChild(e)}function y(){let e=document.querySelector(".legend");e&&e.remove();let a=document.createElement("div");a.className="legend",p==="land_price"?a.innerHTML=`
+      <div class="legend-title">\u5730\u4FA1\uFF08\u4E07\u5186/\u33A1\uFF09</div>
+      <div class="legend-item"><div class="legend-color" style="background:#ff2d55"></div> 100\u4E07\u301C</div>
+      <div class="legend-item"><div class="legend-color" style="background:#ff6b35"></div> 50\u4E07\u301C100\u4E07</div>
+      <div class="legend-item"><div class="legend-color" style="background:#ffb340"></div> 30\u4E07\u301C50\u4E07</div>
+      <div class="legend-item"><div class="legend-color" style="background:#ffe066"></div> 20\u4E07\u301C30\u4E07</div>
+      <div class="legend-item"><div class="legend-color" style="background:#a8e6cf"></div> 15\u4E07\u301C20\u4E07</div>
+      <div class="legend-item"><div class="legend-color" style="background:#69b7eb"></div> \u301C15\u4E07</div>
+    `:p==="flood_risk"?a.innerHTML=`
+      <div class="legend-title">\u6D78\u6C34\u6DF1\uFF08m\uFF09</div>
+      <div class="legend-item"><div class="legend-color" style="background:rgba(255,45,85,0.6)"></div> 3m\u301C</div>
+      <div class="legend-item"><div class="legend-color" style="background:rgba(255,107,53,0.5)"></div> 2m\u301C3m</div>
+      <div class="legend-item"><div class="legend-color" style="background:rgba(255,179,64,0.4)"></div> 1m\u301C2m</div>
+      <div class="legend-item"><div class="legend-color" style="background:rgba(255,224,102,0.3)"></div> 0.5m\u301C1m</div>
+      <div class="legend-item"><div class="legend-color" style="background:rgba(105,183,235,0.2)"></div> \u301C0.5m</div>
+    `:p==="population"?a.innerHTML=`
+      <div class="legend-title">\u4EBA\u53E3\u52D5\u614B</div>
+      <div class="legend-item"><div class="legend-color" style="background:#34d399"></div> \u4EBA\u53E3\u5897\u52A0</div>
+      <div class="legend-item"><div class="legend-color" style="background:#ff4d6a"></div> \u4EBA\u53E3\u6E1B\u5C11</div>
+      <div class="legend-item"><div class="legend-color" style="opacity:0.3">\u2B55</div> \u5186\u306E\u5927\u304D\u3055\uFF1D\u4EBA\u53E3\u898F\u6A21</div>
+    `:a.innerHTML=`
+      <div class="legend-title">\u53D6\u5F15\u5206\u5E03</div>
+      <div class="legend-item"><div class="legend-color" style="background:#4f8cff"></div> \u53D6\u5F15\u30A8\u30EA\u30A2</div>
+      <div class="legend-item"><div class="legend-color" style="opacity:0.3">\u2B55</div> \u5186\u306E\u5927\u304D\u3055\uFF1D\u53D6\u5F15\u4EF6\u6570</div>
+    `,document.getElementById("map-container").appendChild(a)}function s(e){$=e,k(e);let a=document.getElementById("area-select");a&&(a.value=e)}function k(e){let a=document.getElementById("insight-panel"),n=g[e],t=u[e],o=n?Math.round(Math.max(0,Math.min(100,(n.change+10)*2+(100-(t?.overall??30))*.3+15))):50,l=o>=70?"high":o>=40?"medium":"low",d=(t?.overall??0)>=60?"high":(t?.overall??0)>=30?"medium":"low";a.innerHTML=`
+    <div class="panel-section">
+      <h3>${e||"\u30A8\u30EA\u30A2\u3092\u9078\u629E"}</h3>
+    </div>
+
+    <div class="score-card">
+      <div class="score-value ${l}">${o}</div>
+      <div class="score-label">\u6295\u8CC7\u30B9\u30B3\u30A2</div>
+      <div class="score-sublabel">/ 100</div>
+    </div>
+
+    ${n?`
+    <div class="price-info">
+      <div class="price-current">${(n.price/1e4).toFixed(1)}<span style="font-size:14px;color:var(--text-muted)"> \u4E07\u5186/\u33A1</span></div>
+      <div class="price-change ${n.change>=0?"up":"down"}">${n.change>=0?"\u25B2":"\u25BC"} ${Math.abs(n.change)}%</div>
+    </div>
+    `:""}
+
+    ${t?`
+    <div class="panel-section">
+      <h3>\u30EA\u30B9\u30AF\u8A55\u4FA1</h3>
+      <div style="margin:8px 0">
+        <span class="risk-badge ${d}">\u7DCF\u5408: ${t.overall}/100</span>
+      </div>
+      <div style="font-size:12px;margin:4px 0">\u6D78\u6C34\u30EA\u30B9\u30AF: ${t.flood}/100</div>
+      <div style="font-size:12px;margin:4px 0">\u60F3\u5B9A\u9707\u5EA6: ${t.earthquake}</div>
+    </div>
+    `:""}
+
+    <div class="panel-section">
+      <h3>\u30A4\u30F3\u30B5\u30A4\u30C8</h3>
+      <ul class="insight-list">
+        ${n&&n.change>3?"<li>\u5730\u4FA1\u4E0A\u6607\u304C\u9855\u8457\u3002\u518D\u958B\u767A\u3084\u4EA4\u901A\u30A4\u30F3\u30D5\u30E9\u6539\u5584\u304C\u8981\u56E0\u3002</li>":""}
+        ${n&&n.change<0?"<li>\u5730\u4FA1\u304C\u4E0B\u843D\u50BE\u5411\u3002\u5E95\u5024\u8CB7\u3044\u306E\u6A5F\u4F1A\u304B\u69CB\u9020\u7684\u30EA\u30B9\u30AF\u304B\u8981\u7CBE\u67FB\u3002</li>":""}
+        ${t&&t.overall>=60?"<li>\u707D\u5BB3\u30EA\u30B9\u30AF\u304C\u9AD8\u3081\u3002\u4FDD\u967A\u30B3\u30B9\u30C8\u5897\u3092\u4FA1\u683C\u306B\u7E54\u308A\u8FBC\u3080\u5FC5\u8981\u3042\u308A\u3002</li>":""}
+        ${t&&t.flood>=50?"<li>\u6D78\u6C34\u30EA\u30B9\u30AF\u6CE8\u610F\u3002\u6C34\u5BB3\u4FDD\u967A\u3068\u6B62\u6C34\u5BFE\u7B56\u3092\u63A8\u5968\u3002</li>":""}
+        ${n?"":"<li>\u30A8\u30EA\u30A2\u3092\u9078\u629E\u3059\u308B\u3068\u30A4\u30F3\u30B5\u30A4\u30C8\u304C\u8868\u793A\u3055\u308C\u307E\u3059\u3002</li>"}
+        <li>\u8A73\u7D30\u306F\u300C\u30EC\u30DD\u30FC\u30C8\u751F\u6210\u300D\u3067\u78BA\u8A8D\u3067\u304D\u307E\u3059\u3002</li>
+      </ul>
+    </div>
+
+    <button class="btn-report" id="btn-generate-report">\u30EC\u30DD\u30FC\u30C8\u751F\u6210</button>
+    <button class="btn-gateway">Gateway\u9023\u643A\uFF08\u6E96\u5099\u4E2D\uFF09</button>
+  `,document.getElementById("btn-generate-report")?.addEventListener("click",()=>{I(e)})}function I(e){let a=document.getElementById("report-overlay"),n=document.getElementById("report-content"),t=g[e],o=u[e],l=t?Math.round(Math.max(0,Math.min(100,(t.change+10)*2+(100-(o?.overall??30))*.3+15))):50;n.innerHTML=`
+    <button class="report-close" id="close-report">\u9589\u3058\u308B</button>
+    <h1>${e} \u4E0D\u52D5\u7523\u6295\u8CC7\u30EC\u30DD\u30FC\u30C8</h1>
+    <p>\u751F\u6210\u65E5: ${new Date().toISOString().split("T")[0]}</p>
+    <hr>
+    <h2>\u4FA1\u683C\u52D5\u5411</h2>
+    <table>
+      <tr><th>\u6307\u6A19</th><th>\u5024</th></tr>
+      <tr><td>\u5E73\u5747\u5730\u4FA1</td><td>${t?(t.price/1e4).toFixed(1)+" \u4E07\u5186/\u33A1":"N/A"}</td></tr>
+      <tr><td>\u5909\u5316\u7387</td><td>${t?(t.change>=0?"+":"")+t.change+"%":"N/A"}</td></tr>
+    </table>
+    <h2>\u30B9\u30B3\u30A2</h2>
+    <table>
+      <tr><th>\u6307\u6A19</th><th>\u30B9\u30B3\u30A2</th></tr>
+      <tr><td>\u6295\u8CC7\u30B9\u30B3\u30A2</td><td>${l} / 100</td></tr>
+      <tr><td>\u30EA\u30B9\u30AF\u30B9\u30B3\u30A2</td><td>${o?.overall??"N/A"} / 100</td></tr>
+    </table>
+    ${o?`
+    <h2>\u30EA\u30B9\u30AF\u8A73\u7D30</h2>
+    <table>
+      <tr><th>\u30EA\u30B9\u30AF\u7A2E\u5225</th><th>\u5024</th></tr>
+      <tr><td>\u6D78\u6C34\u30EA\u30B9\u30AF</td><td>${o.flood}/100</td></tr>
+      <tr><td>\u60F3\u5B9A\u9707\u5EA6</td><td>${o.earthquake}</td></tr>
+    </table>
+    `:""}
+    <h2>\u63A8\u5968\u30A2\u30AF\u30B7\u30E7\u30F3</h2>
+    <ul>
+      ${l>=70?"<li>\u7A4D\u6975\u7684\u306A\u6295\u8CC7\u691C\u8A0E\u3092\u63A8\u5968\u3002\u30EA\u30B9\u30AF\u8ABF\u6574\u5F8C\u3067\u3082\u9B45\u529B\u7684\u3002</li>":""}
+      ${l>=40&&l<70?"<li>\u9078\u629E\u7684\u306A\u6295\u8CC7\u691C\u8A0E\u3002\u7269\u4EF6\u500B\u5225\u306E\u7CBE\u67FB\u304C\u5FC5\u8981\u3002</li>":""}
+      ${l<40?"<li>\u614E\u91CD\u306A\u691C\u8A0E\u304C\u5FC5\u8981\u3002\u4EE3\u66FF\u30A8\u30EA\u30A2\u3068\u306E\u6BD4\u8F03\u3092\u63A8\u5968\u3002</li>":""}
+      ${o&&o.flood>=50?"<li>\u6C34\u5BB3\u4FDD\u967A\u306E\u52A0\u5165\u3092\u5F37\u304F\u63A8\u5968\u3002</li>":""}
+      ${o&&o.overall>=60?"<li>\u5357\u6D77\u30C8\u30E9\u30D5\u5730\u9707\u306E\u60F3\u5B9A\u9707\u5EA6\u304C\u9AD8\u3044\u3002\u8010\u9707\u6027\u80FD\u306E\u78BA\u8A8D\u3092\u3002</li>":""}
+    </ul>
+    <hr>
+    <p style="font-size:11px;color:var(--text-muted)">\u51FA\u5178: \u56FD\u571F\u4EA4\u901A\u7701 \u4E0D\u52D5\u7523\u4FA1\u683C\u60C5\u5831 / \u5730\u4FA1\u516C\u793A / \u30CF\u30B6\u30FC\u30C9\u30DE\u30C3\u30D7\u30DD\u30FC\u30BF\u30EB, e-Stat, \u611B\u77E5\u770C\u30AA\u30FC\u30D7\u30F3\u30C7\u30FC\u30BF</p>
+  `,a.classList.add("visible"),document.getElementById("close-report")?.addEventListener("click",()=>{a.classList.remove("visible")})}function x(){let e=document.getElementById("search-panel"),a=Object.keys(c);e.innerHTML=`
+    <div class="panel-section">
+      <h3>\u30A8\u30EA\u30A2\u691C\u7D22</h3>
+      <div class="form-group">
+        <label>\u5E02\u533A\u753A\u6751</label>
+        <select id="area-select">
+          <option value="">\u30A8\u30EA\u30A2\u3092\u9078\u629E...</option>
+          ${a.map(n=>`<option value="${n}">${n}</option>`).join("")}
+        </select>
+      </div>
+    </div>
+
+    <div class="panel-section">
+      <h3>\u7269\u4EF6\u7A2E\u5225</h3>
+      <div class="toggle-group">
+        <button class="toggle-btn active" data-type="residential">\u4F4F\u5B85</button>
+        <button class="toggle-btn" data-type="commercial">\u5546\u696D</button>
+        <button class="toggle-btn" data-type="office">\u30AA\u30D5\u30A3\u30B9</button>
+        <button class="toggle-btn" data-type="logistics">\u7269\u6D41</button>
+      </div>
+    </div>
+
+    <div class="panel-section">
+      <h3>\u671F\u9593</h3>
+      <div class="toggle-group">
+        <button class="toggle-btn" data-range="1y">1\u5E74</button>
+        <button class="toggle-btn active" data-range="3y">3\u5E74</button>
+        <button class="toggle-btn" data-range="5y">5\u5E74</button>
+      </div>
+    </div>
+
+    <div class="panel-section">
+      <div class="switch-row">
+        <label>\u707D\u5BB3\u30EA\u30B9\u30AF\u8003\u616E</label>
+        <div class="switch on" id="risk-toggle"></div>
+      </div>
+    </div>
+
+    <button class="btn-primary" id="btn-analyze">\u30AF\u30ED\u30B9\u5206\u6790</button>
+  `,document.getElementById("area-select")?.addEventListener("change",n=>{let t=n.target.value;if(t){s(t);let o=c[t];o&&r.setView(o,13)}}),e.querySelectorAll(".toggle-btn[data-type]").forEach(n=>{n.addEventListener("click",t=>{e.querySelectorAll(".toggle-btn[data-type]").forEach(o=>o.classList.remove("active")),t.target.classList.add("active")})}),e.querySelectorAll(".toggle-btn[data-range]").forEach(n=>{n.addEventListener("click",t=>{e.querySelectorAll(".toggle-btn[data-range]").forEach(o=>o.classList.remove("active")),t.target.classList.add("active")})}),document.getElementById("risk-toggle")?.addEventListener("click",n=>{n.target.classList.toggle("on")}),document.getElementById("btn-analyze")?.addEventListener("click",()=>{let n=document.getElementById("area-select").value;n&&s(n)})}function A(){let e=document.createElement("div");e.id="report-overlay",e.innerHTML='<div id="report-content"></div>',document.body.appendChild(e),e.addEventListener("click",a=>{a.target===e&&e.classList.remove("visible")})}function b(){x(),E(),A(),k("")}document.readyState==="loading"?document.addEventListener("DOMContentLoaded",b):b();})();
+</script>
+</body>
+</html>

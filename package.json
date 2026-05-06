@@ -1,0 +1,72 @@
+{
+  "name": "@sugukuru/aichi-real-estate-intel-mcp",
+  "version": "1.0.0",
+  "description": "愛知県の不動産投資・仲介・開発・管理向けに地価・取引価格・人口統計・災害リスクをクロス分析するMCPサーバー",
+  "type": "module",
+  "main": "dist/index.js",
+  "bin": {
+    "aichi-real-estate-intel-mcp": "dist/index.js",
+    "aichi-real-estate-intel-mcp-http": "dist/http.js"
+  },
+  "files": [
+    "dist",
+    "data",
+    "ui",
+    "LICENSE",
+    "README.md"
+  ],
+  "scripts": {
+    "build": "tsc && node scripts/build-ui.js",
+    "build:server": "tsc",
+    "build:ui": "node scripts/build-ui.js",
+    "dev": "tsc --watch",
+    "start": "node dist/index.js",
+    "start:http": "node dist/http.js",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "lint": "tsc --noEmit",
+    "prepublishOnly": "npm run build"
+  },
+  "keywords": [
+    "mcp",
+    "real-estate",
+    "aichi",
+    "land-price",
+    "hazard",
+    "investment",
+    "japan"
+  ],
+  "author": "sugukuru",
+  "license": "MIT",
+  "private": false,
+  "publishConfig": {
+    "access": "public"
+  },
+  "engines": {
+    "node": ">=20.0.0"
+  },
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "esbuild"
+    ]
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.12.1",
+    "@turf/boolean-point-in-polygon": "^7.2.0",
+    "@turf/helpers": "^7.2.0",
+    "express": "^5.1.0",
+    "papaparse": "^5.5.2",
+    "topojson-client": "^3.1.0",
+    "zod": "^3.24.4"
+  },
+  "devDependencies": {
+    "@types/express": "^5.0.2",
+    "@types/geojson": "^7946.0.16",
+    "@types/node": "^22.15.3",
+    "@types/papaparse": "^5.3.15",
+    "@types/topojson-client": "^3.1.5",
+    "esbuild": "^0.25.4",
+    "typescript": "^5.8.3",
+    "vitest": "^3.1.3"
+  }
+}

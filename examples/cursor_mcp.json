@@ -1,0 +1,9 @@
+{
+  "mcpServers": {
+    "aichi-real-estate-intel": {
+      "command": "node",
+      "args": ["dist/index.js"],
+      "cwd": "/path/to/aichi-real-estate-intel-mcp"
+    }
+  }
+}

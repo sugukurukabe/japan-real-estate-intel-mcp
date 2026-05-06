@@ -1,0 +1,135 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "足助地区急傾斜地崩壊危険箇所",
+        "risk_type": "急傾斜地",
+        "warning_level": "警戒区域",
+        "area_name": "豊田市足助町"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[137.310, 35.125], [137.335, 35.125], [137.335, 35.148], [137.310, 35.148], [137.310, 35.125]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "足助地区土石流危険渓流",
+        "risk_type": "土石流",
+        "warning_level": "特別警戒区域",
+        "area_name": "豊田市足助町北部"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[137.295, 35.148], [137.325, 35.148], [137.325, 35.170], [137.295, 35.170], [137.295, 35.148]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "設楽地区地すべり危険箇所",
+        "risk_type": "地すべり",
+        "warning_level": "警戒区域",
+        "area_name": "北設楽郡設楽町"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[137.560, 35.080], [137.600, 35.080], [137.600, 35.110], [137.560, 35.110], [137.560, 35.080]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "設楽地区急傾斜地崩壊危険箇所",
+        "risk_type": "急傾斜地",
+        "warning_level": "特別警戒区域",
+        "area_name": "北設楽郡設楽町南部"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[137.540, 35.050], [137.580, 35.050], [137.580, 35.080], [137.540, 35.080], [137.540, 35.050]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "東栄地区土石流危険渓流",
+        "risk_type": "土石流",
+        "warning_level": "特別警戒区域",
+        "area_name": "北設楽郡東栄町"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[137.680, 35.050], [137.720, 35.050], [137.720, 35.080], [137.680, 35.080], [137.680, 35.050]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "東栄地区地すべり危険箇所",
+        "risk_type": "地すべり",
+        "warning_level": "警戒区域",
+        "area_name": "北設楽郡東栄町西部"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[137.640, 35.060], [137.680, 35.060], [137.680, 35.088], [137.640, 35.088], [137.640, 35.060]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "新城地区急傾斜地崩壊危険箇所",
+        "risk_type": "急傾斜地",
+        "warning_level": "警戒区域",
+        "area_name": "新城市北部"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[137.480, 34.950], [137.520, 34.950], [137.520, 34.980], [137.480, 34.980], [137.480, 34.950]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "新城地区土石流危険渓流",
+        "risk_type": "土石流",
+        "warning_level": "特別警戒区域",
+        "area_name": "新城市鳳来地区"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[137.530, 34.940], [137.575, 34.940], [137.575, 34.970], [137.530, 34.970], [137.530, 34.940]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "新城地区地すべり危険箇所",
+        "risk_type": "地すべり",
+        "warning_level": "警戒区域",
+        "area_name": "新城市作手地区"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[137.420, 34.980], [137.465, 34.980], [137.465, 35.010], [137.420, 35.010], [137.420, 34.980]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "豊根地区急傾斜地崩壊危険箇所",
+        "risk_type": "急傾斜地",
+        "warning_level": "警戒区域",
+        "area_name": "北設楽郡豊根村"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[137.710, 35.110], [137.755, 35.110], [137.755, 35.140], [137.710, 35.140], [137.710, 35.110]]]
+      }
+    }
+  ]
+}
