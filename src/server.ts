@@ -8,6 +8,7 @@ import {
   CorporateDemandInput,
   ComparePrefecturesInput,
   DrillDownInput,
+  StoreLocationInput,
 } from './schemas.js';
 import { crossAnalyze } from './tools/cross_analyze_real_estate_market.js';
 import { assessPropertyRisk } from './tools/assess_property_risk.js';
@@ -17,6 +18,7 @@ import { assessFamilyFriendlyScore } from './tools/assess_family_friendly_score.
 import { predictCorporateDemand } from './tools/predict_corporate_demand.js';
 import { comparePrefectures } from './tools/compare_prefectures.js';
 import { drillDownLocalAnalysis } from './tools/drill_down_local_analysis.js';
+import { evaluateStoreLocation } from './tools/evaluate_store_location.js';
 import { getLandPriceResource } from './resources/land_price.js';
 import { getFloodResource } from './resources/flood.js';
 import { getPopulationResource } from './resources/population.js';
@@ -27,7 +29,7 @@ import './data-loaders/index.js';
 export function createServer(): McpServer {
   const server = new McpServer({
     name: 'japan-real-estate-intel-mcp',
-    version: '2.1.0',
+    version: '2.2.0',
   });
 
   // ── Tools (6) ──
@@ -157,6 +159,22 @@ export function createServer(): McpServer {
     async (args) => {
       const input = DrillDownInput.parse(args);
       const result = drillDownLocalAnalysis(input);
+      return {
+        content: [
+          { type: 'text' as const, text: JSON.stringify(result, null, 2) },
+        ],
+        structuredContent: { ...result, attribution: ATTRIBUTION },
+      };
+    },
+  );
+
+  server.tool(
+    'evaluate_store_location',
+    '店舗出店候補地を人流・人口・競合・交通・災害リスク等で多角評価し、業態別スコアと差別化提案を返す。（対応: 愛知県, 東京都）',
+    StoreLocationInput.shape,
+    async (args) => {
+      const input = StoreLocationInput.parse(args);
+      const result = evaluateStoreLocation(input);
       return {
         content: [
           { type: 'text' as const, text: JSON.stringify(result, null, 2) },

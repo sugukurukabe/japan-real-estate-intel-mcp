@@ -104,4 +104,7 @@ export abstract class BaseLoader implements PrefectureLoader {
   abstract getCorporateLocations(): import('./types.js').CorporateLocationRecord[];
   abstract getCrimeStats(): import('./types.js').CrimeStatsRecord[];
   abstract getPlateauBuildings(): import('./types.js').PlateauBuildingRecord[];
+  abstract getTransport(): import('./types.js').TransportRecord[];
+  abstract getCommercialFacilities(): import('./types.js').CommercialFacilityRecord[];
+  abstract getMedicalFacilities(): import('./types.js').MedicalFacilityRecord[];
 }

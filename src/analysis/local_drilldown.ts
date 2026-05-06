@@ -85,6 +85,40 @@ export function buildLocalDrillDown(input: DrillDownInput): DrillDownOutput {
     }
   }
 
+  // --- transport ---
+  let transportScore: number | null = null;
+  if (loader.capabilities.transport) {
+    const stations = loader.getTransport().filter(
+      (r) => r.city.includes(city) || city.includes(r.city),
+    );
+    if (stations.length > 0) {
+      const totalPassengers = stations.reduce((s, r) => s + r.daily_passengers, 0);
+      transportScore = Math.min(100, Math.round(totalPassengers / 10000));
+    }
+  }
+
+  // --- commercial ---
+  let commercialDensity: string | null = null;
+  if (loader.capabilities.commercial) {
+    const facilities = loader.getCommercialFacilities().filter(
+      (r) => r.city.includes(city) || city.includes(r.city),
+    );
+    if (facilities.length > 0) {
+      commercialDensity = facilities.length > 100 ? '非常に高い' : facilities.length > 50 ? '高い' : facilities.length > 20 ? '中程度' : '低い';
+    }
+  }
+
+  // --- medical ---
+  let medicalDensity: string | null = null;
+  if (loader.capabilities.medical) {
+    const medicals = loader.getMedicalFacilities().filter(
+      (r) => r.city.includes(city) || city.includes(r.city),
+    );
+    if (medicals.length > 0) {
+      medicalDensity = medicals.length > 50 ? '非常に充実' : medicals.length > 20 ? '充実' : medicals.length > 10 ? '中程度' : '少ない';
+    }
+  }
+
   // --- local pitch ---
   const pitchParts: string[] = [];
   if (priceChangeRate != null) {
@@ -95,6 +129,15 @@ export function buildLocalDrillDown(input: DrillDownInput): DrillDownOutput {
   }
   if (humanFlowScore != null) {
     pitchParts.push(humanFlowScore > 60 ? '人通りが多く商業需要旺盛' : humanFlowScore > 30 ? '人流は安定' : '人流は少なめ（静閑居住向き）');
+  }
+  if (transportScore != null) {
+    pitchParts.push(transportScore > 60 ? '交通利便性が高い' : transportScore > 30 ? '交通アクセス中程度' : '交通アクセスやや不便');
+  }
+  if (commercialDensity != null) {
+    pitchParts.push(`商業施設密度: ${commercialDensity}`);
+  }
+  if (medicalDensity != null) {
+    pitchParts.push(`医療環境: ${medicalDensity}`);
   }
   const localPitch = pitchParts.length > 0
     ? `${scopeLabel}: ${pitchParts.join('、')}。`
@@ -115,6 +158,24 @@ export function buildLocalDrillDown(input: DrillDownInput): DrillDownOutput {
   }
   if (!loader.capabilities.humanFlow) {
     keyInsights.push(`${prefDisplayName}の人流データは v2.2 以降で対応予定です。`);
+  }
+  if (transportScore != null && transportScore > 60) {
+    keyInsights.push(`交通スコア${transportScore}/100。駅近・高利便性エリアです。`);
+  }
+  if (!loader.capabilities.transport) {
+    keyInsights.push(`${prefDisplayName}の交通データは v2.2 以降で対応予定です。`);
+  }
+  if (commercialDensity != null && (commercialDensity === '非常に高い' || commercialDensity === '高い')) {
+    keyInsights.push(`商業施設が${commercialDensity}密度で集積。生活利便性が高いエリアです。`);
+  }
+  if (!loader.capabilities.commercial) {
+    keyInsights.push(`${prefDisplayName}の商業施設データは v2.2 以降で対応予定です。`);
+  }
+  if (medicalDensity != null && (medicalDensity === '非常に充実' || medicalDensity === '充実')) {
+    keyInsights.push(`医療環境が${medicalDensity}。高齢者向け住宅や福祉施設に好適です。`);
+  }
+  if (!loader.capabilities.medical) {
+    keyInsights.push(`${prefDisplayName}の医療施設データは v2.2 以降で対応予定です。`);
   }
   if (keyInsights.length === 0) {
     keyInsights.push(`${scopeLabel}の市区町村レベルデータを正常に取得しました。`);
@@ -158,6 +219,24 @@ export function buildLocalDrillDown(input: DrillDownInput): DrillDownOutput {
       ? `- 人流スコア: **${humanFlowScore}/100**`
       : loader.capabilities.humanFlow ? `この市区町村の人流データは未登録です` : `${prefDisplayName}の人流データは v2.2 以降で対応予定`,
     ``,
+    `## 交通利便性`,
+    ``,
+    transportScore != null
+      ? `- 交通スコア: **${transportScore}/100**`
+      : loader.capabilities.transport ? `この市区町村の交通データは未登録です` : `${prefDisplayName}の交通データは v2.2 以降で対応予定`,
+    ``,
+    `## 商業施設`,
+    ``,
+    commercialDensity != null
+      ? `- 商業施設密度: **${commercialDensity}**`
+      : loader.capabilities.commercial ? `この市区町村の商業施設データは未登録です` : `${prefDisplayName}の商業施設データは v2.2 以降で対応予定`,
+    ``,
+    `## 医療環境`,
+    ``,
+    medicalDensity != null
+      ? `- 医療充実度: **${medicalDensity}**`
+      : loader.capabilities.medical ? `この市区町村の医療施設データは未登録です` : `${prefDisplayName}の医療施設データは v2.2 以降で対応予定`,
+    ``,
     keyInsights.length > 0 ? `## 主要インサイト\n\n${keyInsights.map((i) => `- ${i}`).join('\n')}` : '',
     ``,
     `---`,
@@ -174,6 +253,9 @@ export function buildLocalDrillDown(input: DrillDownInput): DrillDownOutput {
     riskScore,
     floodLevel,
     humanFlowScore,
+    transportScore,
+    commercialDensity,
+    medicalDensity,
     competitorDensity,
     localPitch,
     keyInsights,

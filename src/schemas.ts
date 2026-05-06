@@ -15,6 +15,9 @@ export const CrossAnalyzeInput = z.object({
   includeHumanFlow: z.boolean().default(true).describe('人流データを含むか（対応都道府県のみ）'),
   includeEducation: z.boolean().default(false).describe('教育環境データを含むか（対応都道府県のみ）'),
   includeCorporate: z.boolean().default(false).describe('企業立地データを含むか（対応都道府県のみ）'),
+  includeTransport: z.boolean().default(false).describe('交通利便性データを含むか（対応都道府県のみ）'),
+  includeCommercial: z.boolean().default(false).describe('商業施設データを含むか（対応都道府県のみ）'),
+  includeMedical: z.boolean().default(false).describe('医療・福祉施設データを含むか（対応都道府県のみ）'),
   focusMetrics: z
     .array(z.enum(['price_trend', 'yield', 'demand_supply', 'risk_score']))
     .optional(),
@@ -60,6 +63,9 @@ export const CrossAnalyzeOutput = z.object({
   vacancyRiskScore: z.number().min(0).max(100).optional(),
   educationSummary: z.object({ avgScore: z.number(), topSchool: z.string() }).optional(),
   corporateSummary: z.object({ totalEstablishments: z.number(), majorCount: z.number() }).optional(),
+  transportSummary: z.object({ totalDailyPassengers: z.number(), stationCount: z.number(), transportScore: z.number() }).optional(),
+  commercialSummary: z.object({ facilityCountByType: z.record(z.number()), totalGFA: z.number() }).optional(),
+  medicalSummary: z.object({ facilityCount: z.number(), hospitalCount: z.number(), totalBeds: z.number() }).optional(),
 });
 export type CrossAnalyzeOutput = z.infer<typeof CrossAnalyzeOutput>;
 
@@ -213,7 +219,7 @@ export const ComparePrefecturesInput = z.object({
     .describe('各都道府県の代表エリア（省略時は県庁所在地相当。愛知=名古屋市中区、東京=千代田区）'),
   neighborhood: neighborhoodField,
   propertyType: z.enum(['residential', 'commercial', 'logistics', 'office', 'mixed']).default('mixed'),
-  metrics: z.array(z.enum(['price', 'risk', 'humanFlow', 'education', 'corporate', 'investment']))
+  metrics: z.array(z.enum(['price', 'risk', 'humanFlow', 'education', 'corporate', 'investment', 'transport', 'commercial', 'medical']))
     .default(['price', 'risk', 'investment']),
   includeMarkdown: z.boolean().default(true),
 });
@@ -226,6 +232,7 @@ export const PrefectureScore = z.object({
   capabilities: z.object({
     humanFlow: z.boolean(), education: z.boolean(),
     corporate: z.boolean(), crime: z.boolean(), plateau: z.boolean(),
+    transport: z.boolean(), commercial: z.boolean(), medical: z.boolean(),
   }),
   metrics: z.object({
     price: z.number().nullable(),
@@ -234,6 +241,9 @@ export const PrefectureScore = z.object({
     humanFlowScore: z.number().nullable(),
     educationScore: z.number().nullable(),
     corporateScore: z.number().nullable(),
+    transportScore: z.number().nullable(),
+    commercialScore: z.number().nullable(),
+    medicalScore: z.number().nullable(),
     investmentScore: z.number(),
   }),
   rank: z.number(),
@@ -289,9 +299,59 @@ export const DrillDownOutput = z.object({
   riskScore: z.number().nullable(),
   floodLevel: z.enum(['low', 'medium', 'high']).nullable(),
   humanFlowScore: z.number().nullable(),
+  transportScore: z.number().nullable(),
+  commercialDensity: z.string().nullable(),
+  medicalDensity: z.string().nullable(),
   competitorDensity: z.string(),
   localPitch: z.string(),
   keyInsights: z.array(z.string()),
   markdownReport: z.string(),
 });
 export type DrillDownOutput = z.infer<typeof DrillDownOutput>;
+
+// ── evaluate_store_location (v2.2 new) ──
+
+export const StoreLocationInput = z.object({
+  prefecture: prefectureField,
+  city: z.string().describe("市区町村（例: '名古屋市中村区'）"),
+  neighborhood: neighborhoodField,
+  storeType: z.enum(['convenience', 'family_restaurant', 'cafe', 'drugstore', 'supermarket'])
+    .describe('出店を検討する店舗タイプ'),
+  radiusM: z.number().default(500).describe('競合・施設を検索する半径（メートル）'),
+  customWeights: z.record(z.string(), z.number()).optional()
+    .describe('カスタム重み付け（省略時はタイプ別デフォルト）'),
+  includeMarkdown: z.boolean().default(true),
+});
+export type StoreLocationInput = z.infer<typeof StoreLocationInput>;
+
+export const KeyCompetitor = z.object({
+  name: z.string(),
+  chainBrand: z.string(),
+  distance: z.number().describe('メートル'),
+  type: z.string(),
+  strength: z.number().min(0).max(100),
+  weakness: z.string(),
+});
+export type KeyCompetitor = z.infer<typeof KeyCompetitor>;
+
+export const StoreLocationOutput = z.object({
+  overallScore: z.number().min(0).max(100),
+  storeType: z.string(),
+  city: z.string(),
+  neighborhood: z.string().optional(),
+  breakdown: z.object({
+    population: z.number(),
+    humanFlow: z.number(),
+    risk: z.number(),
+    competition: z.number(),
+    transport: z.number(),
+    education: z.number(),
+    commercial: z.number(),
+    medical: z.number(),
+  }),
+  keyCompetitors: z.array(KeyCompetitor),
+  differentiationSuggestions: z.array(z.string()),
+  keyInsights: z.array(z.string()),
+  markdownReport: z.string().optional(),
+});
+export type StoreLocationOutput = z.infer<typeof StoreLocationOutput>;

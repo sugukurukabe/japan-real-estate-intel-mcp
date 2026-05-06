@@ -16,6 +16,9 @@ export function generateAreaReport(input: GenerateReportInput): GenerateReportOu
     includeHumanFlow: true,
     includeEducation: false,
     includeCorporate: false,
+    includeTransport: false,
+    includeCommercial: false,
+    includeMedical: false,
   });
 
   const population = getPopulationForCity(input.area, prefKey);

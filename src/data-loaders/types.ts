@@ -11,6 +11,9 @@ export interface LoaderCapabilities {
   corporate: boolean;
   crime: boolean;
   plateau: boolean;
+  transport: boolean;
+  commercial: boolean;
+  medical: boolean;
 }
 
 export interface LandPriceRecord {
@@ -116,6 +119,37 @@ export interface PlateauBuildingRecord {
   shadow_impact: 'high' | 'medium' | 'low';
 }
 
+export interface TransportRecord {
+  city: string;
+  district: string;
+  station_name: string;
+  line: string;
+  daily_passengers: number;
+  walk_min_to_center: number;
+  station_type: 'jr' | 'subway' | 'private' | 'bus';
+}
+
+export interface CommercialFacilityRecord {
+  city: string;
+  district: string;
+  facility_name: string;
+  type: 'mall' | 'sc' | 'cvs' | 'drugstore' | 'fast_food' | 'cafe' | 'supermarket';
+  chain_brand: string;
+  lat: number;
+  lng: number;
+  gfa_sqm: number;
+}
+
+export interface MedicalFacilityRecord {
+  city: string;
+  district: string;
+  facility_name: string;
+  type: 'hospital' | 'clinic' | 'pharmacy' | 'dental' | 'elderly_care';
+  lat: number;
+  lng: number;
+  beds: number | null;
+}
+
 export interface PrefectureLoader {
   readonly key: string;
   readonly displayName: string;
@@ -138,4 +172,8 @@ export interface PrefectureLoader {
   getCorporateLocations(): CorporateLocationRecord[];
   getCrimeStats(): CrimeStatsRecord[];
   getPlateauBuildings(): PlateauBuildingRecord[];
+
+  getTransport(): TransportRecord[];
+  getCommercialFacilities(): CommercialFacilityRecord[];
+  getMedicalFacilities(): MedicalFacilityRecord[];
 }

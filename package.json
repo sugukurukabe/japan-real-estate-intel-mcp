@@ -1,6 +1,6 @@
 {
   "name": "@sugukuru/japan-real-estate-intel-mcp",
-  "version": "2.1.0",
+  "version": "2.2.0",
   "description": "日本の不動産投資・仲介・開発・管理向けに地価・取引価格・人口統計・災害リスク・人流・教育・企業立地をクロス分析するMCPサーバー（愛知県・東京都対応、都道府県プラガブル構造）",
   "type": "module",
   "main": "dist/index.js",

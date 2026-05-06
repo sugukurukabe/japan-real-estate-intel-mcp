@@ -28,6 +28,9 @@ interface RawMetrics {
   humanFlowScore: number | null;
   educationScore: number | null;
   corporateScore: number | null;
+  transportScore: number | null;
+  commercialScore: number | null;
+  medicalScore: number | null;
   investmentScore: number;
 }
 
@@ -100,6 +103,47 @@ function extractMetrics(prefKey: string, area: string): { raw: RawMetrics; notes
     notes.push(`${displayName}: 企業立地データ未対応（v2.2 以降で対応予定）`);
   }
 
+  // transport
+  let transportScore: number | null = null;
+  if (loader.capabilities.transport) {
+    const stations = loader.getTransport().filter(
+      (r) => r.city.includes(area) || area.includes(r.city),
+    );
+    if (stations.length > 0) {
+      const totalPassengers = stations.reduce((s, r) => s + r.daily_passengers, 0);
+      transportScore = Math.min(100, Math.round(totalPassengers / 10000));
+    }
+  } else {
+    notes.push(`${displayName}: 交通データ未対応（v2.2 以降で対応予定）`);
+  }
+
+  // commercial
+  let commercialScore: number | null = null;
+  if (loader.capabilities.commercial) {
+    const facilities = loader.getCommercialFacilities().filter(
+      (r) => r.city.includes(area) || area.includes(r.city),
+    );
+    if (facilities.length > 0) {
+      commercialScore = Math.min(100, Math.round(facilities.length / 5));
+    }
+  } else {
+    notes.push(`${displayName}: 商業施設データ未対応（v2.2 以降で対応予定）`);
+  }
+
+  // medical
+  let medicalScore: number | null = null;
+  if (loader.capabilities.medical) {
+    const medicals = loader.getMedicalFacilities().filter(
+      (r) => r.city.includes(area) || area.includes(r.city),
+    );
+    if (medicals.length > 0) {
+      const hospitalCount = medicals.filter((r) => r.type === 'hospital').length;
+      medicalScore = Math.min(100, Math.round((medicals.length + hospitalCount * 2) / 3));
+    }
+  } else {
+    notes.push(`${displayName}: 医療施設データ未対応（v2.2 以降で対応予定）`);
+  }
+
   // investment score
   const priceComp = priceChangeRate != null ? Math.max(0, Math.min(40, (priceChangeRate + 10) * 2)) : 20;
   const riskComp = riskScore != null ? Math.max(0, (100 - riskScore) * 0.3) : 15;
@@ -107,7 +151,7 @@ function extractMetrics(prefKey: string, area: string): { raw: RawMetrics; notes
   const investmentScore = Math.round(Math.max(0, Math.min(100, priceComp + riskComp + demandComp)));
 
   return {
-    raw: { prefKey, displayName, area, price, priceChangeRate, riskScore, humanFlowScore, educationScore, corporateScore, investmentScore },
+    raw: { prefKey, displayName, area, price, priceChangeRate, riskScore, humanFlowScore, educationScore, corporateScore, transportScore, commercialScore, medicalScore, investmentScore },
     notes,
   };
 }
@@ -149,6 +193,9 @@ export function buildComparisonOutput(
       humanFlowScore: r.humanFlowScore,
       educationScore: r.educationScore,
       corporateScore: r.corporateScore,
+      transportScore: r.transportScore,
+      commercialScore: r.commercialScore,
+      medicalScore: r.medicalScore,
       investmentScore: r.investmentScore,
     },
     rank: idx + 1,
@@ -161,7 +208,7 @@ export function buildComparisonOutput(
   }));
 
   // radar data (normalize each metric across prefectures)
-  const metrics = ['価格', '安全', '人流', '教育', '企業', '投資'];
+  const metrics = ['価格', '安全', '人流', '教育', '企業', '投資', '交通', '商業', '医療'];
   const rawByMetric = [
     raws.map((r) => r.price),
     raws.map((r) => r.riskScore != null ? 100 - r.riskScore : null),
@@ -169,6 +216,9 @@ export function buildComparisonOutput(
     raws.map((r) => r.educationScore),
     raws.map((r) => r.corporateScore),
     raws.map((r) => r.investmentScore),
+    raws.map((r) => r.transportScore),
+    raws.map((r) => r.commercialScore),
+    raws.map((r) => r.medicalScore),
   ];
 
   const radarData = metrics.map((metric, mi) => ({
@@ -242,6 +292,9 @@ export function buildComparisonOutput(
       `| 人流スコア | ${raws.map((r) => r.humanFlowScore != null ? `${r.humanFlowScore}/100` : '未対応').join(' | ')} |`,
       `| 教育スコア | ${raws.map((r) => r.educationScore != null ? `${r.educationScore}/100` : '未対応').join(' | ')} |`,
       `| 企業立地 | ${raws.map((r) => r.corporateScore != null ? `${r.corporateScore}/100` : '未対応').join(' | ')} |`,
+      `| 交通 | ${raws.map((r) => r.transportScore != null ? `${r.transportScore}/100` : '未対応').join(' | ')} |`,
+      `| 商業 | ${raws.map((r) => r.commercialScore != null ? `${r.commercialScore}/100` : '未対応').join(' | ')} |`,
+      `| 医療 | ${raws.map((r) => r.medicalScore != null ? `${r.medicalScore}/100` : '未対応').join(' | ')} |`,
       ``,
       `## 用途別おすすめ`,
       ``,

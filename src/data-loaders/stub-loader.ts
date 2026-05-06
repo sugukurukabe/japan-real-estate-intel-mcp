@@ -4,6 +4,7 @@ import type {
   LandPriceRecord, TransactionRecord, PopulationRecord, EarthquakeRecord,
   HumanFlowRecord, SchoolDistrictRecord, CorporateLocationRecord,
   CrimeStatsRecord, PlateauBuildingRecord,
+  TransportRecord, CommercialFacilityRecord, MedicalFacilityRecord,
 } from './types.js';
 import { getPrefectureDisplayName } from '../prefecture/resolver.js';
 
@@ -15,6 +16,7 @@ export class StubLoader implements PrefectureLoader {
   readonly isoCode: string;
   readonly capabilities: LoaderCapabilities = {
     humanFlow: false, education: false, corporate: false, crime: false, plateau: false,
+    transport: false, commercial: false, medical: false,
   };
 
   constructor(key: string) {
@@ -38,4 +40,7 @@ export class StubLoader implements PrefectureLoader {
   getCorporateLocations(): CorporateLocationRecord[] { return []; }
   getCrimeStats(): CrimeStatsRecord[] { return []; }
   getPlateauBuildings(): PlateauBuildingRecord[] { return []; }
+  getTransport(): TransportRecord[] { return []; }
+  getCommercialFacilities(): CommercialFacilityRecord[] { return []; }
+  getMedicalFacilities(): MedicalFacilityRecord[] { return []; }
 }

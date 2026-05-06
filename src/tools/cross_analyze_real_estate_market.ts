@@ -20,7 +20,7 @@ import { geocode } from '../data/geocode.js';
 export function crossAnalyze(input: CrossAnalyzeInput): CrossAnalyzeOutput {
   const prefKey = resolvePrefecture(input.prefecture);
   const loader = getLoader(prefKey);
-  const { area, propertyType, timeRange, includeRisk, includeHumanFlow, includeEducation, includeCorporate } = input;
+  const { area, propertyType, timeRange, includeRisk, includeHumanFlow, includeEducation, includeCorporate, includeTransport, includeCommercial, includeMedical } = input;
 
   const landPrices = filterByTimeRange(getLandPricesForCity(area, prefKey), timeRange);
   const allTransactions = getTransactionsForCity(area, prefKey);
@@ -127,6 +127,62 @@ export function crossAnalyze(input: CrossAnalyzeInput): CrossAnalyzeOutput {
     }
   }
 
+  let transportSummary: CrossAnalyzeOutput['transportSummary'];
+  if (includeTransport) {
+    if (loader.capabilities.transport) {
+      const records = loader.getTransport().filter(
+        (r) => r.city.includes(area) || area.includes(r.city),
+      );
+      if (records.length > 0) {
+        const totalDailyPassengers = records.reduce((s, r) => s + r.daily_passengers, 0);
+        const stationCount = records.length;
+        const transportScore = Math.min(100, Math.round(totalDailyPassengers / 10000));
+        transportSummary = { totalDailyPassengers, stationCount, transportScore };
+        keyInsights.push(`駅数${stationCount}、1日乗降客数${totalDailyPassengers.toLocaleString()}人。交通利便性スコア${transportScore}/100。`);
+      }
+    } else {
+      keyInsights.push(`${loader.displayName}の交通データは v2.x で対応予定です。`);
+    }
+  }
+
+  let commercialSummary: CrossAnalyzeOutput['commercialSummary'];
+  if (includeCommercial) {
+    if (loader.capabilities.commercial) {
+      const records = loader.getCommercialFacilities().filter(
+        (r) => r.city.includes(area) || area.includes(r.city),
+      );
+      if (records.length > 0) {
+        const facilityCountByType: Record<string, number> = {};
+        for (const r of records) {
+          facilityCountByType[r.type] = (facilityCountByType[r.type] ?? 0) + 1;
+        }
+        const totalGFA = records.reduce((s, r) => s + r.gfa_sqm, 0);
+        commercialSummary = { facilityCountByType, totalGFA };
+        keyInsights.push(`商業施設${records.length}件、延床面積${totalGFA.toLocaleString()}㎡。`);
+      }
+    } else {
+      keyInsights.push(`${loader.displayName}の商業施設データは v2.x で対応予定です。`);
+    }
+  }
+
+  let medicalSummary: CrossAnalyzeOutput['medicalSummary'];
+  if (includeMedical) {
+    if (loader.capabilities.medical) {
+      const records = loader.getMedicalFacilities().filter(
+        (r) => r.city.includes(area) || area.includes(r.city),
+      );
+      if (records.length > 0) {
+        const facilityCount = records.length;
+        const hospitalCount = records.filter((r) => r.type === 'hospital').length;
+        const totalBeds = records.reduce((s, r) => s + (r.beds ?? 0), 0);
+        medicalSummary = { facilityCount, hospitalCount, totalBeds };
+        keyInsights.push(`医療施設${facilityCount}件（病院${hospitalCount}）、病床数${totalBeds.toLocaleString()}床。`);
+      }
+    } else {
+      keyInsights.push(`${loader.displayName}の医療施設データは v2.x で対応予定です。`);
+    }
+  }
+
   const totalTransactions = allTransactions.length;
   const avgPrice = transactions.length > 0
     ? Math.round(transactions.reduce((s, t) => s + t.price_per_sqm, 0) / transactions.length)
@@ -163,5 +219,8 @@ export function crossAnalyze(input: CrossAnalyzeInput): CrossAnalyzeOutput {
     vacancyRiskScore,
     educationSummary,
     corporateSummary,
+    transportSummary,
+    commercialSummary,
+    medicalSummary,
   };
 }

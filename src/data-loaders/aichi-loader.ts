@@ -5,6 +5,7 @@ import type {
   LandPriceRecord, TransactionRecord, PopulationRecord, EarthquakeRecord,
   HumanFlowRecord, SchoolDistrictRecord, CorporateLocationRecord,
   CrimeStatsRecord, PlateauBuildingRecord,
+  TransportRecord, CommercialFacilityRecord, MedicalFacilityRecord,
 } from './types.js';
 
 const AICHI_GEOCODE: Record<string, LatLng> = {
@@ -57,6 +58,7 @@ export class AichiLoader extends BaseLoader {
   readonly isoCode = 'JP-23';
   readonly capabilities: LoaderCapabilities = {
     humanFlow: true, education: true, corporate: true, crime: true, plateau: true,
+    transport: true, commercial: true, medical: true,
   };
 
   protected readonly geocodeMap = AICHI_GEOCODE;
@@ -73,4 +75,7 @@ export class AichiLoader extends BaseLoader {
   getCorporateLocations(): CorporateLocationRecord[] { return this.loadCsv('corporate_locations.csv'); }
   getCrimeStats(): CrimeStatsRecord[] { return this.loadCsv('crime_stats.csv'); }
   getPlateauBuildings(): PlateauBuildingRecord[] { return this.loadJson('plateau_buildings.json', []); }
+  getTransport(): TransportRecord[] { return this.loadCsv('transport_stations.csv'); }
+  getCommercialFacilities(): CommercialFacilityRecord[] { return this.loadCsv('commercial_facilities.csv'); }
+  getMedicalFacilities(): MedicalFacilityRecord[] { return this.loadCsv('medical_facilities.csv'); }
 }

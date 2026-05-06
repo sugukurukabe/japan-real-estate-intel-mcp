@@ -203,3 +203,19 @@ describe('openDashboard (Tokyo)', () => {
     expect(result.area).toBe('渋谷区');
   });
 });
+
+describe('Tokyo v2.2 capabilities', () => {
+  it('Tokyo lacks transport/commercial/medical', () => {
+    const loader = getLoader('tokyo');
+    expect(loader.capabilities.transport).toBe(false);
+    expect(loader.capabilities.commercial).toBe(false);
+    expect(loader.capabilities.medical).toBe(false);
+  });
+
+  it('Tokyo returns empty arrays for new data types', () => {
+    const loader = getLoader('tokyo');
+    expect(loader.getTransport()).toHaveLength(0);
+    expect(loader.getCommercialFacilities()).toHaveLength(0);
+    expect(loader.getMedicalFacilities()).toHaveLength(0);
+  });
+});

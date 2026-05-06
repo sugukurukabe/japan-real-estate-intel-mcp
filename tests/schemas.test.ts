@@ -11,6 +11,7 @@ import {
   CorporateDemandInput,
   ComparePrefecturesInput,
   DrillDownInput,
+  StoreLocationInput,
 } from '../src/schemas.js';
 
 describe('CrossAnalyzeInput', () => {
@@ -26,6 +27,9 @@ describe('CrossAnalyzeInput', () => {
     expect(result.includeHumanFlow).toBe(true);
     expect(result.includeEducation).toBe(false);
     expect(result.includeCorporate).toBe(false);
+    expect(result.includeTransport).toBe(false);
+    expect(result.includeCommercial).toBe(false);
+    expect(result.includeMedical).toBe(false);
     expect(result.focusMetrics).toBeUndefined();
   });
 
@@ -245,5 +249,81 @@ describe('DrillDownInput', () => {
       neighborhood: '名駅南1丁目',
     });
     expect(r.neighborhood).toBe('名駅南1丁目');
+  });
+});
+
+describe('StoreLocationInput', () => {
+  it('parses valid input with defaults', () => {
+    const r = StoreLocationInput.parse({
+      city: '名古屋市中村区',
+      storeType: 'convenience',
+    });
+    expect(r.prefecture).toBe('愛知県');
+    expect(r.radiusM).toBe(500);
+    expect(r.includeMarkdown).toBe(true);
+  });
+
+  it('accepts all store types', () => {
+    for (const t of ['convenience', 'family_restaurant', 'cafe', 'drugstore', 'supermarket'] as const) {
+      const r = StoreLocationInput.parse({ city: '名古屋市', storeType: t });
+      expect(r.storeType).toBe(t);
+    }
+  });
+
+  it('rejects invalid store type', () => {
+    expect(() => StoreLocationInput.parse({ city: '名古屋市', storeType: 'bar' })).toThrow();
+  });
+
+  it('accepts custom weights', () => {
+    const r = StoreLocationInput.parse({
+      city: '名古屋市',
+      storeType: 'cafe',
+      customWeights: { humanFlow: 60, population: 40 },
+    });
+    expect(r.customWeights?.humanFlow).toBe(60);
+  });
+
+  it('accepts optional neighborhood', () => {
+    const r = StoreLocationInput.parse({
+      city: '名古屋市中村区',
+      storeType: 'supermarket',
+      neighborhood: '名駅南1丁目',
+    });
+    expect(r.neighborhood).toBe('名駅南1丁目');
+  });
+});
+
+describe('CrossAnalyzeInput v2.2 flags', () => {
+  it('includeTransport defaults to false', () => {
+    const r = CrossAnalyzeInput.parse({ area: '名古屋市中区', propertyType: 'residential', timeRange: '1y' });
+    expect(r.includeTransport).toBe(false);
+    expect(r.includeCommercial).toBe(false);
+    expect(r.includeMedical).toBe(false);
+  });
+
+  it('accepts true for new flags', () => {
+    const r = CrossAnalyzeInput.parse({
+      area: '名古屋市中区',
+      propertyType: 'residential',
+      timeRange: '1y',
+      includeTransport: true,
+      includeCommercial: true,
+      includeMedical: true,
+    });
+    expect(r.includeTransport).toBe(true);
+    expect(r.includeCommercial).toBe(true);
+    expect(r.includeMedical).toBe(true);
+  });
+});
+
+describe('ComparePrefecturesInput v2.2 metrics', () => {
+  it('accepts new metric types', () => {
+    const r = ComparePrefecturesInput.parse({
+      prefectures: ['愛知県', '東京都'],
+      metrics: ['price', 'transport', 'commercial', 'medical'],
+    });
+    expect(r.metrics).toContain('transport');
+    expect(r.metrics).toContain('commercial');
+    expect(r.metrics).toContain('medical');
   });
 });

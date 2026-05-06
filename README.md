@@ -1,8 +1,33 @@
 # @sugukuru/japan-real-estate-intel-mcp
 
-日本の不動産投資・仲介・開発・管理向けに、**地価・取引価格・人口統計・災害リスク・人流・教育環境・企業立地・3D景観** をクロス分析する MCP サーバー。
+日本の不動産投資・仲介・開発・管理向けに、**地価・取引価格・人口統計・災害リスク・人流・教育環境・企業立地・交通・商業施設・医療福祉** をクロス分析する MCP サーバー。
 
-**v2.1** から都道府県比較（`compare_prefectures`）と市区町村ドリルダウン（`drill_down_local_analysis`）に対応。ローカル不動産屋・店舗展開担当者向けの町丁目ラベル入力 UI も追加。
+**v2.2** で `evaluate_store_location`（出店適地評価）を新設し、交通利便性・商業施設・医療福祉の 3 データソースを全ツールに統合。ダッシュボードに 3 新レイヤーと店舗評価モードを追加。
+
+## v2.2.0 What's New
+
+| 追加/変更 | 詳細 |
+|---|---|
+| **`evaluate_store_location` ツール新設** | コンビニ/ファミレス/カフェ/ドラッグストア/スーパーの出店適地評価。店舗タイプ別重み付け・競合分析・差別化提案・Markdown レポート |
+| **3 データソース統合** | 交通利便性（駅・路線・乗降客数）、商業施設（SC/CVS/飲食等）、医療福祉（病院/クリニック/薬局等）を全ツールに統合 |
+| **`cross_analyze` に 3 フラグ追加** | `includeTransport` / `includeCommercial` / `includeMedical` でオプトイン |
+| **比較メトリクス 8 軸化** | `compare_prefectures` の metrics に `transport` / `commercial` / `medical` を追加。レーダーチャート 8 軸対応 |
+| **ドリルダウン拡張** | `drill_down_local_analysis` に交通スコア・商業密度・医療充実度を追加 |
+| **ダッシュボード 3 新レイヤー** | 交通（🚉 teal）/ 商業施設（🏬 amber）/ 医療（🏥 pink）レイヤー追加 |
+| **店舗評価モード** | ドリルダウンパネルに storeType セレクタ付き店舗評価モードトグル追加 |
+| 合計ツール数 | **8 → 9 ツール** |
+| テスト総数 | **93 → 130 テスト** |
+
+### 店舗タイプ別重み付け表
+
+| 指標 | コンビニ | ファミレス | カフェ | ドラッグストア | スーパー |
+|---|:---:|:---:|:---:|:---:|:---:|
+| 人流 | 35% | 20% | 40% | 25% | 25% |
+| 人口密度 | 25% | 30% | 20% | 35% | 35% |
+| 災害リスク | 15% | 20% | 10% | 15% | 20% |
+| 競合密度 | 20% | 15% | 20% | 15% | 10% |
+| 交通利便性 | 5% | 10% | 10% | 10% | 10% |
+| 教育環境 | - | 5% | - | - | - |
 
 ## v2.1.0 What's New
 
@@ -45,16 +70,19 @@
 | 土砂災害 | YES | - |
 | 地震想定 | YES | YES |
 | 市区町村境界 | YES | YES |
-| 人流データ | YES | v2.1+ |
-| 教育環境 | YES | v2.1+ |
-| 企業立地 | YES | v2.1+ |
-| 犯罪統計 | YES | v2.1+ |
-| PLATEAU 3D | YES | v2.1+ |
+| 人流データ | YES | v2.x+ |
+| 教育環境 | YES | v2.x+ |
+| 企業立地 | YES | v2.x+ |
+| 犯罪統計 | YES | v2.x+ |
+| PLATEAU 3D | YES | v2.x+ |
+| **交通利便性** | **YES** | v2.x+ |
+| **商業施設** | **YES** | v2.x+ |
+| **医療福祉** | **YES** | v2.x+ |
 
 ## 特徴
 
-- **8つのツール**: 市場クロス分析 / リスク評価 / ファミリー評価 / 法人需要予測 / レポート生成 / ダッシュボード / **都道府県比較（new）** / **ローカルドリルダウン（new）**
-- **8レイヤーダッシュボード**: 地価 / 災害リスク / 取引 / 人口 / 人流 / 学区 / 企業密度 / 3D建物（capabilities に応じて自動 enable/disable）
+- **9つのツール**: 市場クロス分析 / リスク評価 / ファミリー評価 / 法人需要予測 / レポート生成 / ダッシュボード / 都道府県比較 / ローカルドリルダウン / **出店適地評価（v2.2 new）**
+- **11レイヤーダッシュボード**: 地価 / 災害リスク / 取引 / 人口 / 人流 / 学区 / 企業密度 / 3D建物 / **交通（v2.2 new）** / **商業施設（v2.2 new）** / **医療（v2.2 new）**
 - **都道府県セレクタ**: ダッシュボード上で Aichi ↔ Tokyo を切り替え
 - **比較モード（v2.1 フル機能）**: 地図 2 分割 + SVG レーダーチャート + ランキングテーブル + bestFor 表示
 - **ドリルダウンパネル（v2.1 new）**: 市区町村クリックで詳細パネル展開。町丁目ラベル入力対応
@@ -114,11 +142,11 @@ node dist/http.js
 }
 ```
 
-## ツール一覧（v2.1: 8 本）
+## ツール一覧（v2.2: 9 本）
 
 ### `cross_analyze_real_estate_market`
 
-都道府県内エリアの不動産市場をクロス分析。`includeHumanFlow` / `includeEducation` / `includeCorporate` フラグで付加情報をオプトイン。
+都道府県内エリアの不動産市場をクロス分析。`includeHumanFlow` / `includeEducation` / `includeCorporate` / `includeTransport` / `includeCommercial` / `includeMedical` フラグで付加情報をオプトイン。
 
 | パラメータ | 型 | デフォルト | 説明 |
 |---|---|---|---|
@@ -130,6 +158,9 @@ node dist/http.js
 | `includeHumanFlow` | boolean | `true` | 人流データを含むか |
 | `includeEducation` | boolean | `false` | 教育データを含むか |
 | `includeCorporate` | boolean | `false` | 企業データを含むか |
+| `includeTransport` | boolean | `false` | 交通利便性データを含むか *(v2.2)* |
+| `includeCommercial` | boolean | `false` | 商業施設データを含むか *(v2.2)* |
+| `includeMedical` | boolean | `false` | 医療施設データを含むか *(v2.2)* |
 
 capabilities がない都道府県では該当フィールドが `undefined` になり、`keyInsights` に「v2.x で対応予定」と表示されます。
 
@@ -163,7 +194,7 @@ capabilities がない都道府県では該当フィールドが `undefined` に
 | `area` | string | optional | 代表エリア（省略時: 愛知→名古屋市中区、東京→千代田区） |
 | `neighborhood` | string | optional | 町丁目ラベル（v2.1 はレポートへの反映のみ） |
 | `propertyType` | enum | `"mixed"` | residential / commercial / logistics / office / mixed |
-| `metrics` | enum[] | `["price","risk","investment"]` | 比較指標の選択 |
+| `metrics` | enum[] | `["price","risk","investment"]` | 比較指標（price/risk/humanFlow/education/corporate/investment/transport/commercial/medical） |
 | `includeMarkdown` | boolean | `true` | Markdown レポートを含むか |
 
 **出力**: `scores[]`（各都道府県スコア）, `ranking[]`, `radarData[]`（SVG 用正規化値）, `diffs[]`（差分ハイライト）, `bestFor`（投資/安全/成長別おすすめ）, `markdownReport`
@@ -179,9 +210,25 @@ capabilities がない都道府県では該当フィールドが `undefined` に
 | `neighborhood` | string | optional | 町丁目（例: `"名駅南1丁目"`）。v2.1 はラベルのみ |
 | `focus` | enum | `"all"` | price / risk / demand / all |
 
-**出力**: `pricePerSqm`, `population`, `riskScore`, `floodLevel`, `humanFlowScore`, `competitorDensity`, `localPitch`（セールスピッチ文）, `keyInsights[]`, `markdownReport`
+**出力**: `pricePerSqm`, `population`, `riskScore`, `floodLevel`, `humanFlowScore`, `transportScore`, `commercialDensity`, `medicalDensity`, `competitorDensity`, `localPitch`（セールスピッチ文）, `keyInsights[]`, `markdownReport`
 
-> **v2.1 制約**: `neighborhood` はレポートのラベルとして使用します。町丁目単位の実データ集計は v2.2 以降で対応予定です。
+> **制約**: `neighborhood` はレポートのラベルとして使用します。町丁目単位の実データ集計は v2.4 以降で対応予定です。
+
+### `evaluate_store_location` *(v2.2 新設)*
+
+コンビニ・ファミレス・カフェ・ドラッグストア・スーパーの出店適地評価。店舗タイプ別に重み付けを自動調整し、人口・人流・リスク・競合・交通・教育・商業施設・医療の 8 軸でスコアリング。
+
+| パラメータ | 型 | デフォルト | 説明 |
+|---|---|---|---|
+| `prefecture` | string | `"愛知県"` | 都道府県名 |
+| `city` | string | - | 市区町村名 |
+| `neighborhood` | string | optional | 町丁目ラベル |
+| `storeType` | enum | - | convenience / family_restaurant / cafe / drugstore / supermarket |
+| `radiusM` | number | `500` | 競合・施設検索半径（m） |
+| `customWeights` | Record | optional | カスタム重み付け（省略時はタイプ別デフォルト） |
+| `includeMarkdown` | boolean | `true` | Markdown レポートを含むか |
+
+**出力**: `overallScore (0-100)`, `breakdown`（8 軸スコア）, `keyCompetitors[]`（距離・チェーン名・強度・弱点）, `differentiationSuggestions[]`（AI 差別化提案）, `keyInsights[]`, `markdownReport`
 
 ## Resources（v2.0 URI パターン）
 
@@ -220,6 +267,9 @@ capabilities がない都道府県では該当フィールドが `undefined` に
 | 事業所統計 | 総務省 e-Stat | 2025-12-01 |
 | 犯罪統計 | 愛知県警察オープンデータ | 2025-12-01 |
 | 3D都市モデル | 国土交通省 PLATEAU | 2025-12-01 |
+| 交通利便性 | 国土交通省交通データ + JR/私鉄/市営地下鉄 | 2026-05-01 |
+| 商業施設 | 商業統計 + チェーン店立地データ | 2026-05-01 |
+| 医療福祉施設 | 厚労省オープンデータ | 2026-05-01 |
 
 **注意**: データは MVP デモ用のサンプルスナップショットです。投資判断には最新の公開データを直接ご確認ください。
 
@@ -229,35 +279,31 @@ capabilities がない都道府県では該当フィールドが `undefined` に
 pnpm install
 pnpm dev          # TypeScript watch
 pnpm build:ui     # ダッシュボード再ビルド
-pnpm test         # Vitest (93 tests)
+pnpm test         # Vitest (130 tests)
 pnpm lint         # 型チェック
 ```
 
 ## ロードマップ
 
-### v2.1.0（本バージョン）
-- `compare_prefectures`: 2〜5 都道府県比較（レーダー・ランキング・差分ハイライト・Markdown）
-- `drill_down_local_analysis`: 市区町村 / 町丁目ラベルドリルダウン
-- ダッシュボード比較モード（地図 2 分割 + SVG レーダー + ランキングテーブル + bestFor）
-- 市区町村クリック → ドリルダウンパネル（町丁目入力欄付き）
-- 全ツールに `neighborhood` オプションフィールド追加
+### v2.2.0（本バージョン）
+- `evaluate_store_location`: 店舗タイプ別重み付け（コンビニ/ファミレス/カフェ/ドラッグストア/スーパー）+ 競合分析 + 差別化提案
+- 交通利便性・商業施設・医療福祉の 3 データソースを全ツールに統合
+- `cross_analyze` に `includeTransport` / `includeCommercial` / `includeMedical` フラグ追加
+- `compare_prefectures` のメトリクスに transport / commercial / medical 追加（8 軸レーダー対応）
+- `drill_down_local_analysis` に交通スコア・商業密度・医療充実度を追加
+- ダッシュボード 3 新レイヤー + 店舗評価モードトグル
 
-### v2.2.0（予定）: 店舗展開評価ツール `evaluate_store_location`
+### v2.3.0（予定）: PLATEAU 3D 影シミュレーション
+- SunCalc.js による太陽位置計算
+- 建物高さ × 太陽角度からの影ポリゴン計算（ヒューリスティック 2D）
+- ダッシュボード日時スライダー + 影レイヤー ON/OFF
+- `simulate_landscape_impact` ツール（日照時間・影面積・高層建物リスト）
 
-フードチェーン・コンビニ・カフェなど向けの出店適地評価。
-
-| 機能 | 詳細 |
-|---|---|
-| 店舗タイプ別重み付け | コンビニ・ファミリー飲食・カフェ・ドラッグストア・スーパーで自動調整 |
-| 人流 × 人口 × リスク × 競合 | 4 軸クロス分析。総合スコア 0-100 + レーダーチャート |
-| 競合分析拡張 | 競合密度・強さ（チェーン vs 個人店）・距離別影響・時間帯別重複 |
-| AI 差別化提案 | `differentiationSuggestions` で「24h+ATM 特化」など具体的な勝ち筋を生成 |
-| 町丁目実データ対応 | v2.2 から `neighborhood` に e-Stat 小地域集計データを結合 |
-
-### v2.3.0（予定）
-- Overpass API 連携（OSM 競合店舗リアルタイム取得）
-- 大阪府・福岡県ローダー追加
-- Federation Hub 登録（子 MCP として公開）
+### v2.4.0（予定）: 町丁目実データ + Three.js 3D
+- e-Stat 小地域集計（町丁目別人口・世帯）を実データとして統合
+- `neighborhood` を全ツールで実データ対応に昇格
+- Three.js による実 3D ビュー（コード分割 `dashboard-3d.html`）
+- 大阪府ローダー追加で全国展開の足がかり
 
 ## ライセンス
 

@@ -6,7 +6,7 @@ interface PrefectureConfig {
   center: [number, number];
   zoom: number;
   displayName: string;
-  capabilities: { humanFlow: boolean; education: boolean; corporate: boolean; crime: boolean; plateau: boolean };
+  capabilities: { humanFlow: boolean; education: boolean; corporate: boolean; crime: boolean; plateau: boolean; transport: boolean; commercial: boolean; medical: boolean };
   municipalities: Record<string, [number, number]>;
   landPrices: Record<string, { price: number; change: number }>;
   priceBuckets: PriceBucket[];
@@ -15,6 +15,9 @@ interface PrefectureConfig {
   school: Record<string, { score: number; advancement: number }>;
   corporate: Record<string, { establishments: number; major: number; employees: number }>;
   plateau: { name: string; city: string; height: number; lat: number; lng: number }[];
+  transport: Record<string, { stations: number; dailyPassengers: number; lines: string[] }>;
+  commercial: Record<string, { facilities: number; malls: number; cvs: number; totalGfa: number }>;
+  medical: Record<string, { facilities: number; hospitals: number; beds: number }>;
 }
 
 const AICHI_PRICE_BUCKETS: PriceBucket[] = [
@@ -40,7 +43,7 @@ const PREFECTURES: Record<string, PrefectureConfig> = {
     center: [35.1, 136.95],
     zoom: 11,
     displayName: '愛知県',
-    capabilities: { humanFlow: true, education: true, corporate: true, crime: true, plateau: true },
+    capabilities: { humanFlow: true, education: true, corporate: true, crime: true, plateau: true, transport: true, commercial: true, medical: true },
     municipalities: {
       '名古屋市中村区': [35.1709, 136.8716], '名古屋市中区': [35.1709, 136.9066],
       '名古屋市東区': [35.1815, 136.9274], '名古屋市千種区': [35.1676, 136.9486],
@@ -119,12 +122,90 @@ const PREFECTURES: Record<string, PrefectureConfig> = {
       { name: 'ルーセントタワー', city: '名古屋市西区', height: 180, lat: 35.1748, lng: 136.8782 },
       { name: 'グローバルゲート', city: '名古屋市中村区', height: 170, lat: 35.1640, lng: 136.8780 },
     ],
+    transport: {
+      '名古屋市中村区': { stations: 6, dailyPassengers: 1518000, lines: ['JR東海道新幹線','JR東海道本線','地下鉄東山線','地下鉄桜通線','名鉄名古屋本線','近鉄名古屋線'] },
+      '名古屋市中区': { stations: 5, dailyPassengers: 777000, lines: ['JR東海道本線','地下鉄東山線','地下鉄名城線','地下鉄鶴舞線','名鉄名古屋本線'] },
+      '名古屋市東区': { stations: 4, dailyPassengers: 312000, lines: ['地下鉄東山線','地下鉄名城線','地下鉄桜通線','名鉄瀬戸線'] },
+      '名古屋市千種区': { stations: 4, dailyPassengers: 285000, lines: ['JR中央本線','地下鉄東山線','地下鉄名城線','地下鉄桜通線'] },
+      '名古屋市名東区': { stations: 3, dailyPassengers: 145000, lines: ['地下鉄東山線','地下鉄名城線','リニモ'] },
+      '名古屋市熱田区': { stations: 3, dailyPassengers: 198000, lines: ['JR東海道本線','地下鉄名城線','名鉄名古屋本線'] },
+      '名古屋市北区': { stations: 3, dailyPassengers: 125000, lines: ['地下鉄名城線','地下鉄上飯田線','名鉄小牧線'] },
+      '名古屋市西区': { stations: 2, dailyPassengers: 95000, lines: ['地下鉄鶴舞線','名鉄犬山線'] },
+      '名古屋市昭和区': { stations: 3, dailyPassengers: 162000, lines: ['地下鉄鶴舞線','地下鉄桜通線','地下鉄名城線'] },
+      '名古屋市瑞穂区': { stations: 2, dailyPassengers: 88000, lines: ['地下鉄桜通線','地下鉄名城線'] },
+      '名古屋市港区': { stations: 2, dailyPassengers: 42000, lines: ['地下鉄名港線','あおなみ線'] },
+      '名古屋市中川区': { stations: 2, dailyPassengers: 55000, lines: ['あおなみ線','近鉄名古屋線'] },
+      '名古屋市緑区': { stations: 2, dailyPassengers: 72000, lines: ['地下鉄桜通線','名鉄名古屋本線'] },
+      '名古屋市南区': { stations: 2, dailyPassengers: 48000, lines: ['JR東海道本線','名鉄常滑線'] },
+      '名古屋市天白区': { stations: 2, dailyPassengers: 68000, lines: ['地下鉄鶴舞線','地下鉄桜通線'] },
+      '名古屋市守山区': { stations: 2, dailyPassengers: 52000, lines: ['名鉄瀬戸線','ゆとりーとライン'] },
+      '豊田市': { stations: 3, dailyPassengers: 85000, lines: ['名鉄三河線','名鉄豊田線','愛知環状鉄道'] },
+      '岡崎市': { stations: 3, dailyPassengers: 62000, lines: ['JR東海道本線','名鉄名古屋本線','愛知環状鉄道'] },
+      '一宮市': { stations: 2, dailyPassengers: 78000, lines: ['JR東海道本線','名鉄名古屋本線'] },
+      '春日井市': { stations: 3, dailyPassengers: 92000, lines: ['JR中央本線','名鉄小牧線','城北線'] },
+      '豊橋市': { stations: 3, dailyPassengers: 72000, lines: ['JR東海道新幹線','JR東海道本線','豊橋鉄道'] },
+      '安城市': { stations: 2, dailyPassengers: 38000, lines: ['JR東海道本線','名鉄西尾線'] },
+      '刈谷市': { stations: 2, dailyPassengers: 55000, lines: ['JR東海道本線','名鉄三河線'] },
+      '小牧市': { stations: 2, dailyPassengers: 32000, lines: ['名鉄小牧線','名鉄犬山線'] },
+    },
+    commercial: {
+      '名古屋市中村区': { facilities: 1850, malls: 8, cvs: 245, totalGfa: 1820000 },
+      '名古屋市中区': { facilities: 2340, malls: 12, cvs: 310, totalGfa: 2450000 },
+      '名古屋市東区': { facilities: 680, malls: 3, cvs: 95, totalGfa: 520000 },
+      '名古屋市千種区': { facilities: 520, malls: 2, cvs: 82, totalGfa: 380000 },
+      '名古屋市名東区': { facilities: 410, malls: 2, cvs: 65, totalGfa: 290000 },
+      '名古屋市緑区': { facilities: 380, malls: 3, cvs: 58, totalGfa: 420000 },
+      '名古屋市港区': { facilities: 290, malls: 2, cvs: 42, totalGfa: 350000 },
+      '名古屋市熱田区': { facilities: 450, malls: 2, cvs: 55, totalGfa: 310000 },
+      '名古屋市昭和区': { facilities: 340, malls: 1, cvs: 52, totalGfa: 185000 },
+      '名古屋市天白区': { facilities: 280, malls: 1, cvs: 48, totalGfa: 165000 },
+      '名古屋市瑞穂区': { facilities: 260, malls: 1, cvs: 38, totalGfa: 145000 },
+      '名古屋市中川区': { facilities: 320, malls: 2, cvs: 55, totalGfa: 280000 },
+      '名古屋市北区': { facilities: 310, malls: 1, cvs: 48, totalGfa: 175000 },
+      '名古屋市西区': { facilities: 350, malls: 2, cvs: 52, totalGfa: 210000 },
+      '名古屋市南区': { facilities: 270, malls: 1, cvs: 40, totalGfa: 155000 },
+      '名古屋市守山区': { facilities: 240, malls: 1, cvs: 38, totalGfa: 140000 },
+      '豊田市': { facilities: 620, malls: 4, cvs: 85, totalGfa: 580000 },
+      '岡崎市': { facilities: 480, malls: 3, cvs: 72, totalGfa: 420000 },
+      '一宮市': { facilities: 420, malls: 2, cvs: 65, totalGfa: 350000 },
+      '春日井市': { facilities: 390, malls: 2, cvs: 58, totalGfa: 310000 },
+      '豊橋市': { facilities: 450, malls: 3, cvs: 68, totalGfa: 380000 },
+      '安城市': { facilities: 280, malls: 1, cvs: 42, totalGfa: 195000 },
+      '刈谷市': { facilities: 310, malls: 2, cvs: 48, totalGfa: 225000 },
+      '小牧市': { facilities: 260, malls: 1, cvs: 38, totalGfa: 175000 },
+    },
+    medical: {
+      '名古屋市中村区': { facilities: 185, hospitals: 8, beds: 2850 },
+      '名古屋市中区': { facilities: 245, hospitals: 12, beds: 3200 },
+      '名古屋市東区': { facilities: 120, hospitals: 5, beds: 1850 },
+      '名古屋市千種区': { facilities: 210, hospitals: 9, beds: 4200 },
+      '名古屋市名東区': { facilities: 145, hospitals: 4, beds: 1200 },
+      '名古屋市緑区': { facilities: 135, hospitals: 5, beds: 1650 },
+      '名古屋市港区': { facilities: 85, hospitals: 3, beds: 920 },
+      '名古屋市熱田区': { facilities: 98, hospitals: 4, beds: 1380 },
+      '名古屋市昭和区': { facilities: 180, hospitals: 8, beds: 3800 },
+      '名古屋市天白区': { facilities: 110, hospitals: 4, beds: 1100 },
+      '名古屋市瑞穂区': { facilities: 125, hospitals: 5, beds: 1950 },
+      '名古屋市中川区': { facilities: 105, hospitals: 4, beds: 1050 },
+      '名古屋市北区': { facilities: 115, hospitals: 4, beds: 1250 },
+      '名古屋市西区': { facilities: 108, hospitals: 3, beds: 980 },
+      '名古屋市南区': { facilities: 92, hospitals: 3, beds: 850 },
+      '名古屋市守山区': { facilities: 88, hospitals: 3, beds: 780 },
+      '豊田市': { facilities: 165, hospitals: 7, beds: 2800 },
+      '岡崎市': { facilities: 142, hospitals: 6, beds: 2350 },
+      '一宮市': { facilities: 128, hospitals: 5, beds: 1950 },
+      '春日井市': { facilities: 118, hospitals: 5, beds: 1750 },
+      '豊橋市': { facilities: 155, hospitals: 7, beds: 2600 },
+      '安城市': { facilities: 72, hospitals: 3, beds: 850 },
+      '刈谷市': { facilities: 85, hospitals: 3, beds: 1050 },
+      '小牧市': { facilities: 68, hospitals: 2, beds: 620 },
+    },
   },
   tokyo: {
     center: [35.68, 139.76],
     zoom: 11,
     displayName: '東京都',
-    capabilities: { humanFlow: false, education: false, corporate: false, crime: false, plateau: false },
+    capabilities: { humanFlow: false, education: false, corporate: false, crime: false, plateau: false, transport: false, commercial: false, medical: false },
     municipalities: {
       '千代田区': [35.6940, 139.7536], '中央区': [35.6709, 139.7727],
       '港区': [35.6585, 139.7514], '新宿区': [35.6938, 139.7036],
@@ -170,6 +251,9 @@ const PREFECTURES: Record<string, PrefectureConfig> = {
     school: {},
     corporate: {},
     plateau: [],
+    transport: {},
+    commercial: {},
+    medical: {},
   },
 };
 
@@ -415,6 +499,73 @@ function buildPlateauGroup(prefKey: string): any {
   return group;
 }
 
+function buildTransportGroup(prefKey: string, onClickArea?: (name: string) => void): any {
+  const group = L.layerGroup();
+  const config = pref(prefKey);
+  for (const [name, center] of Object.entries(config.municipalities)) {
+    const trans = config.transport[name];
+    if (!trans) continue;
+    const radius = Math.max(400, Math.sqrt(trans.dailyPassengers) * 0.3);
+    const circle = L.circle(center, {
+      radius, fillColor: '#14b8a6', fillOpacity: 0.5, color: '#14b8a6', weight: 2,
+    });
+    circle.bindPopup(`
+      <div class="popup-title">${name}</div>
+      <div class="popup-row"><span>駅数</span><span>${trans.stations}</span></div>
+      <div class="popup-row"><span>日乗降客数</span><span>${trans.dailyPassengers.toLocaleString()}人</span></div>
+      <div class="popup-row"><span>路線</span><span>${trans.lines.join('、')}</span></div>
+    `);
+    if (onClickArea) circle.on('click', () => onClickArea(name));
+    group.addLayer(circle);
+  }
+  return group;
+}
+
+function buildCommercialGroup(prefKey: string, onClickArea?: (name: string) => void): any {
+  const group = L.layerGroup();
+  const config = pref(prefKey);
+  for (const [name, center] of Object.entries(config.municipalities)) {
+    const com = config.commercial[name];
+    if (!com) continue;
+    const radius = Math.max(400, Math.sqrt(com.totalGfa) * 0.5);
+    const circle = L.circle(center, {
+      radius, fillColor: '#f59e0b', fillOpacity: 0.5, color: '#f59e0b', weight: 2,
+    });
+    circle.bindPopup(`
+      <div class="popup-title">${name}</div>
+      <div class="popup-row"><span>施設数</span><span>${com.facilities}</span></div>
+      <div class="popup-row"><span>大型モール</span><span>${com.malls}</span></div>
+      <div class="popup-row"><span>コンビニ</span><span>${com.cvs}</span></div>
+      <div class="popup-row"><span>延床面積</span><span>${com.totalGfa.toLocaleString()}㎡</span></div>
+    `);
+    if (onClickArea) circle.on('click', () => onClickArea(name));
+    group.addLayer(circle);
+  }
+  return group;
+}
+
+function buildMedicalGroup(prefKey: string, onClickArea?: (name: string) => void): any {
+  const group = L.layerGroup();
+  const config = pref(prefKey);
+  for (const [name, center] of Object.entries(config.municipalities)) {
+    const med = config.medical[name];
+    if (!med) continue;
+    const radius = Math.max(400, med.facilities * 4);
+    const circle = L.circle(center, {
+      radius, fillColor: '#ec4899', fillOpacity: 0.5, color: '#ec4899', weight: 2,
+    });
+    circle.bindPopup(`
+      <div class="popup-title">${name}</div>
+      <div class="popup-row"><span>医療施設数</span><span>${med.facilities}</span></div>
+      <div class="popup-row"><span>病院数</span><span>${med.hospitals}</span></div>
+      <div class="popup-row"><span>病床数</span><span>${med.beds.toLocaleString()}</span></div>
+    `);
+    if (onClickArea) circle.on('click', () => onClickArea(name));
+    group.addLayer(circle);
+  }
+  return group;
+}
+
 function priceToColorFor(price: number, prefKey: string): string {
   for (const bucket of pref(prefKey).priceBuckets) {
     if (price >= bucket.min) return bucket.color;
@@ -432,6 +583,9 @@ function renderLayerOn(mapInst: any, layer: string, prefKey: string, onClickArea
     case 'school_district': return addLayerToMap(mapInst, buildSchoolGroup(prefKey, onClickArea));
     case 'corporate_density': return addLayerToMap(mapInst, buildCorporateGroup(prefKey, onClickArea));
     case 'plateau_3d': return addLayerToMap(mapInst, buildPlateauGroup(prefKey));
+    case 'transport': return addLayerToMap(mapInst, buildTransportGroup(prefKey, onClickArea));
+    case 'commercial_facilities': return addLayerToMap(mapInst, buildCommercialGroup(prefKey, onClickArea));
+    case 'medical_facilities': return addLayerToMap(mapInst, buildMedicalGroup(prefKey, onClickArea));
     default: return null;
   }
 }
@@ -500,11 +654,38 @@ function renderPlateau3DLayer() {
   }
 }
 
+function renderTransportLayer() {
+  clearOverlay();
+  currentOverlayGroup = renderLayerOn(map, 'transport', currentPrefecture, selectArea);
+  if (comparisonMode && mapSecondary) {
+    secondaryOverlayGroup = renderLayerOn(mapSecondary, 'transport', secondaryPrefKey());
+  }
+}
+
+function renderCommercialFacilitiesLayer() {
+  clearOverlay();
+  currentOverlayGroup = renderLayerOn(map, 'commercial_facilities', currentPrefecture, selectArea);
+  if (comparisonMode && mapSecondary) {
+    secondaryOverlayGroup = renderLayerOn(mapSecondary, 'commercial_facilities', secondaryPrefKey());
+  }
+}
+
+function renderMedicalFacilitiesLayer() {
+  clearOverlay();
+  currentOverlayGroup = renderLayerOn(map, 'medical_facilities', currentPrefecture, selectArea);
+  if (comparisonMode && mapSecondary) {
+    secondaryOverlayGroup = renderLayerOn(mapSecondary, 'medical_facilities', secondaryPrefKey());
+  }
+}
+
 const CAPABILITY_LAYERS: Record<string, keyof PrefectureConfig['capabilities']> = {
   human_flow: 'humanFlow',
   school_district: 'education',
   corporate_density: 'corporate',
   plateau_3d: 'plateau',
+  transport: 'transport',
+  commercial_facilities: 'commercial',
+  medical_facilities: 'medical',
 };
 
 function isLayerAvailable(layer: string): boolean {
@@ -527,6 +708,9 @@ function switchLayer(layer: string) {
     case 'school_district': renderSchoolDistrictLayer(); break;
     case 'corporate_density': renderCorporateDensityLayer(); break;
     case 'plateau_3d': renderPlateau3DLayer(); break;
+    case 'transport': renderTransportLayer(); break;
+    case 'commercial_facilities': renderCommercialFacilitiesLayer(); break;
+    case 'medical_facilities': renderMedicalFacilitiesLayer(); break;
   }
   renderLegend();
   updateLayerButtons();
@@ -557,6 +741,9 @@ function renderLayerControl() {
     <button class="layer-btn" data-layer="school_district">学区</button>
     <button class="layer-btn" data-layer="corporate_density">企業</button>
     <button class="layer-btn" data-layer="plateau_3d">3D建物</button>
+    <button class="layer-btn" data-layer="transport">🚉交通</button>
+    <button class="layer-btn" data-layer="commercial_facilities">🏬商業施設</button>
+    <button class="layer-btn" data-layer="medical_facilities">🏥医療</button>
   `;
   ctrl.addEventListener('click', (e) => {
     const target = e.target as HTMLElement;
@@ -603,6 +790,15 @@ function renderLegend() {
       <div class="legend-item"><div class="legend-color" style="background:#ff6b35"></div> 150m〜200m</div>`,
     transaction: `<div class="legend-title">取引分布</div>
       <div class="legend-item"><div class="legend-color" style="background:#4f8cff"></div> 取引エリア</div>`,
+    transport: `<div class="legend-title">交通インフラ</div>
+      <div class="legend-item"><div class="legend-color" style="background:#14b8a6"></div> 高乗降客数</div>
+      <div class="legend-item"><div class="legend-color" style="background:rgba(20,184,166,0.3)"></div> 低乗降客数</div>`,
+    commercial_facilities: `<div class="legend-title">商業施設</div>
+      <div class="legend-item"><div class="legend-color" style="background:#f59e0b"></div> 大規模商業</div>
+      <div class="legend-item"><div class="legend-color" style="background:rgba(245,158,11,0.3)"></div> 小規模商業</div>`,
+    medical_facilities: `<div class="legend-title">医療施設</div>
+      <div class="legend-item"><div class="legend-color" style="background:#ec4899"></div> 高密度医療</div>
+      <div class="legend-item"><div class="legend-color" style="background:rgba(236,72,153,0.3)"></div> 低密度医療</div>`,
   };
 
   legend.innerHTML = legendMap[currentLayer] ?? '';
@@ -739,6 +935,21 @@ function buildComparisonPanel(): string {
     if (corps.length === 0) return null;
     return corps.reduce((s, c) => s + c.establishments, 0) / corps.length;
   };
+  const getAvgTransport = (cfg: PrefectureConfig) => {
+    const entries = Object.values(cfg.transport);
+    if (entries.length === 0) return null;
+    return entries.reduce((s, t) => s + t.dailyPassengers, 0) / entries.length;
+  };
+  const getAvgCommercial = (cfg: PrefectureConfig) => {
+    const entries = Object.values(cfg.commercial);
+    if (entries.length === 0) return null;
+    return entries.reduce((s, c) => s + c.totalGfa, 0) / entries.length;
+  };
+  const getAvgMedical = (cfg: PrefectureConfig) => {
+    const entries = Object.values(cfg.medical);
+    if (entries.length === 0) return null;
+    return entries.reduce((s, m) => s + m.facilities, 0) / entries.length;
+  };
 
   const priceA = getAvgPrice(cfgA), priceB = getAvgPrice(cfgB);
   const changeA = getAvgChange(cfgA), changeB = getAvgChange(cfgB);
@@ -746,6 +957,9 @@ function buildComparisonPanel(): string {
   const flowA = getAvgHumanFlow(cfgA), flowB = getAvgHumanFlow(cfgB);
   const eduA = getAvgEdu(cfgA), eduB = getAvgEdu(cfgB);
   const corpA = getAvgCorp(cfgA), corpB = getAvgCorp(cfgB);
+  const transA = getAvgTransport(cfgA), transB = getAvgTransport(cfgB);
+  const comA = getAvgCommercial(cfgA), comB = getAvgCommercial(cfgB);
+  const medA = getAvgMedical(cfgA), medB = getAvgMedical(cfgB);
 
   const norm2 = (a: number | null, b: number | null, invert = false) => {
     if (a == null || b == null) return [50, 50];
@@ -760,18 +974,25 @@ function buildComparisonPanel(): string {
   const [flowNA, flowNB] = norm2(flowA, flowB);
   const [eduNA, eduNB] = norm2(eduA, eduB);
   const [corpNA, corpNB] = norm2(corpA, corpB);
+  const [transNA, transNB] = norm2(transA, transB);
+  const [comNA, comNB] = norm2(comA, comB);
+  const [medNA, medNB] = norm2(medA, medB);
+
+  const radarAxes = ['価格手頃', '安全', '人流', '教育', '企業', '交通', '商業', '医療'];
+  const radarValuesA = [priceNA, riskNA, flowNA, eduNA, corpNA, transNA, comNA, medNA];
+  const radarValuesB = [priceNB, riskNB, flowNB, eduNB, corpNB, transNB, comNB, medNB];
 
   const radar = buildRadarSVG(
     [
-      { label: cfgA.displayName, color: '#4f8cff', values: [priceNA, riskNA, flowNA, eduNA, corpNA] },
-      { label: cfgB.displayName, color: '#ff6b35', values: [priceNB, riskNB, flowNB, eduNB, corpNB] },
+      { label: cfgA.displayName, color: '#4f8cff', values: radarValuesA },
+      { label: cfgB.displayName, color: '#ff6b35', values: radarValuesB },
     ],
-    ['価格手頃', '安全', '人流', '教育', '企業'],
-    220,
+    radarAxes,
+    240,
   );
 
-  const scoreA = Math.round((priceNA + riskNA + flowNA + eduNA + corpNA) / 5);
-  const scoreB = Math.round((priceNB + riskNB + flowNB + eduNB + corpNB) / 5);
+  const scoreA = Math.round(radarValuesA.reduce((s, v) => s + v, 0) / radarValuesA.length);
+  const scoreB = Math.round(radarValuesB.reduce((s, v) => s + v, 0) / radarValuesB.length);
 
   const fmtPrice = (v: number | null) => v ? `${(v / 10000).toFixed(0)}万円/㎡` : '-';
   const fmtChange = (v: number | null) => v != null ? `${v >= 0 ? '+' : ''}${v.toFixed(1)}%` : '-';
@@ -826,6 +1047,9 @@ function buildDrillDownPanel(area: string): string {
   const flow = config.humanFlow[area];
   const school = config.school[area];
   const corp = config.corporate[area];
+  const trans = config.transport[area];
+  const com = config.commercial[area];
+  const med = config.medical[area];
 
   const riskBadge = risk
     ? `<span style="color:${riskToColor(risk.overall)}">${risk.overall}/100</span>`
@@ -855,11 +1079,35 @@ function buildDrillDownPanel(area: string): string {
         ${corp ? `<tr><th colspan="2">企業立地</th></tr>
         <tr><td>事業所数</td><td>${corp.establishments.toLocaleString()}</td></tr>
         <tr><td>大企業</td><td>${corp.major}社</td></tr>` : ''}
+        ${trans ? `<tr><th colspan="2">交通</th></tr>
+        <tr><td>駅数</td><td>${trans.stations}</td></tr>
+        <tr><td>日乗降客数</td><td>${trans.dailyPassengers.toLocaleString()}人</td></tr>
+        <tr><td>路線</td><td style="font-size:10px">${trans.lines.join('、')}</td></tr>` : ''}
+        ${com ? `<tr><th colspan="2">商業施設</th></tr>
+        <tr><td>施設数</td><td>${com.facilities}</td></tr>
+        <tr><td>大型モール</td><td>${com.malls}</td></tr>
+        <tr><td>コンビニ</td><td>${com.cvs}</td></tr>` : ''}
+        ${med ? `<tr><th colspan="2">医療</th></tr>
+        <tr><td>施設数</td><td>${med.facilities}</td></tr>
+        <tr><td>病院</td><td>${med.hospitals}</td></tr>
+        <tr><td>病床数</td><td>${med.beds.toLocaleString()}</td></tr>` : ''}
       </table>
       <div class="neighborhood-input-row">
         <label>町丁目で絞り込み（v2.1: ラベルのみ）</label>
         <input type="text" id="neighborhood-input" placeholder="例: 名駅南1丁目" class="neighborhood-input"/>
         <div id="neighborhood-note" class="neighborhood-note"></div>
+      </div>
+      <div class="store-eval-row" style="margin-top:12px;padding-top:12px;border-top:1px solid rgba(255,255,255,0.1)">
+        <label style="font-size:12px;color:var(--text-muted)">店舗評価モード</label>
+        <select id="store-eval-select" class="neighborhood-input" style="margin-top:4px">
+          <option value="">-- 業態を選択 --</option>
+          <option value="convenience">コンビニ</option>
+          <option value="family_restaurant">ファミレス</option>
+          <option value="cafe">カフェ</option>
+          <option value="drugstore">ドラッグストア</option>
+          <option value="supermarket">スーパーマーケット</option>
+        </select>
+        <div id="store-eval-result" class="neighborhood-note" style="margin-top:6px"></div>
       </div>
     </div>`;
 }
@@ -878,6 +1126,16 @@ function attachDrillDownEvents() {
         : '';
     }
   });
+  const storeSelect = document.getElementById('store-eval-select') as HTMLSelectElement | null;
+  const storeResult = document.getElementById('store-eval-result');
+  storeSelect?.addEventListener('change', () => {
+    const storeType = storeSelect.value;
+    if (storeResult) {
+      storeResult.textContent = storeType
+        ? `店舗評価はツール側で実行してください。storeType: ${storeType}`
+        : '';
+    }
+  });
 }
 
 function updateInsightPanel(area: string) {
@@ -888,6 +1146,9 @@ function updateInsightPanel(area: string) {
   const flow = config.humanFlow[area];
   const school = config.school[area];
   const corp = config.corporate[area];
+  const trans = config.transport[area];
+  const com = config.commercial[area];
+  const med = config.medical[area];
 
   const investmentScore = price
     ? Math.round(Math.max(0, Math.min(100,
@@ -952,6 +1213,28 @@ function updateInsightPanel(area: string) {
     <div class="panel-section">
       <h3>企業集積</h3>
       <div style="font-size:12px;margin:4px 0">事業所: ${corp.establishments.toLocaleString()} / 大企業: ${corp.major}社</div>
+    </div>
+    ` : ''}
+
+    ${trans ? `
+    <div class="panel-section">
+      <h3>交通</h3>
+      <div style="font-size:12px;margin:4px 0">駅数: ${trans.stations} / 日乗降客数: ${trans.dailyPassengers.toLocaleString()}人</div>
+      <div style="font-size:11px;margin:4px 0;color:var(--text-muted)">${trans.lines.join('、')}</div>
+    </div>
+    ` : ''}
+
+    ${com ? `
+    <div class="panel-section">
+      <h3>商業施設</h3>
+      <div style="font-size:12px;margin:4px 0">施設: ${com.facilities} / モール: ${com.malls} / コンビニ: ${com.cvs}</div>
+    </div>
+    ` : ''}
+
+    ${med ? `
+    <div class="panel-section">
+      <h3>医療</h3>
+      <div style="font-size:12px;margin:4px 0">施設: ${med.facilities} / 病院: ${med.hospitals} / 病床: ${med.beds.toLocaleString()}</div>
     </div>
     ` : ''}
 
