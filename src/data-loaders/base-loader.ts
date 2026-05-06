@@ -42,7 +42,7 @@ export abstract class BaseLoader implements PrefectureLoader {
     return memo(`${this.key}:csv:${filename}`, () => {
       const path = this.dataPath(filename);
       if (!existsSync(path)) return [];
-      const raw = readFileSync(path, 'utf-8');
+      const raw = readFileSync(path, 'utf-8').replace(/^\uFEFF/, '');
       const result = Papa.parse<T>(raw, { header: true, dynamicTyping: true, skipEmptyLines: true });
       return result.data;
     });
@@ -52,7 +52,7 @@ export abstract class BaseLoader implements PrefectureLoader {
     return memo(`${this.key}:json:${filename}`, () => {
       const path = this.dataPath(filename);
       if (!existsSync(path)) return fallback;
-      const raw = readFileSync(path, 'utf-8');
+      const raw = readFileSync(path, 'utf-8').replace(/^\uFEFF/, '');
       return JSON.parse(raw) as T;
     });
   }
@@ -65,7 +65,7 @@ export abstract class BaseLoader implements PrefectureLoader {
     return memo(`${this.key}:topojson:${filename}:${objectName}`, () => {
       const path = this.dataPath(filename);
       if (!existsSync(path)) return { type: 'FeatureCollection' as const, features: [] };
-      const raw = readFileSync(path, 'utf-8');
+      const raw = readFileSync(path, 'utf-8').replace(/^\uFEFF/, '');
       const topo = JSON.parse(raw);
       if (!topo.objects?.[objectName]) return { type: 'FeatureCollection' as const, features: [] };
       return topojsonClient.feature(topo, topo.objects[objectName]) as unknown as FeatureCollection;

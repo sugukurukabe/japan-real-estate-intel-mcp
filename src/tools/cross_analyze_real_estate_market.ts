@@ -73,22 +73,24 @@ export function crossAnalyze(input: CrossAnalyzeInput): CrossAnalyzeOutput {
   if (includeHumanFlow) {
     if (loader.capabilities.humanFlow) {
       const flowRecords = getHumanFlowForCity(area, prefKey);
-      const hf = computeHumanFlowMetrics(flowRecords);
-      humanFlowData = hf;
-      realDemandScore = computeRealDemandScore(hf, propertyType);
-      vacancyRiskScore = computeVacancyRiskScore(hf, propertyType);
+      if (flowRecords.length > 0) {
+        const hf = computeHumanFlowMetrics(flowRecords);
+        humanFlowData = hf;
+        realDemandScore = computeRealDemandScore(hf, propertyType);
+        vacancyRiskScore = computeVacancyRiskScore(hf, propertyType);
 
-      investmentScore = Math.round(Math.max(0, Math.min(100,
-        baseInvestment * 0.6 + realDemandScore * 0.3 + (100 - vacancyRiskScore) * 0.1,
-      )));
+        investmentScore = Math.round(Math.max(0, Math.min(100,
+          baseInvestment * 0.6 + realDemandScore * 0.3 + (100 - vacancyRiskScore) * 0.1,
+        )));
 
-      if (hf.weekdayAvgFlow > 50000) {
-        keyInsights.push(`平日人流${hf.weekdayAvgFlow.toLocaleString()}人/日。商業エリアとして高い集客力。`);
-      }
-      if (hf.flowTrend === 'increasing') {
-        keyInsights.push('人流が増加トレンド。エリアの活性化が進行中。');
-      } else if (hf.flowTrend === 'decreasing') {
-        keyInsights.push('人流が減少傾向。エリアの衰退リスクを検討。');
+        if (hf.weekdayAvgFlow > 50000) {
+          keyInsights.push(`平日人流${hf.weekdayAvgFlow.toLocaleString()}人/日。商業エリアとして高い集客力。`);
+        }
+        if (hf.flowTrend === 'increasing') {
+          keyInsights.push('人流が増加トレンド。エリアの活性化が進行中。');
+        } else if (hf.flowTrend === 'decreasing') {
+          keyInsights.push('人流が減少傾向。エリアの衰退リスクを検討。');
+        }
       }
     } else {
       keyInsights.push(`${loader.displayName}の人流データは v2.x で対応予定です。`);

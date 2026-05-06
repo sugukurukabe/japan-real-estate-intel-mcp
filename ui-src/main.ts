@@ -1,5 +1,7 @@
 declare const L: any;
 
+interface PriceBucket { min: number; color: string; label: string }
+
 interface PrefectureConfig {
   center: [number, number];
   zoom: number;
@@ -7,12 +9,31 @@ interface PrefectureConfig {
   capabilities: { humanFlow: boolean; education: boolean; corporate: boolean; crime: boolean; plateau: boolean };
   municipalities: Record<string, [number, number]>;
   landPrices: Record<string, { price: number; change: number }>;
+  priceBuckets: PriceBucket[];
   risk: Record<string, { flood: number; earthquake: string; overall: number }>;
   humanFlow: Record<string, { weekday: number; weekend: number; stay: number; trend: string }>;
   school: Record<string, { score: number; advancement: number }>;
   corporate: Record<string, { establishments: number; major: number; employees: number }>;
   plateau: { name: string; city: string; height: number; lat: number; lng: number }[];
 }
+
+const AICHI_PRICE_BUCKETS: PriceBucket[] = [
+  { min: 1000000, color: '#ff2d55', label: '100万〜' },
+  { min: 500000,  color: '#ff6b35', label: '50万〜100万' },
+  { min: 300000,  color: '#ffb340', label: '30万〜50万' },
+  { min: 200000,  color: '#ffe066', label: '20万〜30万' },
+  { min: 150000,  color: '#a8e6cf', label: '15万〜20万' },
+  { min: 0,       color: '#69b7eb', label: '〜15万' },
+];
+
+const TOKYO_PRICE_BUCKETS: PriceBucket[] = [
+  { min: 10000000, color: '#ff2d55', label: '1000万〜' },
+  { min: 5000000,  color: '#ff6b35', label: '500万〜1000万' },
+  { min: 2000000,  color: '#ffb340', label: '200万〜500万' },
+  { min: 1000000,  color: '#ffe066', label: '100万〜200万' },
+  { min: 500000,   color: '#a8e6cf', label: '50万〜100万' },
+  { min: 0,        color: '#69b7eb', label: '〜50万' },
+];
 
 const PREFECTURES: Record<string, PrefectureConfig> = {
   aichi: {
@@ -48,6 +69,7 @@ const PREFECTURES: Record<string, PrefectureConfig> = {
       '豊橋市': { price: 95000, change: 0.3 }, '安城市': { price: 120000, change: 2.0 },
       '刈谷市': { price: 135000, change: 2.5 }, '小牧市': { price: 110000, change: 0.9 },
     },
+    priceBuckets: AICHI_PRICE_BUCKETS,
     risk: {
       '名古屋市中村区': { flood: 60, earthquake: '6強', overall: 62 },
       '名古屋市中区': { flood: 30, earthquake: '6強', overall: 48 },
@@ -131,6 +153,7 @@ const PREFECTURES: Record<string, PrefectureConfig> = {
       '足立区': { price: 780000, change: 1.3 }, '葛飾区': { price: 420000, change: 0.5 },
       '江戸川区': { price: 480000, change: 0.8 },
     },
+    priceBuckets: TOKYO_PRICE_BUCKETS,
     risk: {
       '江東区': { flood: 80, earthquake: '6強', overall: 75 },
       '足立区': { flood: 85, earthquake: '6強', overall: 78 },
@@ -160,11 +183,9 @@ let comparisonMode = false;
 function pref(): PrefectureConfig { return PREFECTURES[currentPrefecture]; }
 
 function priceToColor(price: number): string {
-  if (price >= 1000000) return '#ff2d55';
-  if (price >= 500000) return '#ff6b35';
-  if (price >= 300000) return '#ffb340';
-  if (price >= 200000) return '#ffe066';
-  if (price >= 150000) return '#a8e6cf';
+  for (const bucket of pref().priceBuckets) {
+    if (price >= bucket.min) return bucket.color;
+  }
   return '#69b7eb';
 }
 
@@ -448,14 +469,13 @@ function renderLegend() {
   const legend = document.createElement('div');
   legend.className = 'legend';
 
+  const landPriceLegend = `<div class="legend-title">地価（万円/㎡） — ${pref().displayName}</div>` +
+    pref().priceBuckets
+      .map(b => `<div class="legend-item"><div class="legend-color" style="background:${b.color}"></div> ${b.label}</div>`)
+      .join('');
+
   const legendMap: Record<string, string> = {
-    land_price: `<div class="legend-title">地価（万円/㎡）</div>
-      <div class="legend-item"><div class="legend-color" style="background:#ff2d55"></div> 100万〜</div>
-      <div class="legend-item"><div class="legend-color" style="background:#ff6b35"></div> 50万〜100万</div>
-      <div class="legend-item"><div class="legend-color" style="background:#ffb340"></div> 30万〜50万</div>
-      <div class="legend-item"><div class="legend-color" style="background:#ffe066"></div> 20万〜30万</div>
-      <div class="legend-item"><div class="legend-color" style="background:#a8e6cf"></div> 15万〜20万</div>
-      <div class="legend-item"><div class="legend-color" style="background:#69b7eb"></div> 〜15万</div>`,
+    land_price: landPriceLegend,
     flood_risk: `<div class="legend-title">リスクスコア</div>
       <div class="legend-item"><div class="legend-color" style="background:#ff2d55"></div> 70〜 高リスク</div>
       <div class="legend-item"><div class="legend-color" style="background:#ff6b35"></div> 50〜69 中高</div>

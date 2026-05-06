@@ -14,9 +14,14 @@ const DISPLAY_NAMES: Record<string, string> = {
   hokkaido: '北海道',
 };
 
-export function resolvePrefecture(input: string): string {
-  const normalized = input.trim().toLowerCase();
-  if (PREFECTURE_KEYS[input]) return PREFECTURE_KEYS[input];
+const DEFAULT_PREFECTURE = 'aichi';
+
+export function resolvePrefecture(input: string | undefined | null): string {
+  if (input == null) return DEFAULT_PREFECTURE;
+  const trimmed = input.trim();
+  if (trimmed === '') return DEFAULT_PREFECTURE;
+  const normalized = trimmed.toLowerCase();
+  if (PREFECTURE_KEYS[trimmed]) return PREFECTURE_KEYS[trimmed];
   if (PREFECTURE_KEYS[normalized]) return PREFECTURE_KEYS[normalized];
   for (const [key, value] of Object.entries(PREFECTURE_KEYS)) {
     if (key.toLowerCase() === normalized) return value;
