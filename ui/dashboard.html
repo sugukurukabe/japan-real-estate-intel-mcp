@@ -21,47 +21,38 @@
       <aside id="insight-panel"></aside>
     </div>
   </div>
-  <script>"use strict";(()=>{var y={\u540D\u53E4\u5C4B\u5E02\u4E2D\u6751\u533A:{price:58e4,change:5.2},\u540D\u53E4\u5C4B\u5E02\u4E2D\u533A:{price:185e4,change:8.1},\u540D\u53E4\u5C4B\u5E02\u6771\u533A:{price:72e4,change:6.3},\u540D\u53E4\u5C4B\u5E02\u5343\u7A2E\u533A:{price:45e4,change:3.8},\u540D\u53E4\u5C4B\u5E02\u540D\u6771\u533A:{price:28e4,change:2.1},\u540D\u53E4\u5C4B\u5E02\u7DD1\u533A:{price:165e3,change:1.5},\u540D\u53E4\u5C4B\u5E02\u6E2F\u533A:{price:12e4,change:-.8},\u540D\u53E4\u5C4B\u5E02\u662D\u548C\u533A:{price:38e4,change:3.2},\u540D\u53E4\u5C4B\u5E02\u5929\u767D\u533A:{price:21e4,change:1.8},\u540D\u53E4\u5C4B\u5E02\u745E\u7A42\u533A:{price:34e4,change:2.9},\u540D\u53E4\u5C4B\u5E02\u71B1\u7530\u533A:{price:29e4,change:2.5},\u540D\u53E4\u5C4B\u5E02\u4E2D\u5DDD\u533A:{price:155e3,change:.5},\u540D\u53E4\u5C4B\u5E02\u5317\u533A:{price:24e4,change:2.3},\u540D\u53E4\u5C4B\u5E02\u897F\u533A:{price:26e4,change:2.8},\u540D\u53E4\u5C4B\u5E02\u5357\u533A:{price:17e4,change:-.3},\u540D\u53E4\u5C4B\u5E02\u5B88\u5C71\u533A:{price:175e3,change:1.2},\u8C4A\u7530\u5E02:{price:13e4,change:1.5},\u5CA1\u5D0E\u5E02:{price:105e3,change:.8},\u4E00\u5BAE\u5E02:{price:115e3,change:1},\u6625\u65E5\u4E95\u5E02:{price:14e4,change:1.8},\u8C4A\u6A4B\u5E02:{price:95e3,change:.3},\u5B89\u57CE\u5E02:{price:12e4,change:2},\u5208\u8C37\u5E02:{price:135e3,change:2.5},\u5C0F\u7267\u5E02:{price:11e4,change:.9}},f={\u540D\u53E4\u5C4B\u5E02\u4E2D\u6751\u533A:{flood:60,earthquake:"6\u5F37",overall:62},\u540D\u53E4\u5C4B\u5E02\u4E2D\u533A:{flood:30,earthquake:"6\u5F37",overall:48},\u540D\u53E4\u5C4B\u5E02\u6771\u533A:{flood:15,earthquake:"6\u5F31",overall:35},\u540D\u53E4\u5C4B\u5E02\u6E2F\u533A:{flood:85,earthquake:"6\u5F37",overall:78},\u540D\u53E4\u5C4B\u5E02\u4E2D\u5DDD\u533A:{flood:70,earthquake:"6\u5F37",overall:68},\u540D\u53E4\u5C4B\u5E02\u5357\u533A:{flood:55,earthquake:"6\u5F31",overall:52},\u540D\u53E4\u5C4B\u5E02\u7DD1\u533A:{flood:25,earthquake:"6\u5F31",overall:38},\u540D\u53E4\u5C4B\u5E02\u71B1\u7530\u533A:{flood:45,earthquake:"6\u5F31",overall:45},\u8C4A\u6A4B\u5E02:{flood:40,earthquake:"6\u5F31",overall:42},\u8C4A\u7530\u5E02:{flood:20,earthquake:"5\u5F37",overall:28}},c={\u540D\u53E4\u5C4B\u5E02\u4E2D\u6751\u533A:[35.1709,136.8716],\u540D\u53E4\u5C4B\u5E02\u4E2D\u533A:[35.1709,136.9066],\u540D\u53E4\u5C4B\u5E02\u6771\u533A:[35.1815,136.9274],\u540D\u53E4\u5C4B\u5E02\u5343\u7A2E\u533A:[35.1676,136.9486],\u540D\u53E4\u5C4B\u5E02\u540D\u6771\u533A:[35.1825,136.9906],\u540D\u53E4\u5C4B\u5E02\u7DD1\u533A:[35.0734,136.9539],\u540D\u53E4\u5C4B\u5E02\u6E2F\u533A:[35.0828,136.8472],\u540D\u53E4\u5C4B\u5E02\u662D\u548C\u533A:[35.1509,136.9331],\u540D\u53E4\u5C4B\u5E02\u5929\u767D\u533A:[35.1204,136.968],\u540D\u53E4\u5C4B\u5E02\u745E\u7A42\u533A:[35.1333,136.9347],\u540D\u53E4\u5C4B\u5E02\u71B1\u7530\u533A:[35.1268,136.9039],\u540D\u53E4\u5C4B\u5E02\u4E2D\u5DDD\u533A:[35.1338,136.8538],\u540D\u53E4\u5C4B\u5E02\u5317\u533A:[35.1985,136.9195],\u540D\u53E4\u5C4B\u5E02\u897F\u533A:[35.1887,136.8753],\u540D\u53E4\u5C4B\u5E02\u5357\u533A:[35.0984,136.9104],\u540D\u53E4\u5C4B\u5E02\u5B88\u5C71\u533A:[35.2154,136.9688],\u8C4A\u7530\u5E02:[35.0833,137.1557],\u5CA1\u5D0E\u5E02:[34.9552,137.1733],\u4E00\u5BAE\u5E02:[35.3015,136.803],\u6625\u65E5\u4E95\u5E02:[35.2512,136.9722],\u8C4A\u6A4B\u5E02:[34.7694,137.3916],\u5B89\u57CE\u5E02:[34.9587,137.0778],\u5208\u8C37\u5E02:[34.9891,137.0042],\u5C0F\u7267\u5E02:[35.2917,136.9222]},d={\u540D\u53E4\u5C4B\u5E02\u4E2D\u533A:{weekday:185e3,weekend:21e4,stay:95,trend:"increasing"},\u540D\u53E4\u5C4B\u5E02\u4E2D\u6751\u533A:{weekday:165e3,weekend:14e4,stay:45,trend:"increasing"},\u540D\u53E4\u5C4B\u5E02\u6771\u533A:{weekday:72e3,weekend:55e3,stay:60,trend:"stable"},\u540D\u53E4\u5C4B\u5E02\u5343\u7A2E\u533A:{weekday:48e3,weekend:52e3,stay:70,trend:"stable"},\u540D\u53E4\u5C4B\u5E02\u540D\u6771\u533A:{weekday:28e3,weekend:32e3,stay:85,trend:"stable"},\u540D\u53E4\u5C4B\u5E02\u7DD1\u533A:{weekday:22e3,weekend:28e3,stay:90,trend:"increasing"},\u540D\u53E4\u5C4B\u5E02\u6E2F\u533A:{weekday:35e3,weekend:18e3,stay:40,trend:"decreasing"},\u540D\u53E4\u5C4B\u5E02\u71B1\u7530\u533A:{weekday:55e3,weekend:68e3,stay:75,trend:"increasing"},\u540D\u53E4\u5C4B\u5E02\u4E2D\u5DDD\u533A:{weekday:2e4,weekend:15e3,stay:55,trend:"stable"},\u540D\u53E4\u5C4B\u5E02\u662D\u548C\u533A:{weekday:38e3,weekend:35e3,stay:65,trend:"stable"},\u8C4A\u7530\u5E02:{weekday:45e3,weekend:3e4,stay:50,trend:"stable"},\u5CA1\u5D0E\u5E02:{weekday:32e3,weekend:28e3,stay:55,trend:"stable"},\u8C4A\u6A4B\u5E02:{weekday:28e3,weekend:22e3,stay:50,trend:"decreasing"},\u4E00\u5BAE\u5E02:{weekday:25e3,weekend:2e4,stay:45,trend:"stable"},\u6625\u65E5\u4E95\u5E02:{weekday:2e4,weekend:18e3,stay:60,trend:"stable"},\u5208\u8C37\u5E02:{weekday:38e3,weekend:12e3,stay:35,trend:"increasing"}},v={\u540D\u53E4\u5C4B\u5E02\u5343\u7A2E\u533A:{score:82,advancement:78},\u540D\u53E4\u5C4B\u5E02\u662D\u548C\u533A:{score:80,advancement:76},\u540D\u53E4\u5C4B\u5E02\u540D\u6771\u533A:{score:78,advancement:74},\u540D\u53E4\u5C4B\u5E02\u745E\u7A42\u533A:{score:76,advancement:72},\u540D\u53E4\u5C4B\u5E02\u6771\u533A:{score:73,advancement:70},\u540D\u53E4\u5C4B\u5E02\u5929\u767D\u533A:{score:68,advancement:66},\u540D\u53E4\u5C4B\u5E02\u7DD1\u533A:{score:65,advancement:63},\u540D\u53E4\u5C4B\u5E02\u4E2D\u533A:{score:60,advancement:62},\u540D\u53E4\u5C4B\u5E02\u4E2D\u6751\u533A:{score:55,advancement:58},\u540D\u53E4\u5C4B\u5E02\u6E2F\u533A:{score:48,advancement:52},\u540D\u53E4\u5C4B\u5E02\u4E2D\u5DDD\u533A:{score:50,advancement:54},\u540D\u53E4\u5C4B\u5E02\u5357\u533A:{score:52,advancement:55},\u8C4A\u7530\u5E02:{score:62,advancement:64},\u5CA1\u5D0E\u5E02:{score:60,advancement:60},\u6625\u65E5\u4E95\u5E02:{score:64,advancement:62},\u5B89\u57CE\u5E02:{score:63,advancement:61}},b={\u540D\u53E4\u5C4B\u5E02\u4E2D\u533A:{establishments:18500,major:245,employees:38e4},\u540D\u53E4\u5C4B\u5E02\u4E2D\u6751\u533A:{establishments:8200,major:120,employees:195e3},\u540D\u53E4\u5C4B\u5E02\u6771\u533A:{establishments:4500,major:55,employees:85e3},\u8C4A\u7530\u5E02:{establishments:5200,major:35,employees:165e3},\u5208\u8C37\u5E02:{establishments:2800,major:28,employees:95e3},\u5CA1\u5D0E\u5E02:{establishments:3200,major:18,employees:72e3},\u4E00\u5BAE\u5E02:{establishments:2600,major:12,employees:45e3},\u540D\u53E4\u5C4B\u5E02\u6E2F\u533A:{establishments:3500,major:22,employees:65e3},\u5C0F\u7267\u5E02:{establishments:2200,major:15,employees:52e3},\u6625\u65E5\u4E95\u5E02:{establishments:2400,major:10,employees:42e3},\u8C4A\u6A4B\u5E02:{establishments:3e3,major:15,employees:58e3},\u5B89\u57CE\u5E02:{establishments:1800,major:12,employees:48e3}},S=[{name:"\u30DF\u30C3\u30C9\u30E9\u30F3\u30C9\u30B9\u30AF\u30A8\u30A2",city:"\u540D\u53E4\u5C4B\u5E02\u4E2D\u6751\u533A",height:247,lat:35.1709,lng:136.8816},{name:"JR\u30BB\u30F3\u30C8\u30E9\u30EB\u30BF\u30EF\u30FC\u30BA",city:"\u540D\u53E4\u5C4B\u5E02\u4E2D\u6751\u533A",height:245,lat:35.1706,lng:136.8826},{name:"\u30E2\u30FC\u30C9\u5B66\u5712\u30B9\u30D1\u30A4\u30E9\u30EB\u30BF\u30EF\u30FC\u30BA",city:"\u540D\u53E4\u5C4B\u5E02\u4E2D\u6751\u533A",height:170,lat:35.1695,lng:136.8835},{name:"\u5927\u540D\u53E4\u5C4B\u30D3\u30EB\u30C2\u30F3\u30B0",city:"\u540D\u53E4\u5C4B\u5E02\u4E2D\u6751\u533A",height:174,lat:35.1718,lng:136.8838},{name:"\u30EB\u30FC\u30BB\u30F3\u30C8\u30BF\u30EF\u30FC",city:"\u540D\u53E4\u5C4B\u5E02\u897F\u533A",height:180,lat:35.1748,lng:136.8782},{name:"\u30B9\u30AB\u30A4\u30D7\u30ED\u30E0\u30CA\u30FC\u30C9",city:"\u540D\u53E4\u5C4B\u5E02\u4E2D\u533A",height:180,lat:35.168,lng:136.906},{name:"NTT\u30C9\u30B3\u30E2\u540D\u53E4\u5C4B\u30D3\u30EB",city:"\u540D\u53E4\u5C4B\u5E02\u6771\u533A",height:150,lat:35.18,lng:136.925},{name:"\u540D\u53E4\u5C4B\u30D7\u30E9\u30A4\u30E0\u30BB\u30F3\u30C8\u30E9\u30EB\u30BF\u30EF\u30FC",city:"\u540D\u53E4\u5C4B\u5E02\u897F\u533A",height:138,lat:35.1752,lng:136.8795},{name:"\u5FA1\u5712\u5EA7\u30BF\u30EF\u30FC",city:"\u540D\u53E4\u5C4B\u5E02\u4E2D\u533A",height:150,lat:35.1685,lng:136.8985},{name:"\u30B0\u30ED\u30FC\u30D0\u30EB\u30B2\u30FC\u30C8",city:"\u540D\u53E4\u5C4B\u5E02\u4E2D\u6751\u533A",height:170,lat:35.164,lng:136.878}],o,g="land_price",x="",i=null;function k(e){return e>=1e6?"#ff2d55":e>=5e5?"#ff6b35":e>=3e5?"#ffb340":e>=2e5?"#ffe066":e>=15e4?"#a8e6cf":"#69b7eb"}function w(e){return e>=70?"#ff2d55":e>=50?"#ff6b35":e>=30?"#ffb340":"#34d399"}function C(e){return e>=3?"rgba(255, 45, 85, 0.6)":e>=2?"rgba(255, 107, 53, 0.5)":e>=1?"rgba(255, 179, 64, 0.4)":e>=.5?"rgba(255, 224, 102, 0.3)":"rgba(105, 183, 235, 0.2)"}function _(){o=L.map("map-container",{center:[35.1,136.95],zoom:11,zoomControl:!0}),L.tileLayer("https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png",{attribution:'&copy; <a href="https://carto.com/">CARTO</a>',maxZoom:18}).addTo(o),M(),z(),E()}function u(){i&&(o.removeLayer(i),i=null)}function M(){u(),i=L.layerGroup();for(let[e,a]of Object.entries(c)){let t=y[e];if(!t)continue;let n=L.circle(a,{radius:1200,fillColor:k(t.price),fillOpacity:.6,color:k(t.price),weight:1,opacity:.8});n.bindPopup(`
-      <div class="popup-title">${e}</div>
-      <div class="popup-row"><span>\u5E73\u5747\u5730\u4FA1</span><span>${(t.price/1e4).toFixed(1)}\u4E07\u5186/\u33A1</span></div>
-      <div class="popup-row"><span>\u5909\u5316\u7387</span><span style="color:${t.change>=0?"#34d399":"#ff4d6a"}">${t.change>=0?"+":""}${t.change}%</span></div>
-    `),n.on("click",()=>p(e)),i.addLayer(n)}i.addTo(o)}function A(){u(),i=L.layerGroup();let e=[{name:"\u5E84\u5185\u5DDD\u6D41\u57DF",bounds:[[35.12,136.82],[35.2,136.92]],depth:3.5,river:"\u5E84\u5185\u5DDD"},{name:"\u5929\u767D\u5DDD\u6D41\u57DF",bounds:[[35.08,136.92],[35.14,137]],depth:2,river:"\u5929\u767D\u5DDD"},{name:"\u65E5\u5149\u5DDD\u6D41\u57DF",bounds:[[35.04,136.76],[35.12,136.86]],depth:4,river:"\u65E5\u5149\u5DDD"},{name:"\u540D\u53E4\u5C4B\u6E2F\u5468\u8FBA",bounds:[[35.02,136.83],[35.1,136.9]],depth:5,river:"\u4F0A\u52E2\u6E7E"},{name:"\u77E2\u4F5C\u5DDD\u6D41\u57DF",bounds:[[34.9,137.05],[34.98,137.2]],depth:2.5,river:"\u77E2\u4F5C\u5DDD"},{name:"\u8C4A\u5DDD\u6D41\u57DF",bounds:[[34.72,137.3],[34.82,137.42]],depth:1.5,river:"\u8C4A\u5DDD"}];for(let a of e){let t=L.rectangle(a.bounds,{fillColor:C(a.depth),fillOpacity:.5,color:"#ff6b35",weight:1});t.bindPopup(`
-      <div class="popup-title">${a.name}</div>
-      <div class="popup-row"><span>\u6CB3\u5DDD</span><span>${a.river}</span></div>
-      <div class="popup-row"><span>\u6700\u5927\u6D78\u6C34\u6DF1</span><span style="color:${a.depth>=3?"#ff4d6a":"#ffb340"}">${a.depth}m</span></div>
-    `),i.addLayer(t)}for(let[a,t]of Object.entries(c)){let n=f[a];if(!n)continue;let s=L.circleMarker(t,{radius:8,fillColor:w(n.overall),fillOpacity:.8,color:"#fff",weight:1});s.bindPopup(`
-      <div class="popup-title">${a}</div>
-      <div class="popup-row"><span>\u6D78\u6C34\u30EA\u30B9\u30AF</span><span>${n.flood}/100</span></div>
-      <div class="popup-row"><span>\u60F3\u5B9A\u9707\u5EA6</span><span>${n.earthquake}</span></div>
-      <div class="popup-row"><span>\u7DCF\u5408\u30EA\u30B9\u30AF</span><span style="color:${w(n.overall)}">${n.overall}/100</span></div>
-    `),s.on("click",()=>p(a)),i.addLayer(s)}i.addTo(o)}function O(){u(),i=L.layerGroup();for(let[e,a]of Object.entries(c)){let t=y[e];if(!t)continue;let n=Math.floor(5+Math.random()*20),s=t.price*(.8+Math.random()*.4),l=L.circle(a,{radius:300+n*50,fillColor:"#4f8cff",fillOpacity:.3,color:"#4f8cff",weight:1});l.bindPopup(`
-      <div class="popup-title">${e}</div>
-      <div class="popup-row"><span>\u53D6\u5F15\u4EF6\u6570</span><span>${n}\u4EF6</span></div>
-      <div class="popup-row"><span>\u5E73\u5747\u53D6\u5F15\u4FA1\u683C</span><span>${(s/1e4).toFixed(1)}\u4E07\u5186/\u33A1</span></div>
-    `),l.on("click",()=>p(e)),i.addLayer(l)}i.addTo(o)}function j(){u(),i=L.layerGroup();let e={\u540D\u53E4\u5C4B\u5E02\u4E2D\u6751\u533A:{pop:14e4,growth:2.1},\u540D\u53E4\u5C4B\u5E02\u4E2D\u533A:{pop:1e5,growth:5.8},\u540D\u53E4\u5C4B\u5E02\u6771\u533A:{pop:88e3,growth:3.2},\u540D\u53E4\u5C4B\u5E02\u5343\u7A2E\u533A:{pop:167e3,growth:1.5},\u540D\u53E4\u5C4B\u5E02\u540D\u6771\u533A:{pop:164e3,growth:-.5},\u540D\u53E4\u5C4B\u5E02\u7DD1\u533A:{pop:248e3,growth:1.2},\u540D\u53E4\u5C4B\u5E02\u6E2F\u533A:{pop:142e3,growth:-1.8},\u540D\u53E4\u5C4B\u5E02\u662D\u548C\u533A:{pop:112e3,growth:.8},\u8C4A\u7530\u5E02:{pop:425e3,growth:.3},\u5CA1\u5D0E\u5E02:{pop:385e3,growth:.1},\u4E00\u5BAE\u5E02:{pop:38e4,growth:-.5},\u8C4A\u6A4B\u5E02:{pop:372e3,growth:-.8}};for(let[a,t]of Object.entries(c)){let n=e[a];if(!n)continue;let s=Math.max(400,Math.sqrt(n.pop)*3),l=n.growth>=0?"#34d399":"#ff4d6a",r=L.circle(t,{radius:s,fillColor:l,fillOpacity:.35,color:l,weight:1});r.bindPopup(`
-      <div class="popup-title">${a}</div>
-      <div class="popup-row"><span>\u4EBA\u53E3</span><span>${n.pop.toLocaleString()}\u4EBA</span></div>
-      <div class="popup-row"><span>\u4EBA\u53E3\u5897\u6E1B\u7387</span><span style="color:${l}">${n.growth>=0?"+":""}${n.growth}%</span></div>
-    `),r.on("click",()=>p(a)),i.addLayer(r)}i.addTo(o)}function P(){u(),i=L.layerGroup();for(let[e,a]of Object.entries(c)){let t=d[e];if(!t)continue;let n=(t.weekday+t.weekend)/2,s=Math.max(500,Math.sqrt(n)*2),r=`rgba(79, 140, 255, ${.2+Math.min(1,n/15e4)*.6})`,m=t.trend==="increasing"?"#34d399":t.trend==="decreasing"?"#ff4d6a":"#4f8cff",h=L.circle(a,{radius:s,fillColor:r,fillOpacity:.5,color:m,weight:2});h.bindPopup(`
-      <div class="popup-title">${e}</div>
-      <div class="popup-row"><span>\u5E73\u65E5\u4EBA\u6D41</span><span>${t.weekday.toLocaleString()}\u4EBA/\u65E5</span></div>
-      <div class="popup-row"><span>\u4F11\u65E5\u4EBA\u6D41</span><span>${t.weekend.toLocaleString()}\u4EBA/\u65E5</span></div>
-      <div class="popup-row"><span>\u5E73\u5747\u6EDE\u5728</span><span>${t.stay}\u5206</span></div>
-      <div class="popup-row"><span>\u30C8\u30EC\u30F3\u30C9</span><span style="color:${m}">${t.trend==="increasing"?"\u2191\u5897\u52A0":t.trend==="decreasing"?"\u2193\u6E1B\u5C11":"\u2192\u5B89\u5B9A"}</span></div>
-    `),h.on("click",()=>p(e)),i.addLayer(h)}i.addTo(o)}function q(){u(),i=L.layerGroup();for(let[e,a]of Object.entries(c)){let t=v[e];if(!t)continue;let n=t.score>=75?"#34d399":t.score>=60?"#ffb340":"#ff4d6a",s=L.circle(a,{radius:1e3,fillColor:n,fillOpacity:.4,color:n,weight:2});s.bindPopup(`
-      <div class="popup-title">${e}</div>
-      <div class="popup-row"><span>\u6559\u80B2\u30B9\u30B3\u30A2</span><span style="color:${n}">${t.score}/100</span></div>
-      <div class="popup-row"><span>\u5927\u5B66\u9032\u5B66\u7387</span><span>${t.advancement}%</span></div>
-    `),s.on("click",()=>p(e)),i.addLayer(s)}i.addTo(o)}function H(){u(),i=L.layerGroup();for(let[e,a]of Object.entries(c)){let t=b[e];if(!t)continue;let n=Math.max(500,Math.sqrt(t.employees)*1.5),s=Math.min(.8,t.major/200),l=L.circle(a,{radius:n,fillColor:`rgba(168, 85, 247, ${.2+s})`,fillOpacity:.5,color:"#a855f7",weight:1});l.bindPopup(`
-      <div class="popup-title">${e}</div>
-      <div class="popup-row"><span>\u4E8B\u696D\u6240\u6570</span><span>${t.establishments.toLocaleString()}</span></div>
-      <div class="popup-row"><span>\u5927\u4F01\u696D</span><span>${t.major}\u793E</span></div>
-      <div class="popup-row"><span>\u5F93\u696D\u8005</span><span>${t.employees.toLocaleString()}\u4EBA</span></div>
-    `),l.on("click",()=>p(e)),i.addLayer(l)}i.addTo(o)}function I(){u(),i=L.layerGroup();for(let e of S){let a=e.height/250,t=80+e.height*.8,n=e.height>=200?"#ff2d55":e.height>=150?"#ff6b35":"#ffb340",s=L.circle([e.lat,e.lng],{radius:t,fillColor:n,fillOpacity:.5+a*.3,color:"#fff",weight:1}),l=e.height*1.5,r=[e.lat-l*5e-6,e.lng+l*8e-6],m=L.polyline([[e.lat,e.lng],r],{color:"rgba(0,0,0,0.3)",weight:Math.max(2,e.height/30),dashArray:"5, 5"});s.bindPopup(`
-      <div class="popup-title">${e.name}</div>
-      <div class="popup-row"><span>\u9AD8\u3055</span><span>${e.height}m</span></div>
-      <div class="popup-row"><span>\u30A8\u30EA\u30A2</span><span>${e.city}</span></div>
-    `),i.addLayer(m),i.addLayer(s)}i.addTo(o)}function R(e){switch(g=e,e){case"land_price":M();break;case"flood_risk":A();break;case"transaction":O();break;case"population":j();break;case"human_flow":P();break;case"school_district":q();break;case"corporate_density":H();break;case"plateau_3d":I();break}E(),document.querySelectorAll(".layer-btn").forEach(a=>{a.classList.toggle("active",a.getAttribute("data-layer")===e)})}function z(){let e=document.createElement("div");e.className="layer-control",e.innerHTML=`
+  <script>"use strict";(()=>{var k={aichi:{center:[35.1,136.95],zoom:11,displayName:"\u611B\u77E5\u770C",capabilities:{humanFlow:!0,education:!0,corporate:!0,crime:!0,plateau:!0},municipalities:{\u540D\u53E4\u5C4B\u5E02\u4E2D\u6751\u533A:[35.1709,136.8716],\u540D\u53E4\u5C4B\u5E02\u4E2D\u533A:[35.1709,136.9066],\u540D\u53E4\u5C4B\u5E02\u6771\u533A:[35.1815,136.9274],\u540D\u53E4\u5C4B\u5E02\u5343\u7A2E\u533A:[35.1676,136.9486],\u540D\u53E4\u5C4B\u5E02\u540D\u6771\u533A:[35.1825,136.9906],\u540D\u53E4\u5C4B\u5E02\u7DD1\u533A:[35.0734,136.9539],\u540D\u53E4\u5C4B\u5E02\u6E2F\u533A:[35.0828,136.8472],\u540D\u53E4\u5C4B\u5E02\u662D\u548C\u533A:[35.1509,136.9331],\u540D\u53E4\u5C4B\u5E02\u5929\u767D\u533A:[35.1204,136.968],\u540D\u53E4\u5C4B\u5E02\u745E\u7A42\u533A:[35.1333,136.9347],\u540D\u53E4\u5C4B\u5E02\u71B1\u7530\u533A:[35.1268,136.9039],\u540D\u53E4\u5C4B\u5E02\u4E2D\u5DDD\u533A:[35.1338,136.8538],\u540D\u53E4\u5C4B\u5E02\u5317\u533A:[35.1985,136.9195],\u540D\u53E4\u5C4B\u5E02\u897F\u533A:[35.1887,136.8753],\u540D\u53E4\u5C4B\u5E02\u5357\u533A:[35.0984,136.9104],\u540D\u53E4\u5C4B\u5E02\u5B88\u5C71\u533A:[35.2154,136.9688],\u8C4A\u7530\u5E02:[35.0833,137.1557],\u5CA1\u5D0E\u5E02:[34.9552,137.1733],\u4E00\u5BAE\u5E02:[35.3015,136.803],\u6625\u65E5\u4E95\u5E02:[35.2512,136.9722],\u8C4A\u6A4B\u5E02:[34.7694,137.3916],\u5B89\u57CE\u5E02:[34.9587,137.0778],\u5208\u8C37\u5E02:[34.9891,137.0042],\u5C0F\u7267\u5E02:[35.2917,136.9222]},landPrices:{\u540D\u53E4\u5C4B\u5E02\u4E2D\u6751\u533A:{price:58e4,change:5.2},\u540D\u53E4\u5C4B\u5E02\u4E2D\u533A:{price:185e4,change:8.1},\u540D\u53E4\u5C4B\u5E02\u6771\u533A:{price:72e4,change:6.3},\u540D\u53E4\u5C4B\u5E02\u5343\u7A2E\u533A:{price:45e4,change:3.8},\u540D\u53E4\u5C4B\u5E02\u540D\u6771\u533A:{price:28e4,change:2.1},\u540D\u53E4\u5C4B\u5E02\u7DD1\u533A:{price:165e3,change:1.5},\u540D\u53E4\u5C4B\u5E02\u6E2F\u533A:{price:12e4,change:-.8},\u540D\u53E4\u5C4B\u5E02\u662D\u548C\u533A:{price:38e4,change:3.2},\u540D\u53E4\u5C4B\u5E02\u5929\u767D\u533A:{price:21e4,change:1.8},\u540D\u53E4\u5C4B\u5E02\u745E\u7A42\u533A:{price:34e4,change:2.9},\u540D\u53E4\u5C4B\u5E02\u71B1\u7530\u533A:{price:29e4,change:2.5},\u540D\u53E4\u5C4B\u5E02\u4E2D\u5DDD\u533A:{price:155e3,change:.5},\u540D\u53E4\u5C4B\u5E02\u5317\u533A:{price:24e4,change:2.3},\u540D\u53E4\u5C4B\u5E02\u897F\u533A:{price:26e4,change:2.8},\u540D\u53E4\u5C4B\u5E02\u5357\u533A:{price:17e4,change:-.3},\u540D\u53E4\u5C4B\u5E02\u5B88\u5C71\u533A:{price:175e3,change:1.2},\u8C4A\u7530\u5E02:{price:13e4,change:1.5},\u5CA1\u5D0E\u5E02:{price:105e3,change:.8},\u4E00\u5BAE\u5E02:{price:115e3,change:1},\u6625\u65E5\u4E95\u5E02:{price:14e4,change:1.8},\u8C4A\u6A4B\u5E02:{price:95e3,change:.3},\u5B89\u57CE\u5E02:{price:12e4,change:2},\u5208\u8C37\u5E02:{price:135e3,change:2.5},\u5C0F\u7267\u5E02:{price:11e4,change:.9}},risk:{\u540D\u53E4\u5C4B\u5E02\u4E2D\u6751\u533A:{flood:60,earthquake:"6\u5F37",overall:62},\u540D\u53E4\u5C4B\u5E02\u4E2D\u533A:{flood:30,earthquake:"6\u5F37",overall:48},\u540D\u53E4\u5C4B\u5E02\u6771\u533A:{flood:15,earthquake:"6\u5F31",overall:35},\u540D\u53E4\u5C4B\u5E02\u6E2F\u533A:{flood:85,earthquake:"6\u5F37",overall:78},\u540D\u53E4\u5C4B\u5E02\u4E2D\u5DDD\u533A:{flood:70,earthquake:"6\u5F37",overall:68},\u540D\u53E4\u5C4B\u5E02\u5357\u533A:{flood:55,earthquake:"6\u5F31",overall:52},\u540D\u53E4\u5C4B\u5E02\u7DD1\u533A:{flood:25,earthquake:"6\u5F31",overall:38},\u540D\u53E4\u5C4B\u5E02\u71B1\u7530\u533A:{flood:45,earthquake:"6\u5F31",overall:45},\u8C4A\u6A4B\u5E02:{flood:40,earthquake:"6\u5F31",overall:42},\u8C4A\u7530\u5E02:{flood:20,earthquake:"5\u5F37",overall:28}},humanFlow:{\u540D\u53E4\u5C4B\u5E02\u4E2D\u533A:{weekday:185e3,weekend:21e4,stay:95,trend:"increasing"},\u540D\u53E4\u5C4B\u5E02\u4E2D\u6751\u533A:{weekday:165e3,weekend:14e4,stay:45,trend:"increasing"},\u540D\u53E4\u5C4B\u5E02\u6771\u533A:{weekday:72e3,weekend:55e3,stay:60,trend:"stable"},\u540D\u53E4\u5C4B\u5E02\u5343\u7A2E\u533A:{weekday:48e3,weekend:52e3,stay:70,trend:"stable"},\u540D\u53E4\u5C4B\u5E02\u540D\u6771\u533A:{weekday:28e3,weekend:32e3,stay:85,trend:"stable"},\u540D\u53E4\u5C4B\u5E02\u7DD1\u533A:{weekday:22e3,weekend:28e3,stay:90,trend:"increasing"},\u540D\u53E4\u5C4B\u5E02\u6E2F\u533A:{weekday:35e3,weekend:18e3,stay:40,trend:"decreasing"},\u540D\u53E4\u5C4B\u5E02\u71B1\u7530\u533A:{weekday:55e3,weekend:68e3,stay:75,trend:"increasing"},\u8C4A\u7530\u5E02:{weekday:45e3,weekend:3e4,stay:50,trend:"stable"},\u5208\u8C37\u5E02:{weekday:38e3,weekend:12e3,stay:35,trend:"increasing"}},school:{\u540D\u53E4\u5C4B\u5E02\u5343\u7A2E\u533A:{score:82,advancement:78},\u540D\u53E4\u5C4B\u5E02\u662D\u548C\u533A:{score:80,advancement:76},\u540D\u53E4\u5C4B\u5E02\u540D\u6771\u533A:{score:78,advancement:74},\u540D\u53E4\u5C4B\u5E02\u745E\u7A42\u533A:{score:76,advancement:72},\u540D\u53E4\u5C4B\u5E02\u6771\u533A:{score:73,advancement:70},\u540D\u53E4\u5C4B\u5E02\u5929\u767D\u533A:{score:68,advancement:66},\u540D\u53E4\u5C4B\u5E02\u7DD1\u533A:{score:65,advancement:63},\u540D\u53E4\u5C4B\u5E02\u4E2D\u533A:{score:60,advancement:62},\u540D\u53E4\u5C4B\u5E02\u4E2D\u6751\u533A:{score:55,advancement:58},\u540D\u53E4\u5C4B\u5E02\u6E2F\u533A:{score:48,advancement:52},\u8C4A\u7530\u5E02:{score:62,advancement:64},\u6625\u65E5\u4E95\u5E02:{score:64,advancement:62}},corporate:{\u540D\u53E4\u5C4B\u5E02\u4E2D\u533A:{establishments:18500,major:245,employees:38e4},\u540D\u53E4\u5C4B\u5E02\u4E2D\u6751\u533A:{establishments:8200,major:120,employees:195e3},\u540D\u53E4\u5C4B\u5E02\u6771\u533A:{establishments:4500,major:55,employees:85e3},\u8C4A\u7530\u5E02:{establishments:5200,major:35,employees:165e3},\u5208\u8C37\u5E02:{establishments:2800,major:28,employees:95e3},\u540D\u53E4\u5C4B\u5E02\u6E2F\u533A:{establishments:3500,major:22,employees:65e3},\u5C0F\u7267\u5E02:{establishments:2200,major:15,employees:52e3}},plateau:[{name:"\u30DF\u30C3\u30C9\u30E9\u30F3\u30C9\u30B9\u30AF\u30A8\u30A2",city:"\u540D\u53E4\u5C4B\u5E02\u4E2D\u6751\u533A",height:247,lat:35.1709,lng:136.8816},{name:"JR\u30BB\u30F3\u30C8\u30E9\u30EB\u30BF\u30EF\u30FC\u30BA",city:"\u540D\u53E4\u5C4B\u5E02\u4E2D\u6751\u533A",height:245,lat:35.1706,lng:136.8826},{name:"\u30E2\u30FC\u30C9\u5B66\u5712\u30B9\u30D1\u30A4\u30E9\u30EB\u30BF\u30EF\u30FC\u30BA",city:"\u540D\u53E4\u5C4B\u5E02\u4E2D\u6751\u533A",height:170,lat:35.1695,lng:136.8835},{name:"\u5927\u540D\u53E4\u5C4B\u30D3\u30EB\u30C2\u30F3\u30B0",city:"\u540D\u53E4\u5C4B\u5E02\u4E2D\u6751\u533A",height:174,lat:35.1718,lng:136.8838},{name:"\u30EB\u30FC\u30BB\u30F3\u30C8\u30BF\u30EF\u30FC",city:"\u540D\u53E4\u5C4B\u5E02\u897F\u533A",height:180,lat:35.1748,lng:136.8782},{name:"\u30B0\u30ED\u30FC\u30D0\u30EB\u30B2\u30FC\u30C8",city:"\u540D\u53E4\u5C4B\u5E02\u4E2D\u6751\u533A",height:170,lat:35.164,lng:136.878}]},tokyo:{center:[35.68,139.76],zoom:11,displayName:"\u6771\u4EAC\u90FD",capabilities:{humanFlow:!1,education:!1,corporate:!1,crime:!1,plateau:!1},municipalities:{\u5343\u4EE3\u7530\u533A:[35.694,139.7536],\u4E2D\u592E\u533A:[35.6709,139.7727],\u6E2F\u533A:[35.6585,139.7514],\u65B0\u5BBF\u533A:[35.6938,139.7036],\u6E0B\u8C37\u533A:[35.664,139.6982],\u54C1\u5DDD\u533A:[35.6092,139.7302],\u76EE\u9ED2\u533A:[35.6414,139.6982],\u5927\u7530\u533A:[35.5613,139.716],\u4E16\u7530\u8C37\u533A:[35.6462,139.6532],\u4E2D\u91CE\u533A:[35.7077,139.6639],\u6749\u4E26\u533A:[35.6995,139.6364],\u8C4A\u5CF6\u533A:[35.7264,139.7163],\u5317\u533A:[35.7527,139.7349],\u677F\u6A4B\u533A:[35.7516,139.7092],\u7DF4\u99AC\u533A:[35.7355,139.6516],\u6587\u4EAC\u533A:[35.7081,139.7521],\u53F0\u6771\u533A:[35.7126,139.78],\u58A8\u7530\u533A:[35.7108,139.8019],\u6C5F\u6771\u533A:[35.6729,139.8171],\u8352\u5DDD\u533A:[35.7359,139.7834],\u8DB3\u7ACB\u533A:[35.7746,139.8044],\u845B\u98FE\u533A:[35.7432,139.8472],\u6C5F\u6238\u5DDD\u533A:[35.7067,139.8683]},landPrices:{\u5343\u4EE3\u7530\u533A:{price:185e5,change:2.8},\u4E2D\u592E\u533A:{price:152e5,change:3.2},\u6E2F\u533A:{price:78e5,change:2.5},\u65B0\u5BBF\u533A:{price:56e5,change:1.9},\u6E0B\u8C37\u533A:{price:82e5,change:3.5},\u54C1\u5DDD\u533A:{price:28e5,change:2},\u76EE\u9ED2\u533A:{price:185e4,change:1.7},\u5927\u7530\u533A:{price:11e5,change:.9},\u4E16\u7530\u8C37\u533A:{price:135e4,change:1.3},\u4E2D\u91CE\u533A:{price:12e5,change:1.4},\u6749\u4E26\u533A:{price:105e4,change:1.1},\u8C4A\u5CF6\u533A:{price:51e5,change:2.3},\u5317\u533A:{price:68e4,change:1},\u677F\u6A4B\u533A:{price:56e4,change:.7},\u7DF4\u99AC\u533A:{price:55e4,change:.6},\u6587\u4EAC\u533A:{price:24e5,change:1.8},\u53F0\u6771\u533A:{price:32e5,change:1.5},\u58A8\u7530\u533A:{price:98e4,change:2},\u6C5F\u6771\u533A:{price:22e5,change:3},\u8352\u5DDD\u533A:{price:65e4,change:1.2},\u8DB3\u7ACB\u533A:{price:78e4,change:1.3},\u845B\u98FE\u533A:{price:42e4,change:.5},\u6C5F\u6238\u5DDD\u533A:{price:48e4,change:.8}},risk:{\u6C5F\u6771\u533A:{flood:80,earthquake:"6\u5F37",overall:75},\u8DB3\u7ACB\u533A:{flood:85,earthquake:"6\u5F37",overall:78},\u845B\u98FE\u533A:{flood:75,earthquake:"6\u5F37",overall:72},\u6C5F\u6238\u5DDD\u533A:{flood:90,earthquake:"6\u5F37",overall:82},\u58A8\u7530\u533A:{flood:65,earthquake:"6\u5F37",overall:65},\u8352\u5DDD\u533A:{flood:70,earthquake:"6\u5F37",overall:68},\u5927\u7530\u533A:{flood:50,earthquake:"6\u5F37",overall:55},\u5317\u533A:{flood:40,earthquake:"6\u5F31",overall:42},\u5343\u4EE3\u7530\u533A:{flood:10,earthquake:"6\u5F37",overall:38},\u4E16\u7530\u8C37\u533A:{flood:25,earthquake:"6\u5F31",overall:30}},humanFlow:{},school:{},corporate:{},plateau:[]}},s,v="land_price",h="aichi",f="",c=null,b=!1;function l(){return k[h]}function E(e){return e>=1e6?"#ff2d55":e>=5e5?"#ff6b35":e>=3e5?"#ffb340":e>=2e5?"#ffe066":e>=15e4?"#a8e6cf":"#69b7eb"}function x(e){return e>=70?"#ff2d55":e>=50?"#ff6b35":e>=30?"#ffb340":"#34d399"}function O(){let e=l();s=L.map("map-container",{center:e.center,zoom:e.zoom,zoomControl:!0}),L.tileLayer("https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png",{attribution:'&copy; <a href="https://carto.com/">CARTO</a>',maxZoom:18}).addTo(s),T(),C(),P()}function p(){c&&(s.removeLayer(c),c=null)}function T(){p(),c=L.layerGroup();let e=l();for(let[t,n]of Object.entries(e.municipalities)){let a=e.landPrices[t];if(!a)continue;let i=L.circle(n,{radius:1200,fillColor:E(a.price),fillOpacity:.6,color:E(a.price),weight:1,opacity:.8});i.bindPopup(`
+      <div class="popup-title">${t}</div>
+      <div class="popup-row"><span>\u5E73\u5747\u5730\u4FA1</span><span>${(a.price/1e4).toFixed(1)}\u4E07\u5186/\u33A1</span></div>
+      <div class="popup-row"><span>\u5909\u5316\u7387</span><span style="color:${a.change>=0?"#34d399":"#ff4d6a"}">${a.change>=0?"+":""}${a.change}%</span></div>
+    `),i.on("click",()=>d(t)),c.addLayer(i)}c.addTo(s)}function z(){p(),c=L.layerGroup();let e=l();for(let[t,n]of Object.entries(e.municipalities)){let a=e.risk[t];if(!a)continue;let i=L.circleMarker(n,{radius:8,fillColor:x(a.overall),fillOpacity:.8,color:"#fff",weight:1});i.bindPopup(`
+      <div class="popup-title">${t}</div>
+      <div class="popup-row"><span>\u6D78\u6C34\u30EA\u30B9\u30AF</span><span>${a.flood}/100</span></div>
+      <div class="popup-row"><span>\u60F3\u5B9A\u9707\u5EA6</span><span>${a.earthquake}</span></div>
+      <div class="popup-row"><span>\u7DCF\u5408\u30EA\u30B9\u30AF</span><span style="color:${x(a.overall)}">${a.overall}/100</span></div>
+    `),i.on("click",()=>d(t)),c.addLayer(i)}c.addTo(s)}function H(){p(),c=L.layerGroup();let e=l();for(let[t,n]of Object.entries(e.municipalities)){if(!e.landPrices[t])continue;let i=Math.floor(5+Math.random()*20),o=L.circle(n,{radius:300+i*50,fillColor:"#4f8cff",fillOpacity:.3,color:"#4f8cff",weight:1});o.bindPopup(`
+      <div class="popup-title">${t}</div>
+      <div class="popup-row"><span>\u53D6\u5F15\u4EF6\u6570</span><span>${i}\u4EF6</span></div>
+    `),o.on("click",()=>d(t)),c.addLayer(o)}c.addTo(s)}function I(){p(),c=L.layerGroup();let e=l();for(let[t,n]of Object.entries(e.municipalities)){let a=L.circle(n,{radius:1e3,fillColor:"#34d399",fillOpacity:.3,color:"#34d399",weight:1});a.bindPopup(`<div class="popup-title">${t}</div>`),a.on("click",()=>d(t)),c.addLayer(a)}c.addTo(s)}function B(){p(),c=L.layerGroup();let e=l();for(let[t,n]of Object.entries(e.municipalities)){let a=e.humanFlow[t];if(!a)continue;let i=(a.weekday+a.weekend)/2,o=Math.max(500,Math.sqrt(i)*2),r=Math.min(1,i/15e4),u=a.trend==="increasing"?"#34d399":a.trend==="decreasing"?"#ff4d6a":"#4f8cff",g=L.circle(n,{radius:o,fillColor:`rgba(79, 140, 255, ${.2+r*.6})`,fillOpacity:.5,color:u,weight:2});g.bindPopup(`
+      <div class="popup-title">${t}</div>
+      <div class="popup-row"><span>\u5E73\u65E5\u4EBA\u6D41</span><span>${a.weekday.toLocaleString()}\u4EBA/\u65E5</span></div>
+      <div class="popup-row"><span>\u4F11\u65E5\u4EBA\u6D41</span><span>${a.weekend.toLocaleString()}\u4EBA/\u65E5</span></div>
+      <div class="popup-row"><span>\u5E73\u5747\u6EDE\u5728</span><span>${a.stay}\u5206</span></div>
+      <div class="popup-row"><span>\u30C8\u30EC\u30F3\u30C9</span><span style="color:${u}">${a.trend==="increasing"?"\u2191\u5897\u52A0":a.trend==="decreasing"?"\u2193\u6E1B\u5C11":"\u2192\u5B89\u5B9A"}</span></div>
+    `),g.on("click",()=>d(t)),c.addLayer(g)}c.addTo(s)}function A(){p(),c=L.layerGroup();let e=l();for(let[t,n]of Object.entries(e.municipalities)){let a=e.school[t];if(!a)continue;let i=a.score>=75?"#34d399":a.score>=60?"#ffb340":"#ff4d6a",o=L.circle(n,{radius:1e3,fillColor:i,fillOpacity:.4,color:i,weight:2});o.bindPopup(`
+      <div class="popup-title">${t}</div>
+      <div class="popup-row"><span>\u6559\u80B2\u30B9\u30B3\u30A2</span><span style="color:${i}">${a.score}/100</span></div>
+      <div class="popup-row"><span>\u5927\u5B66\u9032\u5B66\u7387</span><span>${a.advancement}%</span></div>
+    `),o.on("click",()=>d(t)),c.addLayer(o)}c.addTo(s)}function F(){p(),c=L.layerGroup();let e=l();for(let[t,n]of Object.entries(e.municipalities)){let a=e.corporate[t];if(!a)continue;let i=Math.max(500,Math.sqrt(a.employees)*1.5),o=Math.min(.8,a.major/200),r=L.circle(n,{radius:i,fillColor:`rgba(168, 85, 247, ${.2+o})`,fillOpacity:.5,color:"#a855f7",weight:1});r.bindPopup(`
+      <div class="popup-title">${t}</div>
+      <div class="popup-row"><span>\u4E8B\u696D\u6240\u6570</span><span>${a.establishments.toLocaleString()}</span></div>
+      <div class="popup-row"><span>\u5927\u4F01\u696D</span><span>${a.major}\u793E</span></div>
+      <div class="popup-row"><span>\u5F93\u696D\u8005</span><span>${a.employees.toLocaleString()}\u4EBA</span></div>
+    `),r.on("click",()=>d(t)),c.addLayer(r)}c.addTo(s)}function R(){p(),c=L.layerGroup();let e=l();for(let t of e.plateau){let n=t.height/250,a=80+t.height*.8,i=t.height>=200?"#ff2d55":t.height>=150?"#ff6b35":"#ffb340",o=L.circle([t.lat,t.lng],{radius:a,fillColor:i,fillOpacity:.5+n*.3,color:"#fff",weight:1});o.bindPopup(`
+      <div class="popup-title">${t.name}</div>
+      <div class="popup-row"><span>\u9AD8\u3055</span><span>${t.height}m</span></div>
+      <div class="popup-row"><span>\u30A8\u30EA\u30A2</span><span>${t.city}</span></div>
+    `),c.addLayer(o)}c.addTo(s)}var N={human_flow:"humanFlow",school_district:"education",corporate_density:"corporate",plateau_3d:"plateau"};function w(e){let t=N[e];return t?l().capabilities[t]:!0}function q(e){if(w(e)){switch(v=e,e){case"land_price":T();break;case"flood_risk":z();break;case"transaction":H();break;case"population":I();break;case"human_flow":B();break;case"school_district":A();break;case"corporate_density":F();break;case"plateau_3d":R();break}P(),S()}}function S(){document.querySelectorAll(".layer-btn").forEach(e=>{let t=e.getAttribute("data-layer")??"",n=w(t);e.classList.toggle("active",t===v),e.classList.toggle("disabled",!n),e.disabled=!n})}function C(){let e=document.querySelector(".layer-control");e&&e.remove();let t=document.createElement("div");t.className="layer-control",t.innerHTML=`
     <button class="layer-btn active" data-layer="land_price">\u5730\u4FA1</button>
     <button class="layer-btn" data-layer="flood_risk">\u707D\u5BB3</button>
     <button class="layer-btn" data-layer="transaction">\u53D6\u5F15</button>
@@ -70,159 +61,130 @@
     <button class="layer-btn" data-layer="school_district">\u5B66\u533A</button>
     <button class="layer-btn" data-layer="corporate_density">\u4F01\u696D</button>
     <button class="layer-btn" data-layer="plateau_3d">3D\u5EFA\u7269</button>
-  `,e.addEventListener("click",a=>{let n=a.target.getAttribute("data-layer");n&&R(n)}),document.getElementById("map-container").appendChild(e)}function E(){let e=document.querySelector(".legend");e&&e.remove();let a=document.createElement("div");a.className="legend",g==="land_price"?a.innerHTML=`
-      <div class="legend-title">\u5730\u4FA1\uFF08\u4E07\u5186/\u33A1\uFF09</div>
+  `,t.addEventListener("click",n=>{let i=n.target.getAttribute("data-layer");i&&q(i)}),document.getElementById("map-container").appendChild(t),S()}function P(){let e=document.querySelector(".legend");e&&e.remove();let t=document.createElement("div");t.className="legend";let n={land_price:`<div class="legend-title">\u5730\u4FA1\uFF08\u4E07\u5186/\u33A1\uFF09</div>
       <div class="legend-item"><div class="legend-color" style="background:#ff2d55"></div> 100\u4E07\u301C</div>
       <div class="legend-item"><div class="legend-color" style="background:#ff6b35"></div> 50\u4E07\u301C100\u4E07</div>
       <div class="legend-item"><div class="legend-color" style="background:#ffb340"></div> 30\u4E07\u301C50\u4E07</div>
       <div class="legend-item"><div class="legend-color" style="background:#ffe066"></div> 20\u4E07\u301C30\u4E07</div>
       <div class="legend-item"><div class="legend-color" style="background:#a8e6cf"></div> 15\u4E07\u301C20\u4E07</div>
-      <div class="legend-item"><div class="legend-color" style="background:#69b7eb"></div> \u301C15\u4E07</div>
-    `:g==="flood_risk"?a.innerHTML=`
-      <div class="legend-title">\u6D78\u6C34\u6DF1\uFF08m\uFF09</div>
-      <div class="legend-item"><div class="legend-color" style="background:rgba(255,45,85,0.6)"></div> 3m\u301C</div>
-      <div class="legend-item"><div class="legend-color" style="background:rgba(255,107,53,0.5)"></div> 2m\u301C3m</div>
-      <div class="legend-item"><div class="legend-color" style="background:rgba(255,179,64,0.4)"></div> 1m\u301C2m</div>
-      <div class="legend-item"><div class="legend-color" style="background:rgba(255,224,102,0.3)"></div> 0.5m\u301C1m</div>
-      <div class="legend-item"><div class="legend-color" style="background:rgba(105,183,235,0.2)"></div> \u301C0.5m</div>
-    `:g==="population"?a.innerHTML=`
-      <div class="legend-title">\u4EBA\u53E3\u52D5\u614B</div>
-      <div class="legend-item"><div class="legend-color" style="background:#34d399"></div> \u4EBA\u53E3\u5897\u52A0</div>
-      <div class="legend-item"><div class="legend-color" style="background:#ff4d6a"></div> \u4EBA\u53E3\u6E1B\u5C11</div>
-      <div class="legend-item"><div class="legend-color" style="opacity:0.3">\u2B55</div> \u5186\u306E\u5927\u304D\u3055\uFF1D\u4EBA\u53E3\u898F\u6A21</div>
-    `:g==="human_flow"?a.innerHTML=`
-      <div class="legend-title">\u4EBA\u6D41\u91CF\uFF08\u4EBA/\u65E5\uFF09</div>
+      <div class="legend-item"><div class="legend-color" style="background:#69b7eb"></div> \u301C15\u4E07</div>`,flood_risk:`<div class="legend-title">\u30EA\u30B9\u30AF\u30B9\u30B3\u30A2</div>
+      <div class="legend-item"><div class="legend-color" style="background:#ff2d55"></div> 70\u301C \u9AD8\u30EA\u30B9\u30AF</div>
+      <div class="legend-item"><div class="legend-color" style="background:#ff6b35"></div> 50\u301C69 \u4E2D\u9AD8</div>
+      <div class="legend-item"><div class="legend-color" style="background:#ffb340"></div> 30\u301C49 \u4E2D</div>
+      <div class="legend-item"><div class="legend-color" style="background:#34d399"></div> \u301C29 \u4F4E\u30EA\u30B9\u30AF</div>`,population:`<div class="legend-title">\u4EBA\u53E3\u52D5\u614B</div>
+      <div class="legend-item"><div class="legend-color" style="background:#34d399"></div> \u5E02\u533A\u753A\u6751</div>`,human_flow:`<div class="legend-title">\u4EBA\u6D41\u91CF</div>
       <div class="legend-item"><div class="legend-color" style="background:rgba(79,140,255,0.8)"></div> \u9AD8\u4EBA\u6D41</div>
-      <div class="legend-item"><div class="legend-color" style="background:rgba(79,140,255,0.4)"></div> \u4E2D\u4EBA\u6D41</div>
-      <div class="legend-item"><div class="legend-color" style="background:rgba(79,140,255,0.2)"></div> \u4F4E\u4EBA\u6D41</div>
       <div class="legend-item"><div class="legend-color" style="border:2px solid #34d399;background:transparent"></div> \u5897\u52A0\u50BE\u5411</div>
-      <div class="legend-item"><div class="legend-color" style="border:2px solid #ff4d6a;background:transparent"></div> \u6E1B\u5C11\u50BE\u5411</div>
-    `:g==="school_district"?a.innerHTML=`
-      <div class="legend-title">\u6559\u80B2\u74B0\u5883\u30B9\u30B3\u30A2</div>
+      <div class="legend-item"><div class="legend-color" style="border:2px solid #ff4d6a;background:transparent"></div> \u6E1B\u5C11\u50BE\u5411</div>`,school_district:`<div class="legend-title">\u6559\u80B2\u74B0\u5883\u30B9\u30B3\u30A2</div>
       <div class="legend-item"><div class="legend-color" style="background:#34d399"></div> 75\u301C \u512A\u79C0</div>
       <div class="legend-item"><div class="legend-color" style="background:#ffb340"></div> 60\u301C74 \u6A19\u6E96</div>
-      <div class="legend-item"><div class="legend-color" style="background:#ff4d6a"></div> \u301C59 \u4F4E\u3081</div>
-    `:g==="corporate_density"?a.innerHTML=`
-      <div class="legend-title">\u4F01\u696D\u96C6\u7A4D\u5EA6</div>
-      <div class="legend-item"><div class="legend-color" style="background:rgba(168,85,247,0.8)"></div> \u5927\u4F01\u696D\u96C6\u7A4D</div>
-      <div class="legend-item"><div class="legend-color" style="background:rgba(168,85,247,0.4)"></div> \u4E2D\u7A0B\u5EA6</div>
-      <div class="legend-item"><div class="legend-color" style="opacity:0.3">\u2B55</div> \u5186\u306E\u5927\u304D\u3055\uFF1D\u5F93\u696D\u8005\u6570</div>
-    `:g==="plateau_3d"?a.innerHTML=`
-      <div class="legend-title">\u5EFA\u7269\u9AD8\u3055</div>
+      <div class="legend-item"><div class="legend-color" style="background:#ff4d6a"></div> \u301C59 \u4F4E\u3081</div>`,corporate_density:`<div class="legend-title">\u4F01\u696D\u96C6\u7A4D\u5EA6</div>
+      <div class="legend-item"><div class="legend-color" style="background:rgba(168,85,247,0.8)"></div> \u5927\u4F01\u696D\u96C6\u7A4D</div>`,plateau_3d:`<div class="legend-title">\u5EFA\u7269\u9AD8\u3055</div>
       <div class="legend-item"><div class="legend-color" style="background:#ff2d55"></div> 200m\u301C</div>
-      <div class="legend-item"><div class="legend-color" style="background:#ff6b35"></div> 150m\u301C200m</div>
-      <div class="legend-item"><div class="legend-color" style="background:#ffb340"></div> \u301C150m</div>
-      <div class="legend-item"><div class="legend-color" style="background:rgba(0,0,0,0.3)"></div> \u5F71\u306E\u65B9\u5411</div>
-    `:a.innerHTML=`
-      <div class="legend-title">\u53D6\u5F15\u5206\u5E03</div>
-      <div class="legend-item"><div class="legend-color" style="background:#4f8cff"></div> \u53D6\u5F15\u30A8\u30EA\u30A2</div>
-      <div class="legend-item"><div class="legend-color" style="opacity:0.3">\u2B55</div> \u5186\u306E\u5927\u304D\u3055\uFF1D\u53D6\u5F15\u4EF6\u6570</div>
-    `,document.getElementById("map-container").appendChild(a)}function p(e){x=e,T(e);let a=document.getElementById("area-select");a&&(a.value=e)}function T(e){let a=document.getElementById("insight-panel"),t=y[e],n=f[e],s=t?Math.round(Math.max(0,Math.min(100,(t.change+10)*2+(100-(n?.overall??30))*.3+15))):50,l=s>=70?"high":s>=40?"medium":"low",r=(n?.overall??0)>=60?"high":(n?.overall??0)>=30?"medium":"low";a.innerHTML=`
+      <div class="legend-item"><div class="legend-color" style="background:#ff6b35"></div> 150m\u301C200m</div>`,transaction:`<div class="legend-title">\u53D6\u5F15\u5206\u5E03</div>
+      <div class="legend-item"><div class="legend-color" style="background:#4f8cff"></div> \u53D6\u5F15\u30A8\u30EA\u30A2</div>`};t.innerHTML=n[v]??"",document.getElementById("map-container").appendChild(t)}function G(e){h=e,f="";let t=l();s.setView(t.center,t.zoom),w(v)||(v="land_price"),q(v),C(),K(),y("")}function d(e){f=e,y(e);let t=document.getElementById("area-select");t&&(t.value=e)}function y(e){let t=document.getElementById("insight-panel"),n=l(),a=n.landPrices[e],i=n.risk[e],o=n.humanFlow[e],r=n.school[e],u=n.corporate[e],g=a?Math.round(Math.max(0,Math.min(100,(a.change+10)*2+(100-(i?.overall??30))*.3+15))):50,_=g>=70?"high":g>=40?"medium":"low",j=(i?.overall??0)>=60?"high":(i?.overall??0)>=30?"medium":"low",$="";if(b&&e){let m=k[h==="aichi"?"tokyo":"aichi"];$=`
+    <div class="panel-section" style="border-top:1px solid var(--border);padding-top:12px;margin-top:12px">
+      <h3>\u6BD4\u8F03: ${m.displayName}</h3>
+      <div style="font-size:12px;color:var(--text-muted)">\u6BD4\u8F03\u30E2\u30FC\u30C9\u306F v2.1 \u3067\u30D5\u30EB\u6A5F\u80FD\u5316\u4E88\u5B9A</div>
+      <div style="font-size:12px;margin:4px 0">\u5BFE\u5FDC\u30C7\u30FC\u30BF: \u5730\u4FA1/\u4EBA\u53E3/\u707D\u5BB3/\u5730\u9707</div>
+      <div style="font-size:12px;margin:4px 0">\u4EBA\u6D41: ${m.capabilities.humanFlow?"\u5BFE\u5FDC":"\u672A\u5BFE\u5FDC"}</div>
+      <div style="font-size:12px;margin:4px 0">\u6559\u80B2: ${m.capabilities.education?"\u5BFE\u5FDC":"\u672A\u5BFE\u5FDC"}</div>
+      <div style="font-size:12px;margin:4px 0">\u4F01\u696D: ${m.capabilities.corporate?"\u5BFE\u5FDC":"\u672A\u5BFE\u5FDC"}</div>
+    </div>`}t.innerHTML=`
     <div class="panel-section">
       <h3>${e||"\u30A8\u30EA\u30A2\u3092\u9078\u629E"}</h3>
+      <div style="font-size:11px;color:var(--text-muted)">${n.displayName}</div>
     </div>
 
     <div class="score-card">
-      <div class="score-value ${l}">${s}</div>
+      <div class="score-value ${_}">${g}</div>
       <div class="score-label">\u6295\u8CC7\u30B9\u30B3\u30A2</div>
       <div class="score-sublabel">/ 100</div>
     </div>
 
-    ${t?`
+    ${a?`
     <div class="price-info">
-      <div class="price-current">${(t.price/1e4).toFixed(1)}<span style="font-size:14px;color:var(--text-muted)"> \u4E07\u5186/\u33A1</span></div>
-      <div class="price-change ${t.change>=0?"up":"down"}">${t.change>=0?"\u25B2":"\u25BC"} ${Math.abs(t.change)}%</div>
+      <div class="price-current">${(a.price/1e4).toFixed(1)}<span style="font-size:14px;color:var(--text-muted)"> \u4E07\u5186/\u33A1</span></div>
+      <div class="price-change ${a.change>=0?"up":"down"}">${a.change>=0?"\u25B2":"\u25BC"} ${Math.abs(a.change)}%</div>
     </div>
     `:""}
 
-    ${n?`
+    ${i?`
     <div class="panel-section">
       <h3>\u30EA\u30B9\u30AF\u8A55\u4FA1</h3>
-      <div style="margin:8px 0">
-        <span class="risk-badge ${r}">\u7DCF\u5408: ${n.overall}/100</span>
-      </div>
-      <div style="font-size:12px;margin:4px 0">\u6D78\u6C34\u30EA\u30B9\u30AF: ${n.flood}/100</div>
-      <div style="font-size:12px;margin:4px 0">\u60F3\u5B9A\u9707\u5EA6: ${n.earthquake}</div>
+      <div style="margin:8px 0"><span class="risk-badge ${j}">\u7DCF\u5408: ${i.overall}/100</span></div>
+      <div style="font-size:12px;margin:4px 0">\u6D78\u6C34: ${i.flood}/100 / \u9707\u5EA6: ${i.earthquake}</div>
     </div>
     `:""}
 
-    ${d[e]?`
+    ${o?`
     <div class="panel-section">
       <h3>\u4EBA\u6D41\u30C7\u30FC\u30BF</h3>
-      <div style="font-size:12px;margin:4px 0">\u5E73\u65E5: ${d[e].weekday.toLocaleString()}\u4EBA/\u65E5</div>
-      <div style="font-size:12px;margin:4px 0">\u4F11\u65E5: ${d[e].weekend.toLocaleString()}\u4EBA/\u65E5</div>
-      <div style="font-size:12px;margin:4px 0">\u6EDE\u5728: ${d[e].stay}\u5206</div>
+      <div style="font-size:12px;margin:4px 0">\u5E73\u65E5: ${o.weekday.toLocaleString()}\u4EBA/\u65E5 / \u4F11\u65E5: ${o.weekend.toLocaleString()}\u4EBA/\u65E5</div>
+      <div style="font-size:12px;margin:4px 0">\u6EDE\u5728: ${o.stay}\u5206 / ${o.trend==="increasing"?"\u2191\u5897\u52A0":o.trend==="decreasing"?"\u2193\u6E1B\u5C11":"\u2192\u5B89\u5B9A"}</div>
     </div>
     `:""}
 
-    ${v[e]?`
+    ${r?`
     <div class="panel-section">
       <h3>\u6559\u80B2\u74B0\u5883</h3>
-      <div style="font-size:12px;margin:4px 0">\u6559\u80B2\u30B9\u30B3\u30A2: <span style="color:${v[e].score>=75?"#34d399":v[e].score>=60?"#ffb340":"#ff4d6a"}">${v[e].score}/100</span></div>
-      <div style="font-size:12px;margin:4px 0">\u5927\u5B66\u9032\u5B66\u7387: ${v[e].advancement}%</div>
+      <div style="font-size:12px;margin:4px 0">\u6559\u80B2\u30B9\u30B3\u30A2: <span style="color:${r.score>=75?"#34d399":r.score>=60?"#ffb340":"#ff4d6a"}">${r.score}/100</span> / \u9032\u5B66\u7387: ${r.advancement}%</div>
     </div>
     `:""}
+
+    ${u?`
+    <div class="panel-section">
+      <h3>\u4F01\u696D\u96C6\u7A4D</h3>
+      <div style="font-size:12px;margin:4px 0">\u4E8B\u696D\u6240: ${u.establishments.toLocaleString()} / \u5927\u4F01\u696D: ${u.major}\u793E</div>
+    </div>
+    `:""}
+
+    ${$}
 
     <div class="panel-section">
       <h3>\u30A4\u30F3\u30B5\u30A4\u30C8</h3>
       <ul class="insight-list">
-        ${t&&t.change>3?"<li>\u5730\u4FA1\u4E0A\u6607\u304C\u9855\u8457\u3002\u518D\u958B\u767A\u3084\u4EA4\u901A\u30A4\u30F3\u30D5\u30E9\u6539\u5584\u304C\u8981\u56E0\u3002</li>":""}
-        ${t&&t.change<0?"<li>\u5730\u4FA1\u304C\u4E0B\u843D\u50BE\u5411\u3002\u5E95\u5024\u8CB7\u3044\u306E\u6A5F\u4F1A\u304B\u69CB\u9020\u7684\u30EA\u30B9\u30AF\u304B\u8981\u7CBE\u67FB\u3002</li>":""}
-        ${n&&n.overall>=60?"<li>\u707D\u5BB3\u30EA\u30B9\u30AF\u304C\u9AD8\u3081\u3002\u4FDD\u967A\u30B3\u30B9\u30C8\u5897\u3092\u4FA1\u683C\u306B\u7E54\u308A\u8FBC\u3080\u5FC5\u8981\u3042\u308A\u3002</li>":""}
-        ${d[e]&&d[e].weekday>5e4?"<li>\u9AD8\u4EBA\u6D41\u30A8\u30EA\u30A2\u3002\u5546\u696D\u30FB\u30AA\u30D5\u30A3\u30B9\u9700\u8981\u304C\u5805\u8ABF\u3002</li>":""}
-        ${d[e]&&d[e].trend==="increasing"?"<li>\u4EBA\u6D41\u5897\u52A0\u4E2D\u3002\u30A8\u30EA\u30A2\u306E\u6D3B\u6027\u5316\u304C\u9032\u884C\u3002</li>":""}
-        ${v[e]&&v[e].score>=75?"<li>\u6559\u80B2\u74B0\u5883\u512A\u79C0\u3002\u30D5\u30A1\u30DF\u30EA\u30FC\u7269\u4EF6\u306B\u30D7\u30EC\u30DF\u30A2\u30E0\u3002</li>":""}
-        ${b[e]&&b[e].major>=50?`<li>\u5927\u4F01\u696D${b[e].major}\u793E\u96C6\u7A4D\u3002\u6CD5\u4EBA\u9700\u8981\u304C\u539A\u3044\u3002</li>`:""}
-        ${t?"":"<li>\u30A8\u30EA\u30A2\u3092\u9078\u629E\u3059\u308B\u3068\u30A4\u30F3\u30B5\u30A4\u30C8\u304C\u8868\u793A\u3055\u308C\u307E\u3059\u3002</li>"}
+        ${a&&a.change>3?"<li>\u5730\u4FA1\u4E0A\u6607\u304C\u9855\u8457\u3002\u518D\u958B\u767A\u3084\u4EA4\u901A\u30A4\u30F3\u30D5\u30E9\u6539\u5584\u304C\u8981\u56E0\u3002</li>":""}
+        ${a&&a.change<0?"<li>\u5730\u4FA1\u304C\u4E0B\u843D\u50BE\u5411\u3002\u5E95\u5024\u8CB7\u3044\u306E\u6A5F\u4F1A\u304B\u69CB\u9020\u7684\u30EA\u30B9\u30AF\u304B\u8981\u7CBE\u67FB\u3002</li>":""}
+        ${i&&i.overall>=60?"<li>\u707D\u5BB3\u30EA\u30B9\u30AF\u304C\u9AD8\u3081\u3002\u4FDD\u967A\u30B3\u30B9\u30C8\u5897\u3092\u4FA1\u683C\u306B\u7E54\u308A\u8FBC\u3080\u5FC5\u8981\u3042\u308A\u3002</li>":""}
+        ${o&&o.weekday>5e4?"<li>\u9AD8\u4EBA\u6D41\u30A8\u30EA\u30A2\u3002\u5546\u696D\u30FB\u30AA\u30D5\u30A3\u30B9\u9700\u8981\u304C\u5805\u8ABF\u3002</li>":""}
+        ${a?"":"<li>\u30A8\u30EA\u30A2\u3092\u9078\u629E\u3059\u308B\u3068\u30A4\u30F3\u30B5\u30A4\u30C8\u304C\u8868\u793A\u3055\u308C\u307E\u3059\u3002</li>"}
         <li>\u8A73\u7D30\u306F\u300C\u30EC\u30DD\u30FC\u30C8\u751F\u6210\u300D\u3067\u78BA\u8A8D\u3067\u304D\u307E\u3059\u3002</li>
       </ul>
     </div>
 
     <button class="btn-report" id="btn-generate-report">\u30EC\u30DD\u30FC\u30C8\u751F\u6210</button>
-    <button class="btn-gateway">Gateway\u9023\u643A\uFF08\u6E96\u5099\u4E2D\uFF09</button>
-  `,document.getElementById("btn-generate-report")?.addEventListener("click",()=>{B(e)})}function B(e){let a=document.getElementById("report-overlay"),t=document.getElementById("report-content"),n=y[e],s=f[e],l=n?Math.round(Math.max(0,Math.min(100,(n.change+10)*2+(100-(s?.overall??30))*.3+15))):50;t.innerHTML=`
+  `,document.getElementById("btn-generate-report")?.addEventListener("click",()=>{e&&D(e)})}function D(e){let t=document.getElementById("report-overlay"),n=document.getElementById("report-content"),a=l(),i=a.landPrices[e],o=a.risk[e];n.innerHTML=`
     <button class="report-close" id="close-report">\u9589\u3058\u308B</button>
-    <h1>${e} \u4E0D\u52D5\u7523\u6295\u8CC7\u30EC\u30DD\u30FC\u30C8</h1>
+    <h1>${a.displayName} ${e} \u4E0D\u52D5\u7523\u6295\u8CC7\u30EC\u30DD\u30FC\u30C8</h1>
     <p>\u751F\u6210\u65E5: ${new Date().toISOString().split("T")[0]}</p>
     <hr>
     <h2>\u4FA1\u683C\u52D5\u5411</h2>
     <table>
       <tr><th>\u6307\u6A19</th><th>\u5024</th></tr>
-      <tr><td>\u5E73\u5747\u5730\u4FA1</td><td>${n?(n.price/1e4).toFixed(1)+" \u4E07\u5186/\u33A1":"N/A"}</td></tr>
-      <tr><td>\u5909\u5316\u7387</td><td>${n?(n.change>=0?"+":"")+n.change+"%":"N/A"}</td></tr>
+      <tr><td>\u5E73\u5747\u5730\u4FA1</td><td>${i?(i.price/1e4).toFixed(1)+" \u4E07\u5186/\u33A1":"N/A"}</td></tr>
+      <tr><td>\u5909\u5316\u7387</td><td>${i?(i.change>=0?"+":"")+i.change+"%":"N/A"}</td></tr>
     </table>
-    <h2>\u30B9\u30B3\u30A2</h2>
-    <table>
-      <tr><th>\u6307\u6A19</th><th>\u30B9\u30B3\u30A2</th></tr>
-      <tr><td>\u6295\u8CC7\u30B9\u30B3\u30A2</td><td>${l} / 100</td></tr>
-      <tr><td>\u30EA\u30B9\u30AF\u30B9\u30B3\u30A2</td><td>${s?.overall??"N/A"} / 100</td></tr>
-    </table>
-    ${s?`
-    <h2>\u30EA\u30B9\u30AF\u8A73\u7D30</h2>
-    <table>
-      <tr><th>\u30EA\u30B9\u30AF\u7A2E\u5225</th><th>\u5024</th></tr>
-      <tr><td>\u6D78\u6C34\u30EA\u30B9\u30AF</td><td>${s.flood}/100</td></tr>
-      <tr><td>\u60F3\u5B9A\u9707\u5EA6</td><td>${s.earthquake}</td></tr>
-    </table>
-    `:""}
-    <h2>\u63A8\u5968\u30A2\u30AF\u30B7\u30E7\u30F3</h2>
-    <ul>
-      ${l>=70?"<li>\u7A4D\u6975\u7684\u306A\u6295\u8CC7\u691C\u8A0E\u3092\u63A8\u5968\u3002\u30EA\u30B9\u30AF\u8ABF\u6574\u5F8C\u3067\u3082\u9B45\u529B\u7684\u3002</li>":""}
-      ${l>=40&&l<70?"<li>\u9078\u629E\u7684\u306A\u6295\u8CC7\u691C\u8A0E\u3002\u7269\u4EF6\u500B\u5225\u306E\u7CBE\u67FB\u304C\u5FC5\u8981\u3002</li>":""}
-      ${l<40?"<li>\u614E\u91CD\u306A\u691C\u8A0E\u304C\u5FC5\u8981\u3002\u4EE3\u66FF\u30A8\u30EA\u30A2\u3068\u306E\u6BD4\u8F03\u3092\u63A8\u5968\u3002</li>":""}
-      ${s&&s.flood>=50?"<li>\u6C34\u5BB3\u4FDD\u967A\u306E\u52A0\u5165\u3092\u5F37\u304F\u63A8\u5968\u3002</li>":""}
-      ${s&&s.overall>=60?"<li>\u5357\u6D77\u30C8\u30E9\u30D5\u5730\u9707\u306E\u60F3\u5B9A\u9707\u5EA6\u304C\u9AD8\u3044\u3002\u8010\u9707\u6027\u80FD\u306E\u78BA\u8A8D\u3092\u3002</li>":""}
-    </ul>
+    ${o?`<h2>\u30EA\u30B9\u30AF\u8A73\u7D30</h2><table><tr><th>\u7A2E\u5225</th><th>\u5024</th></tr><tr><td>\u6D78\u6C34</td><td>${o.flood}/100</td></tr><tr><td>\u9707\u5EA6</td><td>${o.earthquake}</td></tr></table>`:""}
     <hr>
-    <p style="font-size:11px;color:var(--text-muted)">\u51FA\u5178: \u56FD\u571F\u4EA4\u901A\u7701 \u4E0D\u52D5\u7523\u4FA1\u683C\u60C5\u5831 / \u5730\u4FA1\u516C\u793A / \u30CF\u30B6\u30FC\u30C9\u30DE\u30C3\u30D7\u30DD\u30FC\u30BF\u30EB, e-Stat, \u611B\u77E5\u770C\u30AA\u30FC\u30D7\u30F3\u30C7\u30FC\u30BF</p>
-  `,a.classList.add("visible"),document.getElementById("close-report")?.addEventListener("click",()=>{a.classList.remove("visible")})}function G(){let e=document.getElementById("search-panel"),a=Object.keys(c);e.innerHTML=`
+    <p style="font-size:11px;color:var(--text-muted)">\u51FA\u5178: \u56FD\u571F\u4EA4\u901A\u7701 \u4E0D\u52D5\u7523\u4FA1\u683C\u60C5\u5831 / \u5730\u4FA1\u516C\u793A / \u30CF\u30B6\u30FC\u30C9\u30DE\u30C3\u30D7\u30DD\u30FC\u30BF\u30EB</p>
+  `,t.classList.add("visible"),document.getElementById("close-report")?.addEventListener("click",()=>{t.classList.remove("visible")})}function K(){let e=document.getElementById("area-select");if(!e)return;let t=Object.keys(l().municipalities);e.innerHTML=`<option value="">\u30A8\u30EA\u30A2\u3092\u9078\u629E...</option>${t.map(n=>`<option value="${n}">${n}</option>`).join("")}`}function V(){let e=document.getElementById("search-panel");e.innerHTML=`
+    <div class="panel-section">
+      <h3>\u90FD\u9053\u5E9C\u770C</h3>
+      <div class="form-group">
+        <select id="pref-select">
+          ${Object.entries(k).map(([t,n])=>`<option value="${t}" ${t===h?"selected":""}>${n.displayName}</option>`).join("")}
+        </select>
+      </div>
+    </div>
+
     <div class="panel-section">
       <h3>\u30A8\u30EA\u30A2\u691C\u7D22</h3>
       <div class="form-group">
         <label>\u5E02\u533A\u753A\u6751</label>
         <select id="area-select">
           <option value="">\u30A8\u30EA\u30A2\u3092\u9078\u629E...</option>
-          ${a.map(t=>`<option value="${t}">${t}</option>`).join("")}
+          ${Object.keys(l().municipalities).map(t=>`<option value="${t}">${t}</option>`).join("")}
         </select>
       </div>
     </div>
@@ -251,10 +213,14 @@
         <label>\u707D\u5BB3\u30EA\u30B9\u30AF\u8003\u616E</label>
         <div class="switch on" id="risk-toggle"></div>
       </div>
+      <div class="switch-row" style="margin-top:8px">
+        <label>\u6BD4\u8F03\u30E2\u30FC\u30C9</label>
+        <div class="switch ${b?"on":""}" id="comparison-toggle"></div>
+      </div>
     </div>
 
     <button class="btn-primary" id="btn-analyze">\u30AF\u30ED\u30B9\u5206\u6790</button>
-  `,document.getElementById("area-select")?.addEventListener("change",t=>{let n=t.target.value;if(n){p(n);let s=c[n];s&&o.setView(s,13)}}),e.querySelectorAll(".toggle-btn[data-type]").forEach(t=>{t.addEventListener("click",n=>{e.querySelectorAll(".toggle-btn[data-type]").forEach(s=>s.classList.remove("active")),n.target.classList.add("active")})}),e.querySelectorAll(".toggle-btn[data-range]").forEach(t=>{t.addEventListener("click",n=>{e.querySelectorAll(".toggle-btn[data-range]").forEach(s=>s.classList.remove("active")),n.target.classList.add("active")})}),document.getElementById("risk-toggle")?.addEventListener("click",t=>{t.target.classList.toggle("on")}),document.getElementById("btn-analyze")?.addEventListener("click",()=>{let t=document.getElementById("area-select").value;t&&p(t)})}function N(){let e=document.createElement("div");e.id="report-overlay",e.innerHTML='<div id="report-content"></div>',document.body.appendChild(e),e.addEventListener("click",a=>{a.target===e&&e.classList.remove("visible")})}function $(){G(),_(),N(),T("")}document.readyState==="loading"?document.addEventListener("DOMContentLoaded",$):$();})();
+  `,document.getElementById("pref-select")?.addEventListener("change",t=>{G(t.target.value)}),document.getElementById("area-select")?.addEventListener("change",t=>{let n=t.target.value;if(n){d(n);let a=l().municipalities[n];a&&s.setView(a,13)}}),e.querySelectorAll(".toggle-btn[data-type]").forEach(t=>{t.addEventListener("click",n=>{e.querySelectorAll(".toggle-btn[data-type]").forEach(a=>a.classList.remove("active")),n.target.classList.add("active")})}),e.querySelectorAll(".toggle-btn[data-range]").forEach(t=>{t.addEventListener("click",n=>{e.querySelectorAll(".toggle-btn[data-range]").forEach(a=>a.classList.remove("active")),n.target.classList.add("active")})}),document.getElementById("risk-toggle")?.addEventListener("click",t=>{t.target.classList.toggle("on")}),document.getElementById("comparison-toggle")?.addEventListener("click",t=>{let n=t.target;n.classList.toggle("on"),b=n.classList.contains("on"),f&&y(f)}),document.getElementById("btn-analyze")?.addEventListener("click",()=>{let t=document.getElementById("area-select").value;t&&d(t)})}function Y(){let e=document.createElement("div");e.id="report-overlay",e.innerHTML='<div id="report-content"></div>',document.body.appendChild(e),e.addEventListener("click",t=>{t.target===e&&e.classList.remove("visible")})}function M(){V(),O(),Y(),y("")}document.readyState==="loading"?document.addEventListener("DOMContentLoaded",M):M();})();
 </script>
 </body>
 </html>

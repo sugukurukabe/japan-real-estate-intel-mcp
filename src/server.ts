@@ -4,7 +4,6 @@ import {
   AssessRiskInput,
   GenerateReportInput,
   OpenDashboardInput,
-  HumanFlowAnalyzeInput,
   FamilyFriendlyInput,
   CorporateDemandInput,
 } from './schemas.js';
@@ -12,7 +11,6 @@ import { crossAnalyze } from './tools/cross_analyze_real_estate_market.js';
 import { assessPropertyRisk } from './tools/assess_property_risk.js';
 import { generateAreaReport } from './tools/generate_area_report.js';
 import { openDashboard } from './tools/open_dashboard.js';
-import { crossAnalyzeWithHumanFlow } from './tools/cross_analyze_with_human_flow.js';
 import { assessFamilyFriendlyScore } from './tools/assess_family_friendly_score.js';
 import { predictCorporateDemand } from './tools/predict_corporate_demand.js';
 import { getLandPriceResource } from './resources/land_price.js';
@@ -20,18 +18,19 @@ import { getFloodResource } from './resources/flood.js';
 import { getPopulationResource } from './resources/population.js';
 import { getDashboardHtml } from './resources/ui_dashboard.js';
 import { ATTRIBUTION } from './data/attribution.js';
+import './data-loaders/index.js';
 
 export function createServer(): McpServer {
   const server = new McpServer({
     name: 'japan-real-estate-intel-mcp',
-    version: '1.2.0',
+    version: '2.0.0',
   });
 
-  // ── Tools ──
+  // ── Tools (6) ──
 
   server.tool(
     'cross_analyze_real_estate_market',
-    '愛知県内エリアの不動産市場をクロス分析。価格トレンド・需給・災害リスク・投資スコアを返す。',
+    '都道府県内エリアの不動産市場をクロス分析。価格トレンド・需給・災害リスク・投資スコアに加え、人流・教育・企業データをフラグで統合可能。（対応: 愛知県, 東京都）',
     CrossAnalyzeInput.shape,
     async (args) => {
       const input = CrossAnalyzeInput.parse(args);
@@ -47,7 +46,7 @@ export function createServer(): McpServer {
 
   server.tool(
     'assess_property_risk',
-    '特定物件・住所の災害リスク（浸水・土砂・地震）を評価し、リスクスコアと価格調整率を返す。',
+    '特定物件・住所の災害リスク（浸水・土砂・地震）を評価し、リスクスコアと価格調整率を返す。（対応: 愛知県, 東京都）',
     AssessRiskInput.shape,
     async (args) => {
       const input = AssessRiskInput.parse(args);
@@ -62,42 +61,8 @@ export function createServer(): McpServer {
   );
 
   server.tool(
-    'generate_area_report',
-    'エリア別の投資・開発・賃貸・管理レポートをMarkdown形式で生成する。',
-    GenerateReportInput.shape,
-    async (args) => {
-      const input = GenerateReportInput.parse(args);
-      const result = generateAreaReport(input);
-      return {
-        content: [
-          { type: 'text' as const, text: result.markdownReport },
-        ],
-        structuredContent: { ...result, attribution: ATTRIBUTION },
-      };
-    },
-  );
-
-  // ── v1.2 Tools ──
-
-  server.tool(
-    'cross_analyze_with_human_flow',
-    '人流データ（モバイル位置情報統計）を加味した不動産クロス分析。実需要・空室リスクを科学的に予測する。',
-    HumanFlowAnalyzeInput.shape,
-    async (args) => {
-      const input = HumanFlowAnalyzeInput.parse(args);
-      const result = crossAnalyzeWithHumanFlow(input);
-      return {
-        content: [
-          { type: 'text' as const, text: JSON.stringify(result, null, 2) },
-        ],
-        structuredContent: { ...result, attribution: ATTRIBUTION },
-      };
-    },
-  );
-
-  server.tool(
     'assess_family_friendly_score',
-    '学区・教育環境・犯罪統計を加味したファミリー物件評価。子育て世帯向け資産価値を算出。',
+    '学区・教育環境・犯罪統計を加味したファミリー物件評価。子育て世帯向け資産価値を算出。（対応: 愛知県=フル, 東京都=限定）',
     FamilyFriendlyInput.shape,
     async (args) => {
       const input = FamilyFriendlyInput.parse(args);
@@ -113,7 +78,7 @@ export function createServer(): McpServer {
 
   server.tool(
     'predict_corporate_demand',
-    '企業立地・事業所統計・通勤データで法人需要を予測。オフィス・物流投資の意思決定を支援。',
+    '企業立地・事業所統計・通勤データで法人需要を予測。オフィス・物流投資の意思決定を支援。（対応: 愛知県=フル, 東京都=限定）',
     CorporateDemandInput.shape,
     async (args) => {
       const input = CorporateDemandInput.parse(args);
@@ -128,8 +93,24 @@ export function createServer(): McpServer {
   );
 
   server.tool(
+    'generate_area_report',
+    'エリア別の投資・開発・賃貸・管理レポートをMarkdown形式で生成する。（対応: 愛知県, 東京都）',
+    GenerateReportInput.shape,
+    async (args) => {
+      const input = GenerateReportInput.parse(args);
+      const result = generateAreaReport(input);
+      return {
+        content: [
+          { type: 'text' as const, text: result.markdownReport },
+        ],
+        structuredContent: { ...result, attribution: ATTRIBUTION },
+      };
+    },
+  );
+
+  server.tool(
     'open_dashboard',
-    '不動産ダッシュボード（地図・ヒートマップ・リスク・人流・学区・企業レイヤー）を開く。MCP Apps対応ホストではインタラクティブUIを表示。',
+    '不動産ダッシュボード（地図・ヒートマップ・リスク・人流・学区・企業レイヤー）を開く。都道府県切替対応。MCP Apps対応ホストではインタラクティブUIを表示。',
     OpenDashboardInput.shape,
     async (args) => {
       const input = OpenDashboardInput.parse(args);
@@ -138,7 +119,7 @@ export function createServer(): McpServer {
         content: [
           {
             type: 'text' as const,
-            text: `不動産ダッシュボード: ${result.area} (レイヤー: ${result.layer})`,
+            text: `不動産ダッシュボード: ${result.prefecture} ${result.area} (レイヤー: ${result.layer})`,
           },
         ],
         structuredContent: { ...result, attribution: ATTRIBUTION },
@@ -149,20 +130,22 @@ export function createServer(): McpServer {
     },
   );
 
-  // ── Resources ──
+  // ── Resources (prefecture/{area} pattern) ──
 
   server.resource(
-    'land-price-aichi',
-    'realestate://land-price/aichi/{city}',
-    { description: '愛知県の地価公示データ。cityに市区町村名を指定。', mimeType: 'application/json' },
+    'land-price',
+    'realestate://land-price/{prefecture}/{area}',
+    { description: '地価公示データ。prefectureに都道府県名、areaに市区町村名を指定。', mimeType: 'application/json' },
     async (uri) => {
-      const city = uri.pathname.split('/').pop() ?? '名古屋市';
+      const parts = uri.pathname.split('/').filter(Boolean);
+      const prefecture = decodeURIComponent(parts[0] ?? 'aichi');
+      const area = decodeURIComponent(parts[1] ?? '名古屋市');
       return {
         contents: [
           {
             uri: uri.href,
             mimeType: 'application/json' as const,
-            text: getLandPriceResource(decodeURIComponent(city)),
+            text: getLandPriceResource(prefecture, area),
           },
         ],
       };
@@ -170,17 +153,19 @@ export function createServer(): McpServer {
   );
 
   server.resource(
-    'flood-aichi',
-    'hazard://flood/aichi/{area}',
-    { description: '愛知県の浸水想定区域GeoJSON。areaにエリア名を指定。', mimeType: 'application/json' },
+    'flood',
+    'hazard://flood/{prefecture}/{area}',
+    { description: '浸水想定区域GeoJSON。prefectureに都道府県名、areaにエリア名を指定。', mimeType: 'application/json' },
     async (uri) => {
-      const area = uri.pathname.split('/').pop() ?? '愛知県全体';
+      const parts = uri.pathname.split('/').filter(Boolean);
+      const prefecture = decodeURIComponent(parts[0] ?? 'aichi');
+      const area = decodeURIComponent(parts[1] ?? '全体');
       return {
         contents: [
           {
             uri: uri.href,
             mimeType: 'application/json' as const,
-            text: getFloodResource(decodeURIComponent(area)),
+            text: getFloodResource(prefecture, area),
           },
         ],
       };
@@ -188,17 +173,19 @@ export function createServer(): McpServer {
   );
 
   server.resource(
-    'population-aichi',
-    'stats://population-trend/aichi/{area}',
-    { description: '愛知県の人口統計データ。areaに市区町村名を指定。', mimeType: 'application/json' },
+    'population',
+    'stats://population-trend/{prefecture}/{area}',
+    { description: '人口統計データ。prefectureに都道府県名、areaに市区町村名を指定。', mimeType: 'application/json' },
     async (uri) => {
-      const area = uri.pathname.split('/').pop() ?? '愛知県全体';
+      const parts = uri.pathname.split('/').filter(Boolean);
+      const prefecture = decodeURIComponent(parts[0] ?? 'aichi');
+      const area = decodeURIComponent(parts[1] ?? '全体');
       return {
         contents: [
           {
             uri: uri.href,
             mimeType: 'application/json' as const,
-            text: getPopulationResource(decodeURIComponent(area)),
+            text: getPopulationResource(prefecture, area),
           },
         ],
       };
@@ -208,7 +195,7 @@ export function createServer(): McpServer {
   server.resource(
     'dashboard',
     'ui://japan-real-estate-intel/dashboard',
-    { description: '日本不動産インテリジェンスダッシュボード（愛知県先行）', mimeType: 'text/html' },
+    { description: '日本不動産インテリジェンスダッシュボード（愛知県・東京都対応）', mimeType: 'text/html' },
     async (uri) => {
       return {
         contents: [

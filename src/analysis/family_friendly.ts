@@ -1,4 +1,4 @@
-import type { SchoolDistrictRecord, CrimeStatsRecord, PopulationRecord } from '../data/loader.js';
+import type { SchoolDistrictRecord, CrimeStatsRecord, PopulationRecord } from '../data-loaders/types.js';
 
 interface FamilyFriendlyResult {
   overallScore: number;

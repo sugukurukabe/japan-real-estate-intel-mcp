@@ -3,26 +3,26 @@ import { computeRisk } from '../src/analysis/risk_score.js';
 import { computeInvestmentScore } from '../src/analysis/investment_score.js';
 import { computePriceTrend } from '../src/analysis/price_trend.js';
 
-describe('computeRisk', () => {
+describe('computeRisk (Aichi)', () => {
   it('returns higher score for flood-prone area (港区)', () => {
-    const result = computeRisk(35.0828, 136.8472, '名古屋市港区', ['all']);
+    const result = computeRisk(35.0828, 136.8472, '名古屋市港区', ['all'], 'aichi');
     expect(result.overallScore).toBeGreaterThanOrEqual(0);
     expect(result.overallScore).toBeLessThanOrEqual(100);
     expect(result.adjustedPriceImpact).toBeLessThanOrEqual(0);
   });
 
   it('returns lower score for non-flood area', () => {
-    const result = computeRisk(35.18, 136.95, '名古屋市千種区', ['all']);
+    const result = computeRisk(35.18, 136.95, '名古屋市千種区', ['all'], 'aichi');
     expect(result.overallScore).toBeLessThanOrEqual(100);
   });
 
   it('only evaluates flood when specified', () => {
-    const result = computeRisk(35.08, 136.85, '名古屋市港区', ['flood']);
+    const result = computeRisk(35.08, 136.85, '名古屋市港区', ['flood'], 'aichi');
     expect(result.earthquakeRisk.intensity).toBe('4');
   });
 
   it('provides recommendations', () => {
-    const result = computeRisk(35.0828, 136.8472, '名古屋市港区', ['all']);
+    const result = computeRisk(35.0828, 136.8472, '名古屋市港区', ['all'], 'aichi');
     expect(result.recommendations.length).toBeGreaterThan(0);
   });
 });

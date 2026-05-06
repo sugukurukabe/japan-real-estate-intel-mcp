@@ -2,7 +2,17 @@
 
 日本の不動産投資・仲介・開発・管理向けに、**地価・取引価格・人口統計・災害リスク・人流・教育環境・企業立地・3D景観** をクロス分析する MCP サーバー。
 
-愛知県を先行対応し、今後日本全国へ拡張予定。AI ホスト（Claude Desktop / Cursor / VS Code）から直接呼び出して、投資判断・物件評価・市場レポートを瞬時に取得できます。
+**v2.0** から都道府県プラガブル構造を採用。愛知県（フルデータ）と東京都（基本データ）の 2 都道府県に対応。新しい県は `data-loaders/` にファイルを 1 本追加するだけで拡張可能です。
+
+## v2.0.0 Breaking Changes
+
+| 変更 | 詳細 |
+|---|---|
+| 全ツールに `prefecture` パラメータ追加 | デフォルト: `"愛知県"` |
+| `cross_analyze_with_human_flow` 廃止 | `cross_analyze_real_estate_market` に `includeHumanFlow` フラグとして統合 |
+| Resource URI 変更 | `realestate://land-price/{prefecture}/{area}` 形式に |
+| データディレクトリ変更 | `data/aichi/`, `data/tokyo/` に分離 |
+| 出力に optional フィールド追加 | `humanFlow`, `realDemandScore`, `educationSummary`, `corporateSummary` |
 
 ## 「今までなかった」独自価値
 
@@ -13,14 +23,32 @@
 | オフィス価格 × 企業集積 × 通勤時間 | 法人需要の精密予測 | オフィス・物流投資で差別化 |
 | 地価 × PLATEAU 3D建物高さ × 影 | 景観・日照シミュレーション | 開発事業者への視覚的説得力 |
 
+## 都道府県 Capabilities マトリクス
+
+| 機能 | 愛知県 | 東京都 |
+|---|:---:|:---:|
+| 地価公示 | YES | YES |
+| 不動産取引 | YES | - |
+| 人口統計 | YES | YES |
+| 浸水想定 | YES | YES |
+| 土砂災害 | YES | - |
+| 地震想定 | YES | YES |
+| 市区町村境界 | YES | YES |
+| 人流データ | YES | v2.1+ |
+| 教育環境 | YES | v2.1+ |
+| 企業立地 | YES | v2.1+ |
+| 犯罪統計 | YES | v2.1+ |
+| PLATEAU 3D | YES | v2.1+ |
+
 ## 特徴
 
-- **7つのツール**: 市場分析 / 人流クロス分析 / リスク評価 / ファミリー評価 / 法人需要予測 / レポート生成 / ダッシュボード
-- **8レイヤーダッシュボード**: 地価 / 災害リスク / 取引 / 人口 / 人流 / 学区 / 企業密度 / 3D建物
-- **5カテゴリのデータ統合**: 価格・需給・災害・実需要（人流）・教育環境・企業立地・安全性・景観
+- **6つのツール**: 市場クロス分析（人流・教育・企業フラグ統合）/ リスク評価 / ファミリー評価 / 法人需要予測 / レポート生成 / ダッシュボード
+- **8レイヤーダッシュボード**: 地価 / 災害リスク / 取引 / 人口 / 人流 / 学区 / 企業密度 / 3D建物（capabilities に応じて自動 enable/disable）
+- **都道府県セレクタ**: ダッシュボード上で Aichi ↔ Tokyo を切り替え
+- **比較モード**: 2 都道府県のスコアを並列表示（v2.1 でフル機能化）
 - **stdio + Streamable HTTP**: 両トランスポート対応
-- **TypeScript + Zod**: 型安全な入出力スキーマ
-- **バンドルデータ**: 愛知県のスナップショット同梱（API キー不要）
+- **TypeScript strict + Zod**: 型安全な入出力スキーマ
+- **プラガブル**: `BaseLoader` を継承して新県を追加
 
 ## クイックスタート
 
@@ -74,93 +102,67 @@ node dist/http.js
 }
 ```
 
-### VS Code (`.vscode/mcp.json`)
+## ツール一覧（v2.0: 6 本）
 
-```json
-{
-  "servers": {
-    "japan-real-estate-intel": {
-      "type": "stdio",
-      "command": "node",
-      "args": ["dist/index.js"],
-      "cwd": "${workspaceFolder}"
-    }
-  }
-}
-```
+### `cross_analyze_real_estate_market`
 
-## ツール一覧
+都道府県内エリアの不動産市場をクロス分析。`includeHumanFlow` / `includeEducation` / `includeCorporate` フラグで付加情報をオプトイン。
 
-### v1.0 ツール
+| パラメータ | 型 | デフォルト | 説明 |
+|---|---|---|---|
+| `prefecture` | string | `"愛知県"` | 都道府県名 |
+| `area` | string | - | エリア名 |
+| `propertyType` | enum | - | residential / commercial / logistics / office / mixed |
+| `timeRange` | enum | - | 1y / 3y / 5y |
+| `includeRisk` | boolean | `true` | 災害リスクを含むか |
+| `includeHumanFlow` | boolean | `true` | 人流データを含むか |
+| `includeEducation` | boolean | `false` | 教育データを含むか |
+| `includeCorporate` | boolean | `false` | 企業データを含むか |
 
-#### `cross_analyze_real_estate_market`
-地価トレンド・需給・災害リスク・投資スコアのクロス分析。
+capabilities がない都道府県では該当フィールドが `undefined` になり、`keyInsights` に「v2.x で対応予定」と表示されます。
 
-#### `assess_property_risk`
-特定住所の浸水・土砂・地震リスクを評価し、価格調整率を算出。
+### `assess_property_risk`
 
-#### `generate_area_report`
+特定住所の浸水・土砂・地震リスクを評価し、リスクスコアと価格調整率を算出。
+
+### `assess_family_friendly_score`
+
+学区・教育環境・犯罪統計を加味したファミリー物件評価。子育て世帯向け資産価値を算出。
+
+### `predict_corporate_demand`
+
+企業立地・事業所統計・通勤データで法人需要を予測。
+
+### `generate_area_report`
+
 投資/開発/賃貸/管理レポートを Markdown 形式で生成。
 
-#### `open_dashboard`
-8レイヤーの不動産ダッシュボードを起動（MCP Apps 対応ホストでインタラクティブ表示）。
+### `open_dashboard`
 
-### v1.2 新ツール
+8レイヤーの不動産ダッシュボードを起動。都道府県セレクタ付き。
 
-#### `cross_analyze_with_human_flow`
-**人流データ×不動産クロス分析**。モバイル位置情報統計を加味し、実需要スコア・空室リスクを科学的に予測。
+## Resources（v2.0 URI パターン）
 
-| パラメータ | 型 | 説明 |
-|---|---|---|
-| `area` | string | エリア名 |
-| `propertyType` | enum | residential / commercial / logistics / office / mixed |
-| `timeRange` | enum | 1y / 3y / 5y |
-| `dayType` | enum | weekday / weekend / both |
+| URI | 説明 |
+|---|---|
+| `realestate://land-price/{prefecture}/{area}` | 地価公示データ |
+| `hazard://flood/{prefecture}/{area}` | 浸水想定区域 GeoJSON |
+| `stats://population-trend/{prefecture}/{area}` | 人口統計 |
+| `ui://japan-real-estate-intel/dashboard` | ダッシュボード HTML |
 
-```
-> 名古屋市中区の商業不動産を人流データ付きで分析
-→ 平日18.5万人/日、実需要スコア 85/100、空室リスク 10/100
-```
+例: `realestate://land-price/aichi/名古屋市中区`, `realestate://land-price/tokyo/世田谷区`
 
-#### `assess_family_friendly_score`
-**学区・教育環境・犯罪統計でファミリー物件評価**。子育て世帯向けの真の資産価値を算出。
+## 都道府県の追加手順
 
-| パラメータ | 型 | 説明 |
-|---|---|---|
-| `area` | string | エリア名 |
-| `childAge` | enum | preschool / elementary / junior_high / high_school / all |
+新しい県を追加する場合:
 
-```
-> 名古屋市千種区のファミリー向け評価
-→ ファミリースコア 78/100、教育スコア 82/100、資産価値+12.8%
-```
+1. `data/<key>/` に最低限のファイルを配置:
+   - `land_price.csv`, `population.csv`, `flood.geojson`, `earthquake.json`, `municipalities.topojson`
+2. `src/data-loaders/<key>-loader.ts` を作成（`BaseLoader` を継承、`capabilities` を宣言）
+3. `src/data-loaders/index.ts` で `registerLoader(new XxxLoader())` を 1 行追加
+4. `src/prefecture/resolver.ts` の `PREFECTURE_KEYS` にエイリアスを追加
 
-#### `predict_corporate_demand`
-**企業立地・事業所統計・通勤データで法人需要予測**。
-
-| パラメータ | 型 | 説明 |
-|---|---|---|
-| `area` | string | エリア名 |
-| `propertyType` | enum | office / logistics / commercial / mixed |
-| `includeCommuteAnalysis` | boolean | 通勤分析を含むか |
-
-```
-> 名古屋市中区のオフィス需要を予測
-→ 大企業245社集積、法人需要 87/100、成長性: high
-```
-
-## ダッシュボードレイヤー
-
-| レイヤー | データ | 可視化 |
-|---|---|---|
-| 地価 | 地価公示 | ヒートマップ（赤〜青） |
-| 災害リスク | 浸水・土砂・地震 | リスクゾーン + スコア |
-| 取引 | 不動産取引価格 | バブルチャート |
-| 人口 | 人口統計 | 増減カラー + サイズ |
-| **人流** | モバイル位置情報 | フローヒートマップ + トレンド |
-| **学区** | 教育環境データ | 教育スコアカラー |
-| **企業** | 事業所統計 | 企業集積密度 |
-| **3D建物** | PLATEAU | 建物高さ + 影シミュレーション |
+それだけで `prefecture: "大阪府"` が全ツールで動作します。
 
 ## データ出典
 
@@ -171,14 +173,13 @@ node dist/http.js
 | 浸水・土砂災害 | 国土交通省ハザードマップ | 2025-12-01 |
 | 地震想定 | 内閣府 | 2025-12-01 |
 | 人口統計 | 総務省 e-Stat | 2025-12-01 |
-| **人流統計** | 国土交通省「全国うごき統計」| 2025-12-01 |
-| **教育データ** | 愛知県教育委員会 + e-Stat | 2025-12-01 |
-| **事業所統計** | 総務省 e-Stat | 2025-12-01 |
-| **犯罪統計** | 愛知県警察オープンデータ | 2025-12-01 |
-| **3D都市モデル** | 国土交通省 PLATEAU | 2025-12-01 |
-| 市区町村境界 | 国土数値情報 | 2025-12-01 |
+| 人流統計 | 国土交通省「全国うごき統計」| 2025-12-01 |
+| 教育データ | 愛知県教育委員会 + e-Stat | 2025-12-01 |
+| 事業所統計 | 総務省 e-Stat | 2025-12-01 |
+| 犯罪統計 | 愛知県警察オープンデータ | 2025-12-01 |
+| 3D都市モデル | 国土交通省 PLATEAU | 2025-12-01 |
 
-**注意**: v1.2 のデータは MVP デモ用のサンプルスナップショットです。投資判断には最新の公開データを直接ご確認ください。
+**注意**: データは MVP デモ用のサンプルスナップショットです。投資判断には最新の公開データを直接ご確認ください。
 
 ## 開発
 
@@ -186,15 +187,15 @@ node dist/http.js
 pnpm install
 pnpm dev          # TypeScript watch
 pnpm build:ui     # ダッシュボード再ビルド
-pnpm test         # Vitest (43 tests)
+pnpm test         # Vitest (62 tests)
 pnpm lint         # 型チェック
 ```
 
 ## ロードマップ
 
-- **v1.3**: ライブ API アダプタ（MLIT / e-Stat / ハザードマップ）
-- **v1.4**: 愛知県以外の都道府県対応（東京・大阪・福岡）
-- **v2.0**: Federation Hub 連携 + PDF/Excel エクスポート + npm publish
+- **v2.1**: 東京都の人流/学区/企業/PLATEAU データ追加 + 比較モードフル機能化
+- **v2.2**: 大阪府・福岡県対応
+- **v3.0**: ライブ API アダプタ + Federation Hub + npm publish
 
 ## ライセンス
 

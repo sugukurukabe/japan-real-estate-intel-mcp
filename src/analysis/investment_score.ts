@@ -1,4 +1,4 @@
-import type { PopulationRecord } from '../data/loader.js';
+import type { PopulationRecord } from '../data-loaders/types.js';
 
 interface InvestmentParams {
   priceChangeRate: number;

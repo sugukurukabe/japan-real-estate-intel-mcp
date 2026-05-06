@@ -1,16 +1,28 @@
 import { getPopulation, getPopulationForCity } from '../data/loader.js';
 import { ATTRIBUTION } from '../data/attribution.js';
+import { resolvePrefecture, getPrefectureDisplayName } from '../prefecture/resolver.js';
 
-export function getPopulationResource(area: string): string {
-  if (area === '愛知県全体') {
-    const all = getPopulation();
-    return JSON.stringify({ recordCount: all.length, records: all, attribution: ATTRIBUTION }, null, 2);
+export function getPopulationResource(prefecture: string, area: string): string {
+  const prefKey = resolvePrefecture(prefecture);
+  const displayName = getPrefectureDisplayName(prefKey);
+  const isAll = area === `${displayName}全体` || area === '全体';
+
+  if (isAll) {
+    const all = getPopulation(prefKey);
+    return JSON.stringify(
+      { prefecture: displayName, recordCount: all.length, records: all, attribution: ATTRIBUTION },
+      null,
+      2,
+    );
   }
 
-  const record = getPopulationForCity(area);
+  const record = getPopulationForCity(area, prefKey);
   if (!record) {
-    return JSON.stringify({ error: `${area}の人口データが見つかりません`, attribution: ATTRIBUTION });
+    return JSON.stringify({
+      error: `${displayName} ${area}の人口データが見つかりません`,
+      attribution: ATTRIBUTION,
+    });
   }
 
-  return JSON.stringify({ ...record, attribution: ATTRIBUTION }, null, 2);
+  return JSON.stringify({ prefecture: displayName, ...record, attribution: ATTRIBUTION }, null, 2);
 }

@@ -1,65 +1,17 @@
 import { describe, it, expect } from 'vitest';
-import { crossAnalyzeWithHumanFlow } from '../src/tools/cross_analyze_with_human_flow.js';
 import { assessFamilyFriendlyScore } from '../src/tools/assess_family_friendly_score.js';
 import { predictCorporateDemand } from '../src/tools/predict_corporate_demand.js';
 import {
-  HumanFlowAnalyzeInput,
-  HumanFlowAnalyzeOutput,
   FamilyFriendlyInput,
   FamilyFriendlyOutput,
   CorporateDemandInput,
   CorporateDemandOutput,
 } from '../src/schemas.js';
 
-describe('cross_analyze_with_human_flow', () => {
-  it('returns valid result for 名古屋市中区 commercial', () => {
-    const result = crossAnalyzeWithHumanFlow({
-      area: '名古屋市中区',
-      propertyType: 'commercial',
-      timeRange: '3y',
-      includeRisk: true,
-      dayType: 'both',
-    });
-
-    expect(result.summary).toBeTruthy();
-    expect(result.humanFlow.weekdayAvgFlow).toBeGreaterThan(0);
-    expect(result.realDemandScore).toBeGreaterThanOrEqual(0);
-    expect(result.realDemandScore).toBeLessThanOrEqual(100);
-    expect(result.vacancyRiskScore).toBeGreaterThanOrEqual(0);
-    expect(result.investmentScore).toBeGreaterThanOrEqual(0);
-    expect(result.investmentScore).toBeLessThanOrEqual(100);
-    expect(result.keyInsights.length).toBeGreaterThan(0);
-
-    HumanFlowAnalyzeOutput.parse(result);
-  });
-
-  it('handles unknown area gracefully', () => {
-    const result = crossAnalyzeWithHumanFlow({
-      area: '存在しない市',
-      propertyType: 'residential',
-      timeRange: '1y',
-      includeRisk: false,
-      dayType: 'weekday',
-    });
-
-    expect(result.humanFlow.weekdayAvgFlow).toBe(0);
-    expect(result.realDemandScore).toBeLessThanOrEqual(15);
-  });
-
-  it('validates schema round-trip', () => {
-    const input = HumanFlowAnalyzeInput.parse({
-      area: '豊田市',
-      propertyType: 'office',
-      timeRange: '5y',
-    });
-    expect(input.includeRisk).toBe(true);
-    expect(input.dayType).toBe('both');
-  });
-});
-
-describe('assess_family_friendly_score', () => {
+describe('assess_family_friendly_score (Aichi)', () => {
   it('returns high score for education-strong area', () => {
     const result = assessFamilyFriendlyScore({
+      prefecture: '愛知県',
       area: '名古屋市千種区',
       childAge: 'all',
     });
@@ -74,8 +26,8 @@ describe('assess_family_friendly_score', () => {
   });
 
   it('returns lower score for lower-education area', () => {
-    const highResult = assessFamilyFriendlyScore({ area: '名古屋市千種区', childAge: 'all' });
-    const lowResult = assessFamilyFriendlyScore({ area: '名古屋市港区', childAge: 'all' });
+    const highResult = assessFamilyFriendlyScore({ prefecture: '愛知県', area: '名古屋市千種区', childAge: 'all' });
+    const lowResult = assessFamilyFriendlyScore({ prefecture: '愛知県', area: '名古屋市港区', childAge: 'all' });
 
     expect(highResult.schoolDistrict.educationScore).toBeGreaterThan(
       lowResult.schoolDistrict.educationScore,
@@ -84,6 +36,7 @@ describe('assess_family_friendly_score', () => {
 
   it('handles unknown area', () => {
     const result = assessFamilyFriendlyScore({
+      prefecture: '愛知県',
       area: '存在しない市',
       childAge: 'elementary',
     });
@@ -95,12 +48,14 @@ describe('assess_family_friendly_score', () => {
   it('validates input schema', () => {
     const input = FamilyFriendlyInput.parse({ area: '名古屋市昭和区' });
     expect(input.childAge).toBe('all');
+    expect(input.prefecture).toBe('愛知県');
   });
 });
 
-describe('predict_corporate_demand', () => {
+describe('predict_corporate_demand (Aichi)', () => {
   it('returns high demand for 名古屋市中区', () => {
     const result = predictCorporateDemand({
+      prefecture: '愛知県',
       area: '名古屋市中区',
       propertyType: 'office',
       includeCommuteAnalysis: true,
@@ -117,6 +72,7 @@ describe('predict_corporate_demand', () => {
 
   it('returns logistics-appropriate analysis for 刈谷市', () => {
     const result = predictCorporateDemand({
+      prefecture: '愛知県',
       area: '刈谷市',
       propertyType: 'logistics',
       includeCommuteAnalysis: true,
@@ -128,6 +84,7 @@ describe('predict_corporate_demand', () => {
 
   it('handles unknown area gracefully', () => {
     const result = predictCorporateDemand({
+      prefecture: '愛知県',
       area: '存在しない市',
       propertyType: 'office',
       includeCommuteAnalysis: false,
@@ -141,5 +98,6 @@ describe('predict_corporate_demand', () => {
     const input = CorporateDemandInput.parse({ area: '豊田市' });
     expect(input.propertyType).toBe('office');
     expect(input.includeCommuteAnalysis).toBe(true);
+    expect(input.prefecture).toBe('愛知県');
   });
 });

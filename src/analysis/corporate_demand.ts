@@ -1,4 +1,4 @@
-import type { CorporateLocationRecord, HumanFlowRecord } from '../data/loader.js';
+import type { CorporateLocationRecord, HumanFlowRecord } from '../data-loaders/types.js';
 
 interface CorporateDemandResult {
   totalEstablishments: number;

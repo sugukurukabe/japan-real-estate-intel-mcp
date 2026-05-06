@@ -1,0 +1,155 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "river": "荒川",
+        "area_name": "足立区・葛飾区",
+        "name": "荒川下流域浸水想定区域",
+        "max_depth_m": 5.0,
+        "risk_level": "high",
+        "scenario": "荒川堤防決壊（200年確率降雨）"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[139.77,35.75],[139.84,35.75],[139.84,35.80],[139.77,35.80],[139.77,35.75]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "river": "荒川",
+        "area_name": "江東区・墨田区",
+        "name": "荒川中流域浸水想定区域",
+        "max_depth_m": 3.5,
+        "risk_level": "high",
+        "scenario": "荒川堤防決壊（200年確率降雨）"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[139.79,35.68],[139.83,35.68],[139.83,35.72],[139.79,35.72],[139.79,35.68]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "river": "隅田川",
+        "area_name": "台東区・墨田区",
+        "name": "隅田川浸水想定区域",
+        "max_depth_m": 2.0,
+        "risk_level": "medium",
+        "scenario": "隅田川氾濫想定"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[139.79,35.70],[139.81,35.70],[139.81,35.73],[139.79,35.73],[139.79,35.70]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "river": "多摩川",
+        "area_name": "大田区",
+        "name": "多摩川下流域浸水想定区域",
+        "max_depth_m": 3.0,
+        "risk_level": "high",
+        "scenario": "多摩川堤防決壊想定"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[139.69,35.55],[139.73,35.55],[139.73,35.58],[139.69,35.58],[139.69,35.55]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "river": "多摩川",
+        "area_name": "世田谷区",
+        "name": "多摩川中流域浸水想定区域",
+        "max_depth_m": 1.5,
+        "risk_level": "medium",
+        "scenario": "多摩川氾濫想定"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[139.62,35.60],[139.67,35.60],[139.67,35.63],[139.62,35.63],[139.62,35.60]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "river": "江戸川",
+        "area_name": "江戸川区",
+        "name": "江戸川浸水想定区域",
+        "max_depth_m": 5.0,
+        "risk_level": "high",
+        "scenario": "江戸川堤防決壊想定（ゼロメートル地帯）"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[139.85,35.65],[139.90,35.65],[139.90,35.72],[139.85,35.72],[139.85,35.65]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "river": "中川",
+        "area_name": "葛飾区・足立区",
+        "name": "中川浸水想定区域",
+        "max_depth_m": 2.5,
+        "risk_level": "medium",
+        "scenario": "中川氾濫想定"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[139.83,35.74],[139.87,35.74],[139.87,35.78],[139.83,35.78],[139.83,35.74]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "river": "神田川",
+        "area_name": "新宿区・中野区",
+        "name": "神田川浸水想定区域",
+        "max_depth_m": 1.0,
+        "risk_level": "low",
+        "scenario": "内水氾濫想定"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[139.66,35.70],[139.73,35.70],[139.73,35.71],[139.66,35.71],[139.66,35.70]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "river": "目黒川",
+        "area_name": "品川区・目黒区",
+        "name": "目黒川浸水想定区域",
+        "max_depth_m": 0.5,
+        "risk_level": "low",
+        "scenario": "内水氾濫想定"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[139.70,35.62],[139.73,35.62],[139.73,35.64],[139.70,35.64],[139.70,35.62]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "river": "荒川",
+        "area_name": "北区・板橋区",
+        "name": "荒川上流域浸水想定区域",
+        "max_depth_m": 2.0,
+        "risk_level": "medium",
+        "scenario": "荒川氾濫想定"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[139.71,35.76],[139.76,35.76],[139.76,35.79],[139.71,35.79],[139.71,35.76]]]
+      }
+    }
+  ]
+}

@@ -1,5 +1,5 @@
 import type { HumanFlowMetrics } from '../schemas.js';
-import type { HumanFlowRecord } from '../data/loader.js';
+import type { HumanFlowRecord } from '../data-loaders/types.js';
 
 export function computeHumanFlowMetrics(records: HumanFlowRecord[]): HumanFlowMetrics {
   if (records.length === 0) {

@@ -1,12 +1,18 @@
 import { z } from 'zod';
 
-// ── cross_analyze_real_estate_market ──
+const prefectureField = z.string().default('愛知県').describe('都道府県名（和名/英名/ISO 3166-2 コード対応）');
+
+// ── cross_analyze_real_estate_market (v2.0 unified) ──
 
 export const CrossAnalyzeInput = z.object({
-  area: z.string().describe("愛知県内のエリア（例: '名古屋市中村区' または '名古屋市全体'）"),
+  prefecture: prefectureField,
+  area: z.string().describe("エリア（例: '名古屋市中村区', '世田谷区'）"),
   propertyType: z.enum(['residential', 'commercial', 'logistics', 'office', 'mixed']),
   timeRange: z.enum(['1y', '3y', '5y']),
-  includeRisk: z.boolean().default(true).describe('災害リスク（水没可能性など）を考慮するか'),
+  includeRisk: z.boolean().default(true).describe('災害リスクを考慮するか'),
+  includeHumanFlow: z.boolean().default(true).describe('人流データを含むか（対応都道府県のみ）'),
+  includeEducation: z.boolean().default(false).describe('教育環境データを含むか（対応都道府県のみ）'),
+  includeCorporate: z.boolean().default(false).describe('企業立地データを含むか（対応都道府県のみ）'),
   focusMetrics: z
     .array(z.enum(['price_trend', 'yield', 'demand_supply', 'risk_score']))
     .optional(),
@@ -31,6 +37,15 @@ export const ChartsData = z.object({
 });
 export type ChartsData = z.infer<typeof ChartsData>;
 
+export const HumanFlowMetrics = z.object({
+  weekdayAvgFlow: z.number().describe('平日平均人流（人/日）'),
+  weekendAvgFlow: z.number().describe('休日平均人流（人/日）'),
+  avgStayMinutes: z.number().describe('平均滞在時間（分）'),
+  flowTrend: z.enum(['increasing', 'stable', 'decreasing']),
+  peakHour: z.string().describe('ピーク時間帯'),
+});
+export type HumanFlowMetrics = z.infer<typeof HumanFlowMetrics>;
+
 export const CrossAnalyzeOutput = z.object({
   summary: z.string(),
   priceTrend: PriceTrend,
@@ -38,12 +53,18 @@ export const CrossAnalyzeOutput = z.object({
   investmentScore: z.number().min(0).max(100),
   keyInsights: z.array(z.string()),
   charts: ChartsData,
+  humanFlow: HumanFlowMetrics.optional(),
+  realDemandScore: z.number().min(0).max(100).optional(),
+  vacancyRiskScore: z.number().min(0).max(100).optional(),
+  educationSummary: z.object({ avgScore: z.number(), topSchool: z.string() }).optional(),
+  corporateSummary: z.object({ totalEstablishments: z.number(), majorCount: z.number() }).optional(),
 });
 export type CrossAnalyzeOutput = z.infer<typeof CrossAnalyzeOutput>;
 
 // ── assess_property_risk ──
 
 export const AssessRiskInput = z.object({
+  prefecture: prefectureField,
   address: z.string().describe('住所または地番'),
   latlng: z
     .object({ lat: z.number(), lng: z.number() })
@@ -72,6 +93,7 @@ export type AssessRiskOutput = z.infer<typeof AssessRiskOutput>;
 // ── generate_area_report ──
 
 export const GenerateReportInput = z.object({
+  prefecture: prefectureField,
   area: z.string(),
   purpose: z.enum(['investment', 'development', 'rental', 'management']),
   includeCharts: z.boolean().default(true),
@@ -85,43 +107,11 @@ export const GenerateReportOutput = z.object({
 });
 export type GenerateReportOutput = z.infer<typeof GenerateReportOutput>;
 
-// ── cross_analyze_with_human_flow ──
-
-export const HumanFlowAnalyzeInput = z.object({
-  area: z.string().describe("愛知県内のエリア（例: '名古屋市中村区'）"),
-  propertyType: z.enum(['residential', 'commercial', 'logistics', 'office', 'mixed']),
-  timeRange: z.enum(['1y', '3y', '5y']),
-  includeRisk: z.boolean().default(true),
-  dayType: z.enum(['weekday', 'weekend', 'both']).default('both').describe('平日/休日/両方'),
-});
-export type HumanFlowAnalyzeInput = z.infer<typeof HumanFlowAnalyzeInput>;
-
-export const HumanFlowMetrics = z.object({
-  weekdayAvgFlow: z.number().describe('平日平均人流（人/日）'),
-  weekendAvgFlow: z.number().describe('休日平均人流（人/日）'),
-  avgStayMinutes: z.number().describe('平均滞在時間（分）'),
-  flowTrend: z.enum(['increasing', 'stable', 'decreasing']),
-  peakHour: z.string().describe('ピーク時間帯'),
-});
-export type HumanFlowMetrics = z.infer<typeof HumanFlowMetrics>;
-
-export const HumanFlowAnalyzeOutput = z.object({
-  summary: z.string(),
-  priceTrend: PriceTrend,
-  humanFlow: HumanFlowMetrics,
-  riskScore: z.number().min(0).max(100),
-  realDemandScore: z.number().min(0).max(100).describe('人流に基づく実需要スコア'),
-  investmentScore: z.number().min(0).max(100),
-  vacancyRiskScore: z.number().min(0).max(100).describe('空室リスクスコア'),
-  keyInsights: z.array(z.string()),
-  charts: ChartsData,
-});
-export type HumanFlowAnalyzeOutput = z.infer<typeof HumanFlowAnalyzeOutput>;
-
 // ── assess_family_friendly_score ──
 
 export const FamilyFriendlyInput = z.object({
-  area: z.string().describe('愛知県内のエリア'),
+  prefecture: prefectureField,
+  area: z.string().describe('エリア'),
   address: z.string().optional().describe('具体的な住所（任意）'),
   latlng: z.object({ lat: z.number(), lng: z.number() }).optional(),
   childAge: z.enum(['preschool', 'elementary', 'junior_high', 'high_school', 'all']).default('all'),
@@ -157,7 +147,8 @@ export type FamilyFriendlyOutput = z.infer<typeof FamilyFriendlyOutput>;
 // ── predict_corporate_demand ──
 
 export const CorporateDemandInput = z.object({
-  area: z.string().describe('愛知県内のエリア'),
+  prefecture: prefectureField,
+  area: z.string().describe('エリア'),
   propertyType: z.enum(['office', 'logistics', 'commercial', 'mixed']).default('office'),
   includeCommuteAnalysis: z.boolean().default(true).describe('通勤時間分析を含むか'),
 });
@@ -186,6 +177,7 @@ export type CorporateDemandOutput = z.infer<typeof CorporateDemandOutput>;
 // ── open_dashboard ──
 
 export const OpenDashboardInput = z.object({
+  prefecture: prefectureField,
   area: z.string().optional().describe('初期表示エリア'),
   layer: z
     .enum(['land_price', 'transaction', 'flood_risk', 'population', 'human_flow', 'school_district', 'corporate_density', 'plateau_3d'])
@@ -200,6 +192,7 @@ export type OpenDashboardInput = z.infer<typeof OpenDashboardInput>;
 export const OpenDashboardOutput = z.object({
   area: z.string(),
   layer: z.string(),
+  prefecture: z.string(),
   attribution: z.string(),
 });
 export type OpenDashboardOutput = z.infer<typeof OpenDashboardOutput>;

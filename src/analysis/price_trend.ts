@@ -1,5 +1,5 @@
 import type { PriceTrend } from '../schemas.js';
-import type { LandPriceRecord, TransactionRecord } from '../data/loader.js';
+import type { LandPriceRecord, TransactionRecord } from '../data-loaders/types.js';
 
 export function computePriceTrend(
   landPrices: LandPriceRecord[],

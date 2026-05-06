@@ -1,13 +1,19 @@
 import { getLandPricesForCity } from '../data/loader.js';
 import { ATTRIBUTION } from '../data/attribution.js';
+import { resolvePrefecture, getPrefectureDisplayName } from '../prefecture/resolver.js';
 
-export function getLandPriceResource(city: string): string {
-  const records = getLandPricesForCity(city);
+export function getLandPriceResource(prefecture: string, city: string): string {
+  const prefKey = resolvePrefecture(prefecture);
+  const records = getLandPricesForCity(city, prefKey);
   if (records.length === 0) {
-    return JSON.stringify({ error: `${city}の地価公示データが見つかりません`, attribution: ATTRIBUTION });
+    return JSON.stringify({
+      error: `${getPrefectureDisplayName(prefKey)} ${city}の地価公示データが見つかりません`,
+      attribution: ATTRIBUTION,
+    });
   }
 
   const summary = {
+    prefecture: getPrefectureDisplayName(prefKey),
     city,
     recordCount: records.length,
     years: [...new Set(records.map((r) => r.year))].sort(),

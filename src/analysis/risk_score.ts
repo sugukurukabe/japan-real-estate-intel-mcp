@@ -34,6 +34,7 @@ export function computeRisk(
   lng: number,
   city: string,
   riskTypes: string[],
+  prefecture = 'aichi',
 ): RiskResult {
   const includeAll = riskTypes.includes('all');
 
@@ -41,7 +42,7 @@ export function computeRisk(
   let floodRisk: FloodRisk = { level: 'low', probability: 0.05, description: '浸水リスクは低い地域です。' };
 
   if (includeAll || riskTypes.includes('flood')) {
-    const floodFeature = getFloodFeatureAtPoint(lat, lng);
+    const floodFeature = getFloodFeatureAtPoint(lat, lng, prefecture);
     if (floodFeature) {
       const depth = (floodFeature.properties?.max_depth_m as number) ?? 1.0;
       const riskLevel = (floodFeature.properties?.risk_level as string) ?? 'medium';
@@ -74,7 +75,7 @@ export function computeRisk(
   let landslideResult: { level: 'low' | 'medium' | 'high'; type: string } = { level: 'low', type: 'なし' };
 
   if (includeAll || riskTypes.includes('landslide')) {
-    const lsFeature = getLandslideFeatureAtPoint(lat, lng);
+    const lsFeature = getLandslideFeatureAtPoint(lat, lng, prefecture);
     if (lsFeature) {
       const warnLevel = (lsFeature.properties?.warning_level as string) ?? 'medium';
       const riskType = (lsFeature.properties?.risk_type as string) ?? '急傾斜地';
@@ -92,7 +93,7 @@ export function computeRisk(
   let eqResult = { intensity: '4', liquefaction: 'low' };
 
   if (includeAll || riskTypes.includes('earthquake')) {
-    const eq = getEarthquakeForCity(city);
+    const eq = getEarthquakeForCity(city, prefecture);
     if (eq) {
       const intScore = INTENSITY_SCORE[eq.max_intensity] ?? 30;
       const liqScore = LIQUEFACTION_SCORE[eq.liquefaction_risk] ?? 5;
@@ -118,7 +119,7 @@ export function computeRisk(
     recommendations.push('土砂災害警戒区域内です。擁壁や排水設備の状態を専門家に確認してください。');
   }
   if (eqScore >= 60) {
-    recommendations.push('南海トラフ地震の想定震度が高い地域です。耐震性能の確認と地震保険加入を推奨。');
+    recommendations.push('大規模地震の想定震度が高い地域です。耐震性能の確認と地震保険加入を推奨。');
   }
   if (eqResult.liquefaction === 'high') {
     recommendations.push('液状化リスクが高い地域です。地盤調査を実施してください。');

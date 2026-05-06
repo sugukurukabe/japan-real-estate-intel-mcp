@@ -1,5 +1,5 @@
 import type { CrossAnalyzeOutput, ChartsData } from '../schemas.js';
-import type { PopulationRecord } from '../data/loader.js';
+import type { PopulationRecord } from '../data-loaders/types.js';
 import { ATTRIBUTION } from '../data/attribution.js';
 
 interface ReportParams {
