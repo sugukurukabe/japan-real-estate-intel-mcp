@@ -11,6 +11,8 @@ import {
   DrillDownInput,
   StoreLocationInput,
   LandscapeInput,
+  ForecastLandPriceTrendInput,
+  ScenarioWhatIfInput,
 } from './schemas.js';
 import { crossAnalyze } from './tools/cross_analyze_real_estate_market.js';
 import { assessPropertyRisk } from './tools/assess_property_risk.js';
@@ -22,6 +24,8 @@ import { comparePrefectures } from './tools/compare_prefectures.js';
 import { drillDownLocalAnalysis } from './tools/drill_down_local_analysis.js';
 import { evaluateStoreLocation } from './tools/evaluate_store_location.js';
 import { simulateLandscape } from './tools/simulate_landscape_impact.js';
+import { forecastLandPriceTrend } from './tools/forecast_land_price_trend.js';
+import { scenarioWhatIf } from './tools/scenario_what_if.js';
 import { getLandPriceResource } from './resources/land_price.js';
 import { getFloodResource } from './resources/flood.js';
 import { getPopulationResource } from './resources/population.js';
@@ -70,10 +74,10 @@ function withErrorHandling(
 export function createServer(): McpServer {
   const server = new McpServer({
     name: 'japan-real-estate-intel-mcp',
-    version: '3.1.0',
+    version: '4.0.0',
   });
 
-  // -- Tools (10) --
+  // -- Tools (12) --
 
   server.tool(
     'cross_analyze_real_estate_market',
@@ -215,6 +219,35 @@ export function createServer(): McpServer {
     (args) => withErrorHandling('simulate_landscape', String(args.prefecture ?? 'aichi'), async () => {
       const input = LandscapeInput.parse(args);
       const result = simulateLandscape(input);
+      return {
+        content: [{ type: 'text' as const, text: JSON.stringify(result, null, 2) }],
+        structuredContent: { ...result, attribution: ATTRIBUTION },
+      };
+    }),
+  );
+
+
+  server.tool(
+    'forecast_land_price_trend',
+    '地価トレンド予測ツール。地価公示データの年別推移から線形回帰・移動平均で将来地価を予測。CAGR・トレンド方向・信頼区間および投賄シグナル（buy/hold/caution）を返す。対応县: 全 8 都道府県',
+    ForecastLandPriceTrendInput.shape,
+    (args) => withErrorHandling('forecast_land_price_trend', String(args.prefecture ?? 'aichi'), async () => {
+      const input = ForecastLandPriceTrendInput.parse(args);
+      const result = forecastLandPriceTrend(input);
+      return {
+        content: [{ type: 'text' as const, text: JSON.stringify(result, null, 2) }],
+        structuredContent: { ...result, attribution: ATTRIBUTION },
+      };
+    }),
+  );
+
+  server.tool(
+    'scenario_what_if',
+    'シナリオ What-If 分析ツール。「新駅開業」「大型商業施設開業」「人口減少」「災害リスク変動」などの仮想イベントが地価・人流・投賄スコアに与える影響を試算。ベースラインvsシナリオ比較・機会・リスク・推奨アクションをMarkdownレポートで出力。対応县: 全 8 都道府県',
+    ScenarioWhatIfInput.shape,
+    (args) => withErrorHandling('scenario_what_if', String(args.prefecture ?? 'aichi'), async () => {
+      const input = ScenarioWhatIfInput.parse(args);
+      const result = scenarioWhatIf(input);
       return {
         content: [{ type: 'text' as const, text: JSON.stringify(result, null, 2) }],
         structuredContent: { ...result, attribution: ATTRIBUTION },
@@ -384,6 +417,61 @@ export function createServer(): McpServer {
         ],
       };
     },
+  );
+
+
+  server.prompt(
+    'land_price_forecast_report',
+    '地価トレンド予測レポートテンプレート。forecast_land_price_trend ツールを呼び出して地価予測レポートを生成する',
+    {
+      prefecture: z.string().optional().describe('対象都道府県（省略時は愛知県）'),
+      city: z.string().optional().describe('市区町村'),
+      horizon: z.string().optional().describe('予測期間（1y/3y/5y）'),
+    },
+    ({ prefecture, city, horizon }) => ({
+      messages: [{
+        role: 'user' as const,
+        content: {
+          type: 'text' as const,
+          text: [
+            `地価トレンド予測レポートを生成してください。`,
+            `都道府県: ${prefecture ?? '愛知県'}`,
+            `市区町村: ${city ?? '名古屋市中区'}`,
+            `予測期間: ${horizon ?? '3y'}`,
+            ``,
+            `forecast_land_price_trend ツールでCAGR・トレンド方向・将来予測シリーズ・投賄シグナルを含むMarkdownレポートを出力。`,
+          ].join('\n'),
+        },
+      }],
+    }),
+  );
+
+  server.prompt(
+    'scenario_what_if_analysis',
+    'What-If シナリオ分析テンプレート。scenario_what_if ツールで仳想イベントの影響を試算',
+    {
+      prefecture: z.string().optional().describe('対象都道府県'),
+      city: z.string().optional().describe('市区町村'),
+      scenario: z.string().optional().describe('シナリオ種別'),
+      scale: z.string().optional().describe('規模（small/medium/large）'),
+    },
+    ({ prefecture, city, scenario, scale }) => ({
+      messages: [{
+        role: 'user' as const,
+        content: {
+          type: 'text' as const,
+          text: [
+            `以下の条件でWhat-Ifシナリオ分析を行ってください。`,
+            `都道府県: ${prefecture ?? '愛知県'}`,
+            `市区町村: ${city ?? '名古屋市中区'}`,
+            `シナリオ: ${scenario ?? 'new_commercial_facility'}`,
+            `規模: ${scale ?? 'medium'}`,
+            ``,
+            `scenario_what_if ツールでベースラインvsシナリオ後の地価・投賄スコア・リスク影響を比較しMarkdownで出力。`,
+          ].join('\n'),
+        },
+      }],
+    }),
   );
 
   return server;

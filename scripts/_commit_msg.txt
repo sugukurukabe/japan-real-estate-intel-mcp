@@ -1,0 +1,18 @@
+feat: v3.1.0 Project Completion Roadmap (v2.10/v3.0/v3.1)
+
+v2.10.0 Documentation + Dashboard:
+- README/SECURITY/CHANGELOG/server.ts stale content fixed (8 prefectures, 321 tests)
+- Dashboard comparison mode: dynamic prefecture selector, removed Math.random()
+- Fixed neighborhood hint text
+
+v3.0.0 Production Readiness:
+- express-rate-limit middleware with env var config
+- data:fetch CLI expanded to all 8 prefectures
+- CI/CD release.yml: added npm publish step
+- PDF export for generate_area_report (pdfkit)
+
+v3.1.0 Data Enrichment:
+- Tokyo/Osaka/Kanagawa: transport/commercial/medical data files added
+- MCP Prompts: investment_report, store_location_evaluation, prefecture_comparison
+- Excel export for compare_prefectures and drill_down_local_analysis (xlsx)
+- 321 tests passing

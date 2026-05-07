@@ -1,0 +1,21 @@
+## v3.1.0 Project Completion Roadmap (v2.10 + v3.0 + v3.1)
+
+### v2.10.0 — Documentation Accuracy + Dashboard Generalization
+- README/SECURITY/CHANGELOG/server.ts stale content fixed (8 prefectures, 321 tests)
+- Dashboard comparison mode: dynamic 8-prefecture selector, removed Math.random()
+- Fixed neighborhood hint text to reflect full 8-prefecture support
+
+### v3.0.0 — Production Readiness
+- express-rate-limit middleware (RATE_LIMIT_ENABLED/WINDOW_MS/MAX env vars)
+- data:fetch CLI expanded to all 8 prefectures with --all flag
+- CI/CD release.yml: automated npm publish step added
+- PDF export for generate_area_report (format: "pdf", pdfBase64 field)
+
+### v3.1.0 — Data Enrichment + Advanced Features
+- Tokyo/Osaka/Kanagawa: transport_stations.csv, commercial_facilities.csv, medical_facilities.csv added
+- Loader capabilities updated: transport/commercial/medical = true for Tokyo/Osaka/Kanagawa
+- MCP Prompts registered: investment_report, store_location_evaluation, prefecture_comparison
+- Excel export: compare_prefectures/drill_down_local_analysis support exportFormat: "xlsx"
+- 321 tests passing
+
+npm: npx @sugukuru/japan-real-estate-intel-mcp

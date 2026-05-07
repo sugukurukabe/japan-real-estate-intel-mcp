@@ -1684,6 +1684,51 @@ function attachDrillDownEvents() {
   });
 }
 
+function buildTrendMiniChart(area: string): string {
+  const config = pref();
+  const price = config.landPrices[area];
+  if (!price) return '<div style="font-size:11px;color:var(--text-muted)">データなし</div>';
+
+  // Generate a simple SVG sparkline based on change_rate extrapolation
+  const currentPrice = price.price;
+  const changeRate = price.change / 100;
+  const years = [2021, 2022, 2023, 2024, 2025];
+  const prices = years.map((_, i) => {
+    const offset = i - (years.length - 1);
+    return Math.round(currentPrice * Math.pow(1 + changeRate, offset));
+  });
+
+  const minP = Math.min(...prices);
+  const maxP = Math.max(...prices);
+  const range = maxP - minP || 1;
+  const W = 200, H = 50, PAD = 5;
+
+  const pts = prices.map((p, i) => {
+    const x = PAD + (i / (years.length - 1)) * (W - 2 * PAD);
+    const y = PAD + ((maxP - p) / range) * (H - 2 * PAD);
+    return `${x.toFixed(1)},${y.toFixed(1)}`;
+  }).join(' ');
+
+  const trendColor = changeRate > 0 ? '#34d399' : changeRate < 0 ? '#ff4d6a' : '#7ec8ff';
+
+  return `
+    <svg width="${W}" height="${H}" viewBox="0 0 ${W} ${H}" style="display:block;margin:0 auto">
+      <polyline points="${pts}" fill="none" stroke="${trendColor}" stroke-width="2" stroke-linejoin="round"/>
+      ${prices.map((p, i) => {
+        const x = PAD + (i / (years.length - 1)) * (W - 2 * PAD);
+        const y = PAD + ((maxP - p) / range) * (H - 2 * PAD);
+        return `<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="3" fill="${trendColor}"/>`;
+      }).join('')}
+    </svg>
+    <div style="display:flex;justify-content:space-between;font-size:10px;color:var(--text-muted);margin-top:2px">
+      <span>${years[0]}</span><span>${years[years.length - 1]}(予測)</span>
+    </div>
+    <div style="text-align:center;font-size:11px;margin-top:4px">
+      ${(currentPrice / 10000).toFixed(1)} 万円/㎡
+      <span style="color:${trendColor}">${changeRate >= 0 ? '▲' : '▼'} ${Math.abs(price.change)}%/年</span>
+    </div>`;
+}
+
 function updateInsightPanel(area: string) {
   const panel = document.getElementById('insight-panel')!;
   const config = pref();
@@ -1796,6 +1841,13 @@ function updateInsightPanel(area: string) {
 
     ${comparisonHtml}
 
+    ${price ? `
+    <div class="panel-section">
+      <h3>地価トレンド（簡易）</h3>
+      ${buildTrendMiniChart(area)}
+    </div>
+    ` : ''}
+
     <div class="panel-section">
       <h3>インサイト</h3>
       <ul class="insight-list">
@@ -1808,11 +1860,49 @@ function updateInsightPanel(area: string) {
       </ul>
     </div>
 
+    <div class="panel-section scenario-panel">
+      <h3>What-If シナリオ</h3>
+      <div style="font-size:11px;color:var(--text-muted);margin-bottom:6px">仮想シナリオが地価・投資スコアに与える影響を試算</div>
+      <select id="scenario-select" class="neighborhood-input">
+        <option value="">-- シナリオを選択 --</option>
+        <option value="new_commercial_facility">大型商業施設の開業</option>
+        <option value="new_station">新駅設置</option>
+        <option value="new_corporate_office">大型オフィス誘致</option>
+        <option value="population_growth">人口急増</option>
+        <option value="population_decline">人口流出</option>
+        <option value="disaster_risk_increase">災害リスク上昇</option>
+        <option value="disaster_risk_decrease">災害リスク低減</option>
+      </select>
+      <div id="scenario-result" style="margin-top:6px;font-size:11px"></div>
+    </div>
+
     <button class="btn-report" id="btn-generate-report">レポート生成</button>
   `;
 
   document.getElementById('btn-generate-report')?.addEventListener('click', () => {
     if (area) showReport(area);
+  });
+
+  // Scenario What-If selector
+  const scenarioSel = document.getElementById('scenario-select') as HTMLSelectElement | null;
+  const scenarioResult = document.getElementById('scenario-result');
+  scenarioSel?.addEventListener('change', () => {
+    const sc = scenarioSel.value;
+    if (!sc || !scenarioResult) return;
+    const effects: Record<string, { price: number; signal: string }> = {
+      new_commercial_facility: { price: 9.6, signal: '↑ 地価 +9.6% / 投資スコア +10' },
+      new_station:             { price: 14.4, signal: '↑ 地価 +14.4% / 投資スコア +14' },
+      new_corporate_office:    { price: 7.2, signal: '↑ 地価 +7.2% / 投資スコア +9' },
+      population_growth:       { price: 3.2, signal: '↑ 地価 +3.2% / 投資スコア +4' },
+      population_decline:      { price: -4.0, signal: '↓ 地価 -4.0% / 投資スコア -6' },
+      disaster_risk_increase:  { price: -5.6, signal: '↓ 地価 -5.6% / リスクスコア +16' },
+      disaster_risk_decrease:  { price: 2.8, signal: '↑ 地価 +2.8% / リスクスコア -10' },
+    };
+    const e = effects[sc];
+    if (e) {
+      const color = e.price >= 0 ? '#34d399' : '#ff4d6a';
+      scenarioResult.innerHTML = `<span style="color:${color};font-weight:600">${e.signal}</span><br><span style="color:var(--text-muted)">（3年後・中規模 試算）</span>`;
+    }
   });
 }
 
@@ -1834,7 +1924,17 @@ function showReport(area: string) {
       <tr><td>平均地価</td><td>${price ? (price.price / 10000).toFixed(1) + ' 万円/㎡' : 'N/A'}</td></tr>
       <tr><td>変化率</td><td>${price ? (price.change >= 0 ? '+' : '') + price.change + '%' : 'N/A'}</td></tr>
     </table>
+    <h2>地価トレンドチャート</h2>
+    ${buildTrendMiniChart(area)}
     ${risk ? `<h2>リスク詳細</h2><table><tr><th>種別</th><th>値</th></tr><tr><td>浸水</td><td>${risk.flood}/100</td></tr><tr><td>震度</td><td>${risk.earthquake}</td></tr></table>` : ''}
+    <h2>What-If シナリオ試算（3年・中規模）</h2>
+    <table>
+      <tr><th>シナリオ</th><th>地価影響</th></tr>
+      <tr><td>大型商業施設開業</td><td style="color:#34d399">+9.6%</td></tr>
+      <tr><td>新駅設置（JR）</td><td style="color:#34d399">+14.4%</td></tr>
+      <tr><td>人口流出（-5%）</td><td style="color:#ff4d6a">-4.0%</td></tr>
+      <tr><td>大規模災害リスク上昇</td><td style="color:#ff4d6a">-5.6%</td></tr>
+    </table>
     <hr>
     <p style="font-size:11px;color:var(--text-muted)">出典: 国土交通省 不動産価格情報 / 地価公示 / ハザードマップポータル</p>
   `;

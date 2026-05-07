@@ -44,8 +44,8 @@ export class FukuokaLoader extends BaseLoader {
   readonly displayName = '福岡県';
   readonly isoCode = 'JP-40';
   readonly capabilities: LoaderCapabilities = {
-    humanFlow: false, education: false, corporate: false, crime: false, plateau: false,
-    transport: false, commercial: false, medical: false, neighborhoods: true,
+    humanFlow: true, education: true, corporate: true, crime: true, plateau: false,
+    transport: true, commercial: true, medical: true, neighborhoods: true,
   };
 
   protected readonly geocodeMap = FUKUOKA_GEOCODE;
@@ -57,13 +57,13 @@ export class FukuokaLoader extends BaseLoader {
   getFloodZones(): FeatureCollection        { return this.loadGeoJson('flood.geojson'); }
   getLandslideZones(): FeatureCollection    { return EMPTY_FC; }
   getMunicipalities(): FeatureCollection    { return this.loadTopoJson('municipalities.topojson', 'municipalities'); }
-  getHumanFlow(): HumanFlowRecord[]         { return []; }
-  getSchoolDistricts(): SchoolDistrictRecord[]     { return []; }
-  getCorporateLocations(): CorporateLocationRecord[] { return []; }
-  getCrimeStats(): CrimeStatsRecord[]       { return []; }
+  getHumanFlow(): HumanFlowRecord[]         { return this.loadCsv('human_flow.csv'); }
+  getSchoolDistricts(): SchoolDistrictRecord[]     { return this.loadCsv('school_districts.csv'); }
+  getCorporateLocations(): CorporateLocationRecord[] { return this.loadCsv('corporate_locations.csv'); }
+  getCrimeStats(): CrimeStatsRecord[]       { return this.loadCsv('crime_stats.csv'); }
   getPlateauBuildings(): PlateauBuildingRecord[]   { return []; }
-  getTransport(): TransportRecord[]         { return []; }
-  getCommercialFacilities(): CommercialFacilityRecord[] { return []; }
-  getMedicalFacilities(): MedicalFacilityRecord[]  { return []; }
+  getTransport(): TransportRecord[]         { return this.loadCsv('transport_stations.csv'); }
+  getCommercialFacilities(): CommercialFacilityRecord[] { return this.loadCsv('commercial_facilities.csv'); }
+  getMedicalFacilities(): MedicalFacilityRecord[]  { return this.loadCsv('medical_facilities.csv'); }
   getNeighborhoods(): NeighborhoodRecord[]  { return this.loadCsv('neighborhoods.csv'); }
 }

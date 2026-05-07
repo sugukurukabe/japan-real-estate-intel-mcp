@@ -399,6 +399,92 @@ export const StoreLocationOutput = z.object({
 });
 export type StoreLocationOutput = z.infer<typeof StoreLocationOutput>;
 
+// ── forecast_land_price_trend (v4.0 new) ──
+
+export const ForecastLandPriceTrendInput = z.object({
+  prefecture: prefectureField,
+  city: z.string().describe("市区町村（例: '名古屋市中村区', '世田谷区'）"),
+  landUse: z.enum(['residential', 'commercial', 'industrial', 'all']).default('all')
+    .describe('地目フィルター。all=全地目平均'),
+  horizon: z.enum(['1y', '3y', '5y']).default('3y')
+    .describe('予測期間'),
+  method: z.enum(['linear', 'moving_avg']).default('linear')
+    .describe('予測手法。linear=線形回帰、moving_avg=移動平均外挿'),
+  includeMarkdown: z.boolean().default(true),
+});
+export type ForecastLandPriceTrendInput = z.infer<typeof ForecastLandPriceTrendInput>;
+
+export const LandPriceForecastPoint = z.object({
+  year: z.number(),
+  price_per_sqm: z.number(),
+  isForecast: z.boolean(),
+  confidenceInterval: z.object({ low: z.number(), high: z.number() }).optional(),
+});
+export type LandPriceForecastPoint = z.infer<typeof LandPriceForecastPoint>;
+
+export const ForecastLandPriceTrendOutput = z.object({
+  prefecture: z.string(),
+  city: z.string(),
+  landUse: z.string(),
+  latestPricePerSqm: z.number().nullable(),
+  cagr: z.number().nullable().describe('年平均成長率（%）'),
+  trendDirection: z.enum(['rising', 'stable', 'declining']),
+  trendStrength: z.enum(['strong', 'moderate', 'weak']),
+  series: z.array(LandPriceForecastPoint).describe('実績 + 予測の時系列データ'),
+  keyDrivers: z.array(z.string()),
+  riskFactors: z.array(z.string()),
+  investmentSignal: z.enum(['buy', 'hold', 'caution']),
+  markdownReport: z.string().optional(),
+});
+export type ForecastLandPriceTrendOutput = z.infer<typeof ForecastLandPriceTrendOutput>;
+
+// ── scenario_what_if (v4.0 new) ──
+
+export const ScenarioWhatIfInput = z.object({
+  prefecture: prefectureField,
+  city: z.string().describe("市区町村（例: '名古屋市中村区'）"),
+  scenario: z.enum([
+    'new_commercial_facility',
+    'new_station',
+    'new_corporate_office',
+    'population_growth',
+    'population_decline',
+    'disaster_risk_increase',
+    'disaster_risk_decrease',
+  ]).describe('シナリオ種別'),
+  scale: z.enum(['small', 'medium', 'large']).default('medium')
+    .describe('規模感。large=大型施設・急成長など'),
+  horizon: z.enum(['1y', '3y', '5y']).default('3y'),
+  includeMarkdown: z.boolean().default(true),
+});
+export type ScenarioWhatIfInput = z.infer<typeof ScenarioWhatIfInput>;
+
+export const ScenarioMetrics = z.object({
+  pricePerSqm: z.number().nullable(),
+  humanFlowScore: z.number().nullable(),
+  investmentScore: z.number(),
+  riskScore: z.number(),
+});
+
+export const ScenarioWhatIfOutput = z.object({
+  prefecture: z.string(),
+  city: z.string(),
+  scenario: z.string(),
+  scale: z.string(),
+  horizon: z.string(),
+  baseline: ScenarioMetrics.describe('現状ベースライン'),
+  projected: ScenarioMetrics.describe('シナリオ適用後予測'),
+  priceImpactPct: z.number().describe('地価への影響（%。正=上昇）'),
+  humanFlowImpactPct: z.number().nullable(),
+  riskImpactPct: z.number(),
+  confidence: z.enum(['high', 'medium', 'low']),
+  keyOpportunities: z.array(z.string()),
+  keyRisks: z.array(z.string()),
+  recommendations: z.array(z.string()),
+  markdownReport: z.string().optional(),
+});
+export type ScenarioWhatIfOutput = z.infer<typeof ScenarioWhatIfOutput>;
+
 // ── simulate_landscape_impact (v2.3 new) ──
 
 export const LandscapeInput = z.object({

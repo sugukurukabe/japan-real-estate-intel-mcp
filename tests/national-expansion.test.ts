@@ -134,18 +134,17 @@ describe('National Expansion — loader data', () => {
         expect(loader.getNeighborhoods().length).toBeGreaterThan(0);
       });
 
-      it('minimal capabilities are false', () => {
+      it('has full v4.0 capabilities (humanFlow/education/corporate/crime/transport/commercial/medical = true)', () => {
         const loader = getLoader(pref.key);
-        expect(loader.capabilities.humanFlow).toBe(false);
-        expect(loader.capabilities.education).toBe(false);
-        expect(loader.capabilities.corporate).toBe(false);
+        expect(loader.capabilities.humanFlow).toBe(true);
+        expect(loader.capabilities.education).toBe(true);
+        expect(loader.capabilities.corporate).toBe(true);
+        expect(loader.capabilities.crime).toBe(true);
+        expect(loader.capabilities.transport).toBe(true);
+        expect(loader.capabilities.commercial).toBe(true);
+        expect(loader.capabilities.medical).toBe(true);
+        // plateau remains false for all non-Aichi prefectures
         expect(loader.capabilities.plateau).toBe(false);
-        // Note: kanagawa has transport/commercial/medical from v3.1.0
-        if (pref.key !== 'kanagawa') {
-          expect(loader.capabilities.transport).toBe(false);
-          expect(loader.capabilities.commercial).toBe(false);
-          expect(loader.capabilities.medical).toBe(false);
-        }
       });
 
       it(`geocode("${pref.representativeArea}") returns coordinates in expected range`, () => {

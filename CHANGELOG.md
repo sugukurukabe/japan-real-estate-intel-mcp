@@ -7,6 +7,30 @@ Versioning: [Semantic Versioning](https://semver.org/)
 
 ---
 
+## [4.0.0] – 2026-05-07 — Capability Parity + Intelligence Layer
+
+### Added
+- **8 県フルデータ対応**: 東京都・大阪府・神奈川県・福岡県・北海道・京都府・兵庫県の全 7 県に `human_flow.csv`, `school_districts.csv`, `corporate_locations.csv`, `crime_stats.csv` を追加（各県 4 ファイル、計 28 ファイル）。
+- **4 県 transport/commercial/medical データ追加**: 福岡県・北海道・京都府・兵庫県に `transport_stations.csv`, `commercial_facilities.csv`, `medical_facilities.csv` を追加（12 ファイル）。
+- **全 7 非愛知ローダーの capabilities 全面更新**: `humanFlow`, `education`, `corporate`, `crime`, `transport`, `commercial`, `medical` をすべて `true` に（plateau のみ未対応のため `false` を維持）。
+- **新ツール `forecast_land_price_trend`**: 地価公示データの年別推移から線形回帰または移動平均で将来地価を予測。CAGR・トレンド方向・信頼区間・投資シグナル（buy/hold/caution）を出力。
+- **新ツール `scenario_what_if`**: 「大型商業施設開業」「新駅設置」「人口流出」など 7 種類のシナリオが地価・投資スコア・リスクスコアに与える影響をベースライン比較で試算。
+- **MCP Prompts 追加**: `land_price_forecast_report`（地価予測レポート）, `scenario_what_if_analysis`（What-If 分析）の 2 テンプレートを登録（計 5 Prompts）。
+- **ダッシュボード強化**: インサイトパネルに地価トレンド SVG ミニチャートを追加。What-If シナリオセレクターでシナリオ別の地価影響をリアルタイム表示。レポート画面にトレンドチャートと 4 シナリオ試算表を追加。
+- **`src/tools/forecast_land_price_trend.ts`**: 地価予測ツール実装
+- **`src/tools/scenario_what_if.ts`**: シナリオ分析ツール実装
+
+### Changed
+- 全 7 ローダーの `getHumanFlow()`, `getSchoolDistricts()`, `getCorporateLocations()`, `getCrimeStats()` を実データ読み込みに変更（従来は `[]` を返す stub）。
+- `src/schemas.ts` に `ForecastLandPriceTrendInput/Output`, `ScenarioWhatIfInput/Output` スキーマを追加。
+- `server.ts` のツール数コメントを `// -- Tools (12) --` に更新。
+- テスト: 新ツール 12 件追加 + capability 変更に伴うテスト更新（333 件合計）。
+
+### Breaking (none)
+- 既存 API は後方互換。新ローダーメソッドはデータが存在しない場合に空配列を返す挙動は維持。
+
+---
+
 ## [3.1.0] – 2026-05-07 — Data Enrichment + Advanced Features
 
 ### Added

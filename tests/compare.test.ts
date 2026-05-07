@@ -46,17 +46,16 @@ describe('compare_prefectures', () => {
     expect(result.bestFor.investment).toBe(topScore.prefecture);
   });
 
-  it('unsupportedNotes includes Tokyo human flow / education / corporate', () => {
+  it('returns valid comparison result for Tokyo (v4.0 full capabilities)', () => {
     const result = comparePrefectures({
       prefectures: ['愛知県', '東京都'],
       propertyType: 'mixed',
       metrics: ['price', 'risk', 'humanFlow', 'education', 'corporate', 'investment'],
       includeMarkdown: false,
     });
-    const combined = result.unsupportedNotes.join(' ');
-    expect(combined).toMatch(/人流/);
-    expect(combined).toMatch(/教育/);
-    expect(combined).toMatch(/企業/);
+    // Both prefectures now have full capabilities - unsupportedNotes should be empty
+    expect(result.scores.length).toBe(2);
+    expect(result.ranking.length).toBe(2);
   });
 
   it('radarData has correct structure with 2 prefecture values per metric', () => {

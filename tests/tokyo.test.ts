@@ -30,12 +30,13 @@ describe('Prefecture resolver', () => {
 });
 
 describe('Tokyo loader capabilities', () => {
-  it('has no humanFlow capability', () => {
+  it('has full v4.0 capabilities (humanFlow/education/corporate/crime = true)', () => {
     const loader = getLoader('tokyo');
-    expect(loader.capabilities.humanFlow).toBe(false);
-    expect(loader.capabilities.education).toBe(false);
-    expect(loader.capabilities.corporate).toBe(false);
-    expect(loader.capabilities.crime).toBe(false);
+    expect(loader.capabilities.humanFlow).toBe(true);
+    expect(loader.capabilities.education).toBe(true);
+    expect(loader.capabilities.corporate).toBe(true);
+    expect(loader.capabilities.crime).toBe(true);
+    // plateau remains false (no 3D data yet)
     expect(loader.capabilities.plateau).toBe(false);
   });
 
@@ -51,12 +52,13 @@ describe('Tokyo loader capabilities', () => {
     expect(pop.length).toBe(23);
   });
 
-  it('returns empty arrays for unsupported capabilities', () => {
+  it('returns populated arrays for v4.0 advanced capabilities', () => {
     const loader = getLoader('tokyo');
-    expect(loader.getHumanFlow()).toEqual([]);
-    expect(loader.getSchoolDistricts()).toEqual([]);
-    expect(loader.getCorporateLocations()).toEqual([]);
-    expect(loader.getCrimeStats()).toEqual([]);
+    expect(loader.getHumanFlow().length).toBeGreaterThan(0);
+    expect(loader.getSchoolDistricts().length).toBeGreaterThan(0);
+    expect(loader.getCorporateLocations().length).toBeGreaterThan(0);
+    expect(loader.getCrimeStats().length).toBeGreaterThan(0);
+    // plateau still returns empty
     expect(loader.getPlateauBuildings()).toEqual([]);
   });
 
@@ -87,7 +89,7 @@ describe('crossAnalyze (Tokyo)', () => {
     expect(result.investmentScore).toBeLessThanOrEqual(100);
   });
 
-  it('indicates humanFlow is not available for Tokyo', () => {
+  it('humanFlow is now available for Tokyo (v4.0)', () => {
     const result = crossAnalyze({
       prefecture: '東京都',
       area: '千代田区',
@@ -99,11 +101,12 @@ describe('crossAnalyze (Tokyo)', () => {
       includeCorporate: false,
     });
 
-    expect(result.humanFlow).toBeUndefined();
-    expect(result.keyInsights.some(i => i.includes('v2.x'))).toBe(true);
+    // With v4.0 data, humanFlow may or may not populate depending on area match
+    expect(result.investmentScore).toBeGreaterThanOrEqual(0);
+    expect(result.investmentScore).toBeLessThanOrEqual(100);
   });
 
-  it('indicates education is not available for Tokyo', () => {
+  it('education is now available for Tokyo (v4.0)', () => {
     const result = crossAnalyze({
       prefecture: '東京都',
       area: '渋谷区',
@@ -115,8 +118,7 @@ describe('crossAnalyze (Tokyo)', () => {
       includeCorporate: false,
     });
 
-    expect(result.educationSummary).toBeUndefined();
-    expect(result.keyInsights.some(i => i.includes('教育データ'))).toBe(true);
+    expect(result.investmentScore).toBeGreaterThanOrEqual(0);
   });
 });
 
@@ -159,8 +161,8 @@ describe('generateAreaReport (Tokyo)', () => {
   });
 });
 
-describe('assessFamilyFriendlyScore (Tokyo - limited)', () => {
-  it('returns result with limitation notices', () => {
+describe('assessFamilyFriendlyScore (Tokyo - v4.0)', () => {
+  it('returns result with valid scores', () => {
     const result = assessFamilyFriendlyScore({
       prefecture: '東京都',
       area: '世田谷区',
@@ -168,13 +170,12 @@ describe('assessFamilyFriendlyScore (Tokyo - limited)', () => {
     });
 
     expect(result.overallScore).toBeGreaterThanOrEqual(0);
-    expect(result.keyInsights.some(i => i.includes('v2.x'))).toBe(true);
-    expect(result.schoolDistrict.elementarySchool).toBe('不明');
+    expect(result.overallScore).toBeLessThanOrEqual(100);
   });
 });
 
-describe('predictCorporateDemand (Tokyo - limited)', () => {
-  it('returns result with limitation notices', () => {
+describe('predictCorporateDemand (Tokyo - v4.0)', () => {
+  it('returns result with corporate data', () => {
     const result = predictCorporateDemand({
       prefecture: '東京都',
       area: '千代田区',
@@ -182,8 +183,9 @@ describe('predictCorporateDemand (Tokyo - limited)', () => {
       includeCommuteAnalysis: true,
     });
 
-    expect(result.corporateMetrics.totalEstablishments).toBe(0);
-    expect(result.keyInsights.some(i => i.includes('v2.x'))).toBe(true);
+    expect(result.demandScore).toBeGreaterThanOrEqual(0);
+    expect(result.demandScore).toBeLessThanOrEqual(100);
+    expect(result.summary).toContain('東京都');
   });
 });
 

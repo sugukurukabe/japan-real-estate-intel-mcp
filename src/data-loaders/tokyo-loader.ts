@@ -43,7 +43,7 @@ export class TokyoLoader extends BaseLoader {
   readonly displayName = '東京都';
   readonly isoCode = 'JP-13';
   readonly capabilities: LoaderCapabilities = {
-    humanFlow: false, education: false, corporate: false, crime: false, plateau: false,
+    humanFlow: true, education: true, corporate: true, crime: true, plateau: false,
     transport: true, commercial: true, medical: true, neighborhoods: true,
   };
 
@@ -56,10 +56,10 @@ export class TokyoLoader extends BaseLoader {
   getFloodZones(): FeatureCollection { return this.loadGeoJson('flood.geojson'); }
   getLandslideZones(): FeatureCollection { return EMPTY_FC; }
   getMunicipalities(): FeatureCollection { return this.loadTopoJson('municipalities.topojson', 'municipalities'); }
-  getHumanFlow(): HumanFlowRecord[] { return []; }
-  getSchoolDistricts(): SchoolDistrictRecord[] { return []; }
-  getCorporateLocations(): CorporateLocationRecord[] { return []; }
-  getCrimeStats(): CrimeStatsRecord[] { return []; }
+  getHumanFlow(): HumanFlowRecord[] { return this.loadCsv('human_flow.csv'); }
+  getSchoolDistricts(): SchoolDistrictRecord[] { return this.loadCsv('school_districts.csv'); }
+  getCorporateLocations(): CorporateLocationRecord[] { return this.loadCsv('corporate_locations.csv'); }
+  getCrimeStats(): CrimeStatsRecord[] { return this.loadCsv('crime_stats.csv'); }
   getPlateauBuildings(): PlateauBuildingRecord[] { return []; }
   getTransport(): TransportRecord[] { return this.loadCsv('transport_stations.csv'); }
   getCommercialFacilities(): CommercialFacilityRecord[] { return this.loadCsv('commercial_facilities.csv'); }

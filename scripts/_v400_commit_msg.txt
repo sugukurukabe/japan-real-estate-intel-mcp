@@ -1,0 +1,24 @@
+feat: v4.0.0 Capability Parity + Intelligence Layer
+
+- 全 8 都道府県でフルデータ対応（humanFlow/education/corporate/crime/transport/commercial/medical）
+  - 7 県 × 最大 7 CSV = 49 ファイル追加（前バージョン比）
+  - 全ローダーの capabilities.humanFlow/education/corporate/crime/transport/commercial/medical を true に更新
+
+- 新ツール forecast_land_price_trend: 線形回帰・移動平均による地価予測
+  - CAGR・トレンド方向（rising/stable/declining）・信頼区間付き時系列
+  - 投資シグナル（buy/hold/caution）出力
+
+- 新ツール scenario_what_if: 7 種類の What-If シナリオ分析
+  - new_commercial_facility / new_station / new_corporate_office
+  - population_growth / population_decline / disaster_risk_increase / disaster_risk_decrease
+  - ベースライン vs シナリオ後の地価・投資スコア・リスクスコア比較
+
+- MCP Prompts 2 件追加（land_price_forecast_report, scenario_what_if_analysis）→ 計 5 Prompts
+
+- ダッシュボード強化
+  - インサイトパネルに SVG 地価トレンドミニチャート追加
+  - What-If シナリオセレクター追加（リアルタイム影響表示）
+  - レポート画面にトレンドチャート + 4 シナリオ試算表追加
+
+- テスト: 333 件（+12 新規、既存テスト能力変更に合わせ更新）
+- 型チェック: clean (tsc --noEmit)
