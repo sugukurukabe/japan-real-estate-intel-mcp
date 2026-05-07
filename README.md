@@ -1,8 +1,28 @@
 # @sugukuru/japan-real-estate-intel-mcp
 
+[![npm version](https://img.shields.io/npm/v/@sugukuru/japan-real-estate-intel-mcp)](https://www.npmjs.com/package/@sugukuru/japan-real-estate-intel-mcp)
+[![CI](https://github.com/sugukuru/japan-real-estate-intel-mcp/actions/workflows/ci.yml/badge.svg)](https://github.com/sugukuru/japan-real-estate-intel-mcp/actions/workflows/ci.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+[![Node.js ≥ 20](https://img.shields.io/badge/node-%E2%89%A520-brightgreen)](https://nodejs.org)
+
 日本の不動産投資・仲介・開発・管理向けに、**地価・取引価格・人口統計・災害リスク・人流・教育環境・企業立地・交通・商業施設・医療福祉・3D 日照シミュレーション・町丁目実データ** をクロス分析する MCP サーバー。
 
-**v2.4** で町丁目（neighborhood）を実データ対応に昇格。大阪府ローダー追加で 3 都府県体制に。Three.js 3D ビューアで名駅周辺の建物をリアルタイム影シミュレーション付きで可視化。
+**v2.5** で本番品質の土台を完成。エラーハンドリング・構造化ロギング(pino)・HTTP サーバー堅牢化(helmet/API key/タイムアウト)・ESLint/Prettier・CI/CD 強化を実施。
+
+## v2.5.0 What's New
+
+| 追加/変更 | 詳細 |
+|---|---|
+| **カスタムエラー層** | `McpBaseError` 継承: `DataNotFoundError`, `InvalidPrefectureError`, `CapabilityNotAvailableError`, `ValidationError` |
+| **構造化ロギング (pino)** | `src/logger.ts` — stderr 書き込み、`LOG_LEVEL` env 対応、`toolLogger` (tool/prefecture/duration_ms) |
+| **`withErrorHandling()` ラッパー** | 全 10 ツールに適用。エラー時 `isError: true` レスポンス + 構造化ログ |
+| **HTTP サーバー堅牢化** | `helmet` セキュリティヘッダー、10MB ボディ制限、`API_KEY` 認証、30分タイムアウト、SIGTERM/SIGINT グレースフルシャットダウン |
+| **ESLint + Prettier** | `eslint.config.mjs` (flat config) + `.prettierrc` 導入 |
+| **カバレッジ計測** | `pnpm test:coverage` — vitest v8 coverage (70% 閾値) |
+| **CodeQL セキュリティ分析** | `.github/workflows/codeql.yml` — 週次実行 |
+| **CI 拡張** | ESLint ステップ + `npm audit` + カバレッジアーティファクト + Step Summary |
+| **ドキュメント** | `CHANGELOG.md`, `CONTRIBUTING.md`, `SECURITY.md` 追加 |
+| テスト総数 | **174 → 185+ テスト** |
 
 ## v2.4.0 What's New
 

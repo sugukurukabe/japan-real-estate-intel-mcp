@@ -30,11 +30,42 @@ jobs:
       - name: Type check
         run: pnpm lint
 
+      - name: ESLint
+        run: pnpm lint:eslint
+
+      - name: Security audit
+        run: pnpm audit --prod
+        continue-on-error: true
+
       - name: Build server
         run: pnpm build:server
 
       - name: Build UI
         run: pnpm build:ui
 
-      - name: Test
-        run: pnpm test
+      - name: Test with coverage
+        run: pnpm test:coverage
+        env:
+          LOG_LEVEL: silent
+
+      - name: Upload coverage report
+        if: matrix.node-version == 22
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-report
+          path: coverage/
+
+      - name: Coverage summary
+        if: matrix.node-version == 22
+        run: |
+          echo "## Coverage Report" >> $GITHUB_STEP_SUMMARY
+          if [ -f coverage/coverage-summary.json ]; then
+            node -e "
+              const s = require('./coverage/coverage-summary.json').total;
+              console.log('| Metric | Coverage |');
+              console.log('|--------|----------|');
+              Object.entries(s).forEach(([k,v]) => console.log(\`| \${k} | \${v.pct}% |\`));
+            " >> $GITHUB_STEP_SUMMARY
+          else
+            echo "No coverage-summary.json found" >> $GITHUB_STEP_SUMMARY
+          fi
