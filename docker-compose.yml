@@ -1,0 +1,56 @@
+version: "3.9"
+
+services:
+  # ── Japan Real Estate Intel MCP Server ───────────────────────────────────
+  mcp:
+    build: .
+    image: japan-re-intel-mcp:latest
+    container_name: rei-mcp
+    restart: unless-stopped
+    env_file:
+      - .env.production
+    environment:
+      PORT: "3100"
+      HOST: "0.0.0.0"
+      NODE_ENV: production
+    expose:
+      - "3100"
+    volumes:
+      # Persist any runtime-written data (optional)
+      - rei_data:/app/data
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:3100/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+    networks:
+      - rei_net
+
+  # ── Caddy: automatic HTTPS reverse proxy ─────────────────────────────────
+  caddy:
+    image: caddy:2-alpine
+    container_name: rei-caddy
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+      - "443:443/udp"   # HTTP/3
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    depends_on:
+      mcp:
+        condition: service_healthy
+    networks:
+      - rei_net
+
+volumes:
+  rei_data:
+  caddy_data:
+  caddy_config:
+
+networks:
+  rei_net:
+    driver: bridge

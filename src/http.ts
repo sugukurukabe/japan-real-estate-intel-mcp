@@ -151,7 +151,7 @@ app.delete('/mcp', async (req, res) => {
 app.get('/health', (_req, res) => {
   res.json({
     status: 'ok',
-    version: '6.0.0',
+    version: '6.1.0',
     sessions: sessions.size,
     uptime_s: Math.round(process.uptime()),
   });

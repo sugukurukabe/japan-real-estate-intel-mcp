@@ -1,4 +1,27 @@
 # Changelog
+## [6.1.0] - 2026-05-08
+
+### Fixed
+- **PDF Japanese font rendering**: Bundle IPAex Gothic (IPA License) in `assets/fonts/ipaexg.ttf`;
+  register via `doc.registerFont()` in `src/export/pdf.ts` so all Japanese text renders correctly
+- Graceful fallback to Helvetica if font file is absent (non-fatal)
+
+### Added
+- **PWA support**: `ui/manifest.webmanifest`, `ui/sw.js` service worker (cache-first for static + Aichi data),
+  icons (192/512/180px). Dashboard now installs on iPad Safari and Android Chrome
+- **Docker deployment**: `Dockerfile` (multi-stage, non-root, healthcheck), `docker-compose.yml`
+  (MCP + Caddy auto-HTTPS), `Caddyfile`, `.dockerignore`, `.env.production.example`
+- **`docs/deployment.md`**: 10-minute self-hosted VPS deploy guide with ChatGPT/Cursor integration,
+  PWA install steps, update procedure, troubleshooting table
+- **`scripts/download-fonts.js`**: standalone font download script (`npm run fonts:download`)
+- **`tests/simulate_aichi_future.test.ts`**: 20 tests for all simulate_aichi_future scenarios
+- **`tests/branded_pdf.test.ts`**: 12 tests for markdownToPdfBase64 (branding, comparables, edge cases)
+- 4 new `GenerateReportInput` schema tests (companyName, agentName, includeLinearImpact, disclaimer)
+
+### Changed
+- `package.json`: added `assets/` and `config/` to `files` field; added `fonts:download` script
+- Test count: 421 -> 458 (all passing)
+
 ## [6.0.0] - 2026-05-08
 
 ### Added

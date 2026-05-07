@@ -154,6 +154,36 @@ describe('GenerateReportInput', () => {
       expect(r.purpose).toBe(p);
     }
   });
+
+  // v6.0 branding fields
+  it('accepts branding fields companyName and agentName', () => {
+    const r = GenerateReportInput.parse({
+      area: '名古屋市中区', purpose: 'investment',
+      companyName: '○○不動産', agentName: '山田太郎',
+    });
+    expect(r.companyName).toBe('○○不動産');
+    expect(r.agentName).toBe('山田太郎');
+  });
+
+  it('defaults includeLinearImpact and includeTransactionComparables to false', () => {
+    const r = GenerateReportInput.parse({ area: '名古屋市中区', purpose: 'investment' });
+    expect(r.includeLinearImpact).toBe(false);
+    expect(r.includeTransactionComparables).toBe(false);
+  });
+
+  it('accepts includeLinearImpact=true with optional disclaimer', () => {
+    const r = GenerateReportInput.parse({
+      area: '名古屋市中村区', purpose: 'investment',
+      includeLinearImpact: true,
+      disclaimer: 'テスト免責事項',
+    });
+    expect(r.includeLinearImpact).toBe(true);
+    expect(r.disclaimer).toBe('テスト免責事項');
+  });
+
+  it('rejects unknown format', () => {
+    expect(() => GenerateReportInput.parse({ area: 'test', purpose: 'investment', format: 'html' })).toThrow();
+  });
 });
 
 describe('OpenDashboardInput', () => {
