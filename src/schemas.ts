@@ -213,6 +213,10 @@ export const OpenDashboardInput = z.object({
     .enum(['2d', '3d'])
     .optional()
     .describe('ダッシュボード表示モード。3dを指定するとPLATEAU 3Dビューアを開く'),
+  initialMode: z
+    .enum(['investment', 'store'])
+    .optional()
+    .describe('デュアルモード切替。investment=不動産投資モード（デフォルト）、store=店舗出店戦略モード'),
 });
 export type OpenDashboardInput = z.infer<typeof OpenDashboardInput>;
 
@@ -222,6 +226,8 @@ export const OpenDashboardOutput = z.object({
   prefecture: z.string(),
   attribution: z.string(),
   mode: z.enum(['2d', '3d']),
+  initialMode: z.enum(['investment', 'store']).optional(),
+  dashboardUrl: z.string().optional(),
 });
 export type OpenDashboardOutput = z.infer<typeof OpenDashboardOutput>;
 

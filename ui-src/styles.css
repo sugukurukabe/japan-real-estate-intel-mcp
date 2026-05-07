@@ -618,6 +618,126 @@ select:focus, input[type="text"]:focus {
   line-height: 1.4;
 }
 
+/* ── Dual-mode toggle bar ── */
+#mode-toggle-bar {
+  display: flex;
+  gap: 6px;
+  margin-left: auto;
+  padding: 4px 6px;
+  background: var(--surface-2);
+  border-radius: 10px;
+  border: 1px solid var(--border);
+}
+
+.mode-toggle-btn {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 5px 12px;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--text-muted);
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+
+.mode-toggle-btn:hover {
+  background: var(--surface);
+  color: var(--text);
+}
+
+.mode-toggle-btn.active[data-mode="investment"] {
+  background: rgba(79, 140, 255, 0.18);
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.mode-toggle-btn.active[data-mode="store"] {
+  background: rgba(245, 158, 11, 0.18);
+  border-color: #f59e0b;
+  color: #f59e0b;
+}
+
+.mode-icon { font-size: 14px; }
+
+/* Mode hint banner */
+#mode-hint-banner {
+  display: none;
+  padding: 6px 12px;
+  background: rgba(245, 158, 11, 0.12);
+  border-bottom: 1px solid rgba(245, 158, 11, 0.3);
+  color: #f59e0b;
+  font-size: 11px;
+  text-align: center;
+  flex-shrink: 0;
+}
+
+/* Layer button primary highlight for current mode */
+.layer-btn-primary {
+  border-color: rgba(79, 140, 255, 0.5) !important;
+}
+
+.mode-toggle-btn.active[data-mode="store"] ~ * .layer-btn-primary,
+body.mode-store .layer-btn-primary {
+  border-color: rgba(245, 158, 11, 0.5) !important;
+}
+
+/* Store eval panel enhancements */
+.store-eval-prominent {
+  background: rgba(245, 158, 11, 0.08);
+  border: 1px solid rgba(245, 158, 11, 0.3);
+  border-radius: 8px;
+  padding: 10px;
+  margin-bottom: 10px;
+}
+
+.store-eval-header {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text);
+  margin-bottom: 6px;
+}
+
+.store-eval-header-active {
+  color: #f59e0b;
+}
+
+.store-mode-badge {
+  font-size: 10px;
+  background: rgba(245, 158, 11, 0.2);
+  color: #f59e0b;
+  padding: 1px 6px;
+  border-radius: 4px;
+  margin-left: 6px;
+  font-weight: 400;
+}
+
+.store-score-chip {
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 3px 6px;
+  text-align: center;
+  color: #f59e0b;
+  font-weight: 600;
+}
+
+/* Drilldown mode tag */
+.drilldown-mode-tag {
+  font-size: 10px;
+  font-weight: 400;
+  color: var(--text-muted);
+  margin-left: 6px;
+}
+
+.drilldown-panel-store .drilldown-header {
+  border-bottom-color: rgba(245, 158, 11, 0.3);
+}
+
 /* ── Shadow simulation controls ── */
 #shadow-controls {
   display: none;

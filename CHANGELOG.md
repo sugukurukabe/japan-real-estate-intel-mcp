@@ -7,6 +7,33 @@ Versioning: [Semantic Versioning](https://semver.org/)
 
 ---
 
+## [2.8.0] – 2026-05-07 — Dual-Mode Dashboard (不動産投資 / 店舗出店戦略)
+
+### Added
+- **Dual-mode toggle bar** in dashboard header — 「🏢 不動産投資」and「🏪 店舗出店戦略」mode buttons rendered dynamically by `renderModeToggle()`
+- **`currentDashboardMode`** global state (`'investment' | 'store'`) and `applyMode()`, `renderModeToggle()`, `renderModeBanner()` functions in `ui-src/main.ts`
+- **Mode-aware layer ordering** — `INVESTMENT_LAYERS` and `STORE_LAYERS` constants; `renderLayerControl()` now orders buttons by mode priority and marks primary layers with `.layer-btn-primary`
+- **Mode hint banner** (`#mode-hint-banner`) shown in store mode at the top of the map area
+- **Store eval panel promotion** — `buildDrillDownPanel()` renders 店舗評価セレクター at the **top** of the panel in store mode (with quick-score chips for 人流/交通/商業) and at the bottom in investment mode
+- **Dynamic radar chart axis ordering** — `buildComparisonPanel()` reorders axes: store mode prioritises 人流→交通→商業→医療; investment mode keeps 価格→安全→人流→企業→教育 order
+- **Mode-aware score card** — insight panel shows 「出店適性スコア」(weighted human flow + transport + commercial) in store mode vs 「投資スコア」in investment mode
+- **`initialMode` parameter** in `OpenDashboardInput` schema (`'investment' | 'store'`, optional, backward-compatible)
+- **`dashboardUrl`** field in `OpenDashboardOutput` — includes `?mode=store` URL param when `initialMode` is specified
+- **URL parameter support** — `?mode=store` / `?mode=investment` initialises dashboard mode on page load
+- **New CSS** in `ui-src/styles.css` — `.mode-toggle-btn`, `#mode-toggle-bar`, `.store-eval-prominent`, `.store-mode-badge`, `.store-score-chip`, `.layer-btn-primary`, `#mode-hint-banner`
+- **3 new tests** in `tests/tools.test.ts` for `initialMode` / `dashboardUrl` behaviour
+
+### Changed
+- `package.json` — version 2.8.0
+- `src/server.ts`, `src/http.ts` — version string updated to 2.8.0
+- `src/schemas.ts` — `OpenDashboardInput` gains optional `initialMode`; `OpenDashboardOutput` gains optional `initialMode` + `dashboardUrl`
+- `src/tools/open_dashboard.ts` — default layer switches to `human_flow` when `initialMode=store`; `dashboardUrl` is always returned
+
+### Test count
+238 total (was 235)
+
+---
+
 ## [2.7.0] – 2026-05-07 — Real Data Integration (e-Stat / MLIT API)
 
 ### Added

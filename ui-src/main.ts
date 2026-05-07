@@ -266,9 +266,118 @@ let currentOverlayGroup: any = null;
 let secondaryOverlayGroup: any = null;
 let comparisonMode = false;
 let currentTimePreset: 'morning' | 'noon' | 'evening' = 'noon';
+let currentDashboardMode: 'investment' | 'store' = 'investment';
 
 function pref(key?: string): PrefectureConfig { return PREFECTURES[key ?? currentPrefecture]; }
 function secondaryPrefKey(): string { return currentPrefecture === 'aichi' ? 'tokyo' : 'aichi'; }
+
+// ── Dual-mode: layer lists ────────────────────────────────────────────────────
+
+/** Layers that are always shown regardless of mode */
+const BASE_LAYERS = ['land_price', 'flood_risk', 'transaction', 'population'];
+
+/** Layers emphasized in investment mode (ordered for the control bar) */
+const INVESTMENT_LAYERS = [
+  'land_price', 'flood_risk', 'transaction', 'population',
+  'human_flow', 'school_district', 'corporate_density',
+  'plateau_3d', 'shadow',
+  'transport', 'commercial_facilities', 'medical_facilities',
+];
+
+/** Layers emphasized in store mode (ordered: store-critical first) */
+const STORE_LAYERS = [
+  'human_flow', 'transport', 'commercial_facilities', 'medical_facilities',
+  'land_price', 'flood_risk', 'population', 'transaction',
+  'corporate_density', 'plateau_3d', 'shadow', 'school_district',
+];
+
+function getDefaultLayerForMode(mode: 'investment' | 'store'): string {
+  return mode === 'store' ? 'human_flow' : 'land_price';
+}
+
+function getLayerOrderForMode(mode: 'investment' | 'store'): string[] {
+  return mode === 'store' ? STORE_LAYERS : INVESTMENT_LAYERS;
+}
+
+/** Returns true if the layer is "primary" for the current mode (used for highlight) */
+function isLayerPrimaryForMode(layer: string, mode: 'investment' | 'store'): boolean {
+  const primary: Record<'investment' | 'store', string[]> = {
+    investment: ['land_price', 'flood_risk', 'human_flow', 'school_district', 'corporate_density'],
+    store: ['human_flow', 'transport', 'commercial_facilities', 'medical_facilities'],
+  };
+  return primary[mode].includes(layer);
+}
+
+function applyMode(mode: 'investment' | 'store') {
+  currentDashboardMode = mode;
+  // Update toggle button appearance
+  document.querySelectorAll('.mode-toggle-btn').forEach(btn => {
+    btn.classList.toggle('active', btn.getAttribute('data-mode') === mode);
+  });
+  // Switch to mode default layer if current layer is not available
+  const defaultLayer = getDefaultLayerForMode(mode);
+  if (!isLayerAvailable(currentLayer)) {
+    currentLayer = defaultLayer;
+  } else if (mode === 'store' && currentLayer === 'land_price') {
+    // Auto-switch to human_flow when entering store mode for the first time
+    currentLayer = defaultLayer;
+  } else if (mode === 'investment' && currentLayer === 'human_flow') {
+    currentLayer = getDefaultLayerForMode('investment');
+  }
+  switchLayer(currentLayer);
+  renderLayerControl();
+  if (selectedArea) updateInsightPanel(selectedArea);
+  // Show/hide mode hint banner
+  const banner = document.getElementById('mode-hint-banner');
+  if (banner) {
+    if (mode === 'store') {
+      banner.style.display = 'block';
+      banner.textContent = '店舗出店戦略モード — 人流・交通・商業施設データを優先表示中';
+    } else {
+      banner.style.display = 'none';
+    }
+  }
+}
+
+function renderModeToggle() {
+  const existing = document.getElementById('mode-toggle-bar');
+  if (existing) existing.remove();
+
+  const bar = document.createElement('div');
+  bar.id = 'mode-toggle-bar';
+  bar.innerHTML = `
+    <button class="mode-toggle-btn ${currentDashboardMode === 'investment' ? 'active' : ''}" data-mode="investment">
+      <span class="mode-icon">🏢</span>
+      <span class="mode-label">不動産投資</span>
+    </button>
+    <button class="mode-toggle-btn ${currentDashboardMode === 'store' ? 'active' : ''}" data-mode="store">
+      <span class="mode-icon">🏪</span>
+      <span class="mode-label">店舗出店戦略</span>
+    </button>
+  `;
+  bar.addEventListener('click', (e) => {
+    const target = (e.target as HTMLElement).closest('.mode-toggle-btn') as HTMLElement | null;
+    const mode = target?.getAttribute('data-mode') as 'investment' | 'store' | undefined;
+    if (mode && mode !== currentDashboardMode) applyMode(mode);
+  });
+
+  // Insert into the header element (right-side via margin-left: auto on the bar)
+  const header = document.getElementById('header') as HTMLElement | null;
+  if (header) {
+    header.appendChild(bar);
+  } else {
+    document.body.prepend(bar);
+  }
+}
+
+function renderModeBanner() {
+  const existing = document.getElementById('mode-hint-banner');
+  if (existing) return;
+  const banner = document.createElement('div');
+  banner.id = 'mode-hint-banner';
+  banner.style.display = 'none';
+  document.getElementById('map-wrapper')?.prepend(banner);
+}
 
 function priceToColor(price: number): string {
   return priceToColorFor(price, currentPrefecture);
@@ -842,26 +951,37 @@ function updateLayerButtons() {
   });
 }
 
+const LAYER_LABELS: Record<string, string> = {
+  land_price: '地価',
+  flood_risk: '災害',
+  transaction: '取引',
+  population: '人口',
+  human_flow: '人流',
+  school_district: '学区',
+  corporate_density: '企業',
+  plateau_3d: '3D建物',
+  transport: '🚉交通',
+  commercial_facilities: '🏬商業',
+  medical_facilities: '🏥医療',
+  shadow: '🌑影',
+};
+
 function renderLayerControl() {
   const existing = document.querySelector('.layer-control');
   if (existing) existing.remove();
 
   const ctrl = document.createElement('div');
   ctrl.className = 'layer-control';
-  ctrl.innerHTML = `
-    <button class="layer-btn active" data-layer="land_price">地価</button>
-    <button class="layer-btn" data-layer="flood_risk">災害</button>
-    <button class="layer-btn" data-layer="transaction">取引</button>
-    <button class="layer-btn" data-layer="population">人口</button>
-    <button class="layer-btn" data-layer="human_flow">人流</button>
-    <button class="layer-btn" data-layer="school_district">学区</button>
-    <button class="layer-btn" data-layer="corporate_density">企業</button>
-    <button class="layer-btn" data-layer="plateau_3d">3D建物</button>
-    <button class="layer-btn" data-layer="transport">🚉交通</button>
-    <button class="layer-btn" data-layer="commercial_facilities">🏬商業施設</button>
-    <button class="layer-btn" data-layer="medical_facilities">🏥医療</button>
-    <button class="layer-btn" data-layer="shadow">🌑影</button>
-  `;
+
+  // Build buttons in mode-specific order
+  const orderedLayers = getLayerOrderForMode(currentDashboardMode);
+  const buttonsHtml = orderedLayers.map(layer => {
+    const label = LAYER_LABELS[layer] ?? layer;
+    const primary = isLayerPrimaryForMode(layer, currentDashboardMode) ? ' layer-btn-primary' : '';
+    return `<button class="layer-btn${primary}" data-layer="${layer}">${label}</button>`;
+  }).join('');
+
+  ctrl.innerHTML = buttonsHtml;
   ctrl.addEventListener('click', (e) => {
     const target = e.target as HTMLElement;
     const layer = target.getAttribute('data-layer');
@@ -1099,9 +1219,20 @@ function buildComparisonPanel(): string {
   const [comNA, comNB] = norm2(comA, comB);
   const [medNA, medNB] = norm2(medA, medB);
 
-  const radarAxes = ['価格手頃', '安全', '人流', '教育', '企業', '交通', '商業', '医療'];
-  const radarValuesA = [priceNA, riskNA, flowNA, eduNA, corpNA, transNA, comNA, medNA];
-  const radarValuesB = [priceNB, riskNB, flowNB, eduNB, corpNB, transNB, comNB, medNB];
+  // Reorder axes based on current dashboard mode
+  const allAxes   = ['価格手頃', '安全', '人流', '教育', '企業', '交通', '商業', '医療'];
+  const allValsA  = [priceNA, riskNA, flowNA, eduNA, corpNA, transNA, comNA, medNA];
+  const allValsB  = [priceNB, riskNB, flowNB, eduNB, corpNB, transNB, comNB, medNB];
+
+  // Store mode: prioritise 人流, 交通, 商業, 医療 (indices 2,5,6,7) then rest
+  const storeOrder  = [2, 5, 6, 7, 0, 1, 3, 4];
+  // Investment mode: keep original order
+  const investOrder = [0, 1, 2, 4, 3, 5, 6, 7];
+  const axisOrder   = currentDashboardMode === 'store' ? storeOrder : investOrder;
+
+  const radarAxes   = axisOrder.map(i => allAxes[i]);
+  const radarValuesA = axisOrder.map(i => allValsA[i]);
+  const radarValuesB = axisOrder.map(i => allValsB[i]);
 
   const radar = buildRadarSVG(
     [
@@ -1177,12 +1308,35 @@ function buildDrillDownPanel(area: string): string {
     : '-';
   const floodBadge = risk ? `<span style="color:${riskToColor(risk.flood)}">${risk.flood}/100</span>` : '-';
 
-  return `
-    <div class="drilldown-panel" id="drilldown-panel">
-      <div class="drilldown-header">
-        <strong>${config.displayName} / ${area}</strong>
-        <button class="drilldown-close" id="drilldown-close">✕</button>
+  const isStoreMode = currentDashboardMode === 'store';
+
+  // Store evaluation block — shown at TOP in store mode, bottom in investment mode
+  const storeEvalHtml = `
+    <div class="store-eval-row${isStoreMode ? ' store-eval-prominent' : ''}" id="store-eval-block">
+      <div class="store-eval-header${isStoreMode ? ' store-eval-header-active' : ''}">
+        🏪 店舗出店評価
+        ${isStoreMode ? '<span class="store-mode-badge">店舗モード優先</span>' : ''}
       </div>
+      <label style="font-size:12px;color:var(--text-muted)">業態を選択して出店適性を確認</label>
+      <select id="store-eval-select" class="neighborhood-input" style="margin-top:4px">
+        <option value="">-- 業態を選択 --</option>
+        <option value="convenience">コンビニ</option>
+        <option value="family_restaurant">ファミレス</option>
+        <option value="cafe">カフェ</option>
+        <option value="drugstore">ドラッグストア</option>
+        <option value="supermarket">スーパーマーケット</option>
+      </select>
+      ${isStoreMode && (flow || trans || com) ? `
+      <div class="store-quick-scores" style="margin-top:8px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:4px;font-size:11px">
+        ${flow ? `<div class="store-score-chip" title="人流スコア">👥 ${Math.min(100, Math.round(flow.weekday / 1000))}</div>` : ''}
+        ${trans ? `<div class="store-score-chip" title="交通スコア">🚉 ${Math.min(100, Math.round(trans.dailyPassengers / 10000))}</div>` : ''}
+        ${com ? `<div class="store-score-chip" title="商業集積">🏬 ${Math.min(100, com.facilities * 2)}</div>` : ''}
+      </div>` : ''}
+      <div id="store-eval-result" class="neighborhood-note" style="margin-top:6px"></div>
+    </div>`;
+
+  // Investment data table
+  const investDataHtml = `
       <table class="drilldown-table">
         <tr><th colspan="2">価格</th></tr>
         <tr><td>平均地価</td><td>${price ? `${(price.price / 10000).toFixed(1)} 万円/㎡` : '-'}</td></tr>
@@ -1194,12 +1348,6 @@ function buildDrillDownPanel(area: string): string {
         ${flow ? `<tr><th colspan="2">人流</th></tr>
         <tr><td>平日</td><td>${flow.weekday.toLocaleString()} 人/日</td></tr>
         <tr><td>休日</td><td>${flow.weekend.toLocaleString()} 人/日</td></tr>` : ''}
-        ${school ? `<tr><th colspan="2">教育</th></tr>
-        <tr><td>教育スコア</td><td>${school.score}/100</td></tr>
-        <tr><td>進学率</td><td>${school.advancement}%</td></tr>` : ''}
-        ${corp ? `<tr><th colspan="2">企業立地</th></tr>
-        <tr><td>事業所数</td><td>${corp.establishments.toLocaleString()}</td></tr>
-        <tr><td>大企業</td><td>${corp.major}社</td></tr>` : ''}
         ${trans ? `<tr><th colspan="2">交通</th></tr>
         <tr><td>駅数</td><td>${trans.stations}</td></tr>
         <tr><td>日乗降客数</td><td>${trans.dailyPassengers.toLocaleString()}人</td></tr>
@@ -1212,24 +1360,29 @@ function buildDrillDownPanel(area: string): string {
         <tr><td>施設数</td><td>${med.facilities}</td></tr>
         <tr><td>病院</td><td>${med.hospitals}</td></tr>
         <tr><td>病床数</td><td>${med.beds.toLocaleString()}</td></tr>` : ''}
-      </table>
+        ${school ? `<tr><th colspan="2">教育</th></tr>
+        <tr><td>教育スコア</td><td>${school.score}/100</td></tr>
+        <tr><td>進学率</td><td>${school.advancement}%</td></tr>` : ''}
+        ${corp ? `<tr><th colspan="2">企業立地</th></tr>
+        <tr><td>事業所数</td><td>${corp.establishments.toLocaleString()}</td></tr>
+        <tr><td>大企業</td><td>${corp.major}社</td></tr>` : ''}
+      </table>`;
+
+  return `
+    <div class="drilldown-panel${isStoreMode ? ' drilldown-panel-store' : ''}" id="drilldown-panel">
+      <div class="drilldown-header">
+        <strong>${config.displayName} / ${area}</strong>
+        <span class="drilldown-mode-tag">${isStoreMode ? '🏪 店舗モード' : '🏢 投資モード'}</span>
+        <button class="drilldown-close" id="drilldown-close">✕</button>
+      </div>
+      ${isStoreMode ? storeEvalHtml : ''}
+      ${investDataHtml}
       <div class="neighborhood-input-row">
-        <label>町丁目で絞り込み（v2.1: ラベルのみ）</label>
+        <label>町丁目で絞り込み</label>
         <input type="text" id="neighborhood-input" placeholder="例: 名駅南1丁目" class="neighborhood-input"/>
         <div id="neighborhood-note" class="neighborhood-note"></div>
       </div>
-      <div class="store-eval-row" style="margin-top:12px;padding-top:12px;border-top:1px solid rgba(255,255,255,0.1)">
-        <label style="font-size:12px;color:var(--text-muted)">店舗評価モード</label>
-        <select id="store-eval-select" class="neighborhood-input" style="margin-top:4px">
-          <option value="">-- 業態を選択 --</option>
-          <option value="convenience">コンビニ</option>
-          <option value="family_restaurant">ファミレス</option>
-          <option value="cafe">カフェ</option>
-          <option value="drugstore">ドラッグストア</option>
-          <option value="supermarket">スーパーマーケット</option>
-        </select>
-        <div id="store-eval-result" class="neighborhood-note" style="margin-top:6px"></div>
-      </div>
+      ${!isStoreMode ? storeEvalHtml : ''}
     </div>`;
 }
 
@@ -1276,7 +1429,17 @@ function updateInsightPanel(area: string) {
         (price.change + 10) * 2 + (100 - (risk?.overall ?? 30)) * 0.3 + 15)))
     : 50;
 
-  const scoreClass = investmentScore >= 70 ? 'high' : investmentScore >= 40 ? 'medium' : 'low';
+  const storeScore = flow && trans && com
+    ? Math.round(Math.max(0, Math.min(100,
+        (flow.weekday / 2000) * 0.4 + (trans.dailyPassengers / 50000) * 0.3 + (com.facilities * 2) * 0.3)))
+    : flow
+      ? Math.round(Math.min(100, flow.weekday / 1000))
+      : 50;
+
+  const displayScore = currentDashboardMode === 'store' ? storeScore : investmentScore;
+  const scoreLabel   = currentDashboardMode === 'store' ? '出店適性スコア' : '投資スコア';
+
+  const scoreClass = displayScore >= 70 ? 'high' : displayScore >= 40 ? 'medium' : 'low';
   const riskClass = (risk?.overall ?? 0) >= 60 ? 'high' : (risk?.overall ?? 0) >= 30 ? 'medium' : 'low';
 
   let comparisonHtml = '';
@@ -1295,8 +1458,8 @@ function updateInsightPanel(area: string) {
     </div>
 
     <div class="score-card">
-      <div class="score-value ${scoreClass}">${investmentScore}</div>
-      <div class="score-label">投資スコア</div>
+      <div class="score-value ${scoreClass}">${displayScore}</div>
+      <div class="score-label">${scoreLabel}</div>
       <div class="score-sublabel">/ 100</div>
     </div>
 
@@ -1538,7 +1701,15 @@ function init() {
   initSearchPanel();
   initMap();
   initReportOverlay();
+  renderModeToggle();
+  renderModeBanner();
   updateInsightPanel('');
+
+  // Respect ?mode= URL parameter for initialMode
+  const urlMode = new URLSearchParams(window.location.search).get('mode');
+  if (urlMode === 'store' || urlMode === 'investment') {
+    applyMode(urlMode);
+  }
 }
 
 if (document.readyState === 'loading') {

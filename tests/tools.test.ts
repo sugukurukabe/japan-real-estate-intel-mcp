@@ -147,4 +147,24 @@ describe('openDashboard', () => {
     expect(result.layer).toBe('flood_risk');
     expect(result.prefecture).toBe('tokyo');
   });
+
+  it('store mode defaults to human_flow layer', () => {
+    const result = openDashboard({ initialMode: 'store' });
+    expect(result.layer).toBe('human_flow');
+    expect(result.initialMode).toBe('store');
+    expect(result.dashboardUrl).toBe('dashboard.html?mode=store');
+  });
+
+  it('investment mode keeps default land_price layer', () => {
+    const result = openDashboard({ initialMode: 'investment' });
+    expect(result.layer).toBe('land_price');
+    expect(result.initialMode).toBe('investment');
+    expect(result.dashboardUrl).toBe('dashboard.html?mode=investment');
+  });
+
+  it('dashboardUrl has no mode param when initialMode not specified', () => {
+    const result = openDashboard({});
+    expect(result.dashboardUrl).toBe('dashboard.html');
+    expect(result.initialMode).toBeUndefined();
+  });
 });
