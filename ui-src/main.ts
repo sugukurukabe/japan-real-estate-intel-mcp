@@ -492,9 +492,17 @@ let secondaryOverlayGroup: any = null;
 let comparisonMode = false;
 let currentTimePreset: 'morning' | 'noon' | 'evening' = 'noon';
 let currentDashboardMode: 'investment' | 'store' = 'investment';
+let comparisonPrefecture = '';
 
 function pref(key?: string): PrefectureConfig { return PREFECTURES[key ?? currentPrefecture]; }
-function secondaryPrefKey(): string { return currentPrefecture === 'aichi' ? 'tokyo' : 'aichi'; }
+function secondaryPrefKey(): string {
+  if (comparisonPrefecture && comparisonPrefecture !== currentPrefecture && PREFECTURES[comparisonPrefecture]) {
+    return comparisonPrefecture;
+  }
+  const keys = Object.keys(PREFECTURES);
+  const others = keys.filter(k => k !== currentPrefecture);
+  return others[0] ?? currentPrefecture;
+}
 
 // ── Dual-mode: layer lists ────────────────────────────────────────────────────
 
@@ -661,6 +669,44 @@ function initMap() {
   renderLegend();
 }
 
+function renderComparisonPrefSelector() {
+  const existing = document.getElementById('comparison-pref-selector');
+  if (existing) return;
+  const toolbar = document.getElementById('comparison-toolbar') ?? document.getElementById('controls');
+  if (!toolbar) return;
+  const wrapper = document.createElement('div');
+  wrapper.id = 'comparison-pref-selector';
+  wrapper.style.cssText = 'display:inline-flex;align-items:center;gap:6px;margin-left:12px;';
+  const label = document.createElement('span');
+  label.textContent = '比較県:';
+  label.style.cssText = 'font-size:12px;color:#aaa;';
+  const sel = document.createElement('select');
+  sel.id = 'comparison-pref-select';
+  sel.style.cssText = 'background:#2a2a3a;color:#e0e0e0;border:1px solid #444;border-radius:4px;padding:3px 6px;font-size:12px;cursor:pointer;';
+  for (const [key, cfg] of Object.entries(PREFECTURES)) {
+    if (key === currentPrefecture) continue;
+    const opt = document.createElement('option');
+    opt.value = key;
+    opt.textContent = cfg.displayName;
+    if (key === secondaryPrefKey()) opt.selected = true;
+    sel.appendChild(opt);
+  }
+  sel.addEventListener('change', () => {
+    comparisonPrefecture = sel.value;
+    if (mapSecondary) {
+      mapSecondary.remove();
+      mapSecondary = null;
+      secondaryOverlayGroup = null;
+    }
+    const secKey = secondaryPrefKey();
+    mapSecondary = createLeafletMap('map-container-secondary', secKey);
+    setTimeout(() => { if (mapSecondary) { mapSecondary.invalidateSize(); renderCurrentLayer(); } }, 200);
+  });
+  wrapper.appendChild(label);
+  wrapper.appendChild(sel);
+  toolbar.appendChild(wrapper);
+}
+
 function enableComparisonLayout() {
   const wrapper = document.getElementById('map-wrapper');
   if (!wrapper) return;
@@ -672,6 +718,7 @@ function enableComparisonLayout() {
     secondary.className = 'map-container-secondary';
     wrapper.appendChild(secondary);
   }
+  renderComparisonPrefSelector();
   const secKey = secondaryPrefKey();
   mapSecondary = createLeafletMap('map-container-secondary', secKey);
   setTimeout(() => { if (mapSecondary) mapSecondary.invalidateSize(); }, 200);
@@ -686,6 +733,7 @@ function disableComparisonLayout() {
     mapSecondary = null;
     secondaryOverlayGroup = null;
   }
+  document.getElementById('comparison-pref-selector')?.remove();
   const secondary = document.getElementById('map-container-secondary');
   if (secondary) secondary.remove();
 }
@@ -752,11 +800,10 @@ function buildTransactionGroup(prefKey: string, onClickArea?: (name: string) => 
   const config = pref(prefKey);
   for (const [name, center] of Object.entries(config.municipalities)) {
     if (!config.landPrices[name]) continue;
-    const txCount = Math.floor(5 + Math.random() * 20);
     const circle = L.circle(center, {
-      radius: 300 + txCount * 50, fillColor: '#4f8cff', fillOpacity: 0.3, color: '#4f8cff', weight: 1,
+      radius: 600, fillColor: '#4f8cff', fillOpacity: 0.25, color: '#4f8cff', weight: 1,
     });
-    circle.bindPopup(`<div class="popup-title">${name}</div><div class="popup-row"><span>取引件数</span><span>${txCount}件</span></div>`);
+    circle.bindPopup(`<div class="popup-title">${name}</div><div class="popup-row"><span>取引データ</span><span>実データ未取得（npm run data:fetch で更新）</span></div>`);
     if (onClickArea) circle.on('click', () => onClickArea(name));
     group.addLayer(circle);
   }
@@ -1621,7 +1668,7 @@ function attachDrillDownEvents() {
     const val = nbInput.value.trim();
     if (nbNote) {
       nbNote.textContent = val
-        ? `「${val}」の詳細データはv2.2以降対応予定。現在は市区町村レベル集計を表示中。`
+        ? `「${val}」の町丁目データで解析します（全 8 県対応済み）。`
         : '';
     }
   });

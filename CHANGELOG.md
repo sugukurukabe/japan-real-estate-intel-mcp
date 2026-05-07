@@ -7,6 +7,61 @@ Versioning: [Semantic Versioning](https://semver.org/)
 
 ---
 
+## [3.1.0] – 2026-05-07 — Data Enrichment + Advanced Features
+
+### Added
+- **Tokyo/Osaka/Kanagawa に transport/commercial/medical データ追加**: 合計 9 ファイル追加（各県 transport_stations.csv, commercial_facilities.csv, medical_facilities.csv）。対応 loader の capabilities を `true` に更新。
+- **MCP Prompts 登録**: `investment_report`, `store_location_evaluation`, `prefecture_comparison` の 3 テンプレートを `server.ts` に登録。
+- **Excel エクスポート**: `compare_prefectures` / `drill_down_local_analysis` に `exportFormat: 'xlsx'` オプション追加。`xlsx` ライブラリを使用。
+- **`src/export/excel.ts`**: Excel エクスポートユーティリティモジュール
+
+### Changed
+- `compare_prefectures` / `drill_down_local_analysis` スキーマに `exportFormat` フィールド追加（後方互換：デフォルト `json`）
+- テスト: Tokyo/Osaka/Kanagawa の capabilities テストを v3.1.0 仕様に更新（321 件合計）
+
+### Dependencies
+- `xlsx 0.18.5` 追加
+
+---
+
+## [3.0.0] – 2026-05-07 — Production Readiness (SaaS 基盤)
+
+### Added
+- **Rate Limiting**: `express-rate-limit` ミドルウェア導入。環境変数 `RATE_LIMIT_ENABLED`, `RATE_LIMIT_WINDOW_MS`, `RATE_LIMIT_MAX` で設定可能。
+- **data:fetch CLI 8 県対応**: `scripts/fetch-real-data.ts` の `SUPPORTED_PREFECTURES` を 8 県（aichi, tokyo, osaka, fukuoka, hokkaido, kanagawa, kyoto, hyogo）に拡張。`--all` フラグで一括取得可能。
+- **CI/CD 自動 npm publish**: `.github/workflows/release.yml` に `npm publish --access public` ステップ追加。`NPM_TOKEN` シークレットを使用。
+- **PDF エクスポート**: `generate_area_report` に `format: 'pdf'` パラメータ追加。`pdfkit` を使用して Markdown をPDF に変換。`pdfBase64` フィールドに Base64 エンコード済み PDF を返す。
+- **`src/export/pdf.ts`**: PDF エクスポートユーティリティモジュール
+- **`.env.example`**: レート制限設定の環境変数ドキュメント追加
+
+### Changed
+- `generate_area_report` が async 関数に変更（PDF 生成のため）
+- テスト: rate limiting テスト 2 件追加（320 件合計）
+
+### Dependencies
+- `express-rate-limit 8.5.1` 追加
+- `pdfkit 0.18.0` + `@types/pdfkit 0.17.6` 追加
+
+### Breaking (minor)
+- `generateAreaReport()` が `async` になったため、直接呼び出す場合は `await` が必要
+
+---
+
+## [2.10.0] – 2026-05-07 — Documentation Accuracy + Dashboard Generalization
+
+### Changed
+- **README.md**: Capabilities マトリクスを 8 県対応に拡張、テスト数 318 に更新、ロードマップを v2.9 現状に更新、`data:fetch` の正確な説明に修正
+- **SECURITY.md**: サポートバージョン表を 2.9.x に更新、rate limiting 予告を v3.0.0 に修正
+- **CHANGELOG.md**: v2.6 欠番について注記追加
+- **`src/server.ts`**: コメント「Tools (6)」→「Tools (10)」に修正
+- **`ui-src/main.ts`** (比較モード汎用化):
+  - `secondaryPrefKey()` を動的選択に変更。`comparisonPrefecture` 変数で任意の 8 県から選択可能
+  - 比較モード開始時に都道府県選択ドロップダウンを UI に追加
+  - `buildTransactionGroup()` の `Math.random()` 除去。「実データ未取得」表示に変更
+  - neighborhood ヒントの「v2.2 以降対応予定」テキストを「全 8 県対応済み」に修正
+
+---
+
 ## [2.9.0] – 2026-05-07 — National Expansion: 8 都道府県体制 (5 新規追加)
 
 ### Added
@@ -76,6 +131,8 @@ Versioning: [Semantic Versioning](https://semver.org/)
 - `tsx` ^4.21.0 (dev) — TypeScript direct execution for CLI scripts
 
 ---
+
+> **Note**: v2.6.0 was merged into v2.9.0 (National Expansion). There is no separate v2.6.0 release.
 
 ## [2.5.0] – 2026-05-07 — Foundation Hardening
 

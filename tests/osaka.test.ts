@@ -54,15 +54,19 @@ describe('Osaka loader capabilities', () => {
     expect(loader.getNeighborhoods().length).toBeGreaterThan(0);
   });
 
-  it('lacks advanced capabilities', () => {
+  it('lacks humanFlow/education/corporate/plateau capabilities', () => {
     const loader = getLoader('osaka');
     expect(loader.capabilities.humanFlow).toBe(false);
     expect(loader.capabilities.education).toBe(false);
     expect(loader.capabilities.corporate).toBe(false);
     expect(loader.capabilities.plateau).toBe(false);
-    expect(loader.capabilities.transport).toBe(false);
-    expect(loader.capabilities.commercial).toBe(false);
-    expect(loader.capabilities.medical).toBe(false);
+  });
+
+  it('has transport/commercial/medical capabilities (v3.1)', () => {
+    const loader = getLoader('osaka');
+    expect(loader.capabilities.transport).toBe(true);
+    expect(loader.capabilities.commercial).toBe(true);
+    expect(loader.capabilities.medical).toBe(true);
   });
 
   it('geocodes known Osaka areas', () => {
@@ -102,11 +106,11 @@ describe('Osaka tool integration', () => {
     expect(result.overallRiskScore).toBeGreaterThanOrEqual(0);
   });
 
-  it('generateAreaReport works for Osaka', () => {
-    const result = generateAreaReport({
+  it('generateAreaReport works for Osaka', async () => {
+    const result = await generateAreaReport({
       prefecture: '大阪府',
       area: '北区',
-      reportType: 'investment',
+      purpose: 'investment',
     });
     expect(result.markdownReport.length).toBeGreaterThan(0);
   });

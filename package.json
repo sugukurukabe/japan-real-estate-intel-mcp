@@ -1,6 +1,6 @@
 {
   "name": "@sugukuru/japan-real-estate-intel-mcp",
-  "version": "2.9.0",
+  "version": "3.1.0",
   "description": "Japan real estate intelligence MCP - land price, transactions, population, disaster risk, human flow, education, corporate location cross-analysis (8 prefectures: Aichi/Tokyo/Osaka/Fukuoka/Hokkaido/Kanagawa/Kyoto/Hyogo)",
   "type": "module",
   "main": "dist/index.js",
@@ -66,11 +66,14 @@
     "@turf/boolean-point-in-polygon": "^7.2.0",
     "@turf/helpers": "^7.2.0",
     "express": "^5.1.0",
+    "express-rate-limit": "^8.5.1",
     "helmet": "^8.1.0",
     "papaparse": "^5.5.2",
+    "pdfkit": "^0.18.0",
     "pino": "^10.3.1",
     "suncalc": "^1.9.0",
     "topojson-client": "^3.1.0",
+    "xlsx": "^0.18.5",
     "zod": "^3.24.4"
   },
   "devDependencies": {
@@ -78,6 +81,7 @@
     "@types/geojson": "^7946.0.16",
     "@types/node": "^22.15.3",
     "@types/papaparse": "^5.3.15",
+    "@types/pdfkit": "^0.17.6",
     "@types/suncalc": "^1.9.2",
     "@types/supertest": "^7.2.0",
     "@types/topojson-client": "^3.1.5",

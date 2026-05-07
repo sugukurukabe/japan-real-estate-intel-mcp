@@ -3,8 +3,9 @@ import { resolvePrefecture } from '../prefecture/resolver.js';
 import { getPopulationForCity } from '../data/loader.js';
 import { crossAnalyze } from './cross_analyze_real_estate_market.js';
 import { generateMarkdownReport } from '../analysis/report.js';
+import { markdownToPdfBase64 } from '../export/pdf.js';
 
-export function generateAreaReport(input: GenerateReportInput): GenerateReportOutput {
+export async function generateAreaReport(input: GenerateReportInput): Promise<GenerateReportOutput> {
   const prefKey = resolvePrefecture(input.prefecture);
 
   const analysis = crossAnalyze({
@@ -23,11 +24,22 @@ export function generateAreaReport(input: GenerateReportInput): GenerateReportOu
 
   const population = getPopulationForCity(input.area, prefKey);
 
-  return generateMarkdownReport({
+  const base = generateMarkdownReport({
     area: input.area,
     purpose: input.purpose,
     analysis,
     population,
     includeCharts: input.includeCharts,
   });
+
+  if (input.format !== 'pdf') {
+    return base;
+  }
+
+  const pdfBase64 = await markdownToPdfBase64(
+    base.markdownReport,
+    `${input.area} エリアレポート`,
+  );
+
+  return { ...base, pdfBase64 };
 }

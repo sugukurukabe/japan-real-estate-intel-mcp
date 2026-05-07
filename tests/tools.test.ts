@@ -118,8 +118,8 @@ describe('assessPropertyRisk (Aichi)', () => {
 });
 
 describe('generateAreaReport (Aichi)', () => {
-  it('generates a markdown report', () => {
-    const result = generateAreaReport({
+  it('generates a markdown report', async () => {
+    const result = await generateAreaReport({
       prefecture: '愛知県',
       area: '名古屋市中区',
       purpose: 'investment',

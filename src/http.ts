@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 import express, { type Express } from 'express';
 import helmet from 'helmet';
+import rateLimit from 'express-rate-limit';
 import { StreamableHTTPServerTransport } from '@modelcontextprotocol/sdk/server/streamableHttp.js';
 import { createServer } from './server.js';
 import { moduleLogger } from './logger.js';
@@ -11,6 +12,9 @@ const PORT = parseInt(process.env.PORT ?? '3100', 10);
 const HOST = process.env.HOST ?? '0.0.0.0';
 const API_KEY = process.env.API_KEY; // optional; if set, require X-Api-Key header
 const SESSION_TIMEOUT_MS = parseInt(process.env.SESSION_TIMEOUT_MS ?? String(30 * 60 * 1000), 10);
+const RATE_LIMIT_ENABLED = process.env.RATE_LIMIT_ENABLED !== 'false';
+const RATE_LIMIT_WINDOW_MS = parseInt(process.env.RATE_LIMIT_WINDOW_MS ?? String(15 * 60 * 1000), 10);
+const RATE_LIMIT_MAX = parseInt(process.env.RATE_LIMIT_MAX ?? '100', 10);
 
 // ── Express setup ──────────────────────────────────────────────────────────
 
@@ -18,6 +22,24 @@ const app: Express = express();
 
 // Security headers (skip CSP for MCP JSON endpoint)
 app.use(helmet({ contentSecurityPolicy: false }));
+
+// Rate limiting (skip /health)
+if (RATE_LIMIT_ENABLED) {
+  app.use(
+    rateLimit({
+      windowMs: RATE_LIMIT_WINDOW_MS,
+      max: RATE_LIMIT_MAX,
+      standardHeaders: true,
+      legacyHeaders: false,
+      skip: (req) => req.path === '/health',
+      handler: (req, res) => {
+        log.warn({ ip: req.ip, path: req.path }, 'Rate limit exceeded');
+        res.status(429).json({ error: 'Too Many Requests' });
+      },
+    }),
+  );
+  log.info({ windowMs: RATE_LIMIT_WINDOW_MS, max: RATE_LIMIT_MAX }, 'Rate limiting enabled');
+}
 
 // Body size limit
 app.use(express.json({ limit: '10mb' }));
@@ -129,7 +151,7 @@ app.delete('/mcp', async (req, res) => {
 app.get('/health', (_req, res) => {
   res.json({
     status: 'ok',
-    version: '2.9.0',
+    version: '3.1.0',
     sessions: sessions.size,
     uptime_s: Math.round(process.uptime()),
   });

@@ -54,7 +54,7 @@ export class OsakaLoader extends BaseLoader {
   readonly isoCode = 'JP-27';
   readonly capabilities: LoaderCapabilities = {
     humanFlow: false, education: false, corporate: false, crime: false, plateau: false,
-    transport: false, commercial: false, medical: false, neighborhoods: true,
+    transport: true, commercial: true, medical: true, neighborhoods: true,
   };
 
   protected readonly geocodeMap = OSAKA_GEOCODE;
@@ -71,8 +71,8 @@ export class OsakaLoader extends BaseLoader {
   getCorporateLocations(): CorporateLocationRecord[] { return []; }
   getCrimeStats(): CrimeStatsRecord[] { return []; }
   getPlateauBuildings(): PlateauBuildingRecord[] { return []; }
-  getTransport(): TransportRecord[] { return []; }
-  getCommercialFacilities(): CommercialFacilityRecord[] { return []; }
-  getMedicalFacilities(): MedicalFacilityRecord[] { return []; }
+  getTransport(): TransportRecord[] { return this.loadCsv('transport_stations.csv'); }
+  getCommercialFacilities(): CommercialFacilityRecord[] { return this.loadCsv('commercial_facilities.csv'); }
+  getMedicalFacilities(): MedicalFacilityRecord[] { return this.loadCsv('medical_facilities.csv'); }
   getNeighborhoods(): NeighborhoodRecord[] { return this.loadCsv('neighborhoods.csv'); }
 }

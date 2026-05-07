@@ -83,17 +83,17 @@ describe('loader capabilities', () => {
     expect(loader.capabilities.medical).toBe(true);
   });
 
-  it('Tokyo does not have transport/commercial/medical capabilities', () => {
+  it('Tokyo now has transport/commercial/medical capabilities (v3.1)', () => {
     const loader = getLoader('tokyo');
-    expect(loader.capabilities.transport).toBe(false);
-    expect(loader.capabilities.commercial).toBe(false);
-    expect(loader.capabilities.medical).toBe(false);
+    expect(loader.capabilities.transport).toBe(true);
+    expect(loader.capabilities.commercial).toBe(true);
+    expect(loader.capabilities.medical).toBe(true);
   });
 
-  it('Tokyo returns empty arrays for new data types', () => {
+  it('Tokyo returns non-empty arrays for transport/commercial/medical (v3.1)', () => {
     const loader = getLoader('tokyo');
-    expect(loader.getTransport()).toHaveLength(0);
-    expect(loader.getCommercialFacilities()).toHaveLength(0);
-    expect(loader.getMedicalFacilities()).toHaveLength(0);
+    expect(loader.getTransport().length).toBeGreaterThan(0);
+    expect(loader.getCommercialFacilities().length).toBeGreaterThan(0);
+    expect(loader.getMedicalFacilities().length).toBeGreaterThan(0);
   });
 });

@@ -117,6 +117,10 @@ export const GenerateReportInput = z.object({
   neighborhood: neighborhoodField,
   purpose: z.enum(['investment', 'development', 'rental', 'management']),
   includeCharts: z.boolean().default(true),
+  format: z
+    .enum(['markdown', 'pdf'])
+    .default('markdown')
+    .describe('出力フォーマット。pdf を指定すると pdfBase64 フィールドに Base64 エンコード済み PDF を返す'),
 });
 export type GenerateReportInput = z.infer<typeof GenerateReportInput>;
 
@@ -124,6 +128,7 @@ export const GenerateReportOutput = z.object({
   markdownReport: z.string(),
   chartsData: ChartsData,
   riskHighlights: z.array(z.string()),
+  pdfBase64: z.string().optional().describe('format=pdf のとき Base64 エンコードされた PDF バイナリ'),
 });
 export type GenerateReportOutput = z.infer<typeof GenerateReportOutput>;
 
@@ -243,6 +248,10 @@ export const ComparePrefecturesInput = z.object({
   metrics: z.array(z.enum(['price', 'risk', 'humanFlow', 'education', 'corporate', 'investment', 'transport', 'commercial', 'medical']))
     .default(['price', 'risk', 'investment']),
   includeMarkdown: z.boolean().default(true),
+  exportFormat: z
+    .enum(['json', 'markdown', 'xlsx'])
+    .default('json')
+    .describe('出力フォーマット。xlsx を指定すると xlsxBase64 フィールドに Base64 エンコード済み Excel を返す'),
 });
 export type ComparePrefecturesInput = z.infer<typeof ComparePrefecturesInput>;
 
@@ -289,6 +298,7 @@ export const ComparePrefecturesOutput = z.object({
   bestFor: z.object({ investment: z.string(), safety: z.string(), growth: z.string() }),
   markdownReport: z.string().optional(),
   unsupportedNotes: z.array(z.string()),
+  xlsxBase64: z.string().optional().describe('exportFormat=xlsx のとき Base64 エンコードされた Excel バイナリ'),
 });
 export type ComparePrefecturesOutput = z.infer<typeof ComparePrefecturesOutput>;
 
@@ -299,6 +309,10 @@ export const DrillDownInput = z.object({
   city: z.string().describe("市区町村（例: '名古屋市中村区'）"),
   neighborhood: neighborhoodField,
   focus: z.enum(['price', 'risk', 'demand', 'all']).default('all'),
+  exportFormat: z
+    .enum(['json', 'markdown', 'xlsx'])
+    .default('json')
+    .describe('出力フォーマット。xlsx を指定すると xlsxBase64 フィールドに Base64 エンコード済み Excel を返す'),
 });
 export type DrillDownInput = z.infer<typeof DrillDownInput>;
 
@@ -334,6 +348,7 @@ export const DrillDownOutput = z.object({
   daytimePopRatio: z.number().optional(),
   popDensity: z.number().optional(),
   neighborhoodDataAvailable: z.boolean().optional(),
+  xlsxBase64: z.string().optional().describe('exportFormat=xlsx のとき Base64 エンコードされた Excel バイナリ'),
 });
 export type DrillDownOutput = z.infer<typeof DrillDownOutput>;
 

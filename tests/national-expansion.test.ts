@@ -140,9 +140,12 @@ describe('National Expansion — loader data', () => {
         expect(loader.capabilities.education).toBe(false);
         expect(loader.capabilities.corporate).toBe(false);
         expect(loader.capabilities.plateau).toBe(false);
-        expect(loader.capabilities.transport).toBe(false);
-        expect(loader.capabilities.commercial).toBe(false);
-        expect(loader.capabilities.medical).toBe(false);
+        // Note: kanagawa has transport/commercial/medical from v3.1.0
+        if (pref.key !== 'kanagawa') {
+          expect(loader.capabilities.transport).toBe(false);
+          expect(loader.capabilities.commercial).toBe(false);
+          expect(loader.capabilities.medical).toBe(false);
+        }
       });
 
       it(`geocode("${pref.representativeArea}") returns coordinates in expected range`, () => {

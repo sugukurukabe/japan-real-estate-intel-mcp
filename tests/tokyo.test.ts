@@ -146,8 +146,8 @@ describe('assessPropertyRisk (Tokyo)', () => {
 });
 
 describe('generateAreaReport (Tokyo)', () => {
-  it('generates report for 千代田区', () => {
-    const result = generateAreaReport({
+  it('generates report for 千代田区', async () => {
+    const result = await generateAreaReport({
       prefecture: '東京都',
       area: '千代田区',
       purpose: 'investment',
@@ -213,18 +213,18 @@ describe('openDashboard (Tokyo)', () => {
   });
 });
 
-describe('Tokyo v2.2 capabilities', () => {
-  it('Tokyo lacks transport/commercial/medical', () => {
+describe('Tokyo v3.1 capabilities', () => {
+  it('Tokyo now has transport/commercial/medical capabilities', () => {
     const loader = getLoader('tokyo');
-    expect(loader.capabilities.transport).toBe(false);
-    expect(loader.capabilities.commercial).toBe(false);
-    expect(loader.capabilities.medical).toBe(false);
+    expect(loader.capabilities.transport).toBe(true);
+    expect(loader.capabilities.commercial).toBe(true);
+    expect(loader.capabilities.medical).toBe(true);
   });
 
-  it('Tokyo returns empty arrays for new data types', () => {
+  it('Tokyo returns non-empty arrays for transport/commercial/medical', () => {
     const loader = getLoader('tokyo');
-    expect(loader.getTransport()).toHaveLength(0);
-    expect(loader.getCommercialFacilities()).toHaveLength(0);
-    expect(loader.getMedicalFacilities()).toHaveLength(0);
+    expect(loader.getTransport().length).toBeGreaterThan(0);
+    expect(loader.getCommercialFacilities().length).toBeGreaterThan(0);
+    expect(loader.getMedicalFacilities().length).toBeGreaterThan(0);
   });
 });

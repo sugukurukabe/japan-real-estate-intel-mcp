@@ -112,3 +112,21 @@ describe('Security headers', () => {
     expect(res.headers['x-frame-options']).toBeDefined();
   });
 });
+
+describe('Rate limiting', () => {
+  it('rate limit headers are present on /mcp endpoint', async () => {
+    const res = await request(app)
+      .post('/mcp')
+      .set('Content-Type', 'application/json')
+      .set('Accept', 'application/json, text/event-stream')
+      .send({ jsonrpc: '2.0', method: 'initialize', id: 1, params: { protocolVersion: '2024-11-05', clientInfo: { name: 'test', version: '1.0' }, capabilities: {} } });
+    // express-rate-limit sets RateLimit-* standard headers
+    expect(res.headers['ratelimit-limit'] ?? res.headers['x-ratelimit-limit']).toBeDefined();
+  });
+
+  it('/health is exempt from rate limiting response headers indicating a limit bucket', async () => {
+    const res = await request(app).get('/health');
+    // health endpoint is skipped by rate limiter — still returns 200
+    expect(res.status).toBe(200);
+  });
+});

@@ -4,9 +4,9 @@
 
 | Version | Supported |
 |---------|-----------|
-| 2.5.x   | ✅ Active  |
-| 2.4.x   | ⚠️ Bug fixes only |
-| < 2.4   | ❌ No longer supported |
+| 2.9.x   | ✅ Active  |
+| 2.8.x   | ⚠️ Bug fixes only |
+| < 2.8   | ❌ No longer supported |
 
 ## Reporting a Vulnerability
 
@@ -47,7 +47,7 @@ This project is an **MCP server** that serves as a data analysis layer over Japa
 **Out of scope:**
 - Inaccuracies in sample/mock data (open a regular issue)
 - Issues requiring physical access to the server
-- Denial-of-service via legitimate tool calls (rate limiting is a roadmap item)
+- Denial-of-service via legitimate tool calls (rate limiting planned for v3.0.0)
 
 ## Security Measures in Place (v2.5.0+)
 
@@ -63,4 +63,4 @@ This project is an **MCP server** that serves as a data analysis layer over Japa
 
 - Sample data files (`data/*/`) are **mock/synthetic data** and do not represent real-world conditions
 - The stdio transport does not support authentication (relies on OS-level process isolation)
-- No rate limiting in current version (planned for v2.8.0)
+- No rate limiting in current version (planned for v3.0.0)
