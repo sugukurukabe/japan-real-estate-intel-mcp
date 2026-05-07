@@ -27,6 +27,7 @@ import { evaluateStoreLocation } from './tools/evaluate_store_location.js';
 import { simulateLandscape } from './tools/simulate_landscape_impact.js';
 import { forecastLandPriceTrend } from './tools/forecast_land_price_trend.js';
 import { portfolioOptimizer } from './tools/portfolio_optimizer.js';
+import { simulateAichiFuture, AichiFutureInput } from './tools/simulate_aichi_future.js';
 import { scenarioWhatIf } from './tools/scenario_what_if.js';
 import { getLandPriceResource } from './resources/land_price.js';
 import { getFloodResource } from './resources/flood.js';
@@ -76,7 +77,7 @@ function withErrorHandling(
 export function createServer(): McpServer {
   const server = new McpServer({
     name: 'japan-real-estate-intel-mcp',
-    version: '5.2.0',
+    version: '6.0.0',
   });
 
   // -- Tools (13) --
@@ -528,6 +529,40 @@ export function createServer(): McpServer {
         content: {
           type: 'text' as const,
           text: ['## Japan Real Estate Intel MCP -- Quick Start', '', '以下の例をそのままチャットに貼り付けて実行できます。', '', '---', '', '### 1. 地価トレンド予測（投資判断）', '```', 'forecast_land_price_trend({ "prefecture": "東京都", "city": "新宿区", "horizon": "5y" })', '```', '> **用途**: 5年後の地価予測・CAGR・投資シグナル(buy/hold/caution)を取得。', '', '---', '', '### 2. 企業立地需要分析', '```', 'predict_corporate_demand({ "prefecture": "愛知県", "city": "名古屋市中区", "industryType": "manufacturing" })', '```', '> **用途**: 制造業・オフィス・小売の需要スコア。法人調査に有効。', '', '---', '', '### 3. ファミリー向け適性評価', '```', 'assess_family_friendly_score({ "prefecture": "神奈川県", "city": "横浜市西区" })', '```', '> **用途**: 教育・安全・医療の3軸で住宅適地を総合評価。', '', '---', '', '### 4. ポートフォリオ最適化', '```', 'portfolio_optimizer({', '  "targets": [', '    { "prefecture": "東京都", "city": "新宿区", "propertyType": "office", "budgetManYen": 10000 },', '    { "prefecture": "大阪府", "city": "大阪市北区", "propertyType": "commercial", "budgetManYen": 6000 },', '    { "prefecture": "埼玉県", "city": "さいたま市大宮区", "propertyType": "residential", "budgetManYen": 4000 }', '  ],', '  "riskTolerance": "medium", "investmentHorizon": "5y", "optimizeFor": "risk_adjusted"', '})', '```', '> **用途**: 3エリアの展開比率・シャープレシオ・推奨配分をMarkdownレポートで出力。', '', '---', '', '### 5. What-If シナリオ分析', '```', 'scenario_what_if({ "prefecture": "大阪府", "city": "大阪市中央区", "scenario": "new_station", "scale": "large" })', '```', '> **用途**: 新駅設置・大型商業施設の地価・投資スコアへの影響を試算。', '', '---', '', '### 6. 店舗出店適地評価', '```', 'evaluate_store_location({ "city": "福岡市博多区", "storeType": "cafe", "targetCustomer": "office_worker" })', '```', '> **用途**: 人流・交通・競合店分布を考慮した出店適地スコアを算出。', '', '---', '', '> **ヒント**: cross_analyze_real_estate_market で地価・人流・教育・企業・家族スコアを一括分析できます。'].join('\n'),
+        },
+      }],
+    }),
+  );
+
+  server.tool(
+    'simulate_aichi_future',
+    '愛知県固有インフラに基づく将来価値シミュレーター。リニア中央新帹線・セントレア第2滑走路・トヨタ電動化投資・万博レガシーの地価影響を数値が話すマークダウンレポートで出力。',
+    AichiFutureInput.shape,
+    (args) => withErrorHandling('simulate_aichi_future', 'aichi', async () => {
+      const input = AichiFutureInput.parse(args);
+      const result = simulateAichiFuture(input);
+      return {
+        content: [{ type: 'text' as const, text: JSON.stringify(result, null, 2) }],
+        structuredContent: { ...result, attribution: result.attribution },
+      };
+    }),
+  );
+
+  server.prompt(
+    'aichi_future_value',
+    {
+      city: z.string().describe('\u5e02\u533a\u753a\u6751\u540d'),
+      horizon: z.enum(['3y', '5y', '10y']).default('10y').describe('\u8a66\u7b97\u671f\u9593'),
+    },
+    (args) => ({
+      messages: [{
+        role: 'user' as const,
+        content: {
+          type: 'text' as const,
+          text: [
+            '\u611b\u77e5\u770c\u5c06\u6765\u4fa1\u5024\u30b7\u30df\u30e5\u30ec\u30fc\u30bf\u30fc\u3092\u5b9f\u884c\u3057\u3066\u304f\u3060\u3055\u3044\u3002',
+            JSON.stringify({ city: args.city, horizon: args.horizon, scenarios: ['all'], includeMarkdown: true }),
+          ].join('\n'),
         },
       }],
     }),

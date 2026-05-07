@@ -1,0 +1,13 @@
+feat: v5.2.0 First-time user onboarding -- Quick Start examples in dashboard + MCP Prompt
+
+- Dashboard: showQuickStartExamples() modal shown automatically on first visit
+  (localStorage gate: rei-seen). 6 clickable example cards covering the full
+  tool spectrum: land price forecast, corporate demand, family score,
+  portfolio optimizer, what-if scenario, store location.
+  Clicking a card auto-selects the prefecture+area or opens the helper.
+- Empty-state insight panel now shows "Quick examples" link to reopen at any time.
+- New MCP Prompt 'quick_start_examples' (7th prompt): returns 6 copy-paste-ready
+  tool call examples in Markdown for Claude/Cursor chat-first users.
+- README: added "First-time users Quick Start" section with example table,
+  6 example code blocks, and prompt usage guidance.
+- Tests: 421 passing (no regressions)

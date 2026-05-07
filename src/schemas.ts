@@ -121,6 +121,14 @@ export const GenerateReportInput = z.object({
     .enum(['markdown', 'pdf'])
     .default('markdown')
     .describe('出力フォーマット。pdf を指定すると pdfBase64 フィールドに Base64 エンコード済み PDF を返す'),
+  // ── v6.0 branding & client-ready fields ──
+  companyName: z.string().optional().describe('会社名（PDFヘッダーに表示）'),
+  agentName: z.string().optional().describe('担当者名（PDFヘッダーに表示）'),
+  agentLogoBase64: z.string().optional().describe('会社ロゴ画像（Base64 Data URL）'),
+  disclaimer: z.string().optional().describe('免責文言（PDF末尾に追加）'),
+  footerContact: z.string().optional().describe('連絡先（PDF末尾フッター）'),
+  includeTransactionComparables: z.boolean().default(false).describe('過去取引事例テーブルを含めるか'),
+  includeLinearImpact: z.boolean().default(false).describe('リニア中央新幹線の影響試算を含めるか（愛知県のみ）'),
 });
 export type GenerateReportInput = z.infer<typeof GenerateReportInput>;
 

@@ -1,0 +1,30 @@
+## v5.2.0 First-time User Onboarding
+
+### New: Quick Start Examples in Dashboard
+
+When a new user opens the dashboard for the first time, a Quick Start modal automatically appears with 6 clickable example cards:
+
+| Card | What it does |
+|---|---|
+| 地価トレンド予測 | 5-year land price forecast for Shinjuku with CAGR + investment signal |
+| 企業立地需要分析 | Corporate demand score for Nagoya Naka-ku (manufacturing) |
+| ファミリー向け適性評価 | Family-friendly composite score for Yokohama Nishi-ku |
+| ポートフォリオ最適化 | 3-area portfolio (Tokyo/Osaka/Saitama) with Sharpe ratio optimization |
+| What-If シナリオ分析 | New station scenario impact on Osaka Chuo-ku land prices |
+| 店舗出店適地評価 | Store suitability score for Fukuoka Hakata-ku cafe |
+
+- Clicking a card auto-selects the matching prefecture + area (or opens the portfolio helper)
+- Gated by localStorage: shown only on first visit
+- "次回から表示しない" to dismiss permanently
+- "クイック事例を見る →" link in the insight panel to reopen at any time
+
+### New: `quick_start_examples` MCP Prompt (7th prompt)
+
+For users starting via Claude/Cursor chat rather than the dashboard. Returns 6 copy-paste-ready tool call examples in Markdown format.
+
+### Documentation
+
+Added "はじめての方へ — クイックスタート" section to README with:
+- 6-row Quick Start table
+- 6 ready-to-run code examples
+- Prompt usage guide

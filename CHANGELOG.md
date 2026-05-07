@@ -1,4 +1,25 @@
-# Changelog
+# Changelog
+## [6.0.0] - 2026-05-08
+
+### Added
+- **Aichi Gold Standard**: Branded PDF reports (`companyName`, `agentName`, `disclaimer`, `footerContact`) via `generate_area_report`
+- **`simulate_aichi_future` tool**: Linear Chuo Shinkansen, Centrair expansion, Toyota EV, Expo legacy future value engine
+- **Field/Presentation Mode** (`?mode=field`): Large-font tablet UI, QR code share button, deep-link URL
+- **Transaction comparables in PDF**: `includeTransactionComparables=true` renders past deals table
+- **`includeLinearImpact` flag**: Adds Linear impact analysis section to reports
+- `data/aichi/future_infrastructure.json`: 5 major Aichi infra projects with impact data
+- `data/aichi/neighborhoods.json`: 10 hyper-local neighborhood profiles (cho-me level)
+- `config/aichi-branding.example.json`: Sample branding config file
+- `docs/aichi-agent-guide.md`: Full agent guide for Aichi realtors
+- `docs/prefecture-completion-kit.md`: Nationwide rollout template
+- `scripts/prefecture-setup.py`: Auto-generates stub data files for new prefectures
+
+### Changed
+- `GenerateReportInput` schema extended with 6 branding/content fields
+- `pdf.ts` completely redesigned: branded header band, section styles, comparables table, disclaimer
+- Mode toggle bar now includes a 'Field Mode' button
+- Aichi transactions.csv expanded to ~170 rows covering Nagoya districts, Toyoda, Okazaki, Tokoname, etc.
+
 
 All notable changes to `@sugukuru/japan-real-estate-intel-mcp` are documented here.
 

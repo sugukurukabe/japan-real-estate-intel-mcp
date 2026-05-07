@@ -1,0 +1,52 @@
+[
+  {
+    "project": "リニア中央新幹線 名古屋駅",
+    "type": "rail",
+    "status": "under_review",
+    "opening_estimate": "2037",
+    "primary_cities": ["名古屋市中村区"],
+    "impact_cities": ["名古屋市中区", "名古屋市熱田区", "名古屋市中川区"],
+    "peak_uplift_pct": 32,
+    "notes": "東京〜名古屋40分。名駅地下に整備予定。工期遅延リスクあり（静岡区間）"
+  },
+  {
+    "project": "中部国際空港 第2滑走路",
+    "type": "airport",
+    "status": "planning",
+    "opening_estimate": "2030s",
+    "primary_cities": ["常滑市"],
+    "impact_cities": ["知多市", "東海市", "半田市"],
+    "peak_uplift_pct": 18,
+    "notes": "国際線増便・物流容量拡大。空港島内の商業・ホテル開発も計画中"
+  },
+  {
+    "project": "トヨタ電動化・次世代モビリティ投資",
+    "type": "industrial",
+    "status": "ongoing",
+    "opening_estimate": "2025-2030",
+    "primary_cities": ["豊田市", "安城市"],
+    "impact_cities": ["岡崎市", "刈谷市", "知立市"],
+    "peak_uplift_pct": 16,
+    "notes": "EV・FCVの国内生産拠点拡張。関連部品メーカーの雇用増で住宅・商業需要拡大"
+  },
+  {
+    "project": "愛知万博レガシー・リニモ沿線開発",
+    "type": "urban_development",
+    "status": "ongoing",
+    "opening_estimate": "2025-2030",
+    "primary_cities": ["長久手市"],
+    "impact_cities": ["名古屋市名東区", "日進市", "尾張旭市"],
+    "peak_uplift_pct": 14,
+    "notes": "愛・地球博記念公園の再整備。ジブリパーク来訪者増による周辺商業活性化"
+  },
+  {
+    "project": "名古屋第二環状自動車道（名二環）",
+    "type": "road",
+    "status": "partial_open",
+    "opening_estimate": "2027",
+    "primary_cities": ["名古屋市守山区", "春日井市"],
+    "impact_cities": ["名古屋市名東区", "長久手市", "一宮市"],
+    "peak_uplift_pct": 10,
+    "notes": "全線開通後、名古屋東部の物流・住宅需要が拡大。通勤時間短縮効果"
+  }
+]

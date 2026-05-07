@@ -587,10 +587,26 @@ function renderModeToggle() {
       <span class="mode-icon">🏪</span>
       <span class="mode-label">店舗出店戦略</span>
     </button>
+    <button class="mode-toggle-btn" id="field-mode-toggle-btn" title="タブレット現地モード（大フォント・QR共有）">
+      <span class="mode-icon">📱</span>
+      <span class="mode-label">現地モード</span>
+    </button>
   `;
   bar.addEventListener('click', (e) => {
     const target = (e.target as HTMLElement).closest('.mode-toggle-btn') as HTMLElement | null;
-    const mode = target?.getAttribute('data-mode') as 'investment' | 'store' | undefined;
+    if (!target) return;
+    if (target.id === 'field-mode-toggle-btn') {
+      if (!fieldModeActive) {
+        activateFieldMode();
+        target.classList.add('active');
+        // Update URL
+        const url = new URL(window.location.href);
+        url.searchParams.set('mode', 'field');
+        window.history.replaceState({}, '', url.toString());
+      }
+      return;
+    }
+    const mode = target.getAttribute('data-mode') as 'investment' | 'store' | undefined;
     if (mode && mode !== currentDashboardMode) applyMode(mode);
   });
 
@@ -2092,10 +2108,193 @@ function init() {
     applyMode(urlMode);
   }
 
+  // Field / Presentation mode for tablet on-site use
+  if (urlMode === 'field') {
+    activateFieldMode();
+  }
+
+  // Auto-select area from URL param for deep linking
+  const urlArea = new URLSearchParams(window.location.search).get('area');
+  if (urlArea) {
+    const areaDecoded = decodeURIComponent(urlArea);
+    setTimeout(() => selectArea(areaDecoded), 600);
+  }
+
   // Show Quick Start Examples for first-time visitors
-  if (!localStorage.getItem('rei-seen')) {
+  if (!localStorage.getItem('rei-seen') && urlMode !== 'field') {
     setTimeout(() => showQuickStartExamples(), 400);
   }
+}
+
+// ── Field / Presentation Mode ──────────────────────────────────────────────
+
+let fieldModeActive = false;
+
+function activateFieldMode(): void {
+  if (fieldModeActive) return;
+  fieldModeActive = true;
+  document.body.classList.add('field-mode');
+
+  // Inject field-mode styles
+  const style = document.createElement('style');
+  style.id = 'field-mode-styles';
+  style.textContent = `
+    body.field-mode {
+      font-size: 16px !important;
+    }
+    body.field-mode #header h1 {
+      font-size: 22px !important;
+    }
+    body.field-mode #search-panel {
+      min-width: 300px !important;
+    }
+    body.field-mode .score-value {
+      font-size: 52px !important;
+    }
+    body.field-mode .score-label {
+      font-size: 16px !important;
+    }
+    body.field-mode .panel-section h3 {
+      font-size: 15px !important;
+    }
+    body.field-mode .panel-section {
+      padding: 12px !important;
+    }
+    body.field-mode .btn-report {
+      padding: 12px 20px !important;
+      font-size: 15px !important;
+    }
+    body.field-mode .neighborhood-input,
+    body.field-mode select {
+      font-size: 15px !important;
+      padding: 8px 10px !important;
+    }
+    body.field-mode #insight-panel {
+      overflow-y: auto !important;
+    }
+    /* Hide technical controls in field mode */
+    body.field-mode #btn-compare-toggle,
+    body.field-mode .mode-toggle {
+      display: none !important;
+    }
+    /* Large tap targets */
+    body.field-mode button,
+    body.field-mode select {
+      min-height: 44px;
+    }
+  `;
+  document.head.appendChild(style);
+
+  // Render field-mode toolbar
+  renderFieldToolbar();
+}
+
+function renderFieldToolbar(): void {
+  const existing = document.getElementById('field-toolbar');
+  if (existing) return;
+
+  const toolbar = document.createElement('div');
+  toolbar.id = 'field-toolbar';
+  toolbar.style.cssText = `
+    position: fixed; bottom: 0; left: 0; right: 0;
+    background: var(--bg-secondary); border-top: 1px solid var(--border);
+    padding: 10px 16px; display: flex; gap: 10px; align-items: center;
+    justify-content: space-between; z-index: 2000;
+    box-shadow: 0 -4px 16px rgba(0,0,0,0.3);
+  `;
+
+  toolbar.innerHTML = `
+    <div style="font-size:12px;color:var(--text-muted)">現地モード</div>
+    <div style="display:flex;gap:8px">
+      <button id="field-btn-qr" class="btn-report" style="padding:8px 16px;font-size:13px">
+        QR 共有
+      </button>
+      <button id="field-btn-pdf" class="btn-report" style="padding:8px 16px;font-size:13px;background:var(--accent)">
+        PDF 作成
+      </button>
+      <button id="field-btn-exit" style="padding:8px 12px;font-size:12px;background:none;border:1px solid var(--border);color:var(--text-muted);border-radius:6px;cursor:pointer">
+        通常表示に戻る
+      </button>
+    </div>
+  `;
+
+  document.body.appendChild(toolbar);
+
+  document.getElementById('field-btn-qr')?.addEventListener('click', () => {
+    showQrShare();
+  });
+
+  document.getElementById('field-btn-pdf')?.addEventListener('click', () => {
+    if (selectedArea) showReport(selectedArea);
+  });
+
+  document.getElementById('field-btn-exit')?.addEventListener('click', () => {
+    document.body.classList.remove('field-mode');
+    const styleEl = document.getElementById('field-mode-styles');
+    if (styleEl) styleEl.remove();
+    toolbar.remove();
+    fieldModeActive = false;
+    // Remove ?mode=field from URL
+    const url = new URL(window.location.href);
+    url.searchParams.delete('mode');
+    window.history.replaceState({}, '', url.toString());
+  });
+}
+
+function showQrShare(): void {
+  const overlay = document.getElementById('report-overlay');
+  const content = document.getElementById('report-content');
+  if (!overlay || !content) return;
+
+  // Build shareable URL for current state
+  const url = new URL(window.location.href);
+  url.searchParams.set('mode', 'field');
+  const prefSel = document.getElementById('prefecture-select') as HTMLSelectElement | null;
+  if (prefSel) url.searchParams.set('prefecture', prefSel.value);
+  if (selectedArea) url.searchParams.set('area', encodeURIComponent(selectedArea));
+  const shareUrl = url.toString();
+
+  // Use QR Server API to generate QR code image
+  const qrApiUrl = `https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=${encodeURIComponent(shareUrl)}`;
+
+  content.innerHTML = `
+    <button class="report-close" id="close-qr" style="position:absolute;top:14px;right:16px;
+      background:none;border:none;font-size:20px;cursor:pointer;color:var(--text-muted)">✕</button>
+    <h2 style="margin-bottom:8px;font-size:18px">QR コード共有</h2>
+    <p style="font-size:12px;color:var(--text-muted);margin-bottom:16px">
+      このQRコードをお客様のスマートフォンで読み取ると現在の画面を共有できます。
+    </p>
+    <div style="text-align:center;margin-bottom:12px">
+      <img src="${qrApiUrl}" alt="QR Code" style="border-radius:8px;border:4px solid var(--bg-secondary)"
+        onerror="this.style.display='none';document.getElementById('qr-fallback').style.display='block'">
+      <div id="qr-fallback" style="display:none;padding:16px;background:var(--bg-secondary);border-radius:8px;font-size:11px;word-break:break-all">
+        ${shareUrl}
+      </div>
+    </div>
+    <div style="background:var(--bg-secondary);border-radius:8px;padding:10px;font-size:10px;
+      color:var(--text-muted);word-break:break-all;margin-bottom:12px">
+      ${shareUrl}
+    </div>
+    <button id="copy-share-url" class="btn-report" style="width:100%;padding:10px;font-size:13px">
+      URLをコピー
+    </button>
+  `;
+
+  overlay.classList.add('visible');
+
+  document.getElementById('close-qr')?.addEventListener('click', () => {
+    overlay.classList.remove('visible');
+  });
+
+  document.getElementById('copy-share-url')?.addEventListener('click', async () => {
+    try {
+      await navigator.clipboard.writeText(shareUrl);
+      const btn = document.getElementById('copy-share-url');
+      if (btn) { btn.textContent = 'コピーしました！'; setTimeout(() => { btn.textContent = 'URLをコピー'; }, 2000); }
+    } catch {
+      alert(shareUrl);
+    }
+  });
 }
 
 const QUICK_EXAMPLES = [

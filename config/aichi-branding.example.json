@@ -1,0 +1,11 @@
+{
+  "companyName": "○○不動産株式会社",
+  "agentName": "山田 太郎",
+  "agentLogoBase64": "",
+  "disclaimer": "本レポートは情報提供を目的としており、投資助言を構成するものではありません。地価・リスクデータはサンプルデータを含み、実際の取引において保証するものではありません。",
+  "primaryColor": "#1a3c5e",
+  "accentColor": "#4f8cff",
+  "footerContact": "TEL: 052-XXX-XXXX | info@example-realty.co.jp",
+  "defaultPrefecture": "愛知県",
+  "defaultAreas": ["名古屋市中区", "名古屋市中村区", "名古屋市東区"]
+}
