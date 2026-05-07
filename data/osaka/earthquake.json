@@ -1,0 +1,17 @@
+[
+  {"city":"中央区","max_intensity":"6弱","probability_30y":0.30,"liquefaction_risk":"medium","description":"上町台地東縁。上町断層帯による直下型地震で震度6弱想定。"},
+  {"city":"北区","max_intensity":"6弱","probability_30y":0.30,"liquefaction_risk":"medium","description":"淀川沿い低地は液状化リスクあり。上町断層帯の影響大。"},
+  {"city":"浪速区","max_intensity":"6弱","probability_30y":0.30,"liquefaction_risk":"high","description":"低地で地盤が軟弱。液状化リスクが高い地域。"},
+  {"city":"天王寺区","max_intensity":"6弱","probability_30y":0.30,"liquefaction_risk":"low","description":"上町台地上で地盤良好。震度は周辺より低め。"},
+  {"city":"阿倍野区","max_intensity":"6弱","probability_30y":0.30,"liquefaction_risk":"low","description":"上町台地上。地盤は安定しているが断層帯近傍。"},
+  {"city":"西区","max_intensity":"6弱","probability_30y":0.30,"liquefaction_risk":"medium","description":"低地を含み液状化リスクあり。堀江周辺は注意。"},
+  {"city":"福島区","max_intensity":"6弱","probability_30y":0.30,"liquefaction_risk":"medium","description":"淀川沿い低地で液状化の可能性あり。"},
+  {"city":"都島区","max_intensity":"6弱","probability_30y":0.30,"liquefaction_risk":"medium","description":"淀川右岸低地。液状化リスクは中程度。"},
+  {"city":"淀川区","max_intensity":"6弱","probability_30y":0.30,"liquefaction_risk":"high","description":"淀川沿い沖積低地で液状化リスク高。新大阪周辺は軟弱地盤。"},
+  {"city":"住之江区","max_intensity":"6弱","probability_30y":0.30,"liquefaction_risk":"high","description":"埋立地・低地で液状化リスクが特に高い。南海トラフ津波注意。"},
+  {"city":"此花区","max_intensity":"6弱","probability_30y":0.30,"liquefaction_risk":"high","description":"臨海埋立地。液状化・津波の複合リスク。"},
+  {"city":"堺市堺区","max_intensity":"6弱","probability_30y":0.28,"liquefaction_risk":"medium","description":"大和川沿い低地は液状化注意。市中心部は台地で比較的安定。"},
+  {"city":"東大阪市","max_intensity":"6弱","probability_30y":0.30,"liquefaction_risk":"medium","description":"生駒断層帯の影響。旧河道沿いは液状化リスクあり。"},
+  {"city":"豊中市","max_intensity":"6弱","probability_30y":0.26,"liquefaction_risk":"low","description":"千里丘陵上で地盤良好。有馬高槻断層帯の影響を受ける。"},
+  {"city":"吹田市","max_intensity":"6弱","probability_30y":0.26,"liquefaction_risk":"low","description":"千里丘陵上。安定した地盤だが有馬高槻断層帯の影響あり。"}
+]

@@ -21,10 +21,11 @@ describe('Prefecture resolver', () => {
     expect(resolvePrefecture('愛知県')).toBe('aichi');
   });
 
-  it('lists both registered prefectures', () => {
+  it('lists all registered prefectures', () => {
     const available = listAvailable();
     expect(available).toContain('aichi');
     expect(available).toContain('tokyo');
+    expect(available).toContain('osaka');
   });
 });
 
@@ -186,13 +187,22 @@ describe('predictCorporateDemand (Tokyo - limited)', () => {
   });
 });
 
-describe('Stub loader for unsupported prefectures', () => {
-  it('returns empty data for unsupported prefecture', () => {
+describe('Osaka loader basic checks', () => {
+  it('returns land price data for Osaka', () => {
     const loader = getLoader('osaka');
     expect(loader.key).toBe('osaka');
+    expect(loader.getLandPrices().length).toBeGreaterThan(0);
+    expect(loader.getPopulation().length).toBeGreaterThan(0);
+  });
+});
+
+describe('Stub loader for unsupported prefectures', () => {
+  it('returns empty data for unsupported prefecture', () => {
+    const loader = getLoader('hokkaido');
+    expect(loader.key).toBe('hokkaido');
     expect(loader.getLandPrices()).toEqual([]);
     expect(loader.getPopulation()).toEqual([]);
-    expect(loader.geocode('大阪市')).toBeUndefined();
+    expect(loader.geocode('札幌市')).toBeUndefined();
   });
 });
 

@@ -1,7 +1,7 @@
 import { z } from 'zod';
 
 const prefectureField = z.string().default('愛知県').describe('都道府県名（和名/英名/ISO 3166-2 コード対応）');
-const neighborhoodField = z.string().optional().describe("町丁目（例: '名駅南1丁目'）。v2.1 ではラベルとしてレポートに反映。実データ対応は v2.2 以降");
+const neighborhoodField = z.string().optional().describe("町丁目（例: '名駅南1丁目'）。v2.4 では町丁目レベル実データに対応（対応都道府県のみ）");
 
 // ── cross_analyze_real_estate_market (v2.0 unified) ──
 
@@ -66,6 +66,16 @@ export const CrossAnalyzeOutput = z.object({
   transportSummary: z.object({ totalDailyPassengers: z.number(), stationCount: z.number(), transportScore: z.number() }).optional(),
   commercialSummary: z.object({ facilityCountByType: z.record(z.number()), totalGFA: z.number() }).optional(),
   medicalSummary: z.object({ facilityCount: z.number(), hospitalCount: z.number(), totalBeds: z.number() }).optional(),
+  neighborhoodDetail: z.object({
+    neighborhood: z.string(),
+    population: z.number(),
+    households: z.number(),
+    popDensity: z.number(),
+    avgAge: z.number(),
+    childRatio: z.number(),
+    elderlyRatio: z.number(),
+    daytimePopRatio: z.number(),
+  }).optional(),
 });
 export type CrossAnalyzeOutput = z.infer<typeof CrossAnalyzeOutput>;
 
@@ -199,6 +209,10 @@ export const OpenDashboardInput = z.object({
   propertyType: z
     .enum(['residential', 'commercial', 'logistics', 'office', 'mixed'])
     .optional(),
+  mode: z
+    .enum(['2d', '3d'])
+    .optional()
+    .describe('ダッシュボード表示モード。3dを指定するとPLATEAU 3Dビューアを開く'),
 });
 export type OpenDashboardInput = z.infer<typeof OpenDashboardInput>;
 
@@ -207,6 +221,7 @@ export const OpenDashboardOutput = z.object({
   layer: z.string(),
   prefecture: z.string(),
   attribution: z.string(),
+  mode: z.enum(['2d', '3d']),
 });
 export type OpenDashboardOutput = z.infer<typeof OpenDashboardOutput>;
 
@@ -306,6 +321,13 @@ export const DrillDownOutput = z.object({
   localPitch: z.string(),
   keyInsights: z.array(z.string()),
   markdownReport: z.string(),
+  households: z.number().optional(),
+  avgAge: z.number().optional(),
+  childRatio: z.number().optional(),
+  elderlyRatio: z.number().optional(),
+  daytimePopRatio: z.number().optional(),
+  popDensity: z.number().optional(),
+  neighborhoodDataAvailable: z.boolean().optional(),
 });
 export type DrillDownOutput = z.infer<typeof DrillDownOutput>;
 

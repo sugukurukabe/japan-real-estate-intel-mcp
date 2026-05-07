@@ -25,13 +25,14 @@ import { getLandPriceResource } from './resources/land_price.js';
 import { getFloodResource } from './resources/flood.js';
 import { getPopulationResource } from './resources/population.js';
 import { getDashboardHtml } from './resources/ui_dashboard.js';
+import { getDashboard3dHtml } from './resources/ui_dashboard_3d.js';
 import { ATTRIBUTION } from './data/attribution.js';
 import './data-loaders/index.js';
 
 export function createServer(): McpServer {
   const server = new McpServer({
     name: 'japan-real-estate-intel-mcp',
-    version: '2.3.0',
+    version: '2.4.0',
   });
 
   // ── Tools (6) ──
@@ -118,21 +119,24 @@ export function createServer(): McpServer {
 
   server.tool(
     'open_dashboard',
-    '不動産ダッシュボード（地図・ヒートマップ・リスク・人流・学区・企業レイヤー）を開く。都道府県切替対応。MCP Apps対応ホストではインタラクティブUIを表示。',
+    '不動産ダッシュボード（地図・ヒートマップ・リスク・人流・学区・企業レイヤー）を開く。都道府県切替対応。mode="3d"でPLATEAU 3Dビューアを表示。MCP Apps対応ホストではインタラクティブUIを表示。',
     OpenDashboardInput.shape,
     async (args) => {
       const input = OpenDashboardInput.parse(args);
       const result = openDashboard(input);
+      const uiUri = result.mode === '3d'
+        ? 'ui://japan-real-estate-intel/dashboard-3d'
+        : 'ui://japan-real-estate-intel/dashboard';
       return {
         content: [
           {
             type: 'text' as const,
-            text: `不動産ダッシュボード: ${result.prefecture} ${result.area} (レイヤー: ${result.layer})`,
+            text: `不動産ダッシュボード${result.mode === '3d' ? ' (3D)' : ''}: ${result.prefecture} ${result.area} (レイヤー: ${result.layer})`,
           },
         ],
         structuredContent: { ...result, attribution: ATTRIBUTION },
         _meta: {
-          ui: { uri: 'ui://japan-real-estate-intel/dashboard' },
+          ui: { uri: uiUri },
         },
       };
     },
@@ -275,6 +279,23 @@ export function createServer(): McpServer {
             uri: uri.href,
             mimeType: 'text/html' as const,
             text: getDashboardHtml(),
+          },
+        ],
+      };
+    },
+  );
+
+  server.resource(
+    'dashboard-3d',
+    'ui://japan-real-estate-intel/dashboard-3d',
+    { description: 'PLATEAU 3D ビューア — 名古屋駅周辺の建物影シミュレーション（Three.js）', mimeType: 'text/html' },
+    async (uri) => {
+      return {
+        contents: [
+          {
+            uri: uri.href,
+            mimeType: 'text/html' as const,
+            text: getDashboard3dHtml(),
           },
         ],
       };

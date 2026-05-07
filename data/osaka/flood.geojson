@@ -1,0 +1,110 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "river": "淀川",
+        "area_name": "淀川区・東淀川区",
+        "name": "淀川下流域浸水想定区域",
+        "max_depth_m": 4.5,
+        "risk_level": "high",
+        "scenario": "淀川堤防決壊（200年確率降雨）"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[135.45,34.72],[135.53,34.72],[135.53,34.76],[135.45,34.76],[135.45,34.72]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "river": "淀川",
+        "area_name": "北区・都島区",
+        "name": "淀川中流域浸水想定区域",
+        "max_depth_m": 3.0,
+        "risk_level": "high",
+        "scenario": "淀川堤防決壊（200年確率降雨）"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[135.49,34.69],[135.54,34.69],[135.54,34.72],[135.49,34.72],[135.49,34.69]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "river": "大和川",
+        "area_name": "住吉区・住之江区",
+        "name": "大和川浸水想定区域",
+        "max_depth_m": 3.5,
+        "risk_level": "high",
+        "scenario": "大和川堤防決壊（200年確率降雨）"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[135.47,34.58],[135.55,34.58],[135.55,34.62],[135.47,34.62],[135.47,34.58]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "river": "大和川",
+        "area_name": "堺市堺区・堺市北区",
+        "name": "大和川南岸浸水想定区域",
+        "max_depth_m": 2.5,
+        "risk_level": "medium",
+        "scenario": "大和川堤防決壊（150年確率降雨）"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[135.46,34.55],[135.52,34.55],[135.52,34.58],[135.46,34.58],[135.46,34.55]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "river": "道頓堀川",
+        "area_name": "中央区・浪速区",
+        "name": "道頓堀周辺内水氾濫想定区域",
+        "max_depth_m": 1.5,
+        "risk_level": "medium",
+        "scenario": "時間雨量80mm超過（内水氾濫）"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[135.49,34.66],[135.51,34.66],[135.51,34.68],[135.49,34.68],[135.49,34.66]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "river": "寝屋川",
+        "area_name": "城東区・鶴見区",
+        "name": "寝屋川流域浸水想定区域",
+        "max_depth_m": 2.0,
+        "risk_level": "medium",
+        "scenario": "寝屋川流域内水氾濫（100年確率降雨）"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[135.54,34.68],[135.58,34.68],[135.58,34.72],[135.54,34.72],[135.54,34.68]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "river": "神崎川",
+        "area_name": "西淀川区・此花区",
+        "name": "神崎川浸水想定区域",
+        "max_depth_m": 2.5,
+        "risk_level": "medium",
+        "scenario": "神崎川堤防決壊（150年確率降雨）"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[135.42,34.68],[135.47,34.68],[135.47,34.71],[135.42,34.71],[135.42,34.68]]]
+      }
+    }
+  ]
+}

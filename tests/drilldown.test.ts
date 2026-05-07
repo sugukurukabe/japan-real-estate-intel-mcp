@@ -68,13 +68,23 @@ describe('drill_down_local_analysis', () => {
     expect(result.riskScore).toBeNull();
   });
 
-  it('StubLoader prefecture does not crash', () => {
+  it('Osaka prefecture returns valid result', () => {
     const result = drillDownLocalAnalysis({
       prefecture: '大阪府',
-      city: '大阪市中央区',
+      city: '中央区',
       focus: 'all',
     });
     expect(result.scope.prefecture).toBe('大阪府');
+    expect(result.markdownReport.length).toBeGreaterThan(0);
+  });
+
+  it('StubLoader prefecture does not crash', () => {
+    const result = drillDownLocalAnalysis({
+      prefecture: '北海道',
+      city: '札幌市中央区',
+      focus: 'all',
+    });
+    expect(result.scope.prefecture).toBe('北海道');
     expect(result.pricePerSqm).toBeNull();
     expect(result.markdownReport.length).toBeGreaterThan(0);
   });

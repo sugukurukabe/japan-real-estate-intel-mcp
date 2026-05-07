@@ -1,4 +1,5 @@
 import type { CrossAnalyzeInput, CrossAnalyzeOutput } from '../schemas.js';
+import type { NeighborhoodRecord } from '../data-loaders/types.js';
 import { resolvePrefecture } from '../prefecture/resolver.js';
 import { getLoader } from '../data-loaders/index.js';
 import {
@@ -20,7 +21,7 @@ import { geocode } from '../data/geocode.js';
 export function crossAnalyze(input: CrossAnalyzeInput): CrossAnalyzeOutput {
   const prefKey = resolvePrefecture(input.prefecture);
   const loader = getLoader(prefKey);
-  const { area, propertyType, timeRange, includeRisk, includeHumanFlow, includeEducation, includeCorporate, includeTransport, includeCommercial, includeMedical } = input;
+  const { area, neighborhood, propertyType, timeRange, includeRisk, includeHumanFlow, includeEducation, includeCorporate, includeTransport, includeCommercial, includeMedical } = input;
 
   const landPrices = filterByTimeRange(getLandPricesForCity(area, prefKey), timeRange);
   const allTransactions = getTransactionsForCity(area, prefKey);
@@ -183,6 +184,30 @@ export function crossAnalyze(input: CrossAnalyzeInput): CrossAnalyzeOutput {
     }
   }
 
+  // --- neighborhood data ---
+  let neighborhoodDetail: CrossAnalyzeOutput['neighborhoodDetail'];
+  if (neighborhood && loader.capabilities.neighborhoods) {
+    const neighborhoods = loader.getNeighborhoods();
+    const match = neighborhoods.find(
+      (r) =>
+        (r.city.includes(area) || area.includes(r.city)) &&
+        (r.neighborhood.includes(neighborhood) || neighborhood.includes(r.neighborhood)),
+    );
+    if (match) {
+      neighborhoodDetail = {
+        neighborhood: match.neighborhood,
+        population: match.population,
+        households: match.households,
+        popDensity: match.pop_density_sqkm,
+        avgAge: match.avg_age,
+        childRatio: match.child_ratio,
+        elderlyRatio: match.elderly_ratio,
+        daytimePopRatio: match.daytime_pop_ratio,
+      };
+      keyInsights.push(`町丁目「${match.neighborhood}」実データ: 人口${match.population.toLocaleString()}人、世帯数${match.households.toLocaleString()}、昼夜間人口比${match.daytime_pop_ratio}。`);
+    }
+  }
+
   const totalTransactions = allTransactions.length;
   const avgPrice = transactions.length > 0
     ? Math.round(transactions.reduce((s, t) => s + t.price_per_sqm, 0) / transactions.length)
@@ -222,5 +247,6 @@ export function crossAnalyze(input: CrossAnalyzeInput): CrossAnalyzeOutput {
     transportSummary,
     commercialSummary,
     medicalSummary,
+    neighborhoodDetail,
   };
 }

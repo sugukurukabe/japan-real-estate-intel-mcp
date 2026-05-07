@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PLATEAU 3D ビューア — 名古屋駅周辺</title>
+<script type="importmap">
+{
+  "imports": {
+    "three": "https://cdn.jsdelivr.net/npm/three@0.165.0/build/three.module.js",
+    "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.165.0/examples/jsm/"
+  }
+}
+</script>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#0f0f23;--surface:rgba(26,31,46,0.88);--surface-solid:#1a1f2e;
+  --border:#2d3548;--text:#e4e8f1;--text-muted:#8892a6;
+  --accent:#4f8cff;--accent-hover:#6ba0ff;--danger:#ff4d6a;
+  --warning:#ffb340;--success:#34d399;--radius:8px;
+  --office:#6366f1;--commercial:#f59e0b;--residential:#10b981;
+}
+html,body{width:100%;height:100%;overflow:hidden;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans JP',sans-serif}
+canvas{display:block}
+
+#overlay{position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:10}
+#overlay>*{pointer-events:auto}
+
+#title-bar{
+  position:absolute;top:0;left:0;right:0;
+  display:flex;align-items:center;gap:16px;
+  padding:12px 20px;
+  background:linear-gradient(180deg,rgba(15,15,35,0.92) 60%,transparent);
+}
+#title-bar h1{font-size:16px;font-weight:700;color:var(--accent)}
+#title-bar .subtitle{font-size:12px;color:var(--text-muted)}
+#back-link{
+  margin-left:auto;font-size:12px;color:var(--accent);
+  text-decoration:none;padding:6px 12px;
+  border:1px solid var(--accent);border-radius:var(--radius);
+  transition:all .2s;
+}
+#back-link:hover{background:var(--accent);color:#fff}
+
+#time-controls{
+  position:absolute;top:60px;right:20px;
+  background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);
+  padding:8px 12px;display:flex;gap:8px;align-items:center;
+}
+#time-controls label{font-size:12px;color:var(--text-muted);white-space:nowrap}
+.time-btn{
+  padding:5px 12px;border:1px solid var(--border);border-radius:6px;
+  background:var(--surface-solid);color:var(--text-muted);cursor:pointer;
+  font-size:12px;transition:all .2s;
+}
+.time-btn:hover{border-color:var(--accent)}
+.time-btn.active{background:var(--accent);border-color:var(--accent);color:#fff}
+
+#info-panel{
+  position:absolute;bottom:20px;left:20px;
+  background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);
+  padding:16px;min-width:260px;max-width:320px;
+  display:none;
+}
+#info-panel .info-title{font-size:15px;font-weight:700;margin-bottom:8px}
+#info-panel .info-row{display:flex;justify-content:space-between;font-size:12px;padding:3px 0;border-bottom:1px solid rgba(45,53,72,0.5)}
+#info-panel .info-row:last-child{border-bottom:none}
+.use-badge{
+  display:inline-block;padding:2px 8px;border-radius:4px;
+  font-size:10px;font-weight:600;
+}
+.use-office{background:rgba(99,102,241,0.2);color:var(--office)}
+.use-commercial{background:rgba(245,158,11,0.2);color:var(--commercial)}
+.use-residential{background:rgba(16,185,129,0.2);color:var(--residential)}
+
+#stats-panel{
+  position:absolute;bottom:20px;right:20px;
+  background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);
+  padding:14px 18px;
+}
+#stats-panel .stat-title{font-size:11px;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px}
+#stats-panel .stat-row{display:flex;justify-content:space-between;gap:24px;font-size:12px;padding:2px 0}
+#stats-panel .stat-val{font-weight:600;color:var(--accent)}
+
+#legend{
+  position:absolute;top:60px;left:20px;
+  background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);
+  padding:10px 14px;font-size:11px;
+}
+#legend .legend-title{font-weight:600;margin-bottom:6px}
+.legend-item{display:flex;align-items:center;gap:6px;margin-bottom:3px}
+.legend-swatch{width:14px;height:14px;border-radius:3px}
+
+#loading{
+  position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
+  font-size:14px;color:var(--text-muted);
+}
+
+#tooltip{
+  position:absolute;display:none;
+  background:rgba(15,15,35,0.92);border:1px solid var(--border);border-radius:6px;
+  padding:6px 10px;font-size:11px;color:var(--text);
+  pointer-events:none;white-space:nowrap;z-index:20;
+}
+</style>
+</head>
+<body>
+<div id="overlay">
+  <div id="title-bar">
+    <h1>PLATEAU 3D ビューア</h1>
+    <span class="subtitle">名古屋駅周辺 — 建物影シミュレーション</span>
+    <a id="back-link" href="#">← 2D ダッシュボードへ</a>
+  </div>
+
+  <div id="time-controls">
+    <label>影シミュレーション</label>
+    <button class="time-btn" data-time="morning">朝 8:00</button>
+    <button class="time-btn active" data-time="noon">正午 12:00</button>
+    <button class="time-btn" data-time="evening">夕方 17:00</button>
+  </div>
+
+  <div id="legend">
+    <div class="legend-title">用途別カラー</div>
+    <div class="legend-item"><div class="legend-swatch" style="background:#6366f1"></div>オフィス</div>
+    <div class="legend-item"><div class="legend-swatch" style="background:#f59e0b"></div>商業</div>
+    <div class="legend-item"><div class="legend-swatch" style="background:#10b981"></div>住居</div>
+    <div class="legend-item"><div class="legend-swatch" style="background:#94a3b8"></div>その他</div>
+  </div>
+
+  <div id="info-panel">
+    <div class="info-title" id="info-name"></div>
+    <div id="info-body"></div>
+  </div>
+
+  <div id="stats-panel">
+    <div class="stat-title">統計</div>
+    <div class="stat-row"><span>建物数</span><span class="stat-val" id="stat-count">—</span></div>
+    <div class="stat-row"><span>最高高度</span><span class="stat-val" id="stat-max-height">—</span></div>
+    <div class="stat-row"><span>平均高度</span><span class="stat-val" id="stat-avg-height">—</span></div>
+    <div class="stat-row"><span>影響度</span><span class="stat-val" id="stat-shadow">—</span></div>
+  </div>
+
+  <div id="loading">読み込み中…</div>
+</div>
+
+<div id="tooltip"></div>
+
+<script type="module">
+import * as THREE from 'three';
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+
+const BUILDINGS = [
+  {name:"ミッドランドスクエア",city:"名古屋市中区",district:"名駅",height:247,floors:47,lat:35.1709,lng:136.8816,use:"office",built:2007,shadow:"high"},
+  {name:"JRセントラルタワーズ",city:"名古屋市中区",district:"名駅",height:245,floors:51,lat:35.1706,lng:136.8826,use:"office",built:1999,shadow:"high"},
+  {name:"モード学園スパイラルタワーズ",city:"名古屋市中区",district:"名駅",height:170,floors:36,lat:35.1700,lng:136.8808,use:"commercial",built:2008,shadow:"high"},
+  {name:"大名古屋ビルヂング",city:"名古屋市中区",district:"名駅",height:174,floors:34,lat:35.1712,lng:136.8830,use:"office",built:2016,shadow:"high"},
+  {name:"JPタワー名古屋",city:"名古屋市中区",district:"名駅",height:196,floors:40,lat:35.1715,lng:136.8835,use:"office",built:2016,shadow:"high"},
+  {name:"名古屋ルーセントタワー",city:"名古屋市中区",district:"名駅",height:180,floors:40,lat:35.1720,lng:136.8800,use:"office",built:2007,shadow:"high"},
+  {name:"グローバルゲート",city:"名古屋市中区",district:"名駅",height:170,floors:36,lat:35.1688,lng:136.8780,use:"office",built:2017,shadow:"high"},
+  {name:"ミッドランドスクエアシネマ棟",city:"名古屋市中区",district:"名駅",height:85,floors:18,lat:35.1707,lng:136.8812,use:"commercial",built:2007,shadow:"medium"},
+  {name:"名古屋プライムセントラルタワー",city:"名古屋市中村区",district:"名駅南",height:148,floors:33,lat:35.1680,lng:136.8845,use:"office",built:2009,shadow:"high"},
+  {name:"名古屋テレビ塔",city:"名古屋市中区",district:"栄",height:180,floors:5,lat:35.1713,lng:136.9088,use:"commercial",built:1954,shadow:"low"},
+  {name:"中日ビル",city:"名古屋市中区",district:"栄",height:158,floors:33,lat:35.1690,lng:136.9080,use:"office",built:2024,shadow:"high"},
+  {name:"錦三丁目25番街区ビル",city:"名古屋市中区",district:"錦",height:110,floors:22,lat:35.1695,lng:136.9020,use:"office",built:2022,shadow:"medium"},
+  {name:"松坂屋名古屋店",city:"名古屋市中区",district:"栄",height:58,floors:11,lat:35.1665,lng:136.9075,use:"commercial",built:1936,shadow:"medium"},
+  {name:"三越名古屋栄店",city:"名古屋市中区",district:"栄",height:60,floors:10,lat:35.1698,lng:136.9068,use:"commercial",built:1954,shadow:"medium"},
+  {name:"名古屋ガーデンパレス",city:"名古屋市東区",district:"葵",height:65,floors:16,lat:35.1748,lng:136.9142,use:"residential",built:1998,shadow:"medium"},
+  {name:"今池ガスビル",city:"名古屋市千種区",district:"今池",height:72,floors:15,lat:35.1668,lng:136.9340,use:"office",built:1989,shadow:"medium"},
+  {name:"オアシス21",city:"名古屋市中区",district:"栄",height:40,floors:3,lat:35.1708,lng:136.9095,use:"commercial",built:2002,shadow:"low"},
+  {name:"名古屋パルコ",city:"名古屋市中区",district:"栄",height:52,floors:11,lat:35.1658,lng:136.9045,use:"commercial",built:1989,shadow:"medium"},
+];
+
+const CENTER_LAT = 35.1709;
+const CENTER_LNG = 136.8816;
+const M_PER_DEG_LAT = 111320;
+const M_PER_DEG_LNG = 111320 * Math.cos(CENTER_LAT * Math.PI / 180);
+const SCALE = 0.1; // 1 unit = 10m
+
+function latLngToXZ(lat, lng) {
+  const dx = (lng - CENTER_LNG) * M_PER_DEG_LNG * SCALE;
+  const dz = -(lat - CENTER_LAT) * M_PER_DEG_LAT * SCALE;
+  return [dx, dz];
+}
+
+const USE_COLORS = {
+  office: 0x6366f1,
+  commercial: 0xf59e0b,
+  residential: 0x10b981,
+};
+
+const SUN_PRESETS = {
+  morning: { azimuth: 120, altitude: 20, label: '朝 8:00' },
+  noon:    { azimuth: 180, altitude: 65, label: '正午 12:00' },
+  evening: { azimuth: 240, altitude: 15, label: '夕方 17:00' },
+};
+
+let currentPreset = 'noon';
+let scene, camera, renderer, controls, sunLight, sunHelper;
+const buildingMeshes = [];
+const raycaster = new THREE.Raycaster();
+const mouse = new THREE.Vector2();
+let hoveredMesh = null;
+
+function init() {
+  scene = new THREE.Scene();
+  scene.background = new THREE.Color(0x0f0f23);
+  scene.fog = new THREE.FogExp2(0x0f0f23, 0.0015);
+
+  camera = new THREE.PerspectiveCamera(55, window.innerWidth / window.innerHeight, 0.1, 2000);
+  camera.position.set(40, 35, 50);
+
+  renderer = new THREE.WebGLRenderer({ antialias: true });
+  renderer.setSize(window.innerWidth, window.innerHeight);
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+  renderer.shadowMap.enabled = true;
+  renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+  renderer.toneMapping = THREE.ACESFilmicToneMapping;
+  renderer.toneMappingExposure = 1.1;
+  document.body.insertBefore(renderer.domElement, document.getElementById('overlay'));
+
+  controls = new OrbitControls(camera, renderer.domElement);
+  controls.enableDamping = true;
+  controls.dampingFactor = 0.08;
+  controls.maxPolarAngle = Math.PI / 2.1;
+  controls.minDistance = 5;
+  controls.maxDistance = 300;
+  controls.target.set(0, 8, 0);
+
+  const ambient = new THREE.AmbientLight(0x4466aa, 0.5);
+  scene.add(ambient);
+
+  const hemi = new THREE.HemisphereLight(0x88aaff, 0x443322, 0.4);
+  scene.add(hemi);
+
+  sunLight = new THREE.DirectionalLight(0xffeedd, 1.8);
+  sunLight.castShadow = true;
+  sunLight.shadow.mapSize.width = 4096;
+  sunLight.shadow.mapSize.height = 4096;
+  sunLight.shadow.camera.left = -120;
+  sunLight.shadow.camera.right = 120;
+  sunLight.shadow.camera.top = 120;
+  sunLight.shadow.camera.bottom = -120;
+  sunLight.shadow.camera.near = 0.5;
+  sunLight.shadow.camera.far = 400;
+  sunLight.shadow.bias = -0.0005;
+  sunLight.shadow.normalBias = 0.02;
+  scene.add(sunLight);
+  scene.add(sunLight.target);
+
+  createGround();
+  createBuildings();
+  updateSunPosition(currentPreset);
+  updateStats();
+
+  document.getElementById('loading').style.display = 'none';
+
+  window.addEventListener('resize', onResize);
+  renderer.domElement.addEventListener('mousemove', onMouseMove);
+  renderer.domElement.addEventListener('click', onClickBuilding);
+
+  document.getElementById('time-controls').addEventListener('click', (e) => {
+    const btn = e.target.closest('.time-btn');
+    if (!btn) return;
+    const time = btn.dataset.time;
+    currentPreset = time;
+    document.querySelectorAll('.time-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    updateSunPosition(time);
+    updateStats();
+  });
+
+  animate();
+}
+
+function createGround() {
+  const groundGeo = new THREE.PlaneGeometry(600, 600);
+  const groundMat = new THREE.MeshStandardMaterial({
+    color: 0x1a2233,
+    roughness: 0.95,
+    metalness: 0.05,
+  });
+  const ground = new THREE.Mesh(groundGeo, groundMat);
+  ground.rotation.x = -Math.PI / 2;
+  ground.position.y = -0.01;
+  ground.receiveShadow = true;
+  scene.add(ground);
+
+  const grid = new THREE.GridHelper(600, 120, 0x2d3548, 0x1e2636);
+  grid.position.y = 0;
+  scene.add(grid);
+
+  const roadColor = 0x252d40;
+  const roadMat = new THREE.MeshStandardMaterial({ color: roadColor, roughness: 0.9 });
+
+  const mainRoadGeo = new THREE.PlaneGeometry(300, 1.2);
+  const roadEW = new THREE.Mesh(mainRoadGeo, roadMat);
+  roadEW.rotation.x = -Math.PI / 2;
+  roadEW.position.y = 0.005;
+  scene.add(roadEW);
+
+  const roadNS = new THREE.Mesh(new THREE.PlaneGeometry(1.2, 300), roadMat);
+  roadNS.rotation.x = -Math.PI / 2;
+  roadNS.position.y = 0.005;
+  scene.add(roadNS);
+}
+
+function createBuildings() {
+  for (const b of BUILDINGS) {
+    const [x, z] = latLngToXZ(b.lat, b.lng);
+    const h = b.height * SCALE;
+    const footprint = Math.sqrt(b.height) * 0.3;
+
+    const geo = new THREE.BoxGeometry(footprint, h, footprint);
+    geo.translate(0, h / 2, 0);
+
+    const baseColor = USE_COLORS[b.use] ?? 0x94a3b8;
+    const mat = new THREE.MeshStandardMaterial({
+      color: baseColor,
+      roughness: 0.5,
+      metalness: 0.3,
+      transparent: true,
+      opacity: 0.92,
+    });
+
+    const mesh = new THREE.Mesh(geo, mat);
+    mesh.position.set(x, 0, z);
+    mesh.castShadow = true;
+    mesh.receiveShadow = true;
+    mesh.userData = b;
+    scene.add(mesh);
+    buildingMeshes.push(mesh);
+
+    const edgesGeo = new THREE.EdgesGeometry(geo);
+    const edgesMat = new THREE.LineBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.08 });
+    const edges = new THREE.LineSegments(edgesGeo, edgesMat);
+    edges.position.copy(mesh.position);
+    scene.add(edges);
+  }
+}
+
+function updateSunPosition(preset) {
+  const params = SUN_PRESETS[preset];
+  const azRad = (params.azimuth * Math.PI) / 180;
+  const altRad = (params.altitude * Math.PI) / 180;
+  const dist = 150;
+
+  const sx = dist * Math.cos(altRad) * Math.sin(azRad);
+  const sy = dist * Math.sin(altRad);
+  const sz = -dist * Math.cos(altRad) * Math.cos(azRad);
+
+  sunLight.position.set(sx, sy, sz);
+  sunLight.target.position.set(0, 0, 0);
+
+  const intensity = preset === 'noon' ? 1.8 : preset === 'morning' ? 1.2 : 0.9;
+  sunLight.intensity = intensity;
+
+  const warmth = preset === 'evening' ? 0xffaa66 : preset === 'morning' ? 0xffeebb : 0xffeedd;
+  sunLight.color.set(warmth);
+
+  const bgColors = {
+    morning: 0x0d1220,
+    noon: 0x0f0f23,
+    evening: 0x15101a,
+  };
+  scene.background.set(bgColors[preset]);
+}
+
+function updateStats() {
+  const count = BUILDINGS.length;
+  const maxH = Math.max(...BUILDINGS.map(b => b.height));
+  const avgH = Math.round(BUILDINGS.reduce((s, b) => s + b.height, 0) / count);
+  const highShadow = BUILDINGS.filter(b => b.shadow === 'high').length;
+  const preset = SUN_PRESETS[currentPreset];
+  const altRad = (preset.altitude * Math.PI) / 180;
+  const avgShadowLen = Math.round(avgH / Math.tan(altRad));
+
+  document.getElementById('stat-count').textContent = `${count}棟`;
+  document.getElementById('stat-max-height').textContent = `${maxH}m`;
+  document.getElementById('stat-avg-height').textContent = `${avgH}m`;
+  document.getElementById('stat-shadow').textContent = `高影響 ${highShadow}棟 / 平均影長 ${avgShadowLen}m`;
+}
+
+function showInfoPanel(b) {
+  const panel = document.getElementById('info-panel');
+  const useLabels = { office: 'オフィス', commercial: '商業', residential: '住居' };
+  const useClass = `use-${b.use}`;
+
+  document.getElementById('info-name').textContent = b.name;
+  document.getElementById('info-body').innerHTML = `
+    <div class="info-row"><span>用途</span><span class="use-badge ${useClass}">${useLabels[b.use] ?? b.use}</span></div>
+    <div class="info-row"><span>高さ</span><span>${b.height}m</span></div>
+    <div class="info-row"><span>階数</span><span>${b.floors}F</span></div>
+    <div class="info-row"><span>地区</span><span>${b.city} ${b.district}</span></div>
+    <div class="info-row"><span>竣工年</span><span>${b.built}年</span></div>
+    <div class="info-row"><span>影響度</span><span style="color:${b.shadow === 'high' ? 'var(--danger)' : b.shadow === 'medium' ? 'var(--warning)' : 'var(--success)'}">${b.shadow === 'high' ? '高' : b.shadow === 'medium' ? '中' : '低'}</span></div>
+  `;
+  panel.style.display = 'block';
+}
+
+function onMouseMove(e) {
+  mouse.x = (e.clientX / window.innerWidth) * 2 - 1;
+  mouse.y = -(e.clientY / window.innerHeight) * 2 + 1;
+
+  raycaster.setFromCamera(mouse, camera);
+  const hits = raycaster.intersectObjects(buildingMeshes);
+  const tooltip = document.getElementById('tooltip');
+
+  if (hoveredMesh && hoveredMesh !== (hits[0]?.object ?? null)) {
+    hoveredMesh.material.emissive.set(0x000000);
+    hoveredMesh = null;
+  }
+
+  if (hits.length > 0) {
+    const mesh = hits[0].object;
+    if (mesh !== hoveredMesh) {
+      hoveredMesh = mesh;
+      mesh.material.emissive.set(0x222244);
+    }
+    const b = mesh.userData;
+    tooltip.style.display = 'block';
+    tooltip.style.left = (e.clientX + 14) + 'px';
+    tooltip.style.top = (e.clientY - 10) + 'px';
+    tooltip.textContent = `${b.name}  (${b.height}m / ${b.floors}F)`;
+    renderer.domElement.style.cursor = 'pointer';
+  } else {
+    tooltip.style.display = 'none';
+    renderer.domElement.style.cursor = 'grab';
+  }
+}
+
+function onClickBuilding(e) {
+  mouse.x = (e.clientX / window.innerWidth) * 2 - 1;
+  mouse.y = -(e.clientY / window.innerHeight) * 2 + 1;
+  raycaster.setFromCamera(mouse, camera);
+  const hits = raycaster.intersectObjects(buildingMeshes);
+  if (hits.length > 0) {
+    showInfoPanel(hits[0].object.userData);
+  }
+}
+
+function onResize() {
+  camera.aspect = window.innerWidth / window.innerHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize(window.innerWidth, window.innerHeight);
+}
+
+function animate() {
+  requestAnimationFrame(animate);
+  controls.update();
+  renderer.render(scene, camera);
+}
+
+init();
+</script>
+</body>
+</html>

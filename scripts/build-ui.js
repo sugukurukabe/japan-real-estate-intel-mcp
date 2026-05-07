@@ -1,5 +1,5 @@
 import { build } from 'esbuild';
-import { readFileSync, writeFileSync, mkdirSync } from 'node:fs';
+import { readFileSync, writeFileSync, mkdirSync, existsSync, copyFileSync } from 'node:fs';
 import { resolve, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -38,6 +38,14 @@ async function main() {
 
   writeFileSync(resolve(ROOT, 'ui', 'dashboard.html'), inlined, 'utf-8');
   console.log('UI built → ui/dashboard.html');
+
+  const dashboard3dSrc = resolve(ROOT, 'ui-src', 'dashboard-3d.html');
+  if (existsSync(dashboard3dSrc)) {
+    copyFileSync(dashboard3dSrc, resolve(ROOT, 'ui', 'dashboard-3d.html'));
+    console.log('UI copied → ui/dashboard-3d.html (from ui-src)');
+  } else {
+    console.log('ℹ  ui/dashboard-3d.html already exists (standalone)');
+  }
 }
 
 main().catch((err) => {

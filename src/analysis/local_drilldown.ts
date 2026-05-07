@@ -1,4 +1,5 @@
 import type { DrillDownInput, DrillDownOutput } from '../schemas.js';
+import type { NeighborhoodRecord } from '../data-loaders/types.js';
 import { getLoader } from '../data-loaders/index.js';
 import { resolvePrefecture, getPrefectureDisplayName } from '../prefecture/resolver.js';
 import { geocode } from '../data/geocode.js';
@@ -12,10 +13,24 @@ export function buildLocalDrillDown(input: DrillDownInput): DrillDownOutput {
   const { city, neighborhood, focus } = input;
   const now = new Date().toISOString().split('T')[0];
 
+  // --- neighborhood data lookup ---
+  let neighborhoodMatch: NeighborhoodRecord | undefined;
+  const neighborhoodDataAvailable = !!(loader.capabilities.neighborhoods && neighborhood);
+  if (neighborhoodDataAvailable) {
+    const neighborhoods = loader.getNeighborhoods();
+    neighborhoodMatch = neighborhoods.find(
+      (r) =>
+        (r.city.includes(city) || city.includes(r.city)) &&
+        (r.neighborhood.includes(neighborhood!) || neighborhood!.includes(r.neighborhood)),
+    );
+  }
+
   const granularity: 'city' | 'neighborhood' = neighborhood ? 'neighborhood' : 'city';
-  const granularityNote = neighborhood
-    ? `v2.1 では市区町村レベルでのデータ集計です。町丁目「${neighborhood}」はレポートのラベルとして使用しています。町丁目単位の実データ対応は v2.2 以降で予定しています。`
-    : '市区町村レベルでのデータ集計です。';
+  const granularityNote = neighborhoodMatch
+    ? `町丁目「${neighborhood}」の実データ（町丁目レベル）を使用しています。`
+    : neighborhood
+      ? `町丁目「${neighborhood}」の実データは未登録のため、市区町村レベルでのデータ集計です。`
+      : '市区町村レベルでのデータ集計です。';
 
   const scopeLabel = neighborhood ? `${city} ${neighborhood}` : city;
 
@@ -37,15 +52,23 @@ export function buildLocalDrillDown(input: DrillDownInput): DrillDownOutput {
   // --- population ---
   let population: DrillDownOutput['population'] = null;
   if (focus === 'all' || focus === 'demand') {
-    const pop = loader.getPopulation().find(
-      (r) => r.city.includes(city) || city.includes(r.city),
-    );
-    if (pop) {
+    if (neighborhoodMatch) {
       population = {
-        total: pop.population_2025,
-        households: pop.households_2025,
-        aging: pop.aging_rate,
+        total: neighborhoodMatch.population,
+        households: neighborhoodMatch.households,
+        aging: neighborhoodMatch.elderly_ratio,
       };
+    } else {
+      const pop = loader.getPopulation().find(
+        (r) => r.city.includes(city) || city.includes(r.city),
+      );
+      if (pop) {
+        population = {
+          total: pop.population_2025,
+          households: pop.households_2025,
+          aging: pop.aging_rate,
+        };
+      }
     }
   }
 
@@ -121,6 +144,15 @@ export function buildLocalDrillDown(input: DrillDownInput): DrillDownOutput {
 
   // --- local pitch ---
   const pitchParts: string[] = [];
+  if (neighborhoodMatch) {
+    pitchParts.push(`町丁目人口${neighborhoodMatch.population.toLocaleString()}人`);
+    pitchParts.push(`世帯数${neighborhoodMatch.households.toLocaleString()}`);
+    if (neighborhoodMatch.daytime_pop_ratio > 1.5) {
+      pitchParts.push('昼間人口が多く商業・業務需要旺盛');
+    } else if (neighborhoodMatch.daytime_pop_ratio < 0.7) {
+      pitchParts.push('住宅地型（昼間人口流出型）');
+    }
+  }
   if (priceChangeRate != null) {
     pitchParts.push(priceChangeRate > 3 ? '地価が上昇傾向' : priceChangeRate < -2 ? '地価がやや下落傾向（底値機会）' : '地価は安定推移');
   }
@@ -145,6 +177,19 @@ export function buildLocalDrillDown(input: DrillDownInput): DrillDownOutput {
 
   // --- key insights ---
   const keyInsights: string[] = [];
+  if (neighborhoodMatch) {
+    keyInsights.push(`町丁目実データ使用: 人口${neighborhoodMatch.population.toLocaleString()}人、世帯数${neighborhoodMatch.households.toLocaleString()}、平均年齢${neighborhoodMatch.avg_age}歳。`);
+    keyInsights.push(`年少比率${neighborhoodMatch.child_ratio}%、高齢比率${neighborhoodMatch.elderly_ratio}%、昼夜間人口比${neighborhoodMatch.daytime_pop_ratio}。`);
+    if (neighborhoodMatch.child_ratio > 15) {
+      keyInsights.push('子育て世帯が多いエリア。ファミリー向け物件の需要が高い可能性があります。');
+    }
+    if (neighborhoodMatch.elderly_ratio > 35) {
+      keyInsights.push('高齢化が進行。高齢者向け施設・バリアフリー住宅の需要が見込まれます。');
+    }
+    if (neighborhoodMatch.daytime_pop_ratio > 2.0) {
+      keyInsights.push('昼間人口が夜間の2倍超。オフィス・商業需要が非常に高いエリアです。');
+    }
+  }
   if (priceChangeRate != null) {
     if (priceChangeRate > 3) keyInsights.push(`地価が上昇（+${priceChangeRate}%）。キャピタルゲインが期待できます。`);
     else if (priceChangeRate < -3) keyInsights.push(`地価が下落中（${priceChangeRate}%）。底値買いか構造的下落か要精査。`);
@@ -152,8 +197,7 @@ export function buildLocalDrillDown(input: DrillDownInput): DrillDownOutput {
   if (riskScore != null && riskScore >= 60) {
     keyInsights.push(`リスクスコア${riskScore}/100（高リスク）。浸水・地震への保険や建設仕様強化を検討してください。`);
   }
-  if (population) {
-    const popGrowth = ((population.total - 0) / population.total) * 0;
+  if (population && !neighborhoodMatch) {
     if (population.aging > 30) keyInsights.push(`高齢化率${population.aging}%。高齢者向け施設・バリアフリー仕様の需要があります。`);
   }
   if (!loader.capabilities.humanFlow) {
@@ -181,16 +225,36 @@ export function buildLocalDrillDown(input: DrillDownInput): DrillDownOutput {
     keyInsights.push(`${scopeLabel}の市区町村レベルデータを正常に取得しました。`);
   }
 
+  // --- neighborhood section for markdown ---
+  const neighborhoodSection = neighborhoodMatch
+    ? [
+        `## 町丁目レベル実データ`,
+        ``,
+        `> 「${neighborhoodMatch.neighborhood}」の実データを使用しています。`,
+        ``,
+        `| 指標 | 値 |`,
+        `|---|---|`,
+        `| 人口 | ${neighborhoodMatch.population.toLocaleString()} 人 |`,
+        `| 世帯数 | ${neighborhoodMatch.households.toLocaleString()} 世帯 |`,
+        `| 人口密度 | ${neighborhoodMatch.pop_density_sqkm.toLocaleString()} 人/km² |`,
+        `| 平均年齢 | ${neighborhoodMatch.avg_age} 歳 |`,
+        `| 年少比率 | ${neighborhoodMatch.child_ratio}% |`,
+        `| 高齢比率 | ${neighborhoodMatch.elderly_ratio}% |`,
+        `| 昼夜間人口比 | ${neighborhoodMatch.daytime_pop_ratio} |`,
+      ].join('\n')
+    : null;
+
   // --- markdown report ---
   const markdownReport = [
     `# ${scopeLabel} ローカル不動産ドリルダウンレポート`,
     ``,
     `生成日: ${now}  `,
     `都道府県: ${prefDisplayName}  `,
-    `市区町村: ${city}${neighborhood ? `  \n町丁目: ${neighborhood}（※v2.1はラベルのみ）` : ''}`,
+    `市区町村: ${city}${neighborhood ? `  \n町丁目: ${neighborhood}${neighborhoodMatch ? '（実データ対応）' : '（データ未登録）'}` : ''}`,
     ``,
     `> ${granularityNote}`,
     ``,
+    neighborhoodSection,
     `## ローカルサマリー`,
     ``,
     `${localPitch}`,
@@ -241,7 +305,7 @@ export function buildLocalDrillDown(input: DrillDownInput): DrillDownOutput {
     ``,
     `---`,
     `${ATTRIBUTION}`,
-  ].filter((line) => line !== undefined).join('\n');
+  ].filter((line) => line != null).join('\n');
 
   return {
     scope: { prefecture: prefDisplayName, city, neighborhood },
@@ -260,5 +324,14 @@ export function buildLocalDrillDown(input: DrillDownInput): DrillDownOutput {
     localPitch,
     keyInsights,
     markdownReport,
+    ...(neighborhoodMatch && {
+      households: neighborhoodMatch.households,
+      avgAge: neighborhoodMatch.avg_age,
+      childRatio: neighborhoodMatch.child_ratio,
+      elderlyRatio: neighborhoodMatch.elderly_ratio,
+      daytimePopRatio: neighborhoodMatch.daytime_pop_ratio,
+      popDensity: neighborhoodMatch.pop_density_sqkm,
+      neighborhoodDataAvailable: true,
+    }),
   };
 }

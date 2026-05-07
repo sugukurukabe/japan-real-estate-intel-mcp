@@ -6,6 +6,7 @@ import type {
   HumanFlowRecord, SchoolDistrictRecord, CorporateLocationRecord,
   CrimeStatsRecord, PlateauBuildingRecord,
   TransportRecord, CommercialFacilityRecord, MedicalFacilityRecord,
+  NeighborhoodRecord,
 } from './types.js';
 
 const TOKYO_GEOCODE: Record<string, LatLng> = {
@@ -43,7 +44,7 @@ export class TokyoLoader extends BaseLoader {
   readonly isoCode = 'JP-13';
   readonly capabilities: LoaderCapabilities = {
     humanFlow: false, education: false, corporate: false, crime: false, plateau: false,
-    transport: false, commercial: false, medical: false,
+    transport: false, commercial: false, medical: false, neighborhoods: true,
   };
 
   protected readonly geocodeMap = TOKYO_GEOCODE;
@@ -63,4 +64,5 @@ export class TokyoLoader extends BaseLoader {
   getTransport(): TransportRecord[] { return []; }
   getCommercialFacilities(): CommercialFacilityRecord[] { return []; }
   getMedicalFacilities(): MedicalFacilityRecord[] { return []; }
+  getNeighborhoods(): NeighborhoodRecord[] { return this.loadCsv('neighborhoods.csv'); }
 }

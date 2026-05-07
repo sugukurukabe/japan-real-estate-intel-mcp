@@ -14,6 +14,7 @@ export interface LoaderCapabilities {
   transport: boolean;
   commercial: boolean;
   medical: boolean;
+  neighborhoods: boolean;
 }
 
 export interface LandPriceRecord {
@@ -150,6 +151,19 @@ export interface MedicalFacilityRecord {
   beds: number | null;
 }
 
+export interface NeighborhoodRecord {
+  city: string;
+  district: string;
+  neighborhood: string;
+  population: number;
+  households: number;
+  pop_density_sqkm: number;
+  avg_age: number;
+  child_ratio: number;
+  elderly_ratio: number;
+  daytime_pop_ratio: number;
+}
+
 export interface PrefectureLoader {
   readonly key: string;
   readonly displayName: string;
@@ -176,4 +190,5 @@ export interface PrefectureLoader {
   getTransport(): TransportRecord[];
   getCommercialFacilities(): CommercialFacilityRecord[];
   getMedicalFacilities(): MedicalFacilityRecord[];
+  getNeighborhoods(): NeighborhoodRecord[];
 }

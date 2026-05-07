@@ -1,4 +1,5 @@
 import type { StoreLocationInput, StoreLocationOutput, KeyCompetitor } from '../schemas.js';
+import type { NeighborhoodRecord } from '../data-loaders/types.js';
 import { getLoader } from '../data-loaders/index.js';
 import { resolvePrefecture } from '../prefecture/resolver.js';
 import { geocode } from '../data/geocode.js';
@@ -46,19 +47,38 @@ export function evaluateStoreLocationAnalysis(input: StoreLocationInput): StoreL
   const centerLat = coords?.lat ?? 35.17;
   const centerLng = coords?.lng ?? 136.88;
 
+  // --- neighborhood data lookup ---
+  let neighborhoodMatch: NeighborhoodRecord | undefined;
+  if (loader.capabilities.neighborhoods && neighborhood) {
+    const neighborhoods = loader.getNeighborhoods();
+    neighborhoodMatch = neighborhoods.find(
+      (r) =>
+        (r.city.includes(city) || city.includes(r.city)) &&
+        (r.neighborhood.includes(neighborhood) || neighborhood.includes(r.neighborhood)),
+    );
+  }
+
   // ── Dimension: population ──
   const popRecords = loader.getPopulation().filter((r) => matchCity(r.city, city));
-  const popDensity = popRecords.length > 0
-    ? popRecords.reduce((s, r) => s + r.density_per_sqkm, 0) / popRecords.length
-    : 0;
-  const populationScore = Math.min(100, Math.round(popDensity / 100));
+  let populationScore: number;
+  if (neighborhoodMatch) {
+    populationScore = Math.min(100, Math.round(neighborhoodMatch.pop_density_sqkm / 100));
+  } else {
+    const popDensity = popRecords.length > 0
+      ? popRecords.reduce((s, r) => s + r.density_per_sqkm, 0) / popRecords.length
+      : 0;
+    populationScore = Math.min(100, Math.round(popDensity / 100));
+  }
 
   // ── Dimension: humanFlow ──
   const flowRecords = loader.getHumanFlow().filter((r) => matchCity(r.city, city));
   const avgWeekdayFlow = flowRecords.length > 0
     ? flowRecords.reduce((s, r) => s + r.weekday_avg_flow, 0) / flowRecords.length
     : 0;
-  const humanFlowScore = Math.min(100, Math.round(avgWeekdayFlow / 2000));
+  let humanFlowScore = Math.min(100, Math.round(avgWeekdayFlow / 2000));
+  if (neighborhoodMatch && neighborhoodMatch.daytime_pop_ratio > 1.0) {
+    humanFlowScore = Math.min(100, Math.round(humanFlowScore * neighborhoodMatch.daytime_pop_ratio));
+  }
 
   // ── Dimension: risk ──
   let riskRaw = 30;
@@ -183,6 +203,9 @@ export function evaluateStoreLocationAnalysis(input: StoreLocationInput): StoreL
 
   // ── Key insights ──
   const keyInsights: string[] = [];
+  if (neighborhoodMatch) {
+    keyInsights.push(`町丁目実データ使用: 人口${neighborhoodMatch.population.toLocaleString()}人、昼夜間人口比${neighborhoodMatch.daytime_pop_ratio}`);
+  }
   if (overallScore >= 75) {
     keyInsights.push(`総合スコア${overallScore}/100。${storeType}の出店に非常に適した立地です。`);
   } else if (overallScore >= 50) {
