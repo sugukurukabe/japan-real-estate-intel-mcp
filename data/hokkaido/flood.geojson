@@ -1,0 +1,80 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "river": "石狩川",
+        "area_name": "札幌市北区・東区",
+        "name": "石狩川下流域浸水想定区域",
+        "max_depth_m": 5.0,
+        "risk_level": "high",
+        "scenario": "石狩川堤防決壊（200年確率降雨）"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[141.28,43.09],[141.38,43.09],[141.38,43.15],[141.28,43.15],[141.28,43.09]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "river": "豊平川",
+        "area_name": "札幌市白石区・豊平区",
+        "name": "豊平川浸水想定区域",
+        "max_depth_m": 3.5,
+        "risk_level": "high",
+        "scenario": "豊平川堤防決壊（200年確率降雨）"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[141.36,43.03],[141.42,43.03],[141.42,43.09],[141.36,43.09],[141.36,43.03]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "river": "十勝川",
+        "area_name": "帯広市・音更町",
+        "name": "十勝川中流域浸水想定区域",
+        "max_depth_m": 4.0,
+        "risk_level": "high",
+        "scenario": "十勝川堤防決壊（150年確率降雨）"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[143.15,42.88],[143.28,42.88],[143.28,42.98],[143.15,42.98],[143.15,42.88]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "river": "空知川",
+        "area_name": "岩見沢市・美唄市",
+        "name": "空知川浸水想定区域",
+        "max_depth_m": 3.0,
+        "risk_level": "medium",
+        "scenario": "空知川堤防決壊（150年確率降雨）"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[141.75,43.18],[141.90,43.18],[141.90,43.30],[141.75,43.30],[141.75,43.18]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "river": "石狩川",
+        "area_name": "石狩市・手稲区",
+        "name": "石狩川河口部津波・浸水複合リスク区域",
+        "max_depth_m": 2.5,
+        "risk_level": "high",
+        "scenario": "千島海溝巨大地震による津波（最大ケース）"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[141.20,43.10],[141.32,43.10],[141.32,43.20],[141.20,43.20],[141.20,43.10]]]
+      }
+    }
+  ]
+}

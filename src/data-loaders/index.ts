@@ -11,7 +11,17 @@ import { registerLoader } from './registry.js';
 import { AichiLoader } from './aichi-loader.js';
 import { TokyoLoader } from './tokyo-loader.js';
 import { OsakaLoader } from './osaka-loader.js';
+import { FukuokaLoader } from './fukuoka-loader.js';
+import { HokkaidoLoader } from './hokkaido-loader.js';
+import { KanagawaLoader } from './kanagawa-loader.js';
+import { KyotoLoader } from './kyoto-loader.js';
+import { HyogoLoader } from './hyogo-loader.js';
 
 registerLoader(new AichiLoader());
 registerLoader(new TokyoLoader());
 registerLoader(new OsakaLoader());
+registerLoader(new FukuokaLoader());
+registerLoader(new HokkaidoLoader());
+registerLoader(new KanagawaLoader());
+registerLoader(new KyotoLoader());
+registerLoader(new HyogoLoader());

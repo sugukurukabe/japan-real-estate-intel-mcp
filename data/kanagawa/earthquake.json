@@ -1,0 +1,14 @@
+[
+  {"city":"横浜市西区","max_intensity":"6強","probability_30y":0.82,"liquefaction_risk":"high","description":"相模トラフ沿いの大規模地震リスク。関東大震災の震源域に近い。横浜駅周辺の埋立地・旧河道は液状化リスク高。"},
+  {"city":"横浜市中区","max_intensity":"6強","probability_30y":0.82,"liquefaction_risk":"high","description":"相模トラフ巨大地震で震度6強想定。関内・みなとみらい周辺は埋立地で液状化リスク高。海岸線近傍は津波注意。"},
+  {"city":"横浜市神奈川区","max_intensity":"6強","probability_30y":0.82,"liquefaction_risk":"medium","description":"相模トラフ地震で震度6強想定。鶴見川・帷子川沿い低地は液状化リスクあり。台地部は比較的安定。"},
+  {"city":"横浜市港北区","max_intensity":"6強","probability_30y":0.82,"liquefaction_risk":"medium","description":"相模トラフ地震で震度6強想定。鶴見川・早渕川沿い低地は液状化注意。新横浜周辺は地盤改良済み箇所多数。"},
+  {"city":"横浜市都筑区","max_intensity":"6強","probability_30y":0.82,"liquefaction_risk":"low","description":"丘陵地に位置し地盤比較的良好。相模トラフ地震の影響は受けるが液状化リスクは低い。"},
+  {"city":"横浜市青葉区","max_intensity":"6強","probability_30y":0.82,"liquefaction_risk":"low","description":"多摩丘陵上に位置し地盤安定。相模トラフ地震で震度6強想定だが液状化リスクは低い。"},
+  {"city":"川崎市川崎区","max_intensity":"6強","probability_30y":0.82,"liquefaction_risk":"high","description":"多摩川沿い低地で液状化リスクが特に高い。東京湾岸の埋立地も存在し相模トラフ・首都直下地震の複合リスクあり。"},
+  {"city":"川崎市中原区","max_intensity":"6強","probability_30y":0.82,"liquefaction_risk":"medium","description":"多摩川沿い低地は液状化リスクあり。武蔵小杉周辺は高層建築密集地で揺れへの注意が必要。"},
+  {"city":"相模原市中央区","max_intensity":"6強","probability_30y":0.82,"liquefaction_risk":"low","description":"相武台地上に位置し地盤比較的安定。相模トラフ地震の影響は受けるが液状化リスクは低い。"},
+  {"city":"藤沢市","max_intensity":"6強","probability_30y":0.82,"liquefaction_risk":"medium","description":"相模トラフ震源域に近く震度6強想定。境川・引地川沿い低地は液状化注意。海岸線近傍は津波リスクあり。"},
+  {"city":"平塚市","max_intensity":"6強","probability_30y":0.82,"liquefaction_risk":"medium","description":"相模トラフ沿いの高リスク地域。相模川沿い低地・海岸部は液状化・津波の複合リスク。震源域最近傍クラス。"},
+  {"city":"小田原市","max_intensity":"6強","probability_30y":0.82,"liquefaction_risk":"medium","description":"関東大震災の震源に最も近い地域のひとつ。相模トラフ巨大地震の甚大な被害が想定される。海岸・低地は液状化・津波リスク高。"}
+]

@@ -1,0 +1,13 @@
+[
+  {"city":"神戸市中央区","max_intensity":"6強","probability_30y":0.16,"liquefaction_risk":"high","description":"阪神淡路大震災の被災地。六甲断層帯による大規模直下型地震リスク。ポートアイランド等の埋立地は液状化リスクが特に高い。"},
+  {"city":"神戸市東灘区","max_intensity":"7","probability_30y":0.16,"liquefaction_risk":"high","description":"1995年阪神大震災で最大震度7を記録。沿岸部の埋立地は液状化リスク極めて高い。六甲・淡路断層帯の直上。"},
+  {"city":"神戸市灘区","max_intensity":"7","probability_30y":0.16,"liquefaction_risk":"medium","description":"阪神大震災で甚大な被害。山麓部と沿岸部で地盤条件が大きく異なる。斜面崩壊にも注意。"},
+  {"city":"神戸市兵庫区","max_intensity":"6強","probability_30y":0.16,"liquefaction_risk":"medium","description":"六甲断層帯の影響を受ける。低地部は液状化リスクあり。1995年震災でも大きな被害。"},
+  {"city":"神戸市長田区","max_intensity":"7","probability_30y":0.16,"liquefaction_risk":"medium","description":"阪神大震災で震度7を記録し火災も発生。木造密集市街地が多く複合リスクあり。復興が進んだが地震リスクは継続。"},
+  {"city":"神戸市西区","max_intensity":"6弱","probability_30y":0.14,"liquefaction_risk":"low","description":"市街地から離れた丘陵・台地部が多く地盤は比較的安定。六甲断層帯の影響は市内中心部より低い。"},
+  {"city":"姫路市","max_intensity":"6弱","probability_30y":0.10,"liquefaction_risk":"medium","description":"山陽地方主要都市。播磨平野の沖積低地は液状化リスクあり。南海トラフ地震の影響も想定される。"},
+  {"city":"西宮市","max_intensity":"7","probability_30y":0.16,"liquefaction_risk":"high","description":"阪神大震災で震度7地域。阪神間の埋立・低地は液状化リスク高。六甲・淡路断層帯の影響圏内。"},
+  {"city":"尼崎市","max_intensity":"6強","probability_30y":0.16,"liquefaction_risk":"high","description":"臨海工業地帯の埋立地が多く液状化リスクが極めて高い。阪神大震災でも大きな被害を受けた。"},
+  {"city":"明石市","max_intensity":"6弱","probability_30y":0.14,"liquefaction_risk":"medium","description":"明石海峡に面し淡路島断層帯の影響あり。沿岸低地部は液状化・津波複合リスクに注意。"},
+  {"city":"宝塚市","max_intensity":"6強","probability_30y":0.16,"liquefaction_risk":"low","description":"武庫川沿いの低地部は液状化リスクあり。山麓の丘陵地は地盤良好だが土砂災害に注意。"}
+]

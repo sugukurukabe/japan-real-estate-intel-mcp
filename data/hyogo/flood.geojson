@@ -1,0 +1,80 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "river": "武庫川",
+        "area_name": "西宮市・尼崎市",
+        "name": "武庫川下流域浸水想定区域",
+        "max_depth_m": 4.0,
+        "risk_level": "high",
+        "scenario": "武庫川堤防決壊（200年確率降雨）"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[135.37,34.71],[135.42,34.71],[135.42,34.76],[135.37,34.76],[135.37,34.71]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "river": "猪名川",
+        "area_name": "尼崎市・伊丹市",
+        "name": "猪名川下流域浸水想定区域",
+        "max_depth_m": 3.5,
+        "risk_level": "high",
+        "scenario": "猪名川堤防決壊（200年確率降雨）"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[135.40,34.76],[135.45,34.76],[135.45,34.82],[135.40,34.82],[135.40,34.76]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "river": "明石川",
+        "area_name": "神戸市西区・明石市",
+        "name": "明石川浸水想定区域",
+        "max_depth_m": 2.5,
+        "risk_level": "medium",
+        "scenario": "明石川堤防決壊（150年確率降雨）"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[134.97,34.63],[135.02,34.63],[135.02,34.68],[134.97,34.68],[134.97,34.63]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "river": "加古川",
+        "area_name": "加古川市・高砂市",
+        "name": "加古川下流域浸水想定区域",
+        "max_depth_m": 3.0,
+        "risk_level": "high",
+        "scenario": "加古川堤防決壊（200年確率降雨）"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[134.83,34.70],[134.90,34.70],[134.90,34.77],[134.83,34.77],[134.83,34.70]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "river": "武庫川",
+        "area_name": "宝塚市・西宮市北部",
+        "name": "武庫川中流域浸水想定区域",
+        "max_depth_m": 2.0,
+        "risk_level": "medium",
+        "scenario": "武庫川堤防決壊（150年確率降雨）"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[135.35,34.78],[135.39,34.78],[135.39,34.83],[135.35,34.83],[135.35,34.78]]]
+      }
+    }
+  ]
+}

@@ -1,0 +1,13 @@
+[
+  {"city":"札幌市中央区","max_intensity":"6強","probability_30y":0.25,"liquefaction_risk":"medium","description":"石狩平野の堆積層。胆振東部地震と同様の直下型リスク。液状化は豊平川沿い低地で注意。"},
+  {"city":"札幌市北区","max_intensity":"6強","probability_30y":0.25,"liquefaction_risk":"medium","description":"石狩川・豊平川合流部近くの沖積低地。液状化リスクは中程度。"},
+  {"city":"札幌市白石区","max_intensity":"6強","probability_30y":0.23,"liquefaction_risk":"high","description":"旧豊平川沿い低地が多く液状化リスクが高い。2018年胆振東部地震では広域停電の影響を受けた区域。"},
+  {"city":"札幌市豊平区","max_intensity":"6強","probability_30y":0.23,"liquefaction_risk":"medium","description":"豊平川東岸の段丘と低地が混在。山鼻地区など台地部は比較的安定。"},
+  {"city":"札幌市西区","max_intensity":"6弱","probability_30y":0.20,"liquefaction_risk":"low","description":"手稲山麓の台地部が多く地盤は比較的安定。内陸側で津波リスクは低い。"},
+  {"city":"札幌市厚別区","max_intensity":"5強","probability_30y":0.18,"liquefaction_risk":"low","description":"丘陵地形が多く液状化リスクは低い。ただし千島海溝沿い巨大地震では長周期振動に注意。"},
+  {"city":"札幌市手稲区","max_intensity":"6弱","probability_30y":0.20,"liquefaction_risk":"medium","description":"石狩湾沿い低地で津波・液状化の複合リスクあり。千島海溝巨大地震では津波浸水が想定される。"},
+  {"city":"函館市","max_intensity":"6弱","probability_30y":0.15,"liquefaction_risk":"medium","description":"太平洋プレートと千島海溝の影響を受ける。津波リスクが高く、海岸部の液状化も懸念される。"},
+  {"city":"旭川市","max_intensity":"5強","probability_30y":0.10,"liquefaction_risk":"low","description":"内陸に位置し津波リスクは低い。石狩川流域の低地では液状化に注意。"},
+  {"city":"小樽市","max_intensity":"6弱","probability_30y":0.18,"liquefaction_risk":"medium","description":"石狩湾に面し津波リスクあり。埋立地・港湾周辺は液状化リスクが高い。"},
+  {"city":"釧路市","max_intensity":"6強","probability_30y":0.35,"liquefaction_risk":"high","description":"千島海溝直近で最大リスク地域の一つ。泥炭性軟弱地盤が広がり液状化リスクが特に高い。1993年釧路沖地震でも大きな被害を記録。"}
+]

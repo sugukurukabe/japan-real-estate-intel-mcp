@@ -42,7 +42,7 @@ describe('Neighborhood data loading', () => {
   });
 
   it('Stub loader returns no neighborhoods', () => {
-    const loader = getLoader('hokkaido');
+    const loader = getLoader('okinawa');
     expect(loader.capabilities.neighborhoods).toBe(false);
     expect(loader.getNeighborhoods()).toHaveLength(0);
   });

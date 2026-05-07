@@ -1,0 +1,14 @@
+[
+  {"city":"福岡市中央区","max_intensity":"6弱","probability_30y":0.35,"liquefaction_risk":"medium","description":"警固断層帯による直下型地震リスク。天神周辺は埋立・低地部分で液状化リスク中程度。"},
+  {"city":"福岡市博多区","max_intensity":"6弱","probability_30y":0.35,"liquefaction_risk":"medium","description":"警固断層帯南東延長部の影響を受ける。博多湾岸の埋立地は液状化リスクあり。"},
+  {"city":"福岡市東区","max_intensity":"5強","probability_30y":0.20,"liquefaction_risk":"low","description":"警固断層帯から離れており相対的にリスク低。沿岸部の一部に液状化リスクあり。"},
+  {"city":"福岡市南区","max_intensity":"5強","probability_30y":0.22,"liquefaction_risk":"low","description":"台地上の地盤が比較的安定。警固断層帯の影響は限定的。"},
+  {"city":"福岡市西区","max_intensity":"5強","probability_30y":0.18,"liquefaction_risk":"low","description":"2005年福岡県西方沖地震の震源域に近い。海岸部は液状化注意。"},
+  {"city":"福岡市城南区","max_intensity":"5強","probability_30y":0.20,"liquefaction_risk":"low","description":"警固断層帯西側に位置。台地上で地盤は比較的良好。"},
+  {"city":"福岡市早良区","max_intensity":"5強","probability_30y":0.18,"liquefaction_risk":"low","description":"脊振山地麓の台地・丘陵地が多く地盤良好。室見川沿いは低地で注意。"},
+  {"city":"北九州市小倉北区","max_intensity":"6弱","probability_30y":0.15,"liquefaction_risk":"medium","description":"洞海湾岸の埋立地を含み液状化リスク中程度。市街地中心部は比較的安定。"},
+  {"city":"北九州市八幡西区","max_intensity":"5強","probability_30y":0.12,"liquefaction_risk":"medium","description":"洞海湾沿岸の埋立地は液状化リスクあり。内陸丘陵部は地盤良好。"},
+  {"city":"久留米市","max_intensity":"5強","probability_30y":0.10,"liquefaction_risk":"high","description":"筑後川流域の沖積平野に位置。河川沿い低地は液状化リスク高。南海トラフの影響も想定。"},
+  {"city":"春日市","max_intensity":"5強","probability_30y":0.22,"liquefaction_risk":"low","description":"台地上に位置し地盤良好。警固断層帯の影響は中程度。"},
+  {"city":"大野城市","max_intensity":"5強","probability_30y":0.20,"liquefaction_risk":"low","description":"丘陵・台地地形が主体で地盤安定。御笠川沿い低地部分は液状化注意。"}
+]

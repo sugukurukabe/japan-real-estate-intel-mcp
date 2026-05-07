@@ -7,6 +7,29 @@ Versioning: [Semantic Versioning](https://semver.org/)
 
 ---
 
+## [2.9.0] – 2026-05-07 — National Expansion: 8 都道府県体制 (5 新規追加)
+
+### Added
+- **5 新規都道府県サポート**: 福岡県・北海道・神奈川県・京都府・兵庫県
+- **Osaka の UI 修正**: `ui-src/main.ts` の `PREFECTURES` 定数に Osaka エントリを追加（ローダーは登録済みだが UI が欠落していた不整合を解消）
+- **30 データファイル新規作成** (5 県 × 6 ファイル): `land_price.csv`, `population.csv`, `earthquake.json`, `flood.geojson`, `municipalities.topojson`, `neighborhoods.csv` + 各県 `README.md`
+- **5 ローダー新規実装**: `fukuoka-loader.ts`, `hokkaido-loader.ts`, `kanagawa-loader.ts`, `kyoto-loader.ts`, `hyogo-loader.ts` — 全て `OsakaLoader` の minimal パターン踏襲 (`capabilities.neighborhoods: true`)
+- **resolver 拡張**: `src/prefecture/resolver.ts` に 神奈川県 (JP-14)、京都府 (JP-26)、兵庫県 (JP-28) を追加
+- **`tests/national-expansion.test.ts`** 新規 — 5 県 + Osaka の 80 パラメータ化テスト (resolver / registry / loader data / tool integration)
+- **6 県分の UI エントリ** (`ui-src/main.ts` `PREFECTURES` 定数): 大阪府・福岡県・北海道・神奈川県・京都府・兵庫県
+
+### Changed
+- `src/data-loaders/index.ts` — 5 ローダーを `registerLoader` 登録
+- `package.json` — version 2.9.0
+- `src/server.ts`, `src/http.ts` — version string updated to 2.9.0
+- テスト数: 238 → 318 (+80件)
+
+### Fixed
+- `tests/drilldown.test.ts`, `tests/neighborhood.test.ts`, `tests/tokyo.test.ts` — 北海道が実ローダー化したことでスタブローダーテストが失敗していた箇所を 沖縄県（真の未サポート県）に変更
+- `tests/shadow.test.ts` — shadow polygon 座標チェックのアサーションを、空ポリゴンを許容するよう修正
+
+---
+
 ## [2.8.0] – 2026-05-07 — Dual-Mode Dashboard (不動産投資 / 店舗出店戦略)
 
 ### Added

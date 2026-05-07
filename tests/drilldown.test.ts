@@ -80,11 +80,11 @@ describe('drill_down_local_analysis', () => {
 
   it('StubLoader prefecture does not crash', () => {
     const result = drillDownLocalAnalysis({
-      prefecture: '北海道',
-      city: '札幌市中央区',
+      prefecture: '沖縄県',
+      city: '那覇市',
       focus: 'all',
     });
-    expect(result.scope.prefecture).toBe('北海道');
+    expect(result.scope.prefecture).toBe('沖縄県');
     expect(result.pricePerSqm).toBeNull();
     expect(result.markdownReport.length).toBeGreaterThan(0);
   });

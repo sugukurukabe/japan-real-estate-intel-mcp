@@ -1,0 +1,95 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "river": "多摩川",
+        "area_name": "川崎市川崎区・中原区",
+        "name": "多摩川下流域浸水想定区域",
+        "max_depth_m": 5.0,
+        "risk_level": "high",
+        "scenario": "多摩川堤防決壊（200年確率降雨）"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[139.60,35.52],[139.70,35.52],[139.70,35.58],[139.60,35.58],[139.60,35.52]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "river": "鶴見川",
+        "area_name": "横浜市港北区・鶴見区・神奈川区",
+        "name": "鶴見川流域浸水想定区域",
+        "max_depth_m": 3.5,
+        "risk_level": "high",
+        "scenario": "鶴見川堤防決壊（200年確率降雨）"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[139.62,35.50],[139.70,35.50],[139.70,35.55],[139.62,35.55],[139.62,35.50]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "river": "相模川",
+        "area_name": "平塚市・茅ヶ崎市",
+        "name": "相模川下流域浸水想定区域",
+        "max_depth_m": 4.0,
+        "risk_level": "high",
+        "scenario": "相模川堤防決壊（200年確率降雨）"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[139.32,35.32],[139.40,35.32],[139.40,35.38],[139.32,35.38],[139.32,35.32]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "river": "境川",
+        "area_name": "藤沢市・大和市",
+        "name": "境川流域浸水想定区域",
+        "max_depth_m": 2.5,
+        "risk_level": "medium",
+        "scenario": "境川堤防決壊（150年確率降雨）"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[139.44,35.38],[139.50,35.38],[139.50,35.48],[139.44,35.48],[139.44,35.38]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "river": "帷子川",
+        "area_name": "横浜市西区・保土ケ谷区",
+        "name": "帷子川流域浸水想定区域",
+        "max_depth_m": 2.0,
+        "risk_level": "medium",
+        "scenario": "帷子川氾濫（100年確率降雨）"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[139.58,35.44],[139.64,35.44],[139.64,35.48],[139.58,35.48],[139.58,35.44]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "river": "相模川",
+        "area_name": "相模原市中央区・海老名市",
+        "name": "相模川中流域浸水想定区域",
+        "max_depth_m": 3.0,
+        "risk_level": "medium",
+        "scenario": "相模川堤防決壊（150年確率降雨）"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[139.35,35.52],[139.42,35.52],[139.42,35.58],[139.35,35.58],[139.35,35.52]]]
+      }
+    }
+  ]
+}

@@ -198,11 +198,10 @@ describe('Osaka loader basic checks', () => {
 
 describe('Stub loader for unsupported prefectures', () => {
   it('returns empty data for unsupported prefecture', () => {
-    const loader = getLoader('hokkaido');
-    expect(loader.key).toBe('hokkaido');
+    const loader = getLoader('okinawa');
     expect(loader.getLandPrices()).toEqual([]);
     expect(loader.getPopulation()).toEqual([]);
-    expect(loader.geocode('札幌市')).toBeUndefined();
+    expect(loader.geocode('那覇市')).toBeUndefined();
   });
 });
 

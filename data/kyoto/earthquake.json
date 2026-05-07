@@ -1,0 +1,13 @@
+[
+  {"city":"京都市中京区","max_intensity":"6弱","probability_30y":0.10,"liquefaction_risk":"low","description":"花折断層帯による直下型地震リスク。盆地内の堆積層による揺れの増幅効果あり。"},
+  {"city":"京都市下京区","max_intensity":"6弱","probability_30y":0.10,"liquefaction_risk":"medium","description":"鴨川沿い低地は軟弱地盤で液状化リスクあり。京都盆地の増幅効果に注意。"},
+  {"city":"京都市上京区","max_intensity":"6弱","probability_30y":0.10,"liquefaction_risk":"low","description":"花折断層帯の影響範囲。西陣地区は盆地内堆積層で揺れが増幅しやすい。"},
+  {"city":"京都市東山区","max_intensity":"6弱","probability_30y":0.09,"liquefaction_risk":"low","description":"東山丘陵の西麓。地盤は比較的安定しているが急傾斜地の崩壊リスクあり。"},
+  {"city":"京都市左京区","max_intensity":"6弱","probability_30y":0.09,"liquefaction_risk":"low","description":"比叡山・北山丘陵部は土砂災害リスク。高野川・賀茂川沿い低地は液状化注意。"},
+  {"city":"京都市右京区","max_intensity":"6弱","probability_30y":0.09,"liquefaction_risk":"low","description":"嵯峨野・嵐山周辺は山麓崩壊リスク。桂川沿い低地は液状化の可能性。"},
+  {"city":"京都市伏見区","max_intensity":"6強","probability_30y":0.12,"liquefaction_risk":"medium","description":"宇治川・桂川合流域の低地。液状化リスク中程度。有馬高槻断層帯の北部に位置。"},
+  {"city":"京都市南区","max_intensity":"6弱","probability_30y":0.10,"liquefaction_risk":"medium","description":"鴨川・桂川沖積低地で軟弱地盤。液状化リスクあり。東海道新幹線高架下周辺は地盤改良済みエリアも。"},
+  {"city":"宇治市","max_intensity":"6強","probability_30y":0.13,"liquefaction_risk":"medium","description":"宇治川流域の低地は液状化リスク中程度。有馬高槻断層帯の影響を受ける。"},
+  {"city":"長岡京市","max_intensity":"6弱","probability_30y":0.11,"liquefaction_risk":"low","description":"有馬高槻断層帯の近傍。小畑川沿い低地は液状化注意。丘陵部は地盤良好。"},
+  {"city":"京田辺市","max_intensity":"6弱","probability_30y":0.10,"liquefaction_risk":"low","description":"生駒断層帯の影響範囲。同志社大学周辺の丘陵地は地盤良好。"}
+]

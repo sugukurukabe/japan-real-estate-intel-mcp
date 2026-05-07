@@ -1,0 +1,80 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "river": "鴨川",
+        "area_name": "京都市中京区・下京区",
+        "name": "鴨川浸水想定区域",
+        "max_depth_m": 2.5,
+        "risk_level": "medium",
+        "scenario": "鴨川堤防決壊（200年確率降雨）"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[135.767,34.990],[135.773,34.990],[135.773,35.015],[135.767,35.015],[135.767,34.990]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "river": "桂川",
+        "area_name": "京都市右京区・伏見区・南区",
+        "name": "桂川浸水想定区域",
+        "max_depth_m": 4.0,
+        "risk_level": "high",
+        "scenario": "桂川堤防決壊（200年確率降雨）"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[135.693,34.930],[135.710,34.930],[135.710,34.985],[135.693,34.985],[135.693,34.930]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "river": "宇治川",
+        "area_name": "宇治市・京都市伏見区",
+        "name": "宇治川浸水想定区域",
+        "max_depth_m": 5.0,
+        "risk_level": "high",
+        "scenario": "宇治川堤防決壊（200年確率降雨）"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[135.780,34.870],[135.820,34.870],[135.820,34.910],[135.780,34.910],[135.780,34.870]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "river": "木津川",
+        "area_name": "京田辺市・宇治市",
+        "name": "木津川浸水想定区域",
+        "max_depth_m": 3.5,
+        "risk_level": "high",
+        "scenario": "木津川堤防決壊（150年確率降雨）"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[135.760,34.820],[135.800,34.820],[135.800,34.860],[135.760,34.860],[135.760,34.820]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "river": "鴨川",
+        "area_name": "京都市左京区・北区",
+        "name": "鴨川上流域浸水想定区域",
+        "max_depth_m": 1.5,
+        "risk_level": "medium",
+        "scenario": "時間雨量70mm超過（内水氾濫）"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[135.768,35.015],[135.774,35.015],[135.774,35.040],[135.768,35.040],[135.768,35.015]]]
+      }
+    }
+  ]
+}

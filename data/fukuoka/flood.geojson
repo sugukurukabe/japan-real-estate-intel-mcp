@@ -1,0 +1,80 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "river": "那珂川",
+        "area_name": "中央区・博多区",
+        "name": "那珂川下流域浸水想定区域",
+        "max_depth_m": 3.0,
+        "risk_level": "high",
+        "scenario": "那珂川堤防決壊（200年確率降雨）"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[130.38,33.57],[130.42,33.57],[130.42,33.61],[130.38,33.61],[130.38,33.57]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "river": "室見川",
+        "area_name": "早良区・西区",
+        "name": "室見川流域浸水想定区域",
+        "max_depth_m": 2.5,
+        "risk_level": "medium",
+        "scenario": "室見川堤防決壊（150年確率降雨）"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[130.33,33.56],[130.37,33.56],[130.37,33.60],[130.33,33.60],[130.33,33.56]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "river": "遠賀川",
+        "area_name": "北九州市八幡西区・中間市",
+        "name": "遠賀川下流域浸水想定区域",
+        "max_depth_m": 4.0,
+        "risk_level": "high",
+        "scenario": "遠賀川堤防決壊（200年確率降雨）"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[130.72,33.82],[130.78,33.82],[130.78,33.87],[130.72,33.87],[130.72,33.82]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "river": "筑後川",
+        "area_name": "久留米市・大川市",
+        "name": "筑後川流域浸水想定区域",
+        "max_depth_m": 5.0,
+        "risk_level": "high",
+        "scenario": "筑後川堤防決壊（200年確率降雨）"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[130.45,33.28],[130.52,33.28],[130.52,33.35],[130.45,33.35],[130.45,33.28]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "river": "那珂川",
+        "area_name": "博多区・南区",
+        "name": "那珂川中流域内水氾濫想定区域",
+        "max_depth_m": 1.5,
+        "risk_level": "medium",
+        "scenario": "時間雨量70mm超過（内水氾濫）"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[130.40,33.54],[130.43,33.54],[130.43,33.57],[130.40,33.57],[130.40,33.54]]]
+      }
+    }
+  ]
+}

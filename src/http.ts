@@ -129,7 +129,7 @@ app.delete('/mcp', async (req, res) => {
 app.get('/health', (_req, res) => {
   res.json({
     status: 'ok',
-    version: '2.8.0',
+    version: '2.9.0',
     sessions: sessions.size,
     uptime_s: Math.round(process.uptime()),
   });
@@ -138,7 +138,7 @@ app.get('/health', (_req, res) => {
 // ── Graceful shutdown ──────────────────────────────────────────────────────
 
 function gracefulShutdown(signal: string): void {
-  log.info({ signal }, 'Shutdown signal received — closing sessions');
+  log.info({ signal }, 'Shutdown signal received  Eclosing sessions');
   closeAllSessions();
   process.exit(0);
 }
