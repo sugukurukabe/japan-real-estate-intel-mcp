@@ -355,3 +355,46 @@ export const StoreLocationOutput = z.object({
   markdownReport: z.string().optional(),
 });
 export type StoreLocationOutput = z.infer<typeof StoreLocationOutput>;
+
+// ── simulate_landscape_impact (v2.3 new) ──
+
+export const LandscapeInput = z.object({
+  prefecture: prefectureField,
+  lat: z.number().describe('対象地点の緯度'),
+  lng: z.number().describe('対象地点の経度'),
+  dateTime: z.string().optional().describe('シミュレーション日時（ISO 8601形式、省略時は現在時刻）'),
+  timePreset: z.enum(['morning', 'noon', 'evening']).optional()
+    .describe('時刻プリセット（morning=8:00, noon=12:00, evening=17:00）'),
+  radiusM: z.number().default(500).describe('建物検索半径（メートル）'),
+  includeMarkdown: z.boolean().default(true),
+});
+export type LandscapeInput = z.infer<typeof LandscapeInput>;
+
+export const ShadowPolygon = z.object({
+  buildingName: z.string(),
+  height: z.number(),
+  shadowLengthM: z.number(),
+  polygon: z.array(z.tuple([z.number(), z.number()])),
+});
+
+export const LandscapeOutput = z.object({
+  sunPosition: z.object({
+    azimuthDeg: z.number(),
+    altitudeDeg: z.number(),
+    dateTime: z.string(),
+  }),
+  nearbyBuildingCount: z.number(),
+  maxHeight: z.number(),
+  avgHeight: z.number(),
+  totalShadowAreaSqm: z.number(),
+  sunlightHoursEstimate: z.number(),
+  shadowPolygons: z.array(ShadowPolygon),
+  highImpactBuildings: z.array(z.object({
+    name: z.string(),
+    height: z.number(),
+    distance: z.number(),
+  })),
+  keyInsights: z.array(z.string()),
+  markdownReport: z.string().optional(),
+});
+export type LandscapeOutput = z.infer<typeof LandscapeOutput>;

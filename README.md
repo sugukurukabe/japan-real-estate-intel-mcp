@@ -1,8 +1,19 @@
 # @sugukuru/japan-real-estate-intel-mcp
 
-日本の不動産投資・仲介・開発・管理向けに、**地価・取引価格・人口統計・災害リスク・人流・教育環境・企業立地・交通・商業施設・医療福祉** をクロス分析する MCP サーバー。
+日本の不動産投資・仲介・開発・管理向けに、**地価・取引価格・人口統計・災害リスク・人流・教育環境・企業立地・交通・商業施設・医療福祉・3D 日照シミュレーション** をクロス分析する MCP サーバー。
 
-**v2.2** で `evaluate_store_location`（出店適地評価）を新設し、交通利便性・商業施設・医療福祉の 3 データソースを全ツールに統合。ダッシュボードに 3 新レイヤーと店舗評価モードを追加。
+**v2.3** で `simulate_landscape_impact`（日照・影シミュレーション）を新設。SunCalc 太陽位置計算 + PLATEAU 建物データから影ポリゴンを生成し、日照時間を推定。ダッシュボードに影レイヤーと朝/正午/夕方の時刻プリセットを追加。
+
+## v2.3.0 What's New
+
+| 追加/変更 | 詳細 |
+|---|---|
+| **`simulate_landscape_impact` ツール新設** | SunCalc 太陽位置計算 + PLATEAU 3D 建物データから影ポリゴンを生成。日照時間推定・影面積・高影響建物リスト・Markdown レポート |
+| **影レイヤー追加** | ダッシュボードに 🌑影 レイヤー。建物ごとの影ポリゴンを半透明で描画 |
+| **時刻プリセット** | 朝 8:00 / 正午 12:00 / 夕方 17:00 の 3 プリセットで時刻別影シミュレーション |
+| **日照推定アルゴリズム** | 8:00〜16:00 の 5 時点で太陽高度 > 10° & 影外判定 → 日照時間概算 |
+| 合計ツール数 | **9 → 10 ツール** |
+| テスト総数 | **130 → 149 テスト** |
 
 ## v2.2.0 What's New
 
@@ -81,8 +92,8 @@
 
 ## 特徴
 
-- **9つのツール**: 市場クロス分析 / リスク評価 / ファミリー評価 / 法人需要予測 / レポート生成 / ダッシュボード / 都道府県比較 / ローカルドリルダウン / **出店適地評価（v2.2 new）**
-- **11レイヤーダッシュボード**: 地価 / 災害リスク / 取引 / 人口 / 人流 / 学区 / 企業密度 / 3D建物 / **交通（v2.2 new）** / **商業施設（v2.2 new）** / **医療（v2.2 new）**
+- **10 ツール**: 市場クロス分析 / リスク評価 / ファミリー評価 / 法人需要予測 / レポート生成 / ダッシュボード / 都道府県比較 / ローカルドリルダウン / 出店適地評価 / **日照・影シミュレーション（v2.3 new）**
+- **12 レイヤーダッシュボード**: 地価 / 災害リスク / 取引 / 人口 / 人流 / 学区 / 企業密度 / 3D 建物 / 交通 / 商業施設 / 医療 / **影（v2.3 new）**
 - **都道府県セレクタ**: ダッシュボード上で Aichi ↔ Tokyo を切り替え
 - **比較モード（v2.1 フル機能）**: 地図 2 分割 + SVG レーダーチャート + ランキングテーブル + bestFor 表示
 - **ドリルダウンパネル（v2.1 new）**: 市区町村クリックで詳細パネル展開。町丁目ラベル入力対応
@@ -142,7 +153,7 @@ node dist/http.js
 }
 ```
 
-## ツール一覧（v2.2: 9 本）
+## ツール一覧（v2.3: 10 本）
 
 ### `cross_analyze_real_estate_market`
 
@@ -182,7 +193,7 @@ capabilities がない都道府県では該当フィールドが `undefined` に
 
 ### `open_dashboard`
 
-8レイヤーの不動産ダッシュボードを起動。v2.1 から比較モード（地図 2 分割 + SVG レーダー）とドリルダウンパネルを搭載。
+12 レイヤーの不動産ダッシュボードを起動。比較モード（地図 2 分割 + SVG レーダー）、ドリルダウンパネル、影シミュレーション（時刻プリセット）を搭載。
 
 ### `compare_prefectures` *(v2.1 新設)*
 
@@ -229,6 +240,22 @@ capabilities がない都道府県では該当フィールドが `undefined` に
 | `includeMarkdown` | boolean | `true` | Markdown レポートを含むか |
 
 **出力**: `overallScore (0-100)`, `breakdown`（8 軸スコア）, `keyCompetitors[]`（距離・チェーン名・強度・弱点）, `differentiationSuggestions[]`（AI 差別化提案）, `keyInsights[]`, `markdownReport`
+
+### `simulate_landscape_impact` *(v2.3 新設)*
+
+SunCalc 太陽位置計算 + PLATEAU 3D 建物データから指定地点の日照・影をシミュレーション。影ポリゴン（[lat,lng][] 配列）を返すため、ダッシュボードや GIS に直接描画可能。
+
+| パラメータ | 型 | デフォルト | 説明 |
+|---|---|---|---|
+| `prefecture` | string | `"愛知県"` | 都道府県名 |
+| `lat` | number | - | 対象地点の緯度 |
+| `lng` | number | - | 対象地点の経度 |
+| `dateTime` | string | 現在時刻 | シミュレーション日時（ISO 8601） |
+| `timePreset` | enum | optional | morning(8:00) / noon(12:00) / evening(17:00) |
+| `radiusM` | number | `500` | 建物検索半径（m） |
+| `includeMarkdown` | boolean | `true` | Markdown レポートを含むか |
+
+**出力**: `sunPosition`（方位角・高度）, `nearbyBuildingCount`, `maxHeight`, `avgHeight`, `totalShadowAreaSqm`, `sunlightHoursEstimate`, `shadowPolygons[]`（建物名・高さ・影長・ポリゴン座標）, `highImpactBuildings[]`, `keyInsights[]`, `markdownReport`
 
 ## Resources（v2.0 URI パターン）
 
@@ -279,25 +306,17 @@ capabilities がない都道府県では該当フィールドが `undefined` に
 pnpm install
 pnpm dev          # TypeScript watch
 pnpm build:ui     # ダッシュボード再ビルド
-pnpm test         # Vitest (130 tests)
+pnpm test         # Vitest (149 tests)
 pnpm lint         # 型チェック
 ```
 
 ## ロードマップ
 
-### v2.2.0（本バージョン）
-- `evaluate_store_location`: 店舗タイプ別重み付け（コンビニ/ファミレス/カフェ/ドラッグストア/スーパー）+ 競合分析 + 差別化提案
-- 交通利便性・商業施設・医療福祉の 3 データソースを全ツールに統合
-- `cross_analyze` に `includeTransport` / `includeCommercial` / `includeMedical` フラグ追加
-- `compare_prefectures` のメトリクスに transport / commercial / medical 追加（8 軸レーダー対応）
-- `drill_down_local_analysis` に交通スコア・商業密度・医療充実度を追加
-- ダッシュボード 3 新レイヤー + 店舗評価モードトグル
-
-### v2.3.0（予定）: PLATEAU 3D 影シミュレーション
-- SunCalc.js による太陽位置計算
-- 建物高さ × 太陽角度からの影ポリゴン計算（ヒューリスティック 2D）
-- ダッシュボード日時スライダー + 影レイヤー ON/OFF
-- `simulate_landscape_impact` ツール（日照時間・影面積・高層建物リスト）
+### v2.3.0（本バージョン）
+- `simulate_landscape_impact`: SunCalc 太陽位置計算 + PLATEAU 建物データから影ポリゴン生成
+- ダッシュボード影レイヤー + 朝/正午/夕方の時刻プリセット
+- 日照時間推定（8:00〜16:00 の 5 時点判定）
+- 高影響建物リスト + Markdown レポート
 
 ### v2.4.0（予定）: 町丁目実データ + Three.js 3D
 - e-Stat 小地域集計（町丁目別人口・世帯）を実データとして統合

@@ -9,6 +9,7 @@ import {
   ComparePrefecturesInput,
   DrillDownInput,
   StoreLocationInput,
+  LandscapeInput,
 } from './schemas.js';
 import { crossAnalyze } from './tools/cross_analyze_real_estate_market.js';
 import { assessPropertyRisk } from './tools/assess_property_risk.js';
@@ -19,6 +20,7 @@ import { predictCorporateDemand } from './tools/predict_corporate_demand.js';
 import { comparePrefectures } from './tools/compare_prefectures.js';
 import { drillDownLocalAnalysis } from './tools/drill_down_local_analysis.js';
 import { evaluateStoreLocation } from './tools/evaluate_store_location.js';
+import { simulateLandscape } from './tools/simulate_landscape_impact.js';
 import { getLandPriceResource } from './resources/land_price.js';
 import { getFloodResource } from './resources/flood.js';
 import { getPopulationResource } from './resources/population.js';
@@ -29,7 +31,7 @@ import './data-loaders/index.js';
 export function createServer(): McpServer {
   const server = new McpServer({
     name: 'japan-real-estate-intel-mcp',
-    version: '2.2.0',
+    version: '2.3.0',
   });
 
   // ── Tools (6) ──
@@ -175,6 +177,22 @@ export function createServer(): McpServer {
     async (args) => {
       const input = StoreLocationInput.parse(args);
       const result = evaluateStoreLocation(input);
+      return {
+        content: [
+          { type: 'text' as const, text: JSON.stringify(result, null, 2) },
+        ],
+        structuredContent: { ...result, attribution: ATTRIBUTION },
+      };
+    },
+  );
+
+  server.tool(
+    'simulate_landscape_impact',
+    '指定地点の日照・影シミュレーション（PLATEAU 3D建物データ + SunCalc太陽位置計算）',
+    LandscapeInput.shape,
+    async (args) => {
+      const input = LandscapeInput.parse(args);
+      const result = simulateLandscape(input);
       return {
         content: [
           { type: 'text' as const, text: JSON.stringify(result, null, 2) },

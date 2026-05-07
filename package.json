@@ -1,6 +1,6 @@
 {
   "name": "@sugukuru/japan-real-estate-intel-mcp",
-  "version": "2.2.0",
+  "version": "2.3.0",
   "description": "日本の不動産投資・仲介・開発・管理向けに地価・取引価格・人口統計・災害リスク・人流・教育・企業立地をクロス分析するMCPサーバー（愛知県・東京都対応、都道府県プラガブル構造）",
   "type": "module",
   "main": "dist/index.js",
@@ -61,6 +61,7 @@
     "@turf/helpers": "^7.2.0",
     "express": "^5.1.0",
     "papaparse": "^5.5.2",
+    "suncalc": "^1.9.0",
     "topojson-client": "^3.1.0",
     "zod": "^3.24.4"
   },
@@ -69,6 +70,7 @@
     "@types/geojson": "^7946.0.16",
     "@types/node": "^22.15.3",
     "@types/papaparse": "^5.3.15",
+    "@types/suncalc": "^1.9.2",
     "@types/topojson-client": "^3.1.5",
     "esbuild": "^0.25.4",
     "typescript": "^5.8.3",

@@ -265,6 +265,7 @@ let selectedArea = '';
 let currentOverlayGroup: any = null;
 let secondaryOverlayGroup: any = null;
 let comparisonMode = false;
+let currentTimePreset: 'morning' | 'noon' | 'evening' = 'noon';
 
 function pref(key?: string): PrefectureConfig { return PREFECTURES[key ?? currentPrefecture]; }
 function secondaryPrefKey(): string { return currentPrefecture === 'aichi' ? 'tokyo' : 'aichi'; }
@@ -290,10 +291,39 @@ function createLeafletMap(containerId: string, prefKey: string): any {
   return m;
 }
 
+function toggleShadowControls(show: boolean) {
+  const ctrl = document.getElementById('shadow-controls');
+  if (ctrl) ctrl.classList.toggle('active', show);
+}
+
+function initShadowControls() {
+  const container = document.getElementById('map-container');
+  if (!container) return;
+  const div = document.createElement('div');
+  div.id = 'shadow-controls';
+  div.innerHTML = `
+    <label>影シミュレーション</label>
+    <button class="time-btn" data-time="morning">朝 8:00</button>
+    <button class="time-btn active" data-time="noon">正午 12:00</button>
+    <button class="time-btn" data-time="evening">夕方 17:00</button>
+  `;
+  div.addEventListener('click', (e) => {
+    const target = e.target as HTMLElement;
+    const time = target.getAttribute('data-time') as 'morning' | 'noon' | 'evening' | null;
+    if (!time) return;
+    currentTimePreset = time;
+    div.querySelectorAll('.time-btn').forEach(b => b.classList.remove('active'));
+    target.classList.add('active');
+    if (currentLayer === 'shadow') renderShadowLayer();
+  });
+  container.appendChild(div);
+}
+
 function initMap() {
   map = createLeafletMap('map-container', currentPrefecture);
   renderLandPriceLayer();
   renderLayerControl();
+  initShadowControls();
   renderLegend();
 }
 
@@ -499,6 +529,79 @@ function buildPlateauGroup(prefKey: string): any {
   return group;
 }
 
+function buildShadowGroup(prefKey: string, onClickArea?: (name: string) => void, timePreset?: 'morning' | 'noon' | 'evening'): any {
+  const group = L.layerGroup();
+  const config = pref(prefKey);
+  const preset = timePreset ?? currentTimePreset;
+
+  const sunParams: Record<string, { azimuthDeg: number; altitudeDeg: number; label: string }> = {
+    morning: { azimuthDeg: 120, altitudeDeg: 20, label: '朝 8:00' },
+    noon:    { azimuthDeg: 180, altitudeDeg: 65, label: '正午 12:00' },
+    evening: { azimuthDeg: 240, altitudeDeg: 15, label: '夕方 17:00' },
+  };
+  const sun = sunParams[preset];
+  const azRad = (sun.azimuthDeg * Math.PI) / 180;
+  const altRad = (sun.altitudeDeg * Math.PI) / 180;
+
+  for (const bldg of config.plateau) {
+    const heightM = bldg.height;
+    const shadowLen = heightM / Math.tan(altRad);
+    const latRad = (bldg.lat * Math.PI) / 180;
+    const mPerDegLat = 111320;
+    const mPerDegLng = 111320 * Math.cos(latRad);
+
+    const dxM = Math.sin(azRad) * shadowLen;
+    const dyM = -Math.cos(azRad) * shadowLen;
+    const dLat = dyM / mPerDegLat;
+    const dLng = dxM / mPerDegLng;
+
+    const footprintSide = Math.sqrt(heightM) * 0.5;
+    const halfLatF = (footprintSide / 2) / mPerDegLat;
+    const halfLngF = (footprintSide / 2) / mPerDegLng;
+
+    const corners = [
+      [bldg.lat - halfLatF, bldg.lng - halfLngF],
+      [bldg.lat - halfLatF, bldg.lng + halfLngF],
+      [bldg.lat + halfLatF, bldg.lng + halfLngF],
+      [bldg.lat + halfLatF, bldg.lng - halfLngF],
+    ];
+    const shadowPoly = [
+      corners[0],
+      corners[1],
+      [corners[1][0] + dLat, corners[1][1] + dLng],
+      [corners[2][0] + dLat, corners[2][1] + dLng],
+      [corners[3][0] + dLat, corners[3][1] + dLng],
+      corners[3],
+    ];
+
+    const polygon = L.polygon(shadowPoly as [number, number][], {
+      fillColor: '#000000', fillOpacity: 0.3, color: '#000000', weight: 0.5, opacity: 0.4,
+    });
+    polygon.bindPopup(`
+      <div class="popup-title">${bldg.name} の影</div>
+      <div class="popup-row"><span>時刻</span><span>${sun.label}</span></div>
+      <div class="popup-row"><span>影の長さ</span><span>${Math.round(shadowLen)}m</span></div>
+      <div class="popup-row"><span>影響範囲</span><span>${shadowLen > 200 ? '広範囲' : shadowLen > 100 ? '中程度' : '限定的'}</span></div>
+    `);
+    group.addLayer(polygon);
+
+    const circle = L.circleMarker([bldg.lat, bldg.lng], {
+      radius: 7, fillColor: '#8b5cf6', fillOpacity: 0.8, color: '#fff', weight: 1,
+    });
+    const shadowImpact = shadowLen > 200 ? '高' : shadowLen > 100 ? '中' : '低';
+    const floors = Math.round(heightM / 3.5);
+    circle.bindPopup(`
+      <div class="popup-title">${bldg.name}</div>
+      <div class="popup-row"><span>高さ</span><span>${heightM}m</span></div>
+      <div class="popup-row"><span>階数(推定)</span><span>${floors}F</span></div>
+      <div class="popup-row"><span>影の影響</span><span style="color:${shadowImpact === '高' ? '#ff4d6a' : shadowImpact === '中' ? '#ffb340' : '#34d399'}">${shadowImpact}</span></div>
+    `);
+    if (onClickArea) circle.on('click', () => onClickArea(bldg.city));
+    group.addLayer(circle);
+  }
+  return group;
+}
+
 function buildTransportGroup(prefKey: string, onClickArea?: (name: string) => void): any {
   const group = L.layerGroup();
   const config = pref(prefKey);
@@ -586,6 +689,7 @@ function renderLayerOn(mapInst: any, layer: string, prefKey: string, onClickArea
     case 'transport': return addLayerToMap(mapInst, buildTransportGroup(prefKey, onClickArea));
     case 'commercial_facilities': return addLayerToMap(mapInst, buildCommercialGroup(prefKey, onClickArea));
     case 'medical_facilities': return addLayerToMap(mapInst, buildMedicalGroup(prefKey, onClickArea));
+    case 'shadow': return addLayerToMap(mapInst, buildShadowGroup(prefKey, onClickArea, currentTimePreset));
     default: return null;
   }
 }
@@ -678,6 +782,15 @@ function renderMedicalFacilitiesLayer() {
   }
 }
 
+function renderShadowLayer() {
+  clearOverlay();
+  currentOverlayGroup = renderLayerOn(map, 'shadow', currentPrefecture, selectArea);
+  if (comparisonMode && mapSecondary) {
+    secondaryOverlayGroup = renderLayerOn(mapSecondary, 'shadow', secondaryPrefKey());
+  }
+  toggleShadowControls(true);
+}
+
 const CAPABILITY_LAYERS: Record<string, keyof PrefectureConfig['capabilities']> = {
   human_flow: 'humanFlow',
   school_district: 'education',
@@ -686,6 +799,7 @@ const CAPABILITY_LAYERS: Record<string, keyof PrefectureConfig['capabilities']> 
   transport: 'transport',
   commercial_facilities: 'commercial',
   medical_facilities: 'medical',
+  shadow: 'plateau',
 };
 
 function isLayerAvailable(layer: string): boolean {
@@ -711,7 +825,9 @@ function switchLayer(layer: string) {
     case 'transport': renderTransportLayer(); break;
     case 'commercial_facilities': renderCommercialFacilitiesLayer(); break;
     case 'medical_facilities': renderMedicalFacilitiesLayer(); break;
+    case 'shadow': renderShadowLayer(); break;
   }
+  if (layer !== 'shadow') toggleShadowControls(false);
   renderLegend();
   updateLayerButtons();
 }
@@ -744,6 +860,7 @@ function renderLayerControl() {
     <button class="layer-btn" data-layer="transport">🚉交通</button>
     <button class="layer-btn" data-layer="commercial_facilities">🏬商業施設</button>
     <button class="layer-btn" data-layer="medical_facilities">🏥医療</button>
+    <button class="layer-btn" data-layer="shadow">🌑影</button>
   `;
   ctrl.addEventListener('click', (e) => {
     const target = e.target as HTMLElement;
@@ -799,6 +916,10 @@ function renderLegend() {
     medical_facilities: `<div class="legend-title">医療施設</div>
       <div class="legend-item"><div class="legend-color" style="background:#ec4899"></div> 高密度医療</div>
       <div class="legend-item"><div class="legend-color" style="background:rgba(236,72,153,0.3)"></div> 低密度医療</div>`,
+    shadow: `<div class="legend-title">影シミュレーション</div>
+      <div class="legend-item"><div class="legend-color" style="background:#8b5cf6"></div> 建物位置</div>
+      <div class="legend-item"><div class="legend-color" style="background:rgba(0,0,0,0.5)"></div> 影の範囲</div>
+      <div class="legend-item" style="font-size:10px;color:var(--text-muted);margin-top:4px">※2Dヒューリスティック近似</div>`,
   };
 
   legend.innerHTML = legendMap[currentLayer] ?? '';
