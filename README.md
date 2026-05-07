@@ -7,7 +7,61 @@
 
 日本の不動産投資・仲介・開発・管理向けに、**地価・取引価格・人口統計・災害リスク・人流・教育環境・企業立地・交通・商業施設・医療福祉・3D 日照シミュレーション・町丁目実データ** をクロス分析する MCP サーバー。
 
-**v2.5** で本番品質の土台を完成。エラーハンドリング・構造化ロギング(pino)・HTTP サーバー堅牢化(helmet/API key/タイムアウト)・ESLint/Prettier・CI/CD 強化を実施。
+**v2.7** で実データ統合。MLIT 不動産情報ライブラリ API（取引価格）と e-Stat 国勢調査 API から実データを取得し、既存 CSV を更新する CLI ツール `npm run data:fetch` を追加。
+
+## 実データセットアップ（v2.7.0）
+
+API キーを取得したら一発で 3 都府県を実データに切り替えられます。
+
+### 1. API キー取得
+
+| API | 申請URL | 用途 |
+|---|---|---|
+| MLIT 不動産情報ライブラリ | https://www.reinfolib.mlit.go.jp/help/apiManual/ | 取引価格・地価 |
+| e-Stat (政府統計) | https://www.e-stat.go.jp/api/ | 国勢調査人口 |
+
+### 2. 環境変数設定
+
+```bash
+cp .env.example .env
+# .env を開いて API キーを記入
+```
+
+### 3. データ取得実行
+
+```bash
+# 愛知県 2025年
+npm run data:fetch -- --prefecture aichi --year 2025
+
+# 全都府県一括
+npm run data:fetch:all
+
+# 特定四半期
+npm run data:fetch -- --prefecture tokyo --year 2025 --quarter 2
+```
+
+キーが未設定のソースはスキップされ、既存 CSV は変更されません。
+
+### 4. MCP サーバー再起動
+
+```bash
+npm run build
+node dist/index.js  # または npm start
+```
+
+---
+
+## v2.7.0 What's New
+
+| 追加/変更 | 詳細 |
+|---|---|
+| **MLIT API クライアント** | `src/api-client/mlit.ts` — XIT001 取引価格取得・CSV 変換（city×district 単位で median 集計） |
+| **e-Stat API クライアント** | `src/api-client/estat.ts` — 国勢調査人口・世帯数取得・CSV 変換 |
+| **実データ取得 CLI** | `scripts/fetch-real-data.ts` — `npm run data:fetch` で 3 都府県の実データを一括更新 |
+| **型定義** | `src/api-client/types.ts` — MLIT/e-Stat レスポンス型 + CSV 行型 |
+| **.env.example** | API キー設定テンプレート追加 |
+| テスト総数 | **210 → 235 テスト** |
+| tsx | `devDependencies` に追加（TypeScript 直接実行） |
 
 ## v2.5.0 What's New
 

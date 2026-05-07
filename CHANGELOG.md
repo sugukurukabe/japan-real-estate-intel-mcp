@@ -7,6 +7,26 @@ Versioning: [Semantic Versioning](https://semver.org/)
 
 ---
 
+## [2.7.0] – 2026-05-07 — Real Data Integration (e-Stat / MLIT API)
+
+### Added
+- **`src/api-client/types.ts`** — `MlitTransaction`, `MlitApiResponse`, `EstatApiResponse`, `EstatValue`, `TransactionCsvRow`, `LandPriceCsvRow`, `PopulationCsvRow`, `FetchResult` type definitions
+- **`src/api-client/mlit.ts`** — `MlitClient.fetchTransactions()` (XIT001), `toTransactionRows()`, `toLandPriceRows()` (median aggregation by city×district); `transactionsToCsv()`, `landPriceToCsv()` serialisers
+- **`src/api-client/estat.ts`** — `EstatClient.fetchPopulation()` (2020 Census, statsDataId=0003443220), `toPopulationRows()` (area code → city name via CLASS_INF); `populationToCsv()` serialiser
+- **`scripts/fetch-real-data.ts`** — CLI orchestrator: `--prefecture`, `--year`, `--quarter`, `--all` args; reads `.env`; skips sources without keys; overwrites `data/{pref}/*.csv`
+- **`.env.example`** — `MLIT_API_KEY` + `ESTAT_APP_ID` + MCP HTTP server settings
+- **`npm run data:fetch`** / **`npm run data:fetch:all`** scripts in `package.json`
+- **25 new tests** in `tests/api-client.test.ts` (fetch mocked via `vi.stubGlobal`)
+
+### Changed
+- `package.json` — version 2.7.0; added `tsx` devDependency; added `data:fetch` / `data:fetch:all` scripts
+- `src/server.ts`, `src/http.ts` — version string updated to 2.7.0
+
+### Dependencies Added
+- `tsx` ^4.21.0 (dev) — TypeScript direct execution for CLI scripts
+
+---
+
 ## [2.5.0] – 2026-05-07 — Foundation Hardening
 
 ### Added
@@ -103,6 +123,7 @@ Versioning: [Semantic Versioning](https://semver.org/)
 - Aichi prefecture data: land price, population, flood/earthquake hazard, municipalities
 - MCP Apps dashboard with Leaflet map
 
+[2.7.0]: https://github.com/sugukuru/japan-real-estate-intel-mcp/compare/v2.5.0...v2.7.0
 [2.5.0]: https://github.com/sugukuru/japan-real-estate-intel-mcp/compare/v2.4.0...v2.5.0
 [2.4.0]: https://github.com/sugukuru/japan-real-estate-intel-mcp/compare/v2.3.0...v2.4.0
 [2.3.0]: https://github.com/sugukuru/japan-real-estate-intel-mcp/compare/v2.2.0...v2.3.0

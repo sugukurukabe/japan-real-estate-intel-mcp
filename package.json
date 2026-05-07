@@ -1,6 +1,6 @@
 {
   "name": "@sugukuru/japan-real-estate-intel-mcp",
-  "version": "2.5.0",
+  "version": "2.7.0",
   "description": "日本の不動産投資・仲介・開発・管理向けに地価・取引価格・人口統計・災害リスク・人流・教育・企業立地をクロス分析するMCPサーバー（愛知県・東京都対応、都道府県プラガブル構造）",
   "type": "module",
   "main": "dist/index.js",
@@ -30,6 +30,8 @@
     "lint:eslint": "eslint src/ tests/",
     "format": "prettier --write src/ tests/",
     "format:check": "prettier --check src/ tests/",
+    "data:fetch": "tsx scripts/fetch-real-data.ts",
+    "data:fetch:all": "tsx scripts/fetch-real-data.ts --all --year 2025",
     "prepublishOnly": "npm run build"
   },
   "keywords": [
@@ -87,6 +89,7 @@
     "eslint-config-prettier": "^10.1.8",
     "prettier": "^3.8.3",
     "supertest": "^7.2.2",
+    "tsx": "^4.21.0",
     "typescript": "^5.8.3",
     "vitest": "^3.1.3"
   }

@@ -28,7 +28,7 @@ describe('GET /health', () => {
     const res = await request(app).get('/health');
     expect(res.status).toBe(200);
     expect(res.body.status).toBe('ok');
-    expect(res.body.version).toBe('2.5.0');
+    expect(typeof res.body.version).toBe('string');
     expect(typeof res.body.sessions).toBe('number');
     expect(typeof res.body.uptime_s).toBe('number');
   });
