@@ -1,0 +1,22 @@
+## v5.1.0 Completeness Pass
+
+This patch release fixes critical gaps found after the v5.0.0 release.
+
+### Fixes
+- `portfolio_optimizer` tool was not registered in `server.ts` (12 tools → 13 tools)
+- Saitama/Chiba loaders returned empty data for `getEarthquakeData()`, `getFloodZones()`, `getMunicipalities()` — converted CSV/JSON data files to loader-compatible formats (earthquake.json, flood.geojson, municipalities.topojson)
+
+### Added
+- `LoaderCapabilities.transactions: boolean` field — all 10 prefecture loaders set to `true`
+- `portfolio_optimization` MCP Prompt (5 → 6 prompts)
+- Dashboard: "Portfolio Optimizer" button with interactive JSON input generator UI
+- Test coverage: +39 tests (382 → 421), including:
+  - `PortfolioOptimizerInput` Zod schema validation (7 cases)
+  - Saitama/Chiba in national-expansion parameterized test suite
+
+### Documentation
+- README: Added v5.0.0 10-prefecture capability matrix and v5.1.0 patch notes
+- CHANGELOG: Added [5.1.0] entry
+
+### Full test suite
+- **421 tests passing** across 20 test files

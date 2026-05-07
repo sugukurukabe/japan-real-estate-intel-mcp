@@ -1855,7 +1855,7 @@ function updateInsightPanel(area: string) {
         ${price && price.change < 0 ? `<li>地価が下落傾向。底値買いの機会か構造的リスクか要精査。</li>` : ''}
         ${risk && risk.overall >= 60 ? `<li>災害リスクが高め。保険コスト増を価格に織り込む必要あり。</li>` : ''}
         ${flow && flow.weekday > 50000 ? `<li>高人流エリア。商業・オフィス需要が堅調。</li>` : ''}
-        ${!price ? `<li>エリアを選択するとインサイトが表示されます。</li>` : ''}
+        ${!price ? `<li><span id="show-examples-link" style="color:var(--accent);cursor:pointer;text-decoration:underline">クイック事例を見る →</span></li>` : ''}
         <li>詳細は「レポート生成」で確認できます。</li>
       </ul>
     </div>
@@ -1886,6 +1886,10 @@ function updateInsightPanel(area: string) {
 
   document.getElementById('btn-portfolio')?.addEventListener('click', () => {
     showPortfolioHelper();
+  });
+
+  document.getElementById('show-examples-link')?.addEventListener('click', () => {
+    showQuickStartExamples();
   });
 
   // Scenario What-If selector
@@ -2087,6 +2091,153 @@ function init() {
   if (urlMode === 'store' || urlMode === 'investment') {
     applyMode(urlMode);
   }
+
+  // Show Quick Start Examples for first-time visitors
+  if (!localStorage.getItem('rei-seen')) {
+    setTimeout(() => showQuickStartExamples(), 400);
+  }
+}
+
+const QUICK_EXAMPLES = [
+  {
+    icon: '📈',
+    title: '地価トレンド予測',
+    desc: '新宿区の5年後地価をAIが予測。CAGR・投資シグナル付き。',
+    tag: '投資判断',
+    action: () => { selectArea('新宿区'); },
+    prefecture: 'tokyo',
+  },
+  {
+    icon: '🏭',
+    title: '企業立地需要分析',
+    desc: '名古屋市中区のオフィス・工場需要スコアを算出。',
+    tag: '法人需要',
+    action: () => { selectArea('名古屋市中区'); },
+    prefecture: 'aichi',
+  },
+  {
+    icon: '🏘️',
+    title: 'ファミリー向け適性評価',
+    desc: '横浜市西区の教育・安全・医療スコアを総合評価。',
+    tag: '住宅用途',
+    action: () => { selectArea('横浜市西区'); },
+    prefecture: 'kanagawa',
+  },
+  {
+    icon: '📊',
+    title: 'ポートフォリオ最適化',
+    desc: '東京・大阪・埼玉の3エリアに投資配分を最適化。',
+    tag: 'ポートフォリオ',
+    action: () => { showPortfolioHelper(); },
+    prefecture: null,
+  },
+  {
+    icon: '🌊',
+    title: '災害リスク + What-If',
+    desc: '大阪市北区で新駅開設シナリオを試算。地価影響+14%。',
+    tag: 'リスク分析',
+    action: () => { selectArea('大阪市北区'); },
+    prefecture: 'osaka',
+  },
+  {
+    icon: '🏪',
+    title: '店舗出店スコア',
+    desc: '福岡市博多区の人流・商業施設・交通データで出店適性を判定。',
+    tag: '店舗戦略',
+    action: () => { selectArea('福岡市博多区'); },
+    prefecture: 'fukuoka',
+  },
+] as const;
+
+function showQuickStartExamples(): void {
+  const overlay = document.getElementById('report-overlay');
+  const content = document.getElementById('report-content');
+  if (!overlay || !content) return;
+
+  const cards = QUICK_EXAMPLES.map((ex, i) => `
+    <div class="qs-card" data-idx="${i}" style="
+      background:var(--bg-secondary);border:1px solid var(--border);border-radius:10px;
+      padding:14px 16px;cursor:pointer;transition:border-color .2s,transform .15s;
+      display:flex;gap:12px;align-items:flex-start;
+    ">
+      <span style="font-size:24px;line-height:1;flex-shrink:0">${ex.icon}</span>
+      <div style="flex:1;min-width:0">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">
+          <strong style="font-size:13px">${ex.title}</strong>
+          <span style="font-size:10px;background:var(--accent);color:#fff;
+            border-radius:4px;padding:2px 6px;white-space:nowrap">${ex.tag}</span>
+        </div>
+        <p style="font-size:11px;color:var(--text-muted);margin:0;line-height:1.5">${ex.desc}</p>
+      </div>
+    </div>
+  `).join('');
+
+  content.innerHTML = `
+    <button class="report-close" id="close-quickstart" style="position:absolute;top:14px;right:16px;
+      background:none;border:none;font-size:20px;cursor:pointer;color:var(--text-muted)">✕</button>
+    <h2 style="margin-bottom:4px;font-size:18px">クイックスタート</h2>
+    <p style="font-size:12px;color:var(--text-muted);margin-bottom:16px">
+      クリックしてすぐに試せるサンプルシナリオです。初回のみ表示されます。
+    </p>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;max-height:60vh;overflow-y:auto;padding-right:4px">
+      ${cards}
+    </div>
+    <div style="margin-top:16px;display:flex;justify-content:space-between;align-items:center">
+      <button id="qs-dismiss-forever" style="font-size:11px;background:none;border:none;
+        color:var(--text-muted);cursor:pointer;text-decoration:underline;padding:0">
+        次回から表示しない
+      </button>
+      <button id="close-quickstart-btn" class="btn-report" style="padding:6px 18px;font-size:12px">
+        閉じる
+      </button>
+    </div>
+  `;
+
+  overlay.classList.add('visible');
+
+  // Card hover styles via JS
+  content.querySelectorAll('.qs-card').forEach((card) => {
+    const el = card as HTMLElement;
+    el.addEventListener('mouseenter', () => {
+      el.style.borderColor = 'var(--accent)';
+      el.style.transform = 'translateY(-2px)';
+    });
+    el.addEventListener('mouseleave', () => {
+      el.style.borderColor = 'var(--border)';
+      el.style.transform = '';
+    });
+    el.addEventListener('click', () => {
+      const idx = Number(el.dataset.idx);
+      const ex = QUICK_EXAMPLES[idx];
+      localStorage.setItem('rei-seen', '1');
+      overlay.classList.remove('visible');
+
+      // Switch prefecture if needed
+      if (ex.prefecture) {
+        const sel = document.getElementById('prefecture-select') as HTMLSelectElement | null;
+        if (sel && sel.value !== ex.prefecture) {
+          sel.value = ex.prefecture;
+          sel.dispatchEvent(new Event('change'));
+          // Slight delay so prefecture data loads before selecting area
+          setTimeout(() => ex.action(), 200);
+        } else {
+          ex.action();
+        }
+      } else {
+        ex.action();
+      }
+    });
+  });
+
+  const close = () => {
+    overlay.classList.remove('visible');
+  };
+  document.getElementById('close-quickstart')?.addEventListener('click', close);
+  document.getElementById('close-quickstart-btn')?.addEventListener('click', close);
+  document.getElementById('qs-dismiss-forever')?.addEventListener('click', () => {
+    localStorage.setItem('rei-seen', '1');
+    overlay.classList.remove('visible');
+  });
 }
 
 function showPortfolioHelper(): void {

@@ -76,7 +76,7 @@ function withErrorHandling(
 export function createServer(): McpServer {
   const server = new McpServer({
     name: 'japan-real-estate-intel-mcp',
-    version: '5.1.0',
+    version: '5.2.0',
   });
 
   // -- Tools (13) --
@@ -511,6 +511,23 @@ export function createServer(): McpServer {
             ``,
             `portfolio_optimizer ツールで各エリアのリターン・リスク・推奨配分を算出しMarkdownレポートを生成。`,
           ].join('\n'),
+        },
+      }],
+    }),
+  );
+
+  server.prompt(
+    'quick_start_examples',
+    '初回ユーザー向けクイックスタートガイド。6つの具体的な使用例をコール例付きでMarkdown返却する',
+    {
+      goal: z.string().optional().describe('investment=投資家向け、store=店舗出店向け、all=全料（デフォルト）'),
+    },
+    ({ goal: _goal }) => ({
+      messages: [{
+        role: 'user' as const,
+        content: {
+          type: 'text' as const,
+          text: ['## Japan Real Estate Intel MCP -- Quick Start', '', '以下の例をそのままチャットに貼り付けて実行できます。', '', '---', '', '### 1. 地価トレンド予測（投資判断）', '```', 'forecast_land_price_trend({ "prefecture": "東京都", "city": "新宿区", "horizon": "5y" })', '```', '> **用途**: 5年後の地価予測・CAGR・投資シグナル(buy/hold/caution)を取得。', '', '---', '', '### 2. 企業立地需要分析', '```', 'predict_corporate_demand({ "prefecture": "愛知県", "city": "名古屋市中区", "industryType": "manufacturing" })', '```', '> **用途**: 制造業・オフィス・小売の需要スコア。法人調査に有効。', '', '---', '', '### 3. ファミリー向け適性評価', '```', 'assess_family_friendly_score({ "prefecture": "神奈川県", "city": "横浜市西区" })', '```', '> **用途**: 教育・安全・医療の3軸で住宅適地を総合評価。', '', '---', '', '### 4. ポートフォリオ最適化', '```', 'portfolio_optimizer({', '  "targets": [', '    { "prefecture": "東京都", "city": "新宿区", "propertyType": "office", "budgetManYen": 10000 },', '    { "prefecture": "大阪府", "city": "大阪市北区", "propertyType": "commercial", "budgetManYen": 6000 },', '    { "prefecture": "埼玉県", "city": "さいたま市大宮区", "propertyType": "residential", "budgetManYen": 4000 }', '  ],', '  "riskTolerance": "medium", "investmentHorizon": "5y", "optimizeFor": "risk_adjusted"', '})', '```', '> **用途**: 3エリアの展開比率・シャープレシオ・推奨配分をMarkdownレポートで出力。', '', '---', '', '### 5. What-If シナリオ分析', '```', 'scenario_what_if({ "prefecture": "大阪府", "city": "大阪市中央区", "scenario": "new_station", "scale": "large" })', '```', '> **用途**: 新駅設置・大型商業施設の地価・投資スコアへの影響を試算。', '', '---', '', '### 6. 店舗出店適地評価', '```', 'evaluate_store_location({ "city": "福岡市博多区", "storeType": "cafe", "targetCustomer": "office_worker" })', '```', '> **用途**: 人流・交通・競合店分布を考慮した出店適地スコアを算出。', '', '---', '', '> **ヒント**: cross_analyze_real_estate_market で地価・人流・教育・企業・家族スコアを一括分析できます。'].join('\n'),
         },
       }],
     }),

@@ -1,0 +1,14 @@
+chore: v5.1.0 completeness pass -- transactions capability, portfolio prompt+UI, 421 tests
+
+- Add LoaderCapabilities.transactions boolean (all 10 loaders set to true)
+- Fix portfolio_optimizer tool registration that was missing from server.ts (12 to 13 tools)
+- Add portfolio_optimization MCP Prompt (5 to 6 prompts)
+- Add portfolio optimizer interactive UI button in dashboard (JSON input generator)
+- Convert saitama/chiba earthquake_risk.csv to earthquake.json,
+  flood_risk.csv to flood.geojson, municipalities.json to municipalities.topojson
+  so loaders return real data instead of empty arrays
+- Extend national-expansion.test.ts with saitama/chiba parameterized test entries
+- Add PortfolioOptimizerInput schema validation tests (7 cases) to schemas.test.ts
+- Update README with v5.0.0 10-prefecture capability matrix and v5.1.0 patch notes
+- Bump version to 5.1.0
+- Tests: 421 passed (20 test files)
