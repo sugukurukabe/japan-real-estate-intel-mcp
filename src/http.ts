@@ -138,7 +138,7 @@ app.get('/health', (_req, res) => {
 // ── Graceful shutdown ──────────────────────────────────────────────────────
 
 function gracefulShutdown(signal: string): void {
-  log.info({ signal }, 'Shutdown signal received  Eclosing sessions');
+  log.info({ signal }, 'Shutdown signal received — closing sessions');
   closeAllSessions();
   process.exit(0);
 }
