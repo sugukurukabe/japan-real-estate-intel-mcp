@@ -12,6 +12,8 @@ import {
   ComparePrefecturesInput,
   DrillDownInput,
   StoreLocationInput,
+  PortfolioOptimizerInput,
+  PortfolioOptimizerOutput,
 } from '../src/schemas.js';
 
 describe('CrossAnalyzeInput', () => {
@@ -325,5 +327,85 @@ describe('ComparePrefecturesInput v2.2 metrics', () => {
     expect(r.metrics).toContain('transport');
     expect(r.metrics).toContain('commercial');
     expect(r.metrics).toContain('medical');
+  });
+});
+
+describe('PortfolioOptimizerInput (v5.0)', () => {
+  it('parses valid 2-target input with defaults', () => {
+    const r = PortfolioOptimizerInput.parse({
+      targets: [
+        { prefecture: '東京都', city: '新宿区', propertyType: 'office', budgetManYen: 10000 },
+        { prefecture: '大阪府', city: '大阪市北区', propertyType: 'commercial', budgetManYen: 5000 },
+      ],
+    });
+    expect(r.targets).toHaveLength(2);
+    expect(r.riskTolerance).toBe('medium');
+    expect(r.investmentHorizon).toBe('5y');
+    expect(r.optimizeFor).toBe('risk_adjusted');
+    expect(r.includeMarkdown).toBe(true);
+  });
+
+  it('accepts all property types', () => {
+    for (const pt of ['residential', 'commercial', 'office', 'land'] as const) {
+      const r = PortfolioOptimizerInput.parse({
+        targets: [
+          { prefecture: '愛知県', city: '名古屋市中区', propertyType: pt, budgetManYen: 5000 },
+          { prefecture: '東京都', city: '新宿区', propertyType: 'residential', budgetManYen: 5000 },
+        ],
+      });
+      expect(r.targets[0].propertyType).toBe(pt);
+    }
+  });
+
+  it('accepts all riskTolerance values', () => {
+    for (const rt of ['low', 'medium', 'high'] as const) {
+      const r = PortfolioOptimizerInput.parse({
+        targets: [
+          { prefecture: '東京都', city: '新宿区', propertyType: 'office', budgetManYen: 5000 },
+          { prefecture: '埼玉県', city: 'さいたま市大宮区', propertyType: 'residential', budgetManYen: 3000 },
+        ],
+        riskTolerance: rt,
+      });
+      expect(r.riskTolerance).toBe(rt);
+    }
+  });
+
+  it('accepts all investmentHorizon values', () => {
+    for (const h of ['3y', '5y', '10y'] as const) {
+      const r = PortfolioOptimizerInput.parse({
+        targets: [
+          { prefecture: '千葉県', city: '浦安市', propertyType: 'commercial', budgetManYen: 5000 },
+          { prefecture: '東京都', city: '江東区', propertyType: 'office', budgetManYen: 8000 },
+        ],
+        investmentHorizon: h,
+      });
+      expect(r.investmentHorizon).toBe(h);
+    }
+  });
+
+  it('accepts all optimizeFor values', () => {
+    for (const opt of ['return', 'risk_adjusted', 'diversification', 'stability'] as const) {
+      const r = PortfolioOptimizerInput.parse({
+        targets: [
+          { prefecture: '福岡県', city: '福岡市博多区', propertyType: 'residential', budgetManYen: 4000 },
+          { prefecture: '北海道', city: '札幌市中央区', propertyType: 'land', budgetManYen: 2000 },
+        ],
+        optimizeFor: opt,
+      });
+      expect(r.optimizeFor).toBe(opt);
+    }
+  });
+
+  it('rejects fewer than 2 targets', () => {
+    expect(() => PortfolioOptimizerInput.parse({
+      targets: [{ prefecture: '東京都', city: '新宿区', propertyType: 'office', budgetManYen: 5000 }],
+    })).toThrow();
+  });
+
+  it('rejects more than 5 targets', () => {
+    const targets = Array.from({ length: 6 }, (_, i) => ({
+      prefecture: '東京都', city: `区${i}`, propertyType: 'office' as const, budgetManYen: 1000,
+    }));
+    expect(() => PortfolioOptimizerInput.parse({ targets })).toThrow();
   });
 });

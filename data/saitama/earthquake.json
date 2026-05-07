@@ -1,0 +1,142 @@
+[
+  {
+    "city": "さいたま市大宮区",
+    "max_intensity": "7",
+    "probability_30y": 0.8,
+    "liquefaction_risk": "medium",
+    "description": "荒川沿い低地部で液状化リスクあり"
+  },
+  {
+    "city": "さいたま市浦和区",
+    "max_intensity": "7",
+    "probability_30y": 0.8,
+    "liquefaction_risk": "medium",
+    "description": "台地部は比較的安定"
+  },
+  {
+    "city": "さいたま市中央区",
+    "max_intensity": "7",
+    "probability_30y": 0.8,
+    "liquefaction_risk": "high",
+    "description": "低地・旧河道多く液状化注意"
+  },
+  {
+    "city": "さいたま市見沼区",
+    "max_intensity": "6強",
+    "probability_30y": 0.5,
+    "liquefaction_risk": "medium",
+    "description": "見沼田んぼ周辺は液状化注意"
+  },
+  {
+    "city": "さいたま市桜区",
+    "max_intensity": "6強",
+    "probability_30y": 0.5,
+    "liquefaction_risk": "low",
+    "description": "台地上で安定した地盤"
+  },
+  {
+    "city": "さいたま市北区",
+    "max_intensity": "6強",
+    "probability_30y": 0.5,
+    "liquefaction_risk": "medium",
+    "description": "荒川沿い地域は注意"
+  },
+  {
+    "city": "川越市",
+    "max_intensity": "6強",
+    "probability_30y": 0.5,
+    "liquefaction_risk": "medium",
+    "description": "入間川流域低地部に液状化リスク"
+  },
+  {
+    "city": "所沢市",
+    "max_intensity": "6強",
+    "probability_30y": 0.5,
+    "liquefaction_risk": "low",
+    "description": "武蔵野台地上で地盤比較的良好"
+  },
+  {
+    "city": "越谷市",
+    "max_intensity": "7",
+    "probability_30y": 0.8,
+    "liquefaction_risk": "high",
+    "description": "低湿地帯で液状化リスク高い"
+  },
+  {
+    "city": "川口市",
+    "max_intensity": "7",
+    "probability_30y": 0.8,
+    "liquefaction_risk": "high",
+    "description": "荒川・綾瀬川流域で液状化リスク高"
+  },
+  {
+    "city": "熊谷市",
+    "max_intensity": "6強",
+    "probability_30y": 0.5,
+    "liquefaction_risk": "medium",
+    "description": "荒川沿い低地部は注意"
+  },
+  {
+    "city": "草加市",
+    "max_intensity": "7",
+    "probability_30y": 0.8,
+    "liquefaction_risk": "high",
+    "description": "元荒川・伝右川流域で液状化危険"
+  },
+  {
+    "city": "春日部市",
+    "max_intensity": "7",
+    "probability_30y": 0.8,
+    "liquefaction_risk": "high",
+    "description": "低地・旧河道多く液状化高リスク"
+  },
+  {
+    "city": "上尾市",
+    "max_intensity": "6強",
+    "probability_30y": 0.5,
+    "liquefaction_risk": "medium",
+    "description": "荒川流域低地部は注意"
+  },
+  {
+    "city": "新座市",
+    "max_intensity": "6強",
+    "probability_30y": 0.5,
+    "liquefaction_risk": "low",
+    "description": "武蔵野台地上で比較的安全"
+  },
+  {
+    "city": "入間市",
+    "max_intensity": "6強",
+    "probability_30y": 0.5,
+    "liquefaction_risk": "low",
+    "description": "丘陵地で傾斜地注意"
+  },
+  {
+    "city": "朝霞市",
+    "max_intensity": "6強",
+    "probability_30y": 0.5,
+    "liquefaction_risk": "medium",
+    "description": "黒目川沿い低地は注意"
+  },
+  {
+    "city": "志木市",
+    "max_intensity": "6強",
+    "probability_30y": 0.5,
+    "liquefaction_risk": "medium",
+    "description": "新河岸川流域低地は注意"
+  },
+  {
+    "city": "和光市",
+    "max_intensity": "6強",
+    "probability_30y": 0.5,
+    "liquefaction_risk": "low",
+    "description": "武蔵野台地縁辺部"
+  },
+  {
+    "city": "蕨市",
+    "max_intensity": "7",
+    "probability_30y": 0.8,
+    "liquefaction_risk": "high",
+    "description": "低地部液状化リスク高い・埼玉最小市"
+  }
+]

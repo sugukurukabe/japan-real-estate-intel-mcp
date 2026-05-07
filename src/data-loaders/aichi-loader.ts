@@ -58,7 +58,7 @@ export class AichiLoader extends BaseLoader {
   readonly displayName = '愛知県';
   readonly isoCode = 'JP-23';
   readonly capabilities: LoaderCapabilities = {
-    humanFlow: true, education: true, corporate: true, crime: true, plateau: true,
+    transactions: true, humanFlow: true, education: true, corporate: true, crime: true, plateau: true,
     transport: true, commercial: true, medical: true, neighborhoods: true,
   };
 

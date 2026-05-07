@@ -76,7 +76,7 @@ function withErrorHandling(
 export function createServer(): McpServer {
   const server = new McpServer({
     name: 'japan-real-estate-intel-mcp',
-    version: '5.0.0',
+    version: '5.1.0',
   });
 
   // -- Tools (13) --
@@ -470,6 +470,46 @@ export function createServer(): McpServer {
             `規模: ${scale ?? 'medium'}`,
             ``,
             `scenario_what_if ツールでベースラインvsシナリオ後の地価・投賄スコア・リスク影響を比較しMarkdownで出力。`,
+          ].join('\n'),
+        },
+      }],
+    }),
+  );
+
+  server.tool(
+    'portfolio_optimizer',
+    '複数エリアの不動産投資ポートフォリオを最適化。最大5エリアを比較し、期待年率リターン・リスクスコア・分散スコア・シャープレシオを算出し展開する。',
+    PortfolioOptimizerInput.shape,
+    (args) => withErrorHandling('portfolio_optimizer', 'multi', async () => {
+      const input = PortfolioOptimizerInput.parse(args);
+      const result = portfolioOptimizer(input);
+      return {
+        content: [{ type: 'text' as const, text: JSON.stringify(result, null, 2) }],
+        structuredContent: { ...result, attribution: ATTRIBUTION },
+      };
+    }),
+  );
+
+  server.prompt(
+    'portfolio_optimization',
+    'ポートフォリオ最適化テンプレート。portfolio_optimizer ツールで複数エリアを比較し最適配分レポートを生成する',
+    {
+      prefectures: z.string().optional().describe('対象都道府県（例: 東京都,大阪府,埼玉県）'),
+      budget_man_yen: z.string().optional().describe('各エリアの予算（万円、カンマ区切り）'),
+      risk_tolerance: z.string().optional().describe('リスク許容度 low/medium/high'),
+    },
+    ({ prefectures, budget_man_yen, risk_tolerance }) => ({
+      messages: [{
+        role: 'user' as const,
+        content: {
+          type: 'text' as const,
+          text: [
+            `ポートフォリオ最適化レポートを作成してください。`,
+            `対象都道府県: ${prefectures ?? '東京都,大阪府,埼玉県'}`,
+            `\u4e88\u7b97(\u4e07\u5186): ${budget_man_yen ?? '10000,5000,5000'}`,
+            `リスク許容度: ${risk_tolerance ?? 'medium'}`,
+            ``,
+            `portfolio_optimizer ツールで各エリアのリターン・リスク・推奨配分を算出しMarkdownレポートを生成。`,
           ].join('\n'),
         },
       }],

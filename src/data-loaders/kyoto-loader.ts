@@ -41,7 +41,7 @@ export class KyotoLoader extends BaseLoader {
   readonly displayName = '京都府';
   readonly isoCode = 'JP-26';
   readonly capabilities: LoaderCapabilities = {
-    humanFlow: true, education: true, corporate: true, crime: true, plateau: false,
+    transactions: true, humanFlow: true, education: true, corporate: true, crime: true, plateau: false,
     transport: true, commercial: true, medical: true, neighborhoods: true,
   };
 

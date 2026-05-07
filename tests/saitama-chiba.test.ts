@@ -27,6 +27,7 @@ describe('Saitama prefecture', () => {
 
   it('has full v5.0 capabilities (all true except plateau)', () => {
     const loader = getLoader('saitama');
+    expect(loader.capabilities.transactions).toBe(true);
     expect(loader.capabilities.humanFlow).toBe(true);
     expect(loader.capabilities.education).toBe(true);
     expect(loader.capabilities.corporate).toBe(true);
@@ -139,6 +140,7 @@ describe('Chiba prefecture', () => {
 
   it('has full v5.0 capabilities (all true except plateau)', () => {
     const loader = getLoader('chiba');
+    expect(loader.capabilities.transactions).toBe(true);
     expect(loader.capabilities.humanFlow).toBe(true);
     expect(loader.capabilities.education).toBe(true);
     expect(loader.capabilities.corporate).toBe(true);

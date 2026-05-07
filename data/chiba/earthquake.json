@@ -1,0 +1,128 @@
+[
+  {
+    "city": "千葉市中央区",
+    "max_intensity": "6強",
+    "probability_30y": 0.5,
+    "liquefaction_risk": "medium",
+    "description": "臨海部で液状化リスクあり"
+  },
+  {
+    "city": "千葉市花見川区",
+    "max_intensity": "6強",
+    "probability_30y": 0.5,
+    "liquefaction_risk": "medium",
+    "description": "内陸部は比較的安定"
+  },
+  {
+    "city": "千葉市稲毛区",
+    "max_intensity": "6強",
+    "probability_30y": 0.5,
+    "liquefaction_risk": "low",
+    "description": "台地上で安定した地盤"
+  },
+  {
+    "city": "千葉市若葉区",
+    "max_intensity": "6強",
+    "probability_30y": 0.5,
+    "liquefaction_risk": "low",
+    "description": "丘陵地形あり"
+  },
+  {
+    "city": "千葉市緑区",
+    "max_intensity": "6強",
+    "probability_30y": 0.5,
+    "liquefaction_risk": "low",
+    "description": "山間部で崖崩れ注意"
+  },
+  {
+    "city": "千葉市美浜区",
+    "max_intensity": "6強",
+    "probability_30y": 0.5,
+    "liquefaction_risk": "high",
+    "description": "埋立地のため液状化リスク高"
+  },
+  {
+    "city": "船橋市",
+    "max_intensity": "6強",
+    "probability_30y": 0.5,
+    "liquefaction_risk": "medium",
+    "description": "海岸部は液状化注意"
+  },
+  {
+    "city": "松戸市",
+    "max_intensity": "6強",
+    "probability_30y": 0.5,
+    "liquefaction_risk": "low",
+    "description": "比較的安全な地盤"
+  },
+  {
+    "city": "柏市",
+    "max_intensity": "6強",
+    "probability_30y": 0.5,
+    "liquefaction_risk": "low",
+    "description": "台地上で良好な地盤"
+  },
+  {
+    "city": "市川市",
+    "max_intensity": "6強",
+    "probability_30y": 0.5,
+    "liquefaction_risk": "medium",
+    "description": "江戸川沿いは液状化注意"
+  },
+  {
+    "city": "浦安市",
+    "max_intensity": "6強",
+    "probability_30y": 0.5,
+    "liquefaction_risk": "high",
+    "description": "2011年東日本大震災で広範な液状化被害。埋立地全域が高リスク"
+  },
+  {
+    "city": "成田市",
+    "max_intensity": "6強",
+    "probability_30y": 0.5,
+    "liquefaction_risk": "low",
+    "description": "比較的安全。内陸部で地盤安定"
+  },
+  {
+    "city": "木更津市",
+    "max_intensity": "6強",
+    "probability_30y": 0.5,
+    "liquefaction_risk": "medium",
+    "description": "海岸部は液状化リスクあり"
+  },
+  {
+    "city": "習志野市",
+    "max_intensity": "6強",
+    "probability_30y": 0.5,
+    "liquefaction_risk": "high",
+    "description": "埋立地が多く液状化注意"
+  },
+  {
+    "city": "我孫子市",
+    "max_intensity": "6強",
+    "probability_30y": 0.5,
+    "liquefaction_risk": "low",
+    "description": "内陸で安定した地盤"
+  },
+  {
+    "city": "流山市",
+    "max_intensity": "6強",
+    "probability_30y": 0.5,
+    "liquefaction_risk": "low",
+    "description": "江戸川沿い低地は注意"
+  },
+  {
+    "city": "八千代市",
+    "max_intensity": "6強",
+    "probability_30y": 0.5,
+    "liquefaction_risk": "low",
+    "description": "台地上で良好"
+  },
+  {
+    "city": "鎌ケ谷市",
+    "max_intensity": "6強",
+    "probability_30y": 0.5,
+    "liquefaction_risk": "low",
+    "description": "安定した地盤"
+  }
+]

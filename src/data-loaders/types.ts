@@ -6,6 +6,7 @@ export interface LatLng {
 }
 
 export interface LoaderCapabilities {
+  transactions: boolean;
   humanFlow: boolean;
   education: boolean;
   corporate: boolean;

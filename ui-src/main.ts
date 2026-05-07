@@ -1877,10 +1877,15 @@ function updateInsightPanel(area: string) {
     </div>
 
     <button class="btn-report" id="btn-generate-report">レポート生成</button>
+    <button class="btn-report" id="btn-portfolio" style="margin-top:6px;background:linear-gradient(135deg,#6366f1,#8b5cf6)">📊 ポートフォリオ最適化</button>
   `;
 
   document.getElementById('btn-generate-report')?.addEventListener('click', () => {
     if (area) showReport(area);
+  });
+
+  document.getElementById('btn-portfolio')?.addEventListener('click', () => {
+    showPortfolioHelper();
   });
 
   // Scenario What-If selector
@@ -2082,6 +2087,105 @@ function init() {
   if (urlMode === 'store' || urlMode === 'investment') {
     applyMode(urlMode);
   }
+}
+
+function showPortfolioHelper(): void {
+  const prefectures = ['東京都', '大阪府', '埼玉県', '千葉県', '愛知県', '神奈川県', '福岡県', '北海道', '京都府', '兵庫県'];
+  const overlay = document.getElementById('report-overlay');
+  const content = document.getElementById('report-content');
+  if (!overlay || !content) return;
+
+  const optionRows = prefectures.map(p => `<option value="${p}">${p}</option>`).join('');
+
+  content.innerHTML = `
+    <h2 style="margin-bottom:16px">📊 ポートフォリオ最適化</h2>
+    <p style="font-size:13px;color:var(--text-muted);margin-bottom:16px">
+      最大 5 エリアを選択して <code>portfolio_optimizer</code> ツールへ渡す入力を生成します。
+    </p>
+    <div id="portfolio-targets" style="display:flex;flex-direction:column;gap:8px"></div>
+    <button id="btn-add-target" class="btn-report" style="margin-top:8px;font-size:12px;padding:6px 12px">+ エリアを追加</button>
+    <hr style="margin:16px 0;border-color:var(--border)">
+    <label style="font-size:12px;color:var(--text-muted)">リスク許容度</label>
+    <select id="p-risk" class="neighborhood-input" style="margin-bottom:8px">
+      <option value="low">低（保守的）</option>
+      <option value="medium" selected>中（標準）</option>
+      <option value="high">高（積極的）</option>
+    </select>
+    <label style="font-size:12px;color:var(--text-muted)">投資期間</label>
+    <select id="p-horizon" class="neighborhood-input" style="margin-bottom:8px">
+      <option value="3y">3年</option>
+      <option value="5y" selected>5年</option>
+      <option value="10y">10年</option>
+    </select>
+    <label style="font-size:12px;color:var(--text-muted)">最適化目標</label>
+    <select id="p-optimize" class="neighborhood-input" style="margin-bottom:16px">
+      <option value="return">最大リターン重視</option>
+      <option value="risk_adjusted" selected>リスク調整後リターン</option>
+      <option value="diversification">分散重視</option>
+      <option value="stability">安定性重視</option>
+    </select>
+    <div id="portfolio-json-out" style="background:var(--bg-secondary);border-radius:8px;padding:12px;font-size:11px;font-family:monospace;white-space:pre-wrap;display:none"></div>
+    <button id="btn-gen-portfolio" class="btn-report" style="margin-top:8px;background:linear-gradient(135deg,#6366f1,#8b5cf6)">JSON 生成</button>
+  `;
+
+  // Add initial target row
+  const targetsDiv = document.getElementById('portfolio-targets')!;
+  const addTargetRow = () => {
+    const idx = targetsDiv.children.length + 1;
+    const row = document.createElement('div');
+    row.style.cssText = 'display:flex;gap:6px;align-items:center;flex-wrap:wrap';
+    row.innerHTML = `
+      <span style="font-size:12px;min-width:16px">${idx}.</span>
+      <select class="p-pref neighborhood-input" style="flex:1;min-width:100px">${optionRows}</select>
+      <input class="p-city neighborhood-input" placeholder="市区町村" style="flex:1;min-width:120px">
+      <select class="p-type neighborhood-input" style="width:90px">
+        <option value="residential">住宅</option>
+        <option value="commercial">商業</option>
+        <option value="office">事務所</option>
+        <option value="land">土地</option>
+      </select>
+      <input class="p-budget neighborhood-input" type="number" placeholder="予算(万円)" value="5000" style="width:100px">
+    `;
+    targetsDiv.appendChild(row);
+  };
+
+  addTargetRow();
+  addTargetRow();
+
+  document.getElementById('btn-add-target')?.addEventListener('click', () => {
+    if (targetsDiv.children.length < 5) addTargetRow();
+  });
+
+  document.getElementById('btn-gen-portfolio')?.addEventListener('click', () => {
+    const prefs = Array.from(document.querySelectorAll('.p-pref')) as HTMLSelectElement[];
+    const cities = Array.from(document.querySelectorAll('.p-city')) as HTMLInputElement[];
+    const types = Array.from(document.querySelectorAll('.p-type')) as HTMLSelectElement[];
+    const budgets = Array.from(document.querySelectorAll('.p-budget')) as HTMLInputElement[];
+    const risk = (document.getElementById('p-risk') as HTMLSelectElement).value;
+    const horizon = (document.getElementById('p-horizon') as HTMLSelectElement).value;
+    const optimize = (document.getElementById('p-optimize') as HTMLSelectElement).value;
+
+    const targets = prefs.map((p, i) => ({
+      prefecture: p.value,
+      city: cities[i]?.value || p.value,
+      propertyType: types[i]?.value || 'residential',
+      budgetManYen: Number(budgets[i]?.value) || 5000,
+    })).filter(t => t.city);
+
+    const json = JSON.stringify({
+      targets,
+      riskTolerance: risk,
+      investmentHorizon: horizon,
+      optimizeFor: optimize,
+      includeMarkdown: true,
+    }, null, 2);
+
+    const out = document.getElementById('portfolio-json-out')!;
+    out.textContent = json;
+    out.style.display = 'block';
+  });
+
+  overlay.classList.add('visible');
 }
 
 if (document.readyState === 'loading') {

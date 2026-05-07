@@ -47,6 +47,22 @@ const NEW_PREFECTURES = [
     latRange: [34.2, 35.7] as [number, number],
     lngRange: [134.2, 135.5] as [number, number],
   },
+  {
+    key: 'saitama',
+    displayName: '埼玉県',
+    aliases: ['埼玉県', '埼玉', 'JP-11'],
+    representativeArea: 'さいたま市大宮区',
+    latRange: [35.7, 36.3] as [number, number],
+    lngRange: [138.7, 139.9] as [number, number],
+  },
+  {
+    key: 'chiba',
+    displayName: '千葉県',
+    aliases: ['千葉県', '千葉', 'JP-12'],
+    representativeArea: '千葉市中央区',
+    latRange: [35.0, 36.1] as [number, number],
+    lngRange: [139.7, 140.9] as [number, number],
+  },
 ] as const;
 
 // ── resolver tests ────────────────────────────────────────────────────────────
@@ -136,8 +152,9 @@ describe('National Expansion — loader data', () => {
         expect(loader.getNeighborhoods().length).toBeGreaterThan(0);
       });
 
-      it('has full v4.0 capabilities (humanFlow/education/corporate/crime/transport/commercial/medical = true)', () => {
+      it('has full v5.0 capabilities (transactions/humanFlow/education/corporate/crime/transport/commercial/medical = true)', () => {
         const loader = getLoader(pref.key);
+        expect(loader.capabilities.transactions).toBe(true);
         expect(loader.capabilities.humanFlow).toBe(true);
         expect(loader.capabilities.education).toBe(true);
         expect(loader.capabilities.corporate).toBe(true);
@@ -145,8 +162,13 @@ describe('National Expansion — loader data', () => {
         expect(loader.capabilities.transport).toBe(true);
         expect(loader.capabilities.commercial).toBe(true);
         expect(loader.capabilities.medical).toBe(true);
-        // plateau remains false for all non-Aichi prefectures
-        expect(loader.capabilities.plateau).toBe(false);
+        // plateau remains false for non-Aichi/Tokyo/Osaka prefectures
+        const plateauPrefs = ['aichi', 'tokyo', 'osaka'];
+        if (plateauPrefs.includes(pref.key)) {
+          expect(loader.capabilities.plateau).toBe(true);
+        } else {
+          expect(loader.capabilities.plateau).toBe(false);
+        }
       });
 
       it(`geocode("${pref.representativeArea}") returns coordinates in expected range`, () => {

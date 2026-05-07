@@ -16,8 +16,9 @@ export class StubLoader implements PrefectureLoader {
   readonly displayName: string;
   readonly isoCode: string;
   readonly capabilities: LoaderCapabilities = {
-    humanFlow: false, education: false, corporate: false, crime: false, plateau: false,
-    transport: false, commercial: false, medical: false, neighborhoods: false,
+    transactions: false, humanFlow: false, education: false, corporate: false,
+    crime: false, plateau: false, transport: false, commercial: false,
+    medical: false, neighborhoods: false,
   };
 
   constructor(key: string) {

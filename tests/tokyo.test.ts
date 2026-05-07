@@ -30,8 +30,9 @@ describe('Prefecture resolver', () => {
 });
 
 describe('Tokyo loader capabilities', () => {
-  it('has full v5.0 capabilities including plateau (Tokyo)', () => {
+  it('has full v5.0 capabilities including transactions + plateau (Tokyo)', () => {
     const loader = getLoader('tokyo');
+    expect(loader.capabilities.transactions).toBe(true);
     expect(loader.capabilities.humanFlow).toBe(true);
     expect(loader.capabilities.education).toBe(true);
     expect(loader.capabilities.corporate).toBe(true);

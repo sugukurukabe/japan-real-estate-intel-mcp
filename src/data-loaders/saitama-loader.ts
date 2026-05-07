@@ -43,7 +43,7 @@ export class SaitamaLoader extends BaseLoader {
   readonly displayName = '埼玉県';
   readonly isoCode = 'JP-11';
   readonly capabilities: LoaderCapabilities = {
-    humanFlow: true, education: true, corporate: true, crime: true, plateau: false,
+    transactions: true, humanFlow: true, education: true, corporate: true, crime: true, plateau: false,
     transport: true, commercial: true, medical: true, neighborhoods: true,
   };
 

@@ -53,7 +53,7 @@ export class OsakaLoader extends BaseLoader {
   readonly displayName = '大阪府';
   readonly isoCode = 'JP-27';
   readonly capabilities: LoaderCapabilities = {
-    humanFlow: true, education: true, corporate: true, crime: true, plateau: true,
+    transactions: true, humanFlow: true, education: true, corporate: true, crime: true, plateau: true,
     transport: true, commercial: true, medical: true, neighborhoods: true,
   };
 

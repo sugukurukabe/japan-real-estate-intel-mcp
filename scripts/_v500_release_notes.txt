@@ -1,0 +1,38 @@
+## v5.0.0: 10-Prefecture Coverage + Transactions Parity + PLATEAU Expansion + Portfolio Optimizer
+
+### 🏙️ 10 都道府県体制へ拡張
+- **埼玉県（JP-11）** フル対応: 14 データファイル（地価・取引・人口・人流・教育・企業・犯罪・交通・商業・医療・neighborhoods 等）
+- **千葉県（JP-12）** フル対応: 14 データファイル（浦安市ディズニーリゾート周辺の高人流・高地価データ含む）
+
+### 💹 取引価格データ完全パリティ
+- 東京都・大阪府・神奈川県・福岡県・北海道・京都府・兵庫県の 7 県に `transactions.csv` を追加
+- 全 10 都道府県で `getTransactions()` が実データを返すように（愛知・埼玉・千葉含む）
+
+### 🏢 PLATEAU 3D データ拡張
+- **東京都**: 新宿・港区・千代田区・江東区などの高層ビル 25〜30 棟（東京都庁・六本木ヒルズ・東京スカイツリーなど）
+- **大阪府**: 梅田・中央区・阿倍野などの高層ビル 20〜25 棟（あべのハルカス・梅田スカイビルなど）
+- 愛知県に次いで 3D 日照シミュレーション対応が 3 都市へ拡大
+
+### 📊 新ツール: portfolio_optimizer
+複数エリア横断の不動産投資ポートフォリオを最適化:
+- 最大 5 エリアの期待年率リターン・リスクスコア・流動性・シャープレシオ・分散スコアを算出
+- 推奨配分（%）と詳細 Markdown レポートを生成
+- 最適化目標: `return` / `risk_adjusted` / `diversification` / `stability`
+- リスク許容度: `low` / `medium` / `high`、投資期間: `3y` / `5y` / `10y`
+
+```json
+portfolio_optimizer({
+  "targets": [
+    { "prefecture": "東京都", "city": "新宿区", "propertyType": "office", "budgetManYen": 10000 },
+    { "prefecture": "埼玉県", "city": "さいたま市大宮区", "propertyType": "residential", "budgetManYen": 5000 },
+    { "prefecture": "千葉県", "city": "浦安市", "propertyType": "commercial", "budgetManYen": 3000 }
+  ],
+  "riskTolerance": "medium",
+  "investmentHorizon": "5y",
+  "optimizeFor": "risk_adjusted"
+})
+```
+
+### 🧪 テスト
+- 333 → **382 テスト** (+49 件)
+- `tests/portfolio_optimizer.test.ts` 17 件、`tests/saitama-chiba.test.ts` 32 件 を新規追加

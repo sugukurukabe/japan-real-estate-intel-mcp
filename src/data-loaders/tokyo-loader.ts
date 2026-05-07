@@ -43,7 +43,7 @@ export class TokyoLoader extends BaseLoader {
   readonly displayName = '東京都';
   readonly isoCode = 'JP-13';
   readonly capabilities: LoaderCapabilities = {
-    humanFlow: true, education: true, corporate: true, crime: true, plateau: true,
+    transactions: true, humanFlow: true, education: true, corporate: true, crime: true, plateau: true,
     transport: true, commercial: true, medical: true, neighborhoods: true,
   };
 

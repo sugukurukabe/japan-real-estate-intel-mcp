@@ -57,7 +57,7 @@ export class KanagawaLoader extends BaseLoader {
   readonly displayName = '神奈川県';
   readonly isoCode = 'JP-14';
   readonly capabilities: LoaderCapabilities = {
-    humanFlow: true, education: true, corporate: true, crime: true, plateau: false,
+    transactions: true, humanFlow: true, education: true, corporate: true, crime: true, plateau: false,
     transport: true, commercial: true, medical: true, neighborhoods: true,
   };
 
