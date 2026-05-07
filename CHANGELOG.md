@@ -7,6 +7,34 @@ Versioning: [Semantic Versioning](https://semver.org/)
 
 ---
 
+## [5.0.0] – 2026-05-07 — Transactions Parity + PLATEAU Expansion + 10-Prefecture Coverage + Portfolio Optimizer
+
+### Added
+- **取引価格データパリティ**: 東京都・大阪府・神奈川県・福岡県・北海道・京都府・兵庫県の全 7 県に `transactions.csv` を追加（各県 20〜30 件、2020〜2024 年）。全 8 都道府県で `getTransactions()` が実データを返すように。
+- **PLATEAU 3D データ — 東京都・大阪府**: 東京都（新宿・港区・千代田区・江東区など 25〜30 棟）、大阪府（梅田・中央区・阿倍野など 20〜25 棟）の高層ビルデータを追加。`capabilities.plateau = true`（Aichi に次いで 3 都市目、4 都市目）。
+- **埼玉県（JP-11）フル対応**: 14 データファイル追加（`land_price`, `population`, `earthquake_risk`, `flood_risk`, `municipalities`, `neighborhoods`, `human_flow`, `school_districts`, `corporate_locations`, `crime_stats`, `transport_stations`, `commercial_facilities`, `medical_facilities`, `transactions`）。`SaitamaLoader` を新規実装。全 capabilities `true`（plateau 除く）。
+- **千葉県（JP-12）フル対応**: 同様に 14 データファイル追加。`ChibaLoader` を新規実装。浦安市（東京ディズニーリゾート周辺）の高人流データ・高地価データを含む。
+- **新ツール `portfolio_optimizer`**: 最大 5 エリアの不動産投資ポートフォリオを最適化。期待年率リターン・リスクスコア・流動性スコア・シャープレシオ・分散スコアを算出し、推奨配分（%）とMarkdownレポートを出力。最適化目標（最大リターン/リスク調整/分散/安定性）・リスク許容度（低/中/高）・投資期間（3y/5y/10y）に対応。
+- **`src/data-loaders/saitama-loader.ts`**: 埼玉県ローダー新規実装
+- **`src/data-loaders/chiba-loader.ts`**: 千葉県ローダー新規実装
+- **`src/tools/portfolio_optimizer.ts`**: ポートフォリオ最適化ツール実装
+- **テスト追加**: `tests/portfolio_optimizer.test.ts`（17 件）、`tests/saitama-chiba.test.ts`（32 件）を新規追加。382 テスト合計。
+
+### Changed
+- 東京都・大阪府ローダーの `capabilities.plateau` を `true` に変更（PLATEAU データ追加に伴う）。
+- 東京都・大阪府・神奈川県・福岡県・北海道・京都府・兵庫県ローダーの `getTransactions()` を `this.loadCsv('transactions.csv')` に変更（実データ読み込み）。
+- `src/prefecture/resolver.ts` に埼玉県（JP-11）・千葉県（JP-12）のエイリアスを追加。
+- `src/data-loaders/index.ts` に `SaitamaLoader`, `ChibaLoader` を登録。
+- `src/schemas.ts` に `PortfolioOptimizerInput/Output` スキーマを追加。
+- `server.ts` のツール数コメントを `// -- Tools (13) --` に更新（portfolio_optimizer 追加）。
+- `tests/national-expansion.test.ts` の「8 県」チェックを「10 県」に更新。
+- `tests/tokyo.test.ts`・`tests/osaka.test.ts`・`tests/shadow.test.ts` の plateau 関連アサーションを v5.0 仕様に更新。
+
+### Breaking (none)
+- 既存 API は後方互換。新ローダーメソッドはデータが存在しない場合に空配列を返す挙動を維持。
+
+---
+
 ## [4.0.0] – 2026-05-07 — Capability Parity + Intelligence Layer
 
 ### Added

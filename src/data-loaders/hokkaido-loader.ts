@@ -50,7 +50,7 @@ export class HokkaidoLoader extends BaseLoader {
   protected readonly geocodeMap = HOKKAIDO_GEOCODE;
 
   getLandPrices(): LandPriceRecord[]       { return this.loadCsv('land_price.csv'); }
-  getTransactions(): TransactionRecord[]    { return []; }
+  getTransactions(): TransactionRecord[]    { return this.loadCsv('transactions.csv'); }
   getPopulation(): PopulationRecord[]       { return this.loadCsv('population.csv'); }
   getEarthquakeData(): EarthquakeRecord[]   { return this.loadJson('earthquake.json', []); }
   getFloodZones(): FeatureCollection        { return this.loadGeoJson('flood.geojson'); }

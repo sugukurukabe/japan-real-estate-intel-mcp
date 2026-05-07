@@ -1,0 +1,376 @@
+{
+  "prefecture": "千葉県",
+  "prefecture_en": "Chiba",
+  "municipalities": [
+    {
+      "code": "12100",
+      "name": "千葉市",
+      "name_en": "Chiba City",
+      "type": "city",
+      "population": 978435,
+      "area_km2": 271.77,
+      "households": 489200,
+      "note": "県庁所在地。政令指定都市"
+    },
+    {
+      "code": "12202",
+      "name": "銚子市",
+      "name_en": "Choshi City",
+      "type": "city",
+      "population": 55432,
+      "area_km2": 83.93,
+      "households": 26100,
+      "note": "漁業で有名。県東端"
+    },
+    {
+      "code": "12204",
+      "name": "市川市",
+      "name_en": "Ichikawa City",
+      "type": "city",
+      "population": 494697,
+      "area_km2": 57.45,
+      "households": 261300,
+      "note": "東京に隣接。住宅地として人気"
+    },
+    {
+      "code": "12205",
+      "name": "船橋市",
+      "name_en": "Funabashi City",
+      "type": "city",
+      "population": 641673,
+      "area_km2": 85.7,
+      "households": 326400,
+      "note": "千葉県第2の都市"
+    },
+    {
+      "code": "12207",
+      "name": "館山市",
+      "name_en": "Tateyama City",
+      "type": "city",
+      "population": 42315,
+      "area_km2": 110.06,
+      "households": 20800,
+      "note": "南房総の中心都市"
+    },
+    {
+      "code": "12208",
+      "name": "木更津市",
+      "name_en": "Kisarazu City",
+      "type": "city",
+      "population": 136069,
+      "area_km2": 138.81,
+      "households": 64800,
+      "note": "アクアラインで東京と接続"
+    },
+    {
+      "code": "12209",
+      "name": "松戸市",
+      "name_en": "Matsudo City",
+      "type": "city",
+      "population": 495303,
+      "area_km2": 61.39,
+      "households": 254700,
+      "note": "東京に隣接。常磐線沿線"
+    },
+    {
+      "code": "12210",
+      "name": "野田市",
+      "name_en": "Noda City",
+      "type": "city",
+      "population": 152243,
+      "area_km2": 103.55,
+      "households": 65300,
+      "note": "醤油の産地"
+    },
+    {
+      "code": "12212",
+      "name": "茂原市",
+      "name_en": "Mobara City",
+      "type": "city",
+      "population": 83741,
+      "area_km2": 99.17,
+      "households": 36200,
+      "note": "外房の中心都市"
+    },
+    {
+      "code": "12213",
+      "name": "成田市",
+      "name_en": "Narita City",
+      "type": "city",
+      "population": 131389,
+      "area_km2": 213.84,
+      "households": 60100,
+      "note": "成田国際空港所在地"
+    },
+    {
+      "code": "12214",
+      "name": "佐倉市",
+      "name_en": "Sakura City",
+      "type": "city",
+      "population": 167093,
+      "area_km2": 103.62,
+      "households": 73800,
+      "note": "城下町。印旛沼周辺"
+    },
+    {
+      "code": "12215",
+      "name": "東金市",
+      "name_en": "Togane City",
+      "type": "city",
+      "population": 57421,
+      "area_km2": 89.1,
+      "households": 25600,
+      "note": "九十九里平野に位置"
+    },
+    {
+      "code": "12217",
+      "name": "旭市",
+      "name_en": "Asahi City",
+      "type": "city",
+      "population": 62234,
+      "area_km2": 129.72,
+      "households": 25100,
+      "note": "農業と漁業が盛ん"
+    },
+    {
+      "code": "12219",
+      "name": "習志野市",
+      "name_en": "Narashino City",
+      "type": "city",
+      "population": 175213,
+      "area_km2": 20.99,
+      "households": 86900,
+      "note": "埋立地含む工業都市"
+    },
+    {
+      "code": "12220",
+      "name": "柏市",
+      "name_en": "Kashiwa City",
+      "type": "city",
+      "population": 431102,
+      "area_km2": 114.74,
+      "households": 208900,
+      "note": "東葛地域の中心。TX沿線開発進む"
+    },
+    {
+      "code": "12221",
+      "name": "勝浦市",
+      "name_en": "Katsuura City",
+      "type": "city",
+      "population": 16234,
+      "area_km2": 94.18,
+      "households": 8200,
+      "note": "漁業と観光"
+    },
+    {
+      "code": "12222",
+      "name": "市原市",
+      "name_en": "Ichihara City",
+      "type": "city",
+      "population": 267892,
+      "area_km2": 368.17,
+      "households": 120500,
+      "note": "石油コンビナート地帯"
+    },
+    {
+      "code": "12224",
+      "name": "流山市",
+      "name_en": "Nagareyama City",
+      "type": "city",
+      "population": 200215,
+      "area_km2": 35.34,
+      "households": 96400,
+      "note": "TX開通後急速に人口増加"
+    },
+    {
+      "code": "12225",
+      "name": "八千代市",
+      "name_en": "Yachiyo City",
+      "type": "city",
+      "population": 198234,
+      "area_km2": 51.36,
+      "households": 91700,
+      "note": "東葛の住宅都市"
+    },
+    {
+      "code": "12226",
+      "name": "我孫子市",
+      "name_en": "Abiko City",
+      "type": "city",
+      "population": 127894,
+      "area_km2": 43.19,
+      "households": 61200,
+      "note": "手賀沼周辺。常磐線沿線"
+    },
+    {
+      "code": "12227",
+      "name": "鴨川市",
+      "name_en": "Kamogawa City",
+      "type": "city",
+      "population": 31234,
+      "area_km2": 191.08,
+      "households": 14900,
+      "note": "南房総の観光都市"
+    },
+    {
+      "code": "12228",
+      "name": "鎌ケ谷市",
+      "name_en": "Kamagaya City",
+      "type": "city",
+      "population": 108234,
+      "area_km2": 21.07,
+      "households": 51800,
+      "note": "利便性高い住宅都市"
+    },
+    {
+      "code": "12229",
+      "name": "君津市",
+      "name_en": "Kimitsu City",
+      "type": "city",
+      "population": 82341,
+      "area_km2": 318.73,
+      "households": 35600,
+      "note": "製鉄業。南部は山地"
+    },
+    {
+      "code": "12230",
+      "name": "富津市",
+      "name_en": "Futtsu City",
+      "type": "city",
+      "population": 41234,
+      "area_km2": 205.33,
+      "households": 18100,
+      "note": "東京湾観音で有名"
+    },
+    {
+      "code": "12231",
+      "name": "浦安市",
+      "name_en": "Urayasu City",
+      "type": "city",
+      "population": 174475,
+      "area_km2": 16.98,
+      "households": 91200,
+      "note": "東京ディズニーリゾート所在地。埋立地"
+    },
+    {
+      "code": "12232",
+      "name": "四街道市",
+      "name_en": "Yotsukaido City",
+      "type": "city",
+      "population": 93456,
+      "area_km2": 34.52,
+      "households": 38700,
+      "note": "千葉市隣接の住宅都市"
+    },
+    {
+      "code": "12233",
+      "name": "袖ケ浦市",
+      "name_en": "Sodegaura City",
+      "type": "city",
+      "population": 63245,
+      "area_km2": 94.65,
+      "households": 26800,
+      "note": "石油化学工業"
+    },
+    {
+      "code": "12234",
+      "name": "八街市",
+      "name_en": "Yachimata City",
+      "type": "city",
+      "population": 70123,
+      "area_km2": 77.11,
+      "households": 28900,
+      "note": "落花生の産地"
+    },
+    {
+      "code": "12235",
+      "name": "印西市",
+      "name_en": "Inzai City",
+      "type": "city",
+      "population": 106789,
+      "area_km2": 122.74,
+      "households": 47200,
+      "note": "TX沿線で開発急速進行"
+    },
+    {
+      "code": "12236",
+      "name": "白井市",
+      "name_en": "Shiroi City",
+      "type": "city",
+      "population": 62134,
+      "area_km2": 35.21,
+      "households": 25100,
+      "note": "TX沿線住宅都市"
+    },
+    {
+      "code": "12237",
+      "name": "富里市",
+      "name_en": "Tomisato City",
+      "type": "city",
+      "population": 49876,
+      "area_km2": 53.98,
+      "households": 20300,
+      "note": "成田空港に隣接"
+    },
+    {
+      "code": "12238",
+      "name": "南房総市",
+      "name_en": "Minamiboso City",
+      "type": "city",
+      "population": 36234,
+      "area_km2": 230.13,
+      "households": 15800,
+      "note": "観光農業が盛ん"
+    },
+    {
+      "code": "12239",
+      "name": "匝瑳市",
+      "name_en": "Sosa City",
+      "type": "city",
+      "population": 33145,
+      "area_km2": 101.78,
+      "households": 13200,
+      "note": "農業中心"
+    },
+    {
+      "code": "12240",
+      "name": "香取市",
+      "name_en": "Katori City",
+      "type": "city",
+      "population": 68234,
+      "area_km2": 260.99,
+      "households": 27600,
+      "note": "香取神宮の門前町"
+    },
+    {
+      "code": "12241",
+      "name": "山武市",
+      "name_en": "Sammu City",
+      "type": "city",
+      "population": 50123,
+      "area_km2": 158.55,
+      "households": 19800,
+      "note": "九十九里に面した農業都市"
+    },
+    {
+      "code": "12242",
+      "name": "いすみ市",
+      "name_en": "Isumi City",
+      "type": "city",
+      "population": 35678,
+      "area_km2": 157.44,
+      "households": 14900,
+      "note": "いすみ鉄道で有名"
+    },
+    {
+      "code": "12243",
+      "name": "大網白里市",
+      "name_en": "Oamishirasato City",
+      "type": "city",
+      "population": 47234,
+      "area_km2": 59.87,
+      "households": 19600,
+      "note": "外房線沿線"
+    }
+  ]
+}

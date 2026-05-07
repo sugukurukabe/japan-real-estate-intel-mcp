@@ -13,6 +13,7 @@ import {
   LandscapeInput,
   ForecastLandPriceTrendInput,
   ScenarioWhatIfInput,
+  PortfolioOptimizerInput,
 } from './schemas.js';
 import { crossAnalyze } from './tools/cross_analyze_real_estate_market.js';
 import { assessPropertyRisk } from './tools/assess_property_risk.js';
@@ -25,6 +26,7 @@ import { drillDownLocalAnalysis } from './tools/drill_down_local_analysis.js';
 import { evaluateStoreLocation } from './tools/evaluate_store_location.js';
 import { simulateLandscape } from './tools/simulate_landscape_impact.js';
 import { forecastLandPriceTrend } from './tools/forecast_land_price_trend.js';
+import { portfolioOptimizer } from './tools/portfolio_optimizer.js';
 import { scenarioWhatIf } from './tools/scenario_what_if.js';
 import { getLandPriceResource } from './resources/land_price.js';
 import { getFloodResource } from './resources/flood.js';
@@ -74,10 +76,10 @@ function withErrorHandling(
 export function createServer(): McpServer {
   const server = new McpServer({
     name: 'japan-real-estate-intel-mcp',
-    version: '4.0.0',
+    version: '5.0.0',
   });
 
-  // -- Tools (12) --
+  // -- Tools (13) --
 
   server.tool(
     'cross_analyze_real_estate_market',

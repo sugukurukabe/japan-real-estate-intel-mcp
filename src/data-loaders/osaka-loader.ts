@@ -53,14 +53,14 @@ export class OsakaLoader extends BaseLoader {
   readonly displayName = '大阪府';
   readonly isoCode = 'JP-27';
   readonly capabilities: LoaderCapabilities = {
-    humanFlow: true, education: true, corporate: true, crime: true, plateau: false,
+    humanFlow: true, education: true, corporate: true, crime: true, plateau: true,
     transport: true, commercial: true, medical: true, neighborhoods: true,
   };
 
   protected readonly geocodeMap = OSAKA_GEOCODE;
 
   getLandPrices(): LandPriceRecord[] { return this.loadCsv('land_price.csv'); }
-  getTransactions(): TransactionRecord[] { return []; }
+  getTransactions(): TransactionRecord[] { return this.loadCsv('transactions.csv'); }
   getPopulation(): PopulationRecord[] { return this.loadCsv('population.csv'); }
   getEarthquakeData(): EarthquakeRecord[] { return this.loadJson('earthquake.json', []); }
   getFloodZones(): FeatureCollection { return this.loadGeoJson('flood.geojson'); }
@@ -70,7 +70,7 @@ export class OsakaLoader extends BaseLoader {
   getSchoolDistricts(): SchoolDistrictRecord[] { return this.loadCsv('school_districts.csv'); }
   getCorporateLocations(): CorporateLocationRecord[] { return this.loadCsv('corporate_locations.csv'); }
   getCrimeStats(): CrimeStatsRecord[] { return this.loadCsv('crime_stats.csv'); }
-  getPlateauBuildings(): PlateauBuildingRecord[] { return []; }
+  getPlateauBuildings(): PlateauBuildingRecord[] { return this.loadJson('plateau_buildings.json', []); }
   getTransport(): TransportRecord[] { return this.loadCsv('transport_stations.csv'); }
   getCommercialFacilities(): CommercialFacilityRecord[] { return this.loadCsv('commercial_facilities.csv'); }
   getMedicalFacilities(): MedicalFacilityRecord[] { return this.loadCsv('medical_facilities.csv'); }

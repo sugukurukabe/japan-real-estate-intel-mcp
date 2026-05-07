@@ -16,6 +16,8 @@ import { HokkaidoLoader } from './hokkaido-loader.js';
 import { KanagawaLoader } from './kanagawa-loader.js';
 import { KyotoLoader } from './kyoto-loader.js';
 import { HyogoLoader } from './hyogo-loader.js';
+import { SaitamaLoader } from './saitama-loader.js';
+import { ChibaLoader } from './chiba-loader.js';
 
 registerLoader(new AichiLoader());
 registerLoader(new TokyoLoader());
@@ -25,3 +27,5 @@ registerLoader(new HokkaidoLoader());
 registerLoader(new KanagawaLoader());
 registerLoader(new KyotoLoader());
 registerLoader(new HyogoLoader());
+registerLoader(new SaitamaLoader());
+registerLoader(new ChibaLoader());

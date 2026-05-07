@@ -1,0 +1,356 @@
+{
+  "prefecture": "埼玉県",
+  "prefecture_en": "Saitama",
+  "municipalities": [
+    {
+      "code": "11100",
+      "name": "さいたま市",
+      "type": "city",
+      "population": 1321542,
+      "area_km2": 217.43
+    },
+    {
+      "code": "11101",
+      "name": "さいたま市西区",
+      "type": "ward",
+      "population": 97000,
+      "area_km2": 26.28
+    },
+    {
+      "code": "11102",
+      "name": "さいたま市北区",
+      "type": "ward",
+      "population": 149000,
+      "area_km2": 19.31
+    },
+    {
+      "code": "11103",
+      "name": "さいたま市大宮区",
+      "type": "ward",
+      "population": 479000,
+      "area_km2": 26.73
+    },
+    {
+      "code": "11104",
+      "name": "さいたま市見沼区",
+      "type": "ward",
+      "population": 165000,
+      "area_km2": 30.67
+    },
+    {
+      "code": "11105",
+      "name": "さいたま市中央区",
+      "type": "ward",
+      "population": 104000,
+      "area_km2": 8.39
+    },
+    {
+      "code": "11106",
+      "name": "さいたま市桜区",
+      "type": "ward",
+      "population": 95000,
+      "area_km2": 17.59
+    },
+    {
+      "code": "11107",
+      "name": "さいたま市浦和区",
+      "type": "ward",
+      "population": 479000,
+      "area_km2": 11.33
+    },
+    {
+      "code": "11108",
+      "name": "さいたま市南区",
+      "type": "ward",
+      "population": 202000,
+      "area_km2": 13.97
+    },
+    {
+      "code": "11109",
+      "name": "さいたま市緑区",
+      "type": "ward",
+      "population": 128000,
+      "area_km2": 25.77
+    },
+    {
+      "code": "11110",
+      "name": "さいたま市岩槻区",
+      "type": "ward",
+      "population": 105000,
+      "area_km2": 49.3
+    },
+    {
+      "code": "11202",
+      "name": "川越市",
+      "type": "city",
+      "population": 356822,
+      "area_km2": 109.13
+    },
+    {
+      "code": "11203",
+      "name": "熊谷市",
+      "type": "city",
+      "population": 194636,
+      "area_km2": 159.89
+    },
+    {
+      "code": "11204",
+      "name": "川口市",
+      "type": "city",
+      "population": 598049,
+      "area_km2": 61.95
+    },
+    {
+      "code": "11206",
+      "name": "行田市",
+      "type": "city",
+      "population": 77000,
+      "area_km2": 67.44
+    },
+    {
+      "code": "11207",
+      "name": "秩父市",
+      "type": "city",
+      "population": 57000,
+      "area_km2": 577.83
+    },
+    {
+      "code": "11208",
+      "name": "所沢市",
+      "type": "city",
+      "population": 341924,
+      "area_km2": 72.11
+    },
+    {
+      "code": "11209",
+      "name": "飯能市",
+      "type": "city",
+      "population": 78000,
+      "area_km2": 193.05
+    },
+    {
+      "code": "11210",
+      "name": "加須市",
+      "type": "city",
+      "population": 108000,
+      "area_km2": 133.3
+    },
+    {
+      "code": "11211",
+      "name": "本庄市",
+      "type": "city",
+      "population": 74000,
+      "area_km2": 89.69
+    },
+    {
+      "code": "11212",
+      "name": "東松山市",
+      "type": "city",
+      "population": 87000,
+      "area_km2": 65.35
+    },
+    {
+      "code": "11214",
+      "name": "春日部市",
+      "type": "city",
+      "population": 226831,
+      "area_km2": 65.13
+    },
+    {
+      "code": "11215",
+      "name": "狭山市",
+      "type": "city",
+      "population": 148000,
+      "area_km2": 48.99
+    },
+    {
+      "code": "11216",
+      "name": "羽生市",
+      "type": "city",
+      "population": 53000,
+      "area_km2": 58.61
+    },
+    {
+      "code": "11217",
+      "name": "鴻巣市",
+      "type": "city",
+      "population": 118000,
+      "area_km2": 67.29
+    },
+    {
+      "code": "11218",
+      "name": "深谷市",
+      "type": "city",
+      "population": 138000,
+      "area_km2": 138.37
+    },
+    {
+      "code": "11219",
+      "name": "上尾市",
+      "type": "city",
+      "population": 224000,
+      "area_km2": 45.51
+    },
+    {
+      "code": "11221",
+      "name": "草加市",
+      "type": "city",
+      "population": 248510,
+      "area_km2": 27.69
+    },
+    {
+      "code": "11222",
+      "name": "越谷市",
+      "type": "city",
+      "population": 341284,
+      "area_km2": 60.26
+    },
+    {
+      "code": "11223",
+      "name": "蕨市",
+      "type": "city",
+      "population": 73000,
+      "area_km2": 5.11
+    },
+    {
+      "code": "11224",
+      "name": "戸田市",
+      "type": "city",
+      "population": 143000,
+      "area_km2": 18.19
+    },
+    {
+      "code": "11225",
+      "name": "入間市",
+      "type": "city",
+      "population": 147000,
+      "area_km2": 44.69
+    },
+    {
+      "code": "11227",
+      "name": "朝霞市",
+      "type": "city",
+      "population": 143000,
+      "area_km2": 18.34
+    },
+    {
+      "code": "11228",
+      "name": "志木市",
+      "type": "city",
+      "population": 77000,
+      "area_km2": 9.05
+    },
+    {
+      "code": "11229",
+      "name": "和光市",
+      "type": "city",
+      "population": 84000,
+      "area_km2": 11.06
+    },
+    {
+      "code": "11230",
+      "name": "新座市",
+      "type": "city",
+      "population": 164000,
+      "area_km2": 22.79
+    },
+    {
+      "code": "11231",
+      "name": "桶川市",
+      "type": "city",
+      "population": 75000,
+      "area_km2": 25.49
+    },
+    {
+      "code": "11232",
+      "name": "久喜市",
+      "type": "city",
+      "population": 151000,
+      "area_km2": 82.41
+    },
+    {
+      "code": "11233",
+      "name": "北本市",
+      "type": "city",
+      "population": 65000,
+      "area_km2": 19.82
+    },
+    {
+      "code": "11234",
+      "name": "八潮市",
+      "type": "city",
+      "population": 90000,
+      "area_km2": 18.02
+    },
+    {
+      "code": "11235",
+      "name": "富士見市",
+      "type": "city",
+      "population": 113000,
+      "area_km2": 19.77
+    },
+    {
+      "code": "11237",
+      "name": "三郷市",
+      "type": "city",
+      "population": 142000,
+      "area_km2": 30.09
+    },
+    {
+      "code": "11238",
+      "name": "蓮田市",
+      "type": "city",
+      "population": 61000,
+      "area_km2": 27.39
+    },
+    {
+      "code": "11239",
+      "name": "坂戸市",
+      "type": "city",
+      "population": 103000,
+      "area_km2": 41.1
+    },
+    {
+      "code": "11240",
+      "name": "幸手市",
+      "type": "city",
+      "population": 51000,
+      "area_km2": 38.96
+    },
+    {
+      "code": "11241",
+      "name": "鶴ヶ島市",
+      "type": "city",
+      "population": 70000,
+      "area_km2": 17.67
+    },
+    {
+      "code": "11242",
+      "name": "日高市",
+      "type": "city",
+      "population": 57000,
+      "area_km2": 47.46
+    },
+    {
+      "code": "11243",
+      "name": "吉川市",
+      "type": "city",
+      "population": 72000,
+      "area_km2": 31.66
+    },
+    {
+      "code": "11245",
+      "name": "ふじみ野市",
+      "type": "city",
+      "population": 114000,
+      "area_km2": 14.64
+    },
+    {
+      "code": "11246",
+      "name": "白岡市",
+      "type": "city",
+      "population": 52000,
+      "area_km2": 24.55
+    }
+  ]
+}

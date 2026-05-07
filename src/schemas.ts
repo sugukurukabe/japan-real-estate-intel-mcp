@@ -485,6 +485,54 @@ export const ScenarioWhatIfOutput = z.object({
 });
 export type ScenarioWhatIfOutput = z.infer<typeof ScenarioWhatIfOutput>;
 
+// ── portfolio_optimizer (v5.0 new) ──
+
+export const PortfolioOptimizerInput = z.object({
+  targets: z.array(z.object({
+    prefecture: z.string().describe('都道府県名'),
+    city: z.string().describe('市区町村'),
+    propertyType: z.enum(['residential', 'commercial', 'office', 'land']).describe('物件種別'),
+    budgetManYen: z.number().describe('投資予算（万円）'),
+  })).min(2).max(5).describe('比較対象エリア（2〜5件）'),
+  riskTolerance: z.enum(['low', 'medium', 'high']).default('medium').describe('リスク許容度'),
+  investmentHorizon: z.enum(['3y', '5y', '10y']).default('5y').describe('投資期間'),
+  optimizeFor: z.enum(['return', 'risk_adjusted', 'diversification', 'stability'])
+    .default('risk_adjusted').describe('最適化目標'),
+  includeMarkdown: z.boolean().default(true),
+});
+export type PortfolioOptimizerInput = z.infer<typeof PortfolioOptimizerInput>;
+
+const PortfolioAsset = z.object({
+  prefecture: z.string(),
+  city: z.string(),
+  propertyType: z.string(),
+  budgetManYen: z.number(),
+  allocationPct: z.number().describe('推奨配分割合（%）'),
+  expectedAnnualReturnPct: z.number().describe('期待年率リターン（%）'),
+  riskScore: z.number().min(1).max(10).describe('リスクスコア（低いほど安全）'),
+  liquidityScore: z.number().min(1).max(10).describe('流動性スコア（高いほど売却しやすい）'),
+  currentPricePerSqm: z.number().nullable(),
+  strengthSummary: z.string().describe('このエリアの強み'),
+  weaknessSummary: z.string().describe('このエリアの弱み'),
+  recommendation: z.enum(['strong_buy', 'buy', 'hold', 'reduce', 'sell']),
+});
+
+export const PortfolioOptimizerOutput = z.object({
+  optimizeFor: z.string(),
+  riskTolerance: z.string(),
+  investmentHorizon: z.string(),
+  totalBudgetManYen: z.number(),
+  assets: z.array(PortfolioAsset),
+  portfolioReturnPct: z.number().describe('ポートフォリオ全体の期待年率リターン（%）'),
+  portfolioRiskScore: z.number().describe('ポートフォリオ全体のリスクスコア（1-10）'),
+  diversificationScore: z.number().min(0).max(100).describe('分散スコア（高いほど分散）'),
+  sharpeRatio: z.number().describe('シャープレシオ（リターン/リスク比）'),
+  topRecommendation: z.string().describe('最優先推奨エリア'),
+  keyInsights: z.array(z.string()),
+  markdownReport: z.string().optional(),
+});
+export type PortfolioOptimizerOutput = z.infer<typeof PortfolioOptimizerOutput>;
+
 // ── simulate_landscape_impact (v2.3 new) ──
 
 export const LandscapeInput = z.object({

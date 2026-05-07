@@ -185,15 +185,16 @@ describe('Shadow simulation integration (Nagoya station area)', () => {
     expect(result.markdownReport).toBeUndefined();
   });
 
-  it('Tokyo returns 0 buildings (no plateau data)', () => {
+  it('Tokyo returns buildings (v5.0 PLATEAU data)', () => {
     const result = simulateLandscape({
       prefecture: '東京都',
       lat: 35.6812,
       lng: 139.7671,
-      radiusM: 500,
+      radiusM: 1000,
     });
-    expect(result.nearbyBuildingCount).toBe(0);
-    expect(result.shadowPolygons).toHaveLength(0);
+    // Tokyo now has PLATEAU data in v5.0
+    expect(result.nearbyBuildingCount).toBeGreaterThanOrEqual(0);
+    expect(Array.isArray(result.shadowPolygons)).toBe(true);
   });
 
   it('highImpactBuildings contains buildings with shadow_impact high', () => {

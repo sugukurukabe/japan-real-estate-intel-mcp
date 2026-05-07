@@ -1,0 +1,29 @@
+## v4.0.0 — Capability Parity + Intelligence Layer
+
+### 主な変更点
+
+#### 全 8 都道府県フルデータ対応
+- 東京都・大阪府・神奈川県・福岡県・北海道・京都府・兵庫県の全 7 県に `human_flow`, `school_districts`, `corporate_locations`, `crime_stats` データを追加
+- 福岡県・北海道・京都府・兵庫県に `transport_stations`, `commercial_facilities`, `medical_facilities` データを追加
+- 全ローダーの `capabilities.humanFlow/education/corporate/crime/transport/commercial/medical` を `true` に更新
+
+#### 新ツール
+- **`forecast_land_price_trend`**: 線形回帰・移動平均による将来地価予測。CAGR・信頼区間・投資シグナル（buy/hold/caution）出力
+- **`scenario_what_if`**: 7種類の What-If シナリオが地価・投資スコアに与える影響を試算（新駅・大型商業施設・人口変動・災害リスク変化など）
+
+#### ダッシュボード強化
+- インサイトパネルに SVG 地価トレンドミニチャート追加
+- What-If シナリオセレクター追加（リアルタイム影響表示）
+- レポート画面にトレンドチャートと 4 シナリオ試算表追加
+
+#### MCP Prompts
+- `land_price_forecast_report`（地価予測レポート）
+- `scenario_what_if_analysis`（What-If 分析）
+- 計 5 Prompts 登録
+
+### テスト
+- 333 件（全通過）
+- TypeScript lint: clean
+
+### 破壊的変更
+なし（後方互換）

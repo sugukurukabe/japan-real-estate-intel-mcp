@@ -1,0 +1,35 @@
+feat: v5.0.0 — 10-Prefecture Coverage + Transactions Parity + PLATEAU Expansion + Portfolio Optimizer
+
+## 主な変更点
+
+### 新機能
+- 埼玉県（JP-11）・千葉県（JP-12）を新規追加 → 10 都道府県体制へ
+  - 各県 14 データファイル完備（地価・取引・人口・人流・教育・企業・犯罪・交通・商業・医療・neighborhoods 等）
+  - SaitamaLoader・ChibaLoader を新規実装（全 capabilities true、plateau 除く）
+  - resolver に埼玉・千葉エイリアスを追加
+
+- 取引価格データパリティ達成
+  - 東京都・大阪府・神奈川県・福岡県・北海道・京都府・兵庫県の 7 県に transactions.csv を追加
+  - 全 8 都道府県で getTransactions() が実データを返す
+
+- PLATEAU 3D データ拡張
+  - 東京都（新宿・港区・千代田区・江東区など 25〜30 棟）plateau_buildings.json 追加
+  - 大阪府（梅田・中央区・阿倍野など 20〜25 棟）plateau_buildings.json 追加
+  - capabilities.plateau = true（Aichi に次いで Tokyo・Osaka も対応）
+
+- 新ツール portfolio_optimizer（v5.0 新機能）
+  - 最大 5 エリア横断の投資ポートフォリオ最適化
+  - 期待年率リターン・リスクスコア・流動性・シャープレシオ・分散スコアを算出
+  - 最適化目標（return/risk_adjusted/diversification/stability）対応
+  - リスク許容度（low/medium/high）・投資期間（3y/5y/10y）対応
+  - Markdown レポート生成
+
+### テスト
+- tests/portfolio_optimizer.test.ts（17 件）新規追加
+- tests/saitama-chiba.test.ts（32 件）新規追加
+- 333 → 382 テスト（+49 件）
+
+### その他
+- national-expansion.test.ts の「8 県」チェックを「10 県」に更新
+- tokyo/osaka/shadow テストを v5.0 plateau 仕様に更新
+- CHANGELOG.md・README.md を v5.0.0 仕様に更新

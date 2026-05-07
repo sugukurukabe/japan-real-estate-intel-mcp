@@ -74,7 +74,7 @@ describe('National Expansion — resolver', () => {
 // ── registry tests ────────────────────────────────────────────────────────────
 
 describe('National Expansion — registry', () => {
-  it('all 8 prefectures are listed as available', () => {
+  it('all 10 prefectures are listed as available', () => {
     const available = listAvailable();
     for (const pref of NEW_PREFECTURES) {
       expect(available).toContain(pref.key);
@@ -82,6 +82,8 @@ describe('National Expansion — registry', () => {
     expect(available).toContain('aichi');
     expect(available).toContain('tokyo');
     expect(available).toContain('osaka');
+    expect(available).toContain('saitama');
+    expect(available).toContain('chiba');
   });
 
   for (const pref of NEW_PREFECTURES) {

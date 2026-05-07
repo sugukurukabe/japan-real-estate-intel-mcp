@@ -54,13 +54,13 @@ describe('Osaka loader capabilities', () => {
     expect(loader.getNeighborhoods().length).toBeGreaterThan(0);
   });
 
-  it('has humanFlow/education/corporate capabilities (v4.0), plateau remains false', () => {
+  it('has humanFlow/education/corporate capabilities and plateau (v5.0 Osaka)', () => {
     const loader = getLoader('osaka');
     expect(loader.capabilities.humanFlow).toBe(true);
     expect(loader.capabilities.education).toBe(true);
     expect(loader.capabilities.corporate).toBe(true);
-    // plateau remains false (no 3D data)
-    expect(loader.capabilities.plateau).toBe(false);
+    // plateau is now true for Osaka (v5.0 PLATEAU data)
+    expect(loader.capabilities.plateau).toBe(true);
   });
 
   it('has transport/commercial/medical capabilities (v3.1)', () => {

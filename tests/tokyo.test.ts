@@ -30,14 +30,14 @@ describe('Prefecture resolver', () => {
 });
 
 describe('Tokyo loader capabilities', () => {
-  it('has full v4.0 capabilities (humanFlow/education/corporate/crime = true)', () => {
+  it('has full v5.0 capabilities including plateau (Tokyo)', () => {
     const loader = getLoader('tokyo');
     expect(loader.capabilities.humanFlow).toBe(true);
     expect(loader.capabilities.education).toBe(true);
     expect(loader.capabilities.corporate).toBe(true);
     expect(loader.capabilities.crime).toBe(true);
-    // plateau remains false (no 3D data yet)
-    expect(loader.capabilities.plateau).toBe(false);
+    // plateau is now true for Tokyo (v5.0 PLATEAU data)
+    expect(loader.capabilities.plateau).toBe(true);
   });
 
   it('returns land prices for Tokyo', () => {
@@ -58,8 +58,8 @@ describe('Tokyo loader capabilities', () => {
     expect(loader.getSchoolDistricts().length).toBeGreaterThan(0);
     expect(loader.getCorporateLocations().length).toBeGreaterThan(0);
     expect(loader.getCrimeStats().length).toBeGreaterThan(0);
-    // plateau still returns empty
-    expect(loader.getPlateauBuildings()).toEqual([]);
+    // plateau now returns buildings (v5.0)
+    expect(loader.getPlateauBuildings().length).toBeGreaterThan(0);
   });
 
   it('geocodes 世田谷区', () => {

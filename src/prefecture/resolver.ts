@@ -7,6 +7,8 @@ const PREFECTURE_KEYS: Record<string, string> = {
   '神奈川県': 'kanagawa', '神奈川': 'kanagawa', 'kanagawa': 'kanagawa', 'JP-14': 'kanagawa',
   '京都府': 'kyoto', '京都': 'kyoto', 'kyoto': 'kyoto', 'JP-26': 'kyoto',
   '兵庫県': 'hyogo', '兵庫': 'hyogo', 'hyogo': 'hyogo', 'JP-28': 'hyogo',
+  '埼玉県': 'saitama', '埼玉': 'saitama', 'saitama': 'saitama', 'JP-11': 'saitama',
+  '千葉県': 'chiba', '千葉': 'chiba', 'chiba': 'chiba', 'JP-12': 'chiba',
 };
 
 const DISPLAY_NAMES: Record<string, string> = {
@@ -18,6 +20,8 @@ const DISPLAY_NAMES: Record<string, string> = {
   kanagawa: '神奈川県',
   kyoto: '京都府',
   hyogo: '兵庫県',
+  saitama: '埼玉県',
+  chiba: '千葉県',
 };
 
 const DEFAULT_PREFECTURE = 'aichi';
