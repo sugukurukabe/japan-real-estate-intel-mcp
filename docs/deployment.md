@@ -43,37 +43,40 @@ docker compose version
 
 ---
 
-## 3. アプリのデプロイ
+## 3. アプリのデプロイ（推奨：ワンコマンド）
+
+VPS（Ubuntu）で以下のコマンドを**1行で実行**するだけで完了します。
 
 ```bash
-# リポジトリをクローン（または zip を展開）
+curl -sSL https://raw.githubusercontent.com/sugukurukabe/japan-real-estate-intel-mcp/main/scripts/deploy.sh | bash
+```
+
+スクリプトが自動で以下を行います：
+- Docker のインストール（未導入の場合）
+- リポジトリのクローン／更新
+- `.env.production` の自動生成（32文字ランダム `API_KEY` 付き）
+- ドメインの入力プロンプトと `Caddyfile` 更新
+- `docker compose up -d --build` で起動
+- ヘルスチェック URL と次のステップを表示
+
+### 手動デプロイ（上級者向け）
+
+```bash
 git clone https://github.com/sugukurukabe/japan-real-estate-intel-mcp.git
 cd japan-real-estate-intel-mcp
 
-# 本番環境設定ファイルを作成
 cp .env.production.example .env.production
-nano .env.production
-```
+nano .env.production          # API_KEY を強力なランダム文字列に変更
 
-`.env.production` を編集：
-
-```env
-API_KEY=ここに強力なランダム文字列を設定   # openssl rand -hex 32 で生成
-RATE_LIMIT_MAX=100
-SESSION_TIMEOUT_MS=1800000
-```
-
-```bash
-# Caddyfile のドメインを変更
+# ドメインを置換（例: rei.example.com）
 sed -i 's/your-domain.com/rei.example.com/g' Caddyfile
 
-# ビルドして起動
 docker compose up -d --build
-
-# ログ確認
 docker compose logs -f
+```
 
-# ヘルスチェック確認
+ヘルスチェック:
+```bash
 curl https://rei.example.com/health
 ```
 
