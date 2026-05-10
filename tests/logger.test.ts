@@ -48,6 +48,9 @@ describe('LOG_LEVEL env var', () => {
 
   beforeEach(() => {
     originalLevel = process.env.LOG_LEVEL;
+    // Reset BEFORE the test runs so the dynamic import re-reads the env var.
+    // (Earlier tests in this file may have already imported logger.js, caching it.)
+    vi.resetModules();
   });
 
   afterEach(() => {
@@ -56,7 +59,6 @@ describe('LOG_LEVEL env var', () => {
     } else {
       process.env.LOG_LEVEL = originalLevel;
     }
-    // Clear module cache so the logger re-reads LOG_LEVEL on next import
     vi.resetModules();
   });
 

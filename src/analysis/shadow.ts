@@ -69,14 +69,18 @@ export function computeShadowPolygon(
   return [corners[0], corners[1], shadowCorners[1], shadowCorners[0]];
 }
 
+// JST (Japan Standard Time) is UTC+9. We pin presets to JST so behaviour is
+// stable across servers regardless of the host TZ (CI typically runs in UTC).
+const JST_OFFSET_HOURS = 9;
+
 function resolveDateTime(
   dateTime: string | undefined,
   timePreset: 'morning' | 'noon' | 'evening' | undefined,
 ): Date {
   const base = dateTime ? new Date(dateTime) : new Date();
   if (timePreset) {
-    const hours = { morning: 8, noon: 12, evening: 17 }[timePreset];
-    base.setHours(hours, 0, 0, 0);
+    const jstHour = { morning: 8, noon: 12, evening: 17 }[timePreset];
+    base.setUTCHours(jstHour - JST_OFFSET_HOURS, 0, 0, 0);
   }
   return base;
 }

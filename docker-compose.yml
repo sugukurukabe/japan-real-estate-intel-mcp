@@ -1,5 +1,3 @@
-version: "3.9"
-
 services:
   # ── Japan Real Estate Intel MCP Server ───────────────────────────────────
   mcp:

@@ -53,20 +53,39 @@ else
   cd "$APP_DIR"
 fi
 
-# 3. Create .env.production if missing
+# 3. Create or repair .env.production
 echo
 if [ ! -f ".env.production" ]; then
   echo "[3/6] Creating .env.production with secure API_KEY..."
-  API_KEY=$(openssl rand -hex 32 2>/dev/null || head -c 32 /dev/urandom | xxd -p -c 32)
   cp .env.production.example .env.production
-  sed -i "s|API_KEY=change-me-to-a-strong-random-secret|API_KEY=${API_KEY}|" .env.production
+fi
+
+# Idempotent API_KEY repair: strip ALL existing API_KEY lines, then append a fresh one
+# only when the current value is missing/placeholder/malformed.
+CURRENT_KEY=$(grep -E '^API_KEY=' .env.production | tail -1 | cut -d= -f2- || echo "")
+NEEDS_NEW_KEY=false
+if [ -z "$CURRENT_KEY" ]; then
+  NEEDS_NEW_KEY=true
+elif [ "$CURRENT_KEY" = "change-me-to-a-strong-random-secret" ]; then
+  NEEDS_NEW_KEY=true
+elif [[ "$CURRENT_KEY" == API_KEY=* ]]; then
+  # Detect the API_KEY=API_KEY=xxx malformation and repair
+  echo "  → Detected malformed API_KEY (double prefix); regenerating"
+  NEEDS_NEW_KEY=true
+fi
+
+if [ "$NEEDS_NEW_KEY" = "true" ]; then
+  NEW_KEY=$(openssl rand -hex 32 2>/dev/null || head -c 32 /dev/urandom | xxd -p -c 32)
+  # Remove every existing API_KEY= line, then append the clean one
+  sed -i '/^API_KEY=/d' .env.production
+  echo "API_KEY=${NEW_KEY}" >> .env.production
   echo "  → Generated API_KEY and saved to .env.production"
   echo "  → IMPORTANT: Copy this key now (you will need it for ChatGPT/Cursor):"
-  echo "     ${API_KEY}"
+  echo "     ${NEW_KEY}"
   echo
   read -rp "Press Enter to continue..."
 else
-  echo "[3/6] .env.production already exists — keeping existing values"
+  echo "[3/6] .env.production already has a valid API_KEY — keeping existing value"
 fi
 
 # 4. Domain configuration
