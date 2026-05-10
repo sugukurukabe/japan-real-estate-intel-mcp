@@ -9,7 +9,7 @@ RUN corepack enable && corepack prepare pnpm@latest --activate && pnpm install -
 
 # Copy source and build
 COPY . .
-RUN pnpm run build
+RUN pnpm run build:server
 
 # ── Stage 2: Runner ───────────────────────────────────────────────────────────
 FROM node:22-alpine AS runner
