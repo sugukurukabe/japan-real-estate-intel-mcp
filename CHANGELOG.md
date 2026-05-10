@@ -1,4 +1,26 @@
 # Changelog
+## [6.2.0] - 2026-05-10
+
+### Added
+- **ChatGPT Apps SDK compatibility**: `search` and `fetch` tools conforming to OpenAI Custom
+  Connector requirements. `search` uses keyword-based catalog matching across all prefectures,
+  cities, tools, and data sources. `fetch` routes IDs to existing domain tools and returns
+  Markdown documents with metadata
+- **Search catalog** (`src/search/`): auto-built from loader registry with Japanese-aware
+  tokenization and ranked scoring (exact match > keyword overlap > token overlap)
+- **Tool annotations**: all 16 tools now carry `readOnlyHint: true`, signalling to ChatGPT
+  and other MCP clients that they perform no mutations
+- **`docs/chatgpt-integration.md`**: step-by-step Custom Connector registration guide, ID
+  naming conventions, and troubleshooting table
+
+### Fixed
+- **Mojibake in tool descriptions**: all 14 original tool descriptions in `src/server.ts` were
+  corrupted (displayed as `???????`). Replaced with correct Japanese text
+- **Prompt descriptions**: resource and prompt descriptions were also mojibake; all restored
+
+### Changed
+- Server version bumped to `6.2.0` in `package.json`, `src/server.ts`, and `src/http.ts`
+
 ## [6.1.2] - 2026-05-10
 
 ### Fixed

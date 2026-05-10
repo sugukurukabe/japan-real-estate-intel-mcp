@@ -1,6 +1,6 @@
 {
   "name": "@sugukuru/japan-real-estate-intel-mcp",
-  "version": "6.1.2",
+  "version": "6.2.0",
   "description": "Japan real estate intelligence MCP - land price, transactions, population, disaster risk, human flow, education, corporate location cross-analysis (8 prefectures: Aichi/Tokyo/Osaka/Fukuoka/Hokkaido/Kanagawa/Kyoto/Hyogo)",
   "type": "module",
   "main": "dist/index.js",
