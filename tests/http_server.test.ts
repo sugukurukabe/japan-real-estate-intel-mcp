@@ -113,6 +113,30 @@ describe('Security headers', () => {
   });
 });
 
+describe('Static UI assets (public, no auth)', () => {
+  it('GET / redirects to /dashboard.html', async () => {
+    const res = await request(app).get('/');
+    expect(res.status).toBe(302);
+    expect(res.headers.location).toBe('/dashboard.html');
+  });
+
+  it('GET /dashboard.html returns 200 (HTML)', async () => {
+    const res = await request(app).get('/dashboard.html');
+    expect(res.status).toBe(200);
+    expect(res.headers['content-type']).toMatch(/html/);
+  });
+
+  it('GET /manifest.webmanifest returns 200', async () => {
+    const res = await request(app).get('/manifest.webmanifest');
+    expect(res.status).toBe(200);
+  });
+
+  it('GET /sw.js returns 200', async () => {
+    const res = await request(app).get('/sw.js');
+    expect(res.status).toBe(200);
+  });
+});
+
 describe('Rate limiting', () => {
   it('rate limit headers are present on /mcp endpoint', async () => {
     const res = await request(app)

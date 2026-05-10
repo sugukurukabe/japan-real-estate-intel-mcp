@@ -2,6 +2,8 @@
 import express, { type Express } from 'express';
 import helmet from 'helmet';
 import rateLimit from 'express-rate-limit';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { StreamableHTTPServerTransport } from '@modelcontextprotocol/sdk/server/streamableHttp.js';
 import { createServer } from './server.js';
 import { moduleLogger } from './logger.js';
@@ -44,13 +46,32 @@ if (RATE_LIMIT_ENABLED) {
 // Body size limit
 app.use(express.json({ limit: '10mb' }));
 
-// Optional API key authentication
+// ── Static UI assets (no auth required) ────────────────────────────────────
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const ROOT = path.resolve(__dirname, '..');
+
+app.use(express.static(path.join(ROOT, 'ui'), { extensions: ['html'] }));
+app.use('/data', express.static(path.join(ROOT, 'data')));
+app.use('/assets', express.static(path.join(ROOT, 'assets')));
+
+// Redirect root to dashboard for convenience
+app.get('/', (_req, res) => res.redirect('/dashboard.html'));
+
+// Optional API key authentication (applied AFTER static files so dashboard is public)
+function isPublicPath(p: string): boolean {
+  if (p === '/health' || p === '/' || p === '/sw.js' || p === '/manifest.webmanifest') return true;
+  if (p.startsWith('/dashboard') || p.startsWith('/icons/') || p.startsWith('/data/') || p.startsWith('/assets/')) return true;
+  return false;
+}
+
 app.use((req, res, next) => {
   if (!API_KEY) { next(); return; }
-  // Skip auth for health check
-  if (req.path === '/health') { next(); return; }
-  const provided = req.headers['x-api-key'];
-  if (provided !== API_KEY) {
+  if (isPublicPath(req.path)) { next(); return; }
+  // Accept either x-api-key or Authorization: Bearer <key>
+  const xApi = req.headers['x-api-key'];
+  const auth = req.headers['authorization'];
+  const bearer = typeof auth === 'string' && auth.startsWith('Bearer ') ? auth.slice(7) : undefined;
+  if (xApi !== API_KEY && bearer !== API_KEY) {
     log.warn({ path: req.path, ip: req.ip }, 'Unauthorized: invalid API key');
     res.status(401).json({ error: 'Unauthorized' });
     return;
@@ -151,7 +172,7 @@ app.delete('/mcp', async (req, res) => {
 app.get('/health', (_req, res) => {
   res.json({
     status: 'ok',
-    version: '6.1.0',
+    version: '6.1.1',
     sessions: sessions.size,
     uptime_s: Math.round(process.uptime()),
   });

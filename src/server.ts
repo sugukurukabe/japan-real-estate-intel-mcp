@@ -77,7 +77,7 @@ function withErrorHandling(
 export function createServer(): McpServer {
   const server = new McpServer({
     name: 'japan-real-estate-intel-mcp',
-    version: '6.1.0',
+    version: '6.1.1',
   });
 
   // -- Tools (13) --
