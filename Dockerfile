@@ -4,12 +4,12 @@ FROM node:22-alpine AS builder
 WORKDIR /app
 
 # Copy package files and install all deps (including devDeps for build)
-COPY package.json package-lock.json ./
-RUN npm ci --ignore-scripts
+COPY package.json pnpm-lock.yaml ./
+RUN corepack enable && corepack prepare pnpm@latest --activate && pnpm install --frozen-lockfile --ignore-scripts
 
 # Copy source and build
 COPY . .
-RUN npm run build
+RUN pnpm run build
 
 # ── Stage 2: Runner ───────────────────────────────────────────────────────────
 FROM node:22-alpine AS runner
@@ -17,8 +17,8 @@ FROM node:22-alpine AS runner
 WORKDIR /app
 
 # Install production deps only
-COPY package.json package-lock.json ./
-RUN npm ci --omit=dev --ignore-scripts
+COPY package.json pnpm-lock.yaml ./
+RUN corepack enable && corepack prepare pnpm@latest --activate && pnpm install --frozen-lockfile --prod --ignore-scripts
 
 # Copy built artifacts and runtime assets
 COPY --from=builder /app/dist ./dist
