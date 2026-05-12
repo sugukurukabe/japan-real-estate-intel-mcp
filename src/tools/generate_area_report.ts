@@ -50,10 +50,17 @@ function buildLinearImpactSection(area: string): string {
   ].join('\n');
 }
 
-export async function generateAreaReport(input: GenerateReportInput): Promise<GenerateReportOutput> {
+export type ProgressFn = (progress: number, total: number, message?: string) => void;
+
+export async function generateAreaReport(
+  input: GenerateReportInput,
+  onProgress?: ProgressFn,
+): Promise<GenerateReportOutput> {
   const prefKey = resolvePrefecture(input.prefecture);
   const loader = getLoader(prefKey);
+  const notify = onProgress ?? (() => {});
 
+  notify(1, 6, 'クロス分析を実行中…');
   const analysis = crossAnalyze({
     prefecture: input.prefecture,
     area: input.area,
@@ -63,13 +70,16 @@ export async function generateAreaReport(input: GenerateReportInput): Promise<Ge
     includeHumanFlow: true,
     includeEducation: false,
     includeCorporate: false,
+    output_mode: 'detailed',
     includeTransport: false,
     includeCommercial: false,
     includeMedical: false,
   });
 
+  notify(2, 6, '人口データ読み込み中…');
   const population = getPopulationForCity(input.area, prefKey);
 
+  notify(3, 6, 'Markdownレポート生成中…');
   const base = generateMarkdownReport({
     area: input.area,
     purpose: input.purpose,
@@ -78,7 +88,6 @@ export async function generateAreaReport(input: GenerateReportInput): Promise<Ge
     includeCharts: input.includeCharts,
   });
 
-  // Append Linear impact section if requested (Aichi only)
   let extendedReport = base.markdownReport;
   if (input.includeLinearImpact && prefKey === 'aichi') {
     extendedReport += buildLinearImpactSection(input.area);
@@ -90,10 +99,11 @@ export async function generateAreaReport(input: GenerateReportInput): Promise<Ge
   };
 
   if (input.format !== 'pdf') {
+    notify(6, 6, 'Markdown完了');
     return baseOutput;
   }
 
-  // Build branding options
+  notify(4, 6, 'ブランディング設定…');
   const branding = {
     companyName: input.companyName,
     agentName: input.agentName,
@@ -102,11 +112,10 @@ export async function generateAreaReport(input: GenerateReportInput): Promise<Ge
     footerContact: input.footerContact,
   };
 
-  // Build transaction comparables if requested
   let comparables: TransactionComparable[] | undefined;
   if (input.includeTransactionComparables && loader.capabilities.transactions) {
+    notify(5, 6, '取引事例を収集中…');
     const txns = loader.getTransactions();
-    // Filter by city/area and take most recent
     const filtered = txns
       .filter((t) => {
         const city = typeof t.city === 'string' ? t.city : String(t.city);
@@ -127,6 +136,7 @@ export async function generateAreaReport(input: GenerateReportInput): Promise<Ge
     }));
   }
 
+  notify(5, 6, 'PDF生成中…');
   const pdfBase64 = await markdownToPdfBase64(
     extendedReport,
     `${input.area} 不動産調査レポート`,
@@ -134,5 +144,6 @@ export async function generateAreaReport(input: GenerateReportInput): Promise<Ge
     comparables,
   );
 
+  notify(6, 6, 'PDF完了');
   return { ...baseOutput, pdfBase64 };
 }

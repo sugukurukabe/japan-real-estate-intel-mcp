@@ -201,25 +201,25 @@ export function buildLocalDrillDown(input: DrillDownInput): DrillDownOutput {
     if (population.aging > 30) keyInsights.push(`高齢化率${population.aging}%。高齢者向け施設・バリアフリー仕様の需要があります。`);
   }
   if (!loader.capabilities.humanFlow) {
-    keyInsights.push(`${prefDisplayName}の人流データは v2.2 以降で対応予定です。`);
+    keyInsights.push(`${prefDisplayName}では人流データを提供していません。`);
   }
   if (transportScore != null && transportScore > 60) {
     keyInsights.push(`交通スコア${transportScore}/100。駅近・高利便性エリアです。`);
   }
   if (!loader.capabilities.transport) {
-    keyInsights.push(`${prefDisplayName}の交通データは v2.2 以降で対応予定です。`);
+    keyInsights.push(`${prefDisplayName}では交通データを提供していません。`);
   }
   if (commercialDensity != null && (commercialDensity === '非常に高い' || commercialDensity === '高い')) {
     keyInsights.push(`商業施設が${commercialDensity}密度で集積。生活利便性が高いエリアです。`);
   }
   if (!loader.capabilities.commercial) {
-    keyInsights.push(`${prefDisplayName}の商業施設データは v2.2 以降で対応予定です。`);
+    keyInsights.push(`${prefDisplayName}では商業施設データを提供していません。`);
   }
   if (medicalDensity != null && (medicalDensity === '非常に充実' || medicalDensity === '充実')) {
     keyInsights.push(`医療環境が${medicalDensity}。高齢者向け住宅や福祉施設に好適です。`);
   }
   if (!loader.capabilities.medical) {
-    keyInsights.push(`${prefDisplayName}の医療施設データは v2.2 以降で対応予定です。`);
+    keyInsights.push(`${prefDisplayName}では医療施設データを提供していません。`);
   }
   if (keyInsights.length === 0) {
     keyInsights.push(`${scopeLabel}の市区町村レベルデータを正常に取得しました。`);
@@ -281,25 +281,25 @@ export function buildLocalDrillDown(input: DrillDownInput): DrillDownOutput {
     ``,
     humanFlowScore != null
       ? `- 人流スコア: **${humanFlowScore}/100**`
-      : loader.capabilities.humanFlow ? `この市区町村の人流データは未登録です` : `${prefDisplayName}の人流データは v2.2 以降で対応予定`,
+      : loader.capabilities.humanFlow ? `この市区町村の人流データは未登録です` : `${prefDisplayName}では人流データを提供していません`,
     ``,
     `## 交通利便性`,
     ``,
     transportScore != null
       ? `- 交通スコア: **${transportScore}/100**`
-      : loader.capabilities.transport ? `この市区町村の交通データは未登録です` : `${prefDisplayName}の交通データは v2.2 以降で対応予定`,
+      : loader.capabilities.transport ? `この市区町村の交通データは未登録です` : `${prefDisplayName}では交通データを提供していません`,
     ``,
     `## 商業施設`,
     ``,
     commercialDensity != null
       ? `- 商業施設密度: **${commercialDensity}**`
-      : loader.capabilities.commercial ? `この市区町村の商業施設データは未登録です` : `${prefDisplayName}の商業施設データは v2.2 以降で対応予定`,
+      : loader.capabilities.commercial ? `この市区町村の商業施設データは未登録です` : `${prefDisplayName}では商業施設データを提供していません`,
     ``,
     `## 医療環境`,
     ``,
     medicalDensity != null
       ? `- 医療充実度: **${medicalDensity}**`
-      : loader.capabilities.medical ? `この市区町村の医療施設データは未登録です` : `${prefDisplayName}の医療施設データは v2.2 以降で対応予定`,
+      : loader.capabilities.medical ? `この市区町村の医療施設データは未登録です` : `${prefDisplayName}では医療施設データを提供していません`,
     ``,
     keyInsights.length > 0 ? `## 主要インサイト\n\n${keyInsights.map((i) => `- ${i}`).join('\n')}` : '',
     ``,

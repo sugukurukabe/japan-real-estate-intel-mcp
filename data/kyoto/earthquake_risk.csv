@@ -1,0 +1,12 @@
+city,seismic_intensity_30yr,liquefaction_risk,slope_failure_risk,overall_risk_score,notes
+京都市中京区,57,low,medium,2,花折断層帯など活断層が複数
+京都市下京区,76,low,low,5,花折断層帯など活断層が複数
+京都市上京区,74,low,low,5,花折断層帯など活断層が複数
+京都市東山区,61,medium,low,3,花折断層帯など活断層が複数
+京都市左京区,78,high,low,9,花折断層帯など活断層が複数
+京都市右京区,68,medium,low,5,花折断層帯など活断層が複数
+京都市伏見区,66,low,medium,4,花折断層帯など活断層が複数
+京都市南区,78,medium,high,9,花折断層帯など活断層が複数
+宇治市,60,low,medium,3,花折断層帯など活断層が複数
+長岡京市,57,low,low,1,花折断層帯など活断層が複数
+京田辺市,76,low,medium,6,花折断層帯など活断層が複数

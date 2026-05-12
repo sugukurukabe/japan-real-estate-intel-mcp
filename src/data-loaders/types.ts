@@ -16,6 +16,10 @@ export interface LoaderCapabilities {
   commercial: boolean;
   medical: boolean;
   neighborhoods: boolean;
+  zoning: boolean;
+  vacancy: boolean;
+  populationProjection: boolean;
+  rosenka: boolean;
 }
 
 export interface LandPriceRecord {
@@ -165,6 +169,44 @@ export interface NeighborhoodRecord {
   daytime_pop_ratio: number;
 }
 
+export interface ZoningRecord {
+  city: string;
+  district: string;
+  zone_type: string;
+  coverage_ratio: number;
+  floor_area_ratio: number;
+  height_limit: number | null;
+}
+
+export interface VacancyRecord {
+  city: string;
+  total_housing: number;
+  total_vacant: number;
+  vacancy_rate: number;
+  for_rent: number;
+  for_sale: number;
+  other_vacant: number;
+}
+
+export interface PopulationProjectionRecord {
+  city: string;
+  pop_2020: number;
+  pop_2030: number;
+  pop_2040: number;
+  pop_2050: number;
+  decline_rate_2050: number;
+}
+
+export interface RosenkaRecord {
+  city: string;
+  district: string;
+  year: number;
+  median_per_sqm: number;
+  max_per_sqm: number;
+  min_per_sqm: number;
+  sample_lines: number;
+}
+
 export interface PrefectureLoader {
   readonly key: string;
   readonly displayName: string;
@@ -192,4 +234,16 @@ export interface PrefectureLoader {
   getCommercialFacilities(): CommercialFacilityRecord[];
   getMedicalFacilities(): MedicalFacilityRecord[];
   getNeighborhoods(): NeighborhoodRecord[];
+
+  getZoning(): ZoningRecord[];
+  getVacancy(): VacancyRecord[];
+  getPopulationProjection(): PopulationProjectionRecord[];
+  getRosenka(): RosenkaRecord[];
+
+  getCities(): string[];
+
+  /** Lat/lng tuples for dashboard municipality pins (excludes prefecture-wide label). */
+  getMunicipalityPins(): Record<string, [number, number]>;
+  /** Centroid and zoom hint from registered municipality coordinates. */
+  getDefaultMapView(): { center: [number, number]; zoom: number };
 }

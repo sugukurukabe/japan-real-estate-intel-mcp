@@ -42,6 +42,7 @@ if (existsSync(envPath)) {
 
 import { MlitClient, transactionsToCsv, landPriceToCsv } from '../src/api-client/mlit.js';
 import { EstatClient, populationToCsv } from '../src/api-client/estat.js';
+import { listAvailable } from '../src/data-loaders/index.js';
 
 // ── CLI argument parsing ─────────────────────────────────────────────────────
 
@@ -75,10 +76,7 @@ if (isNaN(YEAR) || YEAR < 2005 || YEAR > 2030) {
   process.exit(1);
 }
 
-const SUPPORTED_PREFECTURES = [
-  'aichi', 'tokyo', 'osaka',
-  'fukuoka', 'hokkaido', 'kanagawa', 'kyoto', 'hyogo',
-];
+const SUPPORTED_PREFECTURES = listAvailable().sort((a, b) => a.localeCompare(b));
 const PREFECTURES = ALL ? SUPPORTED_PREFECTURES : [prefFlag!];
 
 for (const p of PREFECTURES) {
@@ -185,7 +183,7 @@ async function fetchForPrefecture(pref: string): Promise<void> {
 
 // ── Entry point ──────────────────────────────────────────────────────────────
 
-console.log('Japan Real Estate Intel MCP — Real Data Fetcher v3.0.0');
+console.log('Japan Real Estate Intel MCP — Real Data Fetcher v6.15.0');
 console.log(`Prefectures: ${PREFECTURES.join(', ')}`);
 console.log(`Year: ${YEAR}${QUARTER ? `, Quarter: ${QUARTER}` : ''}`);
 console.log(`MLIT API: ${MLIT_KEY ? 'enabled' : 'SKIPPED (no key)'}`);

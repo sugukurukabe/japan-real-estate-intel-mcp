@@ -1,0 +1,17 @@
+city,district,river_flood_risk,inland_flood_risk,storm_surge_risk,hazard_zone,notes
+中央区,中央区中心部,low,medium,high,danger,大阪湾の高潮リスクが極めて高い
+北区,北区中心部,medium,low,low,warning,淀川・大和川の広域氾濫に注意
+浪速区,浪速区中心部,low,high,high,danger,大阪湾の高潮リスクが極めて高い
+天王寺区,天王寺区中心部,low,low,low,caution,上町断層帯による直下型地震リスク
+阿倍野区,阿倍野区中心部,medium,high,high,danger,大阪湾の高潮リスクが極めて高い
+西区,西区中心部,low,low,low,caution,上町断層帯による直下型地震リスク
+福島区,福島区中心部,medium,high,high,danger,大阪湾の高潮リスクが極めて高い
+都島区,都島区中心部,low,low,low,caution,上町断層帯による直下型地震リスク
+淀川区,淀川区中心部,medium,high,medium,warning,大阪湾の高潮リスクが極めて高い
+堺市堺区,堺市堺区中心部,low,low,low,caution,上町断層帯による直下型地震リスク
+堺市中区,堺市中区中心部,high,high,medium,danger,大阪湾の高潮リスクが極めて高い
+東大阪市,東大阪市中心部,low,low,low,caution,上町断層帯による直下型地震リスク
+豊中市,豊中市中心部,high,high,medium,danger,大阪湾の高潮リスクが極めて高い
+吹田市,吹田市中心部,low,low,medium,warning,大阪湾の高潮リスクが極めて高い
+高槻市,高槻市中心部,high,medium,low,danger,淀川・大和川の広域氾濫に注意
+枚方市,枚方市中心部,low,low,medium,warning,大阪湾の高潮リスクが極めて高い

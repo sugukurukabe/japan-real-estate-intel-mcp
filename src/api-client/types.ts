@@ -161,6 +161,33 @@ export interface PopulationCsvRow {
   aging_rate: number;
 }
 
+// ── e-Stat extended row types (v6.8.0) ──────────────────────────────────────
+
+/** Household composition by municipality */
+export interface HouseholdCompositionRow {
+  city: string;
+  totalHouseholds: number;
+  singlePersonHouseholds: number;
+  familyHouseholds: number;
+  singlePersonRatio: number;
+}
+
+/** Vacancy statistics by municipality */
+export interface VacancyStatsRow {
+  city: string;
+  totalVacant: number;
+  forRent: number;
+  forSale: number;
+  other: number;
+}
+
+/** Economic census row by municipality */
+export interface EconomicCensusRow {
+  city: string;
+  establishments: number;
+  employees: number;
+}
+
 // ── Shared fetch result wrapper ─────────────────────────────────────────────
 
 export interface FetchResult<T> {

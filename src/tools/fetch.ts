@@ -71,6 +71,7 @@ function fetchArea(id: string, url: string, parts: string[]): FetchOutput {
     includeTransport: false,
     includeCommercial: false,
     includeMedical: false,
+    output_mode: 'detailed',
   });
 
   const lines = [

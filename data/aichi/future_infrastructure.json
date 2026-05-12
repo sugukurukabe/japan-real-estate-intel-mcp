@@ -48,5 +48,35 @@
     "impact_cities": ["名古屋市名東区", "長久手市", "一宮市"],
     "peak_uplift_pct": 10,
     "notes": "全線開通後、名古屋東部の物流・住宅需要が拡大。通勤時間短縮効果"
+  },
+  {
+    "project": "名古屋駅前再開発（リニア関連）",
+    "type": "urban_development",
+    "status": "planning",
+    "opening_estimate": "2035",
+    "primary_cities": ["名古屋市中村区"],
+    "impact_cities": ["名古屋市中区", "名古屋市西区"],
+    "peak_uplift_pct": 25,
+    "notes": "リニア開業に向けた名古屋駅周辺の大規模再開発。高層ビル群、商業施設、交通結節点の整備"
+  },
+  {
+    "project": "栄地区再開発（久屋大通・栄広場）",
+    "type": "urban_development",
+    "status": "under_construction",
+    "opening_estimate": "2028",
+    "primary_cities": ["名古屋市中区"],
+    "impact_cities": ["名古屋市東区"],
+    "peak_uplift_pct": 18,
+    "notes": "久屋大通公園リニューアル済み。栄広場の商業施設建替えが進行中"
+  },
+  {
+    "project": "金山駅南口再開発",
+    "type": "urban_development",
+    "status": "planning",
+    "opening_estimate": "2032",
+    "primary_cities": ["名古屋市熱田区"],
+    "impact_cities": ["名古屋市中区", "名古屋市昭和区"],
+    "peak_uplift_pct": 15,
+    "notes": "JR・名鉄・地下鉄の交通結節点。駅前再開発で複合商業施設を計画"
   }
 ]

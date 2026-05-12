@@ -1,0 +1,51 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#0f172a"/>
+      <stop offset="100%" stop-color="#1e40af"/>
+    </linearGradient>
+    <linearGradient id="accent" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#60a5fa"/>
+      <stop offset="100%" stop-color="#3b82f6"/>
+    </linearGradient>
+    <linearGradient id="house-grad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#f8fafc"/>
+      <stop offset="100%" stop-color="#94a3b8"/>
+    </linearGradient>
+  </defs>
+  <!-- Background -->
+  <rect width="512" height="512" rx="80" fill="url(#bg)"/>
+  <!-- Simplified Japan archipelago silhouette -->
+  <g transform="translate(100,60) scale(0.65)" opacity="0.12" fill="#fff">
+    <path d="M280,40 C290,30 310,28 320,38 C335,50 340,80 338,110 C336,140 330,170 325,200
+             C320,230 310,260 295,285 C280,310 265,330 250,345 C235,360 215,365 200,360
+             C185,355 175,340 170,320 C165,300 165,275 170,250 C175,225 185,200 195,180
+             C205,160 220,145 235,130 C250,115 265,95 275,70 C280,55 278,45 280,40Z"/>
+    <path d="M190,280 C200,275 215,280 225,290 C235,300 240,315 238,330
+             C236,345 228,355 218,360 C208,365 195,362 185,355
+             C175,348 170,335 172,320 C174,305 180,290 190,280Z"/>
+    <path d="M140,180 C150,170 165,168 178,175 C190,182 198,195 195,210
+             C192,225 180,235 168,238 C156,241 142,235 135,225
+             C128,215 130,200 140,180Z"/>
+  </g>
+  <!-- House icon -->
+  <g transform="translate(156,120)">
+    <polygon points="100,0 200,80 180,80 180,160 20,160 20,80 0,80" fill="url(#house-grad)" opacity="0.95"/>
+    <rect x="50" y="100" width="40" height="60" rx="2" fill="url(#bg)"/>
+    <rect x="110" y="100" width="35" height="35" rx="2" fill="url(#bg)"/>
+    <polygon points="100,0 200,80 0,80" fill="url(#accent)" opacity="0.3"/>
+  </g>
+  <!-- Rising chart bars -->
+  <g transform="translate(120,300)">
+    <rect x="0" y="60" width="36" height="50" rx="4" fill="url(#accent)" opacity="0.5"/>
+    <rect x="52" y="40" width="36" height="70" rx="4" fill="url(#accent)" opacity="0.65"/>
+    <rect x="104" y="20" width="36" height="90" rx="4" fill="url(#accent)" opacity="0.8"/>
+    <rect x="156" y="0" width="36" height="110" rx="4" fill="url(#accent)" opacity="0.9"/>
+    <rect x="208" y="-20" width="36" height="130" rx="4" fill="url(#accent)"/>
+    <!-- Trend line -->
+    <polyline points="18,65 70,48 122,30 174,12 226,-8" fill="none" stroke="#f8fafc" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" opacity="0.6"/>
+  </g>
+  <!-- Text -->
+  <text x="256" y="445" text-anchor="middle" font-family="system-ui,-apple-system,sans-serif" font-weight="800" font-size="42" fill="#f8fafc" letter-spacing="2">RE Intel JP</text>
+  <text x="256" y="478" text-anchor="middle" font-family="system-ui,-apple-system,sans-serif" font-weight="400" font-size="18" fill="#94a3b8" letter-spacing="4">MCP SERVER</text>
+</svg>

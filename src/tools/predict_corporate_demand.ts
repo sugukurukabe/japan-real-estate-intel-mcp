@@ -17,7 +17,7 @@ export function predictCorporateDemand(input: CorporateDemandInput): CorporateDe
   const result = computeCorporateDemand(corporate, humanFlow, propertyType, area);
 
   if (!loader.capabilities.corporate) {
-    result.insights.unshift(`${loader.displayName}の企業立地データは v2.x で対応予定です。汎用推定値を使用しています。`);
+    result.insights.unshift(`${loader.displayName}では企業立地データを提供していません。汎用推定値を使用しています。`);
   }
 
   const summary = [

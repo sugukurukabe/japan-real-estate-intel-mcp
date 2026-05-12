@@ -1,0 +1,13 @@
+city,district,river_flood_risk,inland_flood_risk,storm_surge_risk,hazard_zone,notes
+福岡市中央区,福岡市中央区中心部,low,medium,high,danger,博多湾沿岸は高潮リスクあり
+福岡市博多区,福岡市博多区中心部,medium,low,low,warning,那珂川・御笠川の氾濫リスク
+福岡市東区,福岡市東区中心部,low,medium,high,danger,博多湾沿岸は高潮リスクあり
+福岡市南区,福岡市南区中心部,low,low,low,caution,警固断層帯あり。西方沖地震(2005)の経験
+福岡市西区,福岡市西区中心部,low,high,high,danger,博多湾沿岸は高潮リスクあり
+福岡市城南区,福岡市城南区中心部,low,low,low,caution,警固断層帯あり。西方沖地震(2005)の経験
+福岡市早良区,福岡市早良区中心部,medium,high,medium,warning,博多湾沿岸は高潮リスクあり
+北九州市小倉北区,北九州市小倉北区中心部,low,low,low,caution,警固断層帯あり。西方沖地震(2005)の経験
+北九州市八幡西区,北九州市八幡西区中心部,medium,high,medium,warning,博多湾沿岸は高潮リスクあり
+久留米市,久留米市中心部,low,low,low,caution,警固断層帯あり。西方沖地震(2005)の経験
+春日市,春日市中心部,high,high,low,danger,那珂川・御笠川の氾濫リスク
+大野城市,大野城市中心部,low,low,low,caution,警固断層帯あり。西方沖地震(2005)の経験

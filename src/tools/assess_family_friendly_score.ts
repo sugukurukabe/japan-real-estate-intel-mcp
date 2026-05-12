@@ -45,10 +45,10 @@ export function assessFamilyFriendlyScore(input: FamilyFriendlyInput): FamilyFri
   const result = computeFamilyFriendlyScore(schools, crime, population, riskScore, avgPrice, area);
 
   if (!loader.capabilities.education) {
-    result.insights.unshift(`${loader.displayName}の教育データは v2.x で対応予定です。汎用スコアで算出しています。`);
+    result.insights.unshift(`${loader.displayName}では教育データを提供していません。汎用スコアで算出しています。`);
   }
   if (!loader.capabilities.crime) {
-    result.insights.unshift(`${loader.displayName}の犯罪統計は v2.x で対応予定です。`);
+    result.insights.unshift(`${loader.displayName}では犯罪統計を提供していません。`);
   }
 
   return {

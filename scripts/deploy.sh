@@ -17,7 +17,7 @@
 
 set -euo pipefail
 
-REPO_URL="https://github.com/sugukurukabe/japan-real-estate-intel-mcp.git"
+REPO_URL="https://github.com/sugukuru/japan-real-estate-intel-mcp.git"
 APP_DIR="${HOME}/japan-real-estate-intel-mcp"
 DOMAIN_PLACEHOLDER="your-domain.com"
 
@@ -94,7 +94,7 @@ echo "[4/6] Domain configuration"
 CURRENT_DOMAIN=$(grep -oE '^[^ ]+' Caddyfile | head -1 || echo "$DOMAIN_PLACEHOLDER")
 
 if [ "$CURRENT_DOMAIN" = "$DOMAIN_PLACEHOLDER" ]; then
-  read -rp "Enter your domain (e.g. rei.example.com): " USER_DOMAIN
+  read -rp "Enter your domain (e.g. realestate-mcp.jp): " USER_DOMAIN
   if [ -n "$USER_DOMAIN" ]; then
     sed -i "s|${DOMAIN_PLACEHOLDER}|${USER_DOMAIN}|g" Caddyfile
     echo "  → Caddyfile updated with domain: ${USER_DOMAIN}"

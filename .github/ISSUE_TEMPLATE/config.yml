@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Security Vulnerability
+    url: https://github.com/sugukuru/japan-real-estate-intel-mcp/security/advisories/new
+    about: Report security vulnerabilities via GitHub Security Advisory (private).
+  - name: Discussions
+    url: https://github.com/sugukuru/japan-real-estate-intel-mcp/discussions
+    about: Ask questions and share ideas.

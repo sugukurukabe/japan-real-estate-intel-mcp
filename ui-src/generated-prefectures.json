@@ -1,0 +1,8309 @@
+{
+  "aichi": {
+    "center": [
+      35.097004878048786,
+      136.9818365853658
+    ],
+    "zoom": 9,
+    "displayName": "愛知県",
+    "capabilities": {
+      "humanFlow": true,
+      "education": true,
+      "corporate": true,
+      "crime": true,
+      "plateau": true,
+      "transport": true,
+      "commercial": true,
+      "medical": true
+    },
+    "municipalities": {
+      "名古屋市中村区": [
+        35.1709,
+        136.8716
+      ],
+      "名古屋市中区": [
+        35.1709,
+        136.9066
+      ],
+      "名古屋市東区": [
+        35.1815,
+        136.9274
+      ],
+      "名古屋市千種区": [
+        35.1676,
+        136.9486
+      ],
+      "名古屋市名東区": [
+        35.1825,
+        136.9906
+      ],
+      "名古屋市緑区": [
+        35.0734,
+        136.9539
+      ],
+      "名古屋市港区": [
+        35.0828,
+        136.8472
+      ],
+      "名古屋市昭和区": [
+        35.1509,
+        136.9331
+      ],
+      "名古屋市天白区": [
+        35.1204,
+        136.968
+      ],
+      "名古屋市瑞穂区": [
+        35.1333,
+        136.9347
+      ],
+      "名古屋市熱田区": [
+        35.1268,
+        136.9039
+      ],
+      "名古屋市中川区": [
+        35.1338,
+        136.8538
+      ],
+      "名古屋市北区": [
+        35.1985,
+        136.9195
+      ],
+      "名古屋市西区": [
+        35.1887,
+        136.8753
+      ],
+      "名古屋市南区": [
+        35.0984,
+        136.9104
+      ],
+      "名古屋市守山区": [
+        35.2154,
+        136.9688
+      ],
+      "名古屋市": [
+        35.1815,
+        136.9066
+      ],
+      "豊田市": [
+        35.0833,
+        137.1557
+      ],
+      "岡崎市": [
+        34.9552,
+        137.1733
+      ],
+      "一宮市": [
+        35.3015,
+        136.803
+      ],
+      "春日井市": [
+        35.2512,
+        136.9722
+      ],
+      "豊橋市": [
+        34.7694,
+        137.3916
+      ],
+      "安城市": [
+        34.9587,
+        137.0778
+      ],
+      "刈谷市": [
+        34.9891,
+        137.0042
+      ],
+      "小牧市": [
+        35.2917,
+        136.9222
+      ],
+      "瀬戸市": [
+        35.2255,
+        137.0803
+      ],
+      "半田市": [
+        34.8893,
+        136.9381
+      ],
+      "津島市": [
+        35.1729,
+        136.7407
+      ],
+      "碧南市": [
+        34.8835,
+        136.9906
+      ],
+      "犬山市": [
+        35.3786,
+        136.9433
+      ],
+      "常滑市": [
+        34.892,
+        136.837
+      ],
+      "江南市": [
+        35.3319,
+        136.8694
+      ],
+      "大府市": [
+        35.01,
+        136.9622
+      ],
+      "知多市": [
+        35.0112,
+        136.8652
+      ],
+      "知立市": [
+        35.0015,
+        137.0497
+      ],
+      "尾張旭市": [
+        35.2188,
+        137.0349
+      ],
+      "豊明市": [
+        35.0534,
+        137.0095
+      ],
+      "日進市": [
+        35.1305,
+        137.0372
+      ],
+      "蒲郡市": [
+        34.8268,
+        137.218
+      ],
+      "西尾市": [
+        34.8642,
+        137.0612
+      ],
+      "新城市": [
+        34.9097,
+        137.498
+      ]
+    },
+    "landPrices": {
+      "名古屋市中村区": {
+        "price": 1441000,
+        "change": 4.2
+      },
+      "名古屋市中区": {
+        "price": 2615000,
+        "change": 4.5
+      },
+      "名古屋市東区": {
+        "price": 1027500,
+        "change": 4.5
+      },
+      "名古屋市千種区": {
+        "price": 438000,
+        "change": 4.3
+      },
+      "名古屋市名東区": {
+        "price": 206000,
+        "change": 3
+      },
+      "名古屋市緑区": {
+        "price": 135000,
+        "change": 3.1
+      },
+      "名古屋市港区": {
+        "price": 145000,
+        "change": 1.4
+      },
+      "名古屋市昭和区": {
+        "price": 316000,
+        "change": 3.6
+      },
+      "名古屋市天白区": {
+        "price": 163000,
+        "change": 3.2
+      },
+      "名古屋市瑞穂区": {
+        "price": 292000,
+        "change": 3.2
+      },
+      "名古屋市熱田区": {
+        "price": 568000,
+        "change": 4.2
+      },
+      "名古屋市中川区": {
+        "price": 177000,
+        "change": 2.9
+      },
+      "名古屋市北区": {
+        "price": 230000,
+        "change": 3.6
+      },
+      "名古屋市西区": {
+        "price": 249000,
+        "change": 3.8
+      },
+      "名古屋市南区": {
+        "price": 154000,
+        "change": 2.7
+      },
+      "名古屋市守山区": {
+        "price": 149000,
+        "change": 2.8
+      },
+      "豊田市": {
+        "price": 237500,
+        "change": 3.2
+      },
+      "岡崎市": {
+        "price": 261000,
+        "change": 3.6
+      },
+      "一宮市": {
+        "price": 208000,
+        "change": 3
+      },
+      "春日井市": {
+        "price": 142000,
+        "change": 2.9
+      },
+      "豊橋市": {
+        "price": 225000,
+        "change": 2.7
+      },
+      "安城市": {
+        "price": 134000,
+        "change": 3.9
+      },
+      "刈谷市": {
+        "price": 310000,
+        "change": 4.7
+      },
+      "小牧市": {
+        "price": 117000,
+        "change": 2.6
+      }
+    },
+    "priceBuckets": [
+      {
+        "min": 10000000,
+        "color": "#ff2d55",
+        "label": "1000万〜"
+      },
+      {
+        "min": 5000000,
+        "color": "#ff6b35",
+        "label": "500万〜1000万"
+      },
+      {
+        "min": 2000000,
+        "color": "#ffb340",
+        "label": "200万〜500万"
+      },
+      {
+        "min": 1000000,
+        "color": "#ffe066",
+        "label": "100万〜200万"
+      },
+      {
+        "min": 500000,
+        "color": "#a8e6cf",
+        "label": "50万〜100万"
+      },
+      {
+        "min": 0,
+        "color": "#69b7eb",
+        "label": "〜50万"
+      }
+    ],
+    "risk": {
+      "名古屋市中村区": {
+        "flood": 90,
+        "earthquake": "6強",
+        "overall": 76
+      },
+      "名古屋市中区": {
+        "flood": 54,
+        "earthquake": "6強",
+        "overall": 59
+      },
+      "名古屋市東区": {
+        "flood": 90,
+        "earthquake": "6弱",
+        "overall": 61
+      },
+      "名古屋市千種区": {
+        "flood": 22,
+        "earthquake": "6弱",
+        "overall": 37
+      },
+      "名古屋市名東区": {
+        "flood": 90,
+        "earthquake": "5強",
+        "overall": 55
+      },
+      "名古屋市緑区": {
+        "flood": 22,
+        "earthquake": "6弱",
+        "overall": 42
+      },
+      "名古屋市港区": {
+        "flood": 90,
+        "earthquake": "6強",
+        "overall": 76
+      },
+      "名古屋市昭和区": {
+        "flood": 22,
+        "earthquake": "6弱",
+        "overall": 37
+      },
+      "名古屋市天白区": {
+        "flood": 84,
+        "earthquake": "6弱",
+        "overall": 64
+      },
+      "名古屋市瑞穂区": {
+        "flood": 22,
+        "earthquake": "6弱",
+        "overall": 37
+      },
+      "名古屋市熱田区": {
+        "flood": 90,
+        "earthquake": "6強",
+        "overall": 76
+      },
+      "名古屋市中川区": {
+        "flood": 22,
+        "earthquake": "6強",
+        "overall": 52
+      },
+      "名古屋市北区": {
+        "flood": 90,
+        "earthquake": "6弱",
+        "overall": 66
+      },
+      "名古屋市西区": {
+        "flood": 54,
+        "earthquake": "6弱",
+        "overall": 54
+      },
+      "名古屋市南区": {
+        "flood": 90,
+        "earthquake": "6強",
+        "overall": 76
+      },
+      "名古屋市守山区": {
+        "flood": 54,
+        "earthquake": "5強",
+        "overall": 43
+      },
+      "豊田市": {
+        "flood": 90,
+        "earthquake": "6弱",
+        "overall": 61
+      },
+      "岡崎市": {
+        "flood": 90,
+        "earthquake": "6弱",
+        "overall": 66
+      },
+      "一宮市": {
+        "flood": 90,
+        "earthquake": "6強",
+        "overall": 76
+      },
+      "春日井市": {
+        "flood": 22,
+        "earthquake": "6弱",
+        "overall": 37
+      },
+      "豊橋市": {
+        "flood": 54,
+        "earthquake": "6弱",
+        "overall": 54
+      },
+      "安城市": {
+        "flood": 22,
+        "earthquake": "6弱",
+        "overall": 42
+      },
+      "刈谷市": {
+        "flood": 54,
+        "earthquake": "6弱",
+        "overall": 53
+      },
+      "小牧市": {
+        "flood": 48,
+        "earthquake": "5強",
+        "overall": 41
+      }
+    },
+    "humanFlow": {
+      "名古屋市中区": {
+        "weekday": 501000,
+        "weekend": 475000,
+        "stay": 66,
+        "trend": "increasing"
+      },
+      "名古屋市中村区": {
+        "weekday": 295000,
+        "weekend": 274000,
+        "stay": 48,
+        "trend": "increasing"
+      },
+      "名古屋市東区": {
+        "weekday": 83000,
+        "weekend": 83000,
+        "stay": 53,
+        "trend": "increasing"
+      },
+      "名古屋市千種区": {
+        "weekday": 102000,
+        "weekend": 128000,
+        "stay": 61,
+        "trend": "increasing"
+      },
+      "名古屋市名東区": {
+        "weekday": 56000,
+        "weekend": 57000,
+        "stay": 42,
+        "trend": "stable"
+      },
+      "名古屋市緑区": {
+        "weekday": 63000,
+        "weekend": 72000,
+        "stay": 58,
+        "trend": "increasing"
+      },
+      "名古屋市港区": {
+        "weekday": 30000,
+        "weekend": 60000,
+        "stay": 111,
+        "trend": "increasing"
+      },
+      "名古屋市昭和区": {
+        "weekday": 56000,
+        "weekend": 50000,
+        "stay": 45,
+        "trend": "stable"
+      },
+      "名古屋市天白区": {
+        "weekday": 47000,
+        "weekend": 43000,
+        "stay": 38,
+        "trend": "stable"
+      },
+      "名古屋市瑞穂区": {
+        "weekday": 48000,
+        "weekend": 53000,
+        "stay": 60,
+        "trend": "stable"
+      },
+      "名古屋市熱田区": {
+        "weekday": 87000,
+        "weekend": 90000,
+        "stay": 53,
+        "trend": "stable"
+      },
+      "名古屋市中川区": {
+        "weekday": 40000,
+        "weekend": 36000,
+        "stay": 35,
+        "trend": "decreasing"
+      },
+      "名古屋市北区": {
+        "weekday": 63000,
+        "weekend": 55000,
+        "stay": 43,
+        "trend": "stable"
+      },
+      "名古屋市西区": {
+        "weekday": 45000,
+        "weekend": 62000,
+        "stay": 68,
+        "trend": "increasing"
+      },
+      "名古屋市南区": {
+        "weekday": 33000,
+        "weekend": 35000,
+        "stay": 42,
+        "trend": "decreasing"
+      },
+      "名古屋市守山区": {
+        "weekday": 36000,
+        "weekend": 32000,
+        "stay": 40,
+        "trend": "increasing"
+      },
+      "豊田市": {
+        "weekday": 63000,
+        "weekend": 60000,
+        "stay": 60,
+        "trend": "increasing"
+      },
+      "岡崎市": {
+        "weekday": 47000,
+        "weekend": 70000,
+        "stay": 74,
+        "trend": "stable"
+      },
+      "一宮市": {
+        "weekday": 50000,
+        "weekend": 50000,
+        "stay": 50,
+        "trend": "stable"
+      },
+      "春日井市": {
+        "weekday": 50000,
+        "weekend": 50000,
+        "stay": 48,
+        "trend": "decreasing"
+      },
+      "豊橋市": {
+        "weekday": 40000,
+        "weekend": 40000,
+        "stay": 54,
+        "trend": "stable"
+      },
+      "安城市": {
+        "weekday": 40000,
+        "weekend": 31000,
+        "stay": 36,
+        "trend": "stable"
+      },
+      "刈谷市": {
+        "weekday": 28000,
+        "weekend": 20000,
+        "stay": 38,
+        "trend": "stable"
+      },
+      "小牧市": {
+        "weekday": 15000,
+        "weekend": 13000,
+        "stay": 42,
+        "trend": "decreasing"
+      }
+    },
+    "school": {
+      "名古屋市千種区": {
+        "score": 88,
+        "advancement": 78.5
+      },
+      "名古屋市昭和区": {
+        "score": 86,
+        "advancement": 77.8
+      },
+      "名古屋市名東区": {
+        "score": 84,
+        "advancement": 75
+      },
+      "名古屋市瑞穂区": {
+        "score": 81,
+        "advancement": 74
+      },
+      "名古屋市東区": {
+        "score": 79,
+        "advancement": 73
+      },
+      "名古屋市中区": {
+        "score": 72,
+        "advancement": 70
+      },
+      "名古屋市中村区": {
+        "score": 62,
+        "advancement": 64
+      },
+      "名古屋市緑区": {
+        "score": 73,
+        "advancement": 69.8
+      },
+      "名古屋市天白区": {
+        "score": 74,
+        "advancement": 70.2
+      },
+      "名古屋市熱田区": {
+        "score": 63,
+        "advancement": 63
+      },
+      "名古屋市北区": {
+        "score": 65,
+        "advancement": 64.5
+      },
+      "名古屋市西区": {
+        "score": 69,
+        "advancement": 67
+      },
+      "名古屋市守山区": {
+        "score": 66,
+        "advancement": 65
+      },
+      "名古屋市南区": {
+        "score": 52,
+        "advancement": 58.5
+      },
+      "名古屋市港区": {
+        "score": 48,
+        "advancement": 55
+      },
+      "名古屋市中川区": {
+        "score": 53,
+        "advancement": 59
+      },
+      "豊田市": {
+        "score": 72,
+        "advancement": 69
+      },
+      "岡崎市": {
+        "score": 70,
+        "advancement": 68
+      },
+      "一宮市": {
+        "score": 65,
+        "advancement": 64.8
+      },
+      "春日井市": {
+        "score": 66,
+        "advancement": 65.5
+      },
+      "豊橋市": {
+        "score": 64,
+        "advancement": 64
+      },
+      "安城市": {
+        "score": 67,
+        "advancement": 66
+      },
+      "刈谷市": {
+        "score": 69,
+        "advancement": 67.5
+      },
+      "小牧市": {
+        "score": 63,
+        "advancement": 63
+      }
+    },
+    "corporate": {
+      "名古屋市中区": {
+        "establishments": 35900,
+        "major": 493,
+        "employees": 705000
+      },
+      "名古屋市中村区": {
+        "establishments": 15300,
+        "major": 207,
+        "employees": 313000
+      },
+      "名古屋市東区": {
+        "establishments": 5700,
+        "major": 77,
+        "employees": 103000
+      },
+      "名古屋市千種区": {
+        "establishments": 1800,
+        "major": 18,
+        "employees": 28000
+      },
+      "名古屋市名東区": {
+        "establishments": 1200,
+        "major": 8,
+        "employees": 18000
+      },
+      "名古屋市熱田区": {
+        "establishments": 2600,
+        "major": 35,
+        "employees": 48000
+      },
+      "名古屋市港区": {
+        "establishments": 1800,
+        "major": 12,
+        "employees": 42000
+      },
+      "名古屋市西区": {
+        "establishments": 1500,
+        "major": 10,
+        "employees": 22000
+      },
+      "名古屋市北区": {
+        "establishments": 1400,
+        "major": 15,
+        "employees": 24000
+      },
+      "名古屋市昭和区": {
+        "establishments": 950,
+        "major": 6,
+        "employees": 12000
+      },
+      "名古屋市瑞穂区": {
+        "establishments": 1600,
+        "major": 18,
+        "employees": 35000
+      },
+      "名古屋市緑区": {
+        "establishments": 1100,
+        "major": 5,
+        "employees": 15000
+      },
+      "名古屋市天白区": {
+        "establishments": 900,
+        "major": 4,
+        "employees": 11000
+      },
+      "名古屋市中川区": {
+        "establishments": 1300,
+        "major": 8,
+        "employees": 19000
+      },
+      "名古屋市南区": {
+        "establishments": 1050,
+        "major": 7,
+        "employees": 16000
+      },
+      "名古屋市守山区": {
+        "establishments": 850,
+        "major": 3,
+        "employees": 9500
+      },
+      "豊田市": {
+        "establishments": 8000,
+        "major": 97,
+        "employees": 273000
+      },
+      "岡崎市": {
+        "establishments": 3200,
+        "major": 32,
+        "employees": 58000
+      },
+      "一宮市": {
+        "establishments": 2800,
+        "major": 22,
+        "employees": 42000
+      },
+      "春日井市": {
+        "establishments": 2200,
+        "major": 15,
+        "employees": 35000
+      },
+      "豊橋市": {
+        "establishments": 2600,
+        "major": 25,
+        "employees": 45000
+      },
+      "安城市": {
+        "establishments": 1800,
+        "major": 18,
+        "employees": 38000
+      },
+      "刈谷市": {
+        "establishments": 2400,
+        "major": 42,
+        "employees": 82000
+      },
+      "小牧市": {
+        "establishments": 1900,
+        "major": 15,
+        "employees": 32000
+      }
+    },
+    "plateau": [
+      {
+        "name": "ミッドランドスクエア",
+        "city": "名古屋市中区",
+        "height": 247,
+        "lat": 35.1709,
+        "lng": 136.8816
+      },
+      {
+        "name": "JRセントラルタワーズ",
+        "city": "名古屋市中区",
+        "height": 245,
+        "lat": 35.1706,
+        "lng": 136.8826
+      },
+      {
+        "name": "モード学園スパイラルタワーズ",
+        "city": "名古屋市中区",
+        "height": 170,
+        "lat": 35.17,
+        "lng": 136.8808
+      },
+      {
+        "name": "大名古屋ビルヂング",
+        "city": "名古屋市中区",
+        "height": 174,
+        "lat": 35.1712,
+        "lng": 136.883
+      },
+      {
+        "name": "JPタワー名古屋",
+        "city": "名古屋市中区",
+        "height": 196,
+        "lat": 35.1715,
+        "lng": 136.8835
+      },
+      {
+        "name": "名古屋ルーセントタワー",
+        "city": "名古屋市中区",
+        "height": 180,
+        "lat": 35.172,
+        "lng": 136.88
+      },
+      {
+        "name": "グローバルゲート",
+        "city": "名古屋市中区",
+        "height": 170,
+        "lat": 35.1688,
+        "lng": 136.878
+      },
+      {
+        "name": "ミッドランドスクエアシネマ棟",
+        "city": "名古屋市中区",
+        "height": 85,
+        "lat": 35.1707,
+        "lng": 136.8812
+      },
+      {
+        "name": "名古屋テレビ塔",
+        "city": "名古屋市中区",
+        "height": 180,
+        "lat": 35.1713,
+        "lng": 136.9088
+      },
+      {
+        "name": "オアシス21",
+        "city": "名古屋市中区",
+        "height": 40,
+        "lat": 35.1708,
+        "lng": 136.9095
+      },
+      {
+        "name": "中日ビル",
+        "city": "名古屋市中区",
+        "height": 158,
+        "lat": 35.169,
+        "lng": 136.908
+      },
+      {
+        "name": "松坂屋名古屋店",
+        "city": "名古屋市中区",
+        "height": 58,
+        "lat": 35.1665,
+        "lng": 136.9075
+      },
+      {
+        "name": "三越名古屋栄店",
+        "city": "名古屋市中区",
+        "height": 60,
+        "lat": 35.1698,
+        "lng": 136.9068
+      },
+      {
+        "name": "LACHIC",
+        "city": "名古屋市中区",
+        "height": 48,
+        "lat": 35.168,
+        "lng": 136.9082
+      },
+      {
+        "name": "名古屋パルコ",
+        "city": "名古屋市中区",
+        "height": 52,
+        "lat": 35.1658,
+        "lng": 136.9045
+      },
+      {
+        "name": "名古屋市役所本庁舎",
+        "city": "名古屋市中区",
+        "height": 53,
+        "lat": 35.1815,
+        "lng": 136.9063
+      },
+      {
+        "name": "愛知県庁本庁舎",
+        "city": "名古屋市中区",
+        "height": 55,
+        "lat": 35.1808,
+        "lng": 136.907
+      },
+      {
+        "name": "錦三丁目25番街区ビル",
+        "city": "名古屋市中区",
+        "height": 110,
+        "lat": 35.1695,
+        "lng": 136.902
+      },
+      {
+        "name": "アスナル金山",
+        "city": "名古屋市中区",
+        "height": 35,
+        "lat": 35.1522,
+        "lng": 136.9005
+      },
+      {
+        "name": "ナゴヤドーム（バンテリンドーム）",
+        "city": "名古屋市東区",
+        "height": 66,
+        "lat": 35.1862,
+        "lng": 136.9473
+      },
+      {
+        "name": "名古屋ガーデンパレス",
+        "city": "名古屋市東区",
+        "height": 65,
+        "lat": 35.1748,
+        "lng": 136.9142
+      },
+      {
+        "name": "星ヶ丘テラス",
+        "city": "名古屋市千種区",
+        "height": 28,
+        "lat": 35.1608,
+        "lng": 136.9642
+      },
+      {
+        "name": "今池ガスビル",
+        "city": "名古屋市千種区",
+        "height": 72,
+        "lat": 35.1668,
+        "lng": 136.934
+      },
+      {
+        "name": "名古屋プライムセントラルタワー",
+        "city": "名古屋市中村区",
+        "height": 148,
+        "lat": 35.168,
+        "lng": 136.8845
+      },
+      {
+        "name": "イオンモール熱田",
+        "city": "名古屋市熱田区",
+        "height": 32,
+        "lat": 35.1385,
+        "lng": 136.8948
+      },
+      {
+        "name": "レゴランド・ジャパン",
+        "city": "名古屋市港区",
+        "height": 35,
+        "lat": 35.0468,
+        "lng": 136.843
+      },
+      {
+        "name": "ポートメッセなごや新第1展示館",
+        "city": "名古屋市港区",
+        "height": 48,
+        "lat": 35.0495,
+        "lng": 136.845
+      },
+      {
+        "name": "イオンモール大高",
+        "city": "名古屋市緑区",
+        "height": 30,
+        "lat": 35.0862,
+        "lng": 136.9328
+      },
+      {
+        "name": "ノリタケの森",
+        "city": "名古屋市西区",
+        "height": 25,
+        "lat": 35.1765,
+        "lng": 136.876
+      },
+      {
+        "name": "イオンモール Nagoya Noritake Garden",
+        "city": "名古屋市西区",
+        "height": 38,
+        "lat": 35.177,
+        "lng": 136.8748
+      },
+      {
+        "name": "豊田市駅前通り北地区再開発ビル（KiTARA）",
+        "city": "豊田市",
+        "height": 110,
+        "lat": 35.0835,
+        "lng": 137.1555
+      },
+      {
+        "name": "トヨタ自動車本社ビル",
+        "city": "豊田市",
+        "height": 48,
+        "lat": 35.048,
+        "lng": 137.1585
+      },
+      {
+        "name": "松坂屋豊田店",
+        "city": "豊田市",
+        "height": 42,
+        "lat": 35.0828,
+        "lng": 137.1562
+      },
+      {
+        "name": "岡崎シビコ跡地再開発ビル",
+        "city": "岡崎市",
+        "height": 65,
+        "lat": 34.9575,
+        "lng": 137.164
+      },
+      {
+        "name": "i-ビル（尾張一宮駅前ビル）",
+        "city": "一宮市",
+        "height": 75,
+        "lat": 35.3042,
+        "lng": 136.803
+      },
+      {
+        "name": "刈谷ハイウェイオアシス",
+        "city": "刈谷市",
+        "height": 52,
+        "lat": 34.988,
+        "lng": 137.021
+      },
+      {
+        "name": "デンソー本社ビル",
+        "city": "刈谷市",
+        "height": 55,
+        "lat": 34.882,
+        "lng": 137.069
+      },
+      {
+        "name": "サンマルシェ",
+        "city": "春日井市",
+        "height": 28,
+        "lat": 35.2478,
+        "lng": 136.9722
+      },
+      {
+        "name": "emCAMPUS",
+        "city": "豊橋市",
+        "height": 55,
+        "lat": 34.764,
+        "lng": 137.3885
+      },
+      {
+        "name": "小牧ジャンクション物流センター",
+        "city": "小牧市",
+        "height": 35,
+        "lat": 35.282,
+        "lng": 136.938
+      }
+    ],
+    "transport": {
+      "名古屋市中村区": {
+        "stations": 6,
+        "dailyPassengers": 1720000,
+        "lines": [
+          "JR東海道新幹線",
+          "JR東海道本線",
+          "名古屋市営地下鉄東山線",
+          "名古屋市営地下鉄桜通線",
+          "名鉄名古屋本線",
+          "近鉄名古屋線"
+        ]
+      },
+      "名古屋市中区": {
+        "stations": 9,
+        "dailyPassengers": 1234000,
+        "lines": [
+          "JR東海道本線",
+          "名古屋市営地下鉄名城線",
+          "名古屋市営地下鉄東山線",
+          "名古屋市営地下鉄桜通線",
+          "名古屋市営地下鉄鶴舞線",
+          "名鉄名古屋本線"
+        ]
+      },
+      "名古屋市千種区": {
+        "stations": 5,
+        "dailyPassengers": 278000,
+        "lines": [
+          "JR中央本線",
+          "名古屋市営地下鉄東山線",
+          "名古屋市営地下鉄桜通線"
+        ]
+      },
+      "名古屋市東区": {
+        "stations": 3,
+        "dailyPassengers": 135000,
+        "lines": [
+          "JR中央本線",
+          "名古屋市営地下鉄名城線",
+          "名鉄瀬戸線"
+        ]
+      },
+      "名古屋市熱田区": {
+        "stations": 2,
+        "dailyPassengers": 63000,
+        "lines": [
+          "JR東海道本線",
+          "名鉄名古屋本線"
+        ]
+      },
+      "名古屋市港区": {
+        "stations": 1,
+        "dailyPassengers": 15000,
+        "lines": [
+          "名古屋市営地下鉄名港線"
+        ]
+      },
+      "名古屋市緑区": {
+        "stations": 2,
+        "dailyPassengers": 54000,
+        "lines": [
+          "名古屋市営地下鉄桜通線",
+          "名鉄名古屋本線"
+        ]
+      },
+      "名古屋市西区": {
+        "stations": 1,
+        "dailyPassengers": 25000,
+        "lines": [
+          "名古屋市営地下鉄鶴舞線"
+        ]
+      },
+      "名古屋市天白区": {
+        "stations": 2,
+        "dailyPassengers": 63000,
+        "lines": [
+          "名古屋市営地下鉄鶴舞線"
+        ]
+      },
+      "名古屋市瑞穂区": {
+        "stations": 1,
+        "dailyPassengers": 18000,
+        "lines": [
+          "名古屋市営地下鉄桜通線"
+        ]
+      },
+      "名古屋市昭和区": {
+        "stations": 2,
+        "dailyPassengers": 76000,
+        "lines": [
+          "名古屋市営地下鉄桜通線",
+          "名古屋市営地下鉄鶴舞線"
+        ]
+      },
+      "名古屋市中川区": {
+        "stations": 1,
+        "dailyPassengers": 42000,
+        "lines": [
+          "名古屋市営地下鉄東山線"
+        ]
+      },
+      "名古屋市名東区": {
+        "stations": 2,
+        "dailyPassengers": 116000,
+        "lines": [
+          "リニモ",
+          "名古屋市営地下鉄東山線"
+        ]
+      },
+      "名古屋市守山区": {
+        "stations": 1,
+        "dailyPassengers": 18000,
+        "lines": [
+          "JR中央本線"
+        ]
+      },
+      "豊田市": {
+        "stations": 1,
+        "dailyPassengers": 35000,
+        "lines": [
+          "名鉄三河線"
+        ]
+      },
+      "豊橋市": {
+        "stations": 2,
+        "dailyPassengers": 104000,
+        "lines": [
+          "JR東海道本線",
+          "名鉄名古屋本線"
+        ]
+      },
+      "岡崎市": {
+        "stations": 1,
+        "dailyPassengers": 28000,
+        "lines": [
+          "名鉄名古屋本線"
+        ]
+      },
+      "一宮市": {
+        "stations": 2,
+        "dailyPassengers": 80000,
+        "lines": [
+          "JR東海道本線",
+          "名鉄名古屋本線"
+        ]
+      },
+      "春日井市": {
+        "stations": 1,
+        "dailyPassengers": 28000,
+        "lines": [
+          "JR中央本線"
+        ]
+      }
+    },
+    "commercial": {
+      "名古屋市中村区": {
+        "facilities": 10,
+        "malls": 2,
+        "cvs": 3,
+        "totalGfa": 139440
+      },
+      "名古屋市中区": {
+        "facilities": 15,
+        "malls": 6,
+        "cvs": 4,
+        "totalGfa": 240625
+      },
+      "名古屋市千種区": {
+        "facilities": 5,
+        "malls": 1,
+        "cvs": 2,
+        "totalGfa": 18680
+      },
+      "名古屋市東区": {
+        "facilities": 2,
+        "malls": 1,
+        "cvs": 1,
+        "totalGfa": 32105
+      },
+      "名古屋市熱田区": {
+        "facilities": 2,
+        "malls": 1,
+        "cvs": 1,
+        "totalGfa": 58100
+      },
+      "名古屋市港区": {
+        "facilities": 2,
+        "malls": 2,
+        "cvs": 0,
+        "totalGfa": 20500
+      },
+      "名古屋市緑区": {
+        "facilities": 3,
+        "malls": 2,
+        "cvs": 1,
+        "totalGfa": 87120
+      },
+      "名古屋市西区": {
+        "facilities": 2,
+        "malls": 1,
+        "cvs": 1,
+        "totalGfa": 52115
+      },
+      "名古屋市天白区": {
+        "facilities": 2,
+        "malls": 0,
+        "cvs": 2,
+        "totalGfa": 230
+      },
+      "名古屋市瑞穂区": {
+        "facilities": 2,
+        "malls": 1,
+        "cvs": 1,
+        "totalGfa": 42105
+      },
+      "名古屋市昭和区": {
+        "facilities": 2,
+        "malls": 0,
+        "cvs": 1,
+        "totalGfa": 200
+      },
+      "名古屋市中川区": {
+        "facilities": 2,
+        "malls": 0,
+        "cvs": 1,
+        "totalGfa": 2315
+      },
+      "名古屋市名東区": {
+        "facilities": 2,
+        "malls": 1,
+        "cvs": 1,
+        "totalGfa": 12110
+      },
+      "名古屋市守山区": {
+        "facilities": 1,
+        "malls": 0,
+        "cvs": 0,
+        "totalGfa": 3500
+      },
+      "豊田市": {
+        "facilities": 2,
+        "malls": 1,
+        "cvs": 1,
+        "totalGfa": 28120
+      },
+      "豊橋市": {
+        "facilities": 2,
+        "malls": 1,
+        "cvs": 1,
+        "totalGfa": 15110
+      },
+      "岡崎市": {
+        "facilities": 2,
+        "malls": 1,
+        "cvs": 1,
+        "totalGfa": 78105
+      },
+      "一宮市": {
+        "facilities": 2,
+        "malls": 1,
+        "cvs": 1,
+        "totalGfa": 8615
+      },
+      "春日井市": {
+        "facilities": 2,
+        "malls": 0,
+        "cvs": 1,
+        "totalGfa": 430
+      }
+    },
+    "medical": {
+      "名古屋市中区": {
+        "facilities": 7,
+        "hospitals": 2,
+        "beds": 1358
+      },
+      "名古屋市中村区": {
+        "facilities": 4,
+        "hospitals": 1,
+        "beds": 852
+      },
+      "名古屋市千種区": {
+        "facilities": 5,
+        "hospitals": 2,
+        "beds": 1115
+      },
+      "名古屋市東区": {
+        "facilities": 3,
+        "hospitals": 1,
+        "beds": 520
+      },
+      "名古屋市熱田区": {
+        "facilities": 3,
+        "hospitals": 1,
+        "beds": 400
+      },
+      "名古屋市港区": {
+        "facilities": 2,
+        "hospitals": 0,
+        "beds": 0
+      },
+      "名古屋市緑区": {
+        "facilities": 5,
+        "hospitals": 2,
+        "beds": 663
+      },
+      "名古屋市西区": {
+        "facilities": 2,
+        "hospitals": 1,
+        "beds": 250
+      },
+      "名古屋市天白区": {
+        "facilities": 3,
+        "hospitals": 0,
+        "beds": 0
+      },
+      "名古屋市瑞穂区": {
+        "facilities": 2,
+        "hospitals": 1,
+        "beds": 200
+      },
+      "名古屋市昭和区": {
+        "facilities": 3,
+        "hospitals": 1,
+        "beds": 390
+      },
+      "名古屋市中川区": {
+        "facilities": 2,
+        "hospitals": 0,
+        "beds": 0
+      },
+      "名古屋市名東区": {
+        "facilities": 2,
+        "hospitals": 1,
+        "beds": 150
+      },
+      "名古屋市守山区": {
+        "facilities": 2,
+        "hospitals": 0,
+        "beds": 0
+      },
+      "名古屋市北区": {
+        "facilities": 1,
+        "hospitals": 0,
+        "beds": 0
+      },
+      "豊田市": {
+        "facilities": 3,
+        "hospitals": 1,
+        "beds": 510
+      },
+      "豊橋市": {
+        "facilities": 2,
+        "hospitals": 1,
+        "beds": 700
+      },
+      "岡崎市": {
+        "facilities": 2,
+        "hospitals": 1,
+        "beds": 600
+      },
+      "一宮市": {
+        "facilities": 2,
+        "hospitals": 1,
+        "beds": 452
+      },
+      "春日井市": {
+        "facilities": 2,
+        "hospitals": 1,
+        "beds": 480
+      }
+    }
+  },
+  "chiba": {
+    "center": [
+      35.66259000000001,
+      140.03449999999998
+    ],
+    "zoom": 10,
+    "displayName": "千葉県",
+    "capabilities": {
+      "humanFlow": true,
+      "education": true,
+      "corporate": true,
+      "crime": true,
+      "plateau": false,
+      "transport": true,
+      "commercial": true,
+      "medical": true
+    },
+    "municipalities": {
+      "千葉市中央区": [
+        35.6073,
+        140.1063
+      ],
+      "千葉市花見川区": [
+        35.6573,
+        140.0613
+      ],
+      "千葉市稲毛区": [
+        35.6473,
+        140.0963
+      ],
+      "千葉市若葉区": [
+        35.6173,
+        140.1563
+      ],
+      "千葉市緑区": [
+        35.5373,
+        140.1463
+      ],
+      "千葉市美浜区": [
+        35.6473,
+        140.0463
+      ],
+      "千葉市": [
+        35.6073,
+        140.1063
+      ],
+      "船橋市": [
+        35.6943,
+        139.9823
+      ],
+      "松戸市": [
+        35.7882,
+        139.9024
+      ],
+      "柏市": [
+        35.8681,
+        139.9758
+      ],
+      "市川市": [
+        35.722,
+        139.9308
+      ],
+      "浦安市": [
+        35.651,
+        139.9037
+      ],
+      "成田市": [
+        35.7776,
+        140.3185
+      ],
+      "木更津市": [
+        35.3764,
+        139.9261
+      ],
+      "市原市": [
+        35.4974,
+        140.1031
+      ],
+      "流山市": [
+        35.8558,
+        139.9044
+      ],
+      "八千代市": [
+        35.7228,
+        140.1018
+      ],
+      "我孫子市": [
+        35.8671,
+        140.028
+      ],
+      "鎌ヶ谷市": [
+        35.7786,
+        140.0012
+      ],
+      "君津市": [
+        35.3314,
+        139.8928
+      ]
+    },
+    "landPrices": {
+      "千葉市中央区": {
+        "price": 183240,
+        "change": 2.5
+      },
+      "千葉市花見川区": {
+        "price": 188330,
+        "change": 2.9
+      },
+      "船橋市": {
+        "price": 195965,
+        "change": 2.8
+      },
+      "松戸市": {
+        "price": 160335,
+        "change": 2
+      },
+      "柏市": {
+        "price": 167970,
+        "change": 2.3
+      },
+      "市川市": {
+        "price": 201055,
+        "change": 2.8
+      },
+      "浦安市": {
+        "price": 371570,
+        "change": 4.9
+      },
+      "成田市": {
+        "price": 111980,
+        "change": 1.3
+      }
+    },
+    "priceBuckets": [
+      {
+        "min": 1000000,
+        "color": "#ff2d55",
+        "label": "100万〜"
+      },
+      {
+        "min": 500000,
+        "color": "#ff6b35",
+        "label": "50万〜100万"
+      },
+      {
+        "min": 300000,
+        "color": "#ffb340",
+        "label": "30万〜50万"
+      },
+      {
+        "min": 200000,
+        "color": "#ffe066",
+        "label": "20万〜30万"
+      },
+      {
+        "min": 150000,
+        "color": "#a8e6cf",
+        "label": "15万〜20万"
+      },
+      {
+        "min": 0,
+        "color": "#69b7eb",
+        "label": "〜15万"
+      }
+    ],
+    "risk": {
+      "千葉市中央区": {
+        "flood": 48,
+        "earthquake": "6強",
+        "overall": 52
+      },
+      "千葉市花見川区": {
+        "flood": 84,
+        "earthquake": "6強",
+        "overall": 65
+      },
+      "千葉市稲毛区": {
+        "flood": 35,
+        "earthquake": "6強",
+        "overall": 42
+      },
+      "千葉市若葉区": {
+        "flood": 48,
+        "earthquake": "6強",
+        "overall": 47
+      },
+      "千葉市緑区": {
+        "flood": 35,
+        "earthquake": "6強",
+        "overall": 42
+      },
+      "千葉市美浜区": {
+        "flood": 90,
+        "earthquake": "6強",
+        "overall": 71
+      },
+      "船橋市": {
+        "flood": 48,
+        "earthquake": "6強",
+        "overall": 52
+      },
+      "松戸市": {
+        "flood": 48,
+        "earthquake": "6強",
+        "overall": 47
+      },
+      "柏市": {
+        "flood": 48,
+        "earthquake": "6強",
+        "overall": 47
+      },
+      "市川市": {
+        "flood": 54,
+        "earthquake": "6強",
+        "overall": 54
+      },
+      "浦安市": {
+        "flood": 90,
+        "earthquake": "6強",
+        "overall": 71
+      },
+      "成田市": {
+        "flood": 48,
+        "earthquake": "6強",
+        "overall": 47
+      },
+      "木更津市": {
+        "flood": 84,
+        "earthquake": "6強",
+        "overall": 65
+      },
+      "習志野市": {
+        "flood": 84,
+        "earthquake": "6強",
+        "overall": 69
+      },
+      "我孫子市": {
+        "flood": 35,
+        "earthquake": "6強",
+        "overall": 42
+      },
+      "流山市": {
+        "flood": 84,
+        "earthquake": "6強",
+        "overall": 59
+      },
+      "八千代市": {
+        "flood": 35,
+        "earthquake": "6強",
+        "overall": 42
+      },
+      "鎌ケ谷市": {
+        "flood": 35,
+        "earthquake": "6強",
+        "overall": 42
+      }
+    },
+    "humanFlow": {
+      "千葉市中央区": {
+        "weekday": 405000,
+        "weekend": 465000,
+        "stay": 75,
+        "trend": "stable"
+      },
+      "千葉市花見川区": {
+        "weekday": 240000,
+        "weekend": 338000,
+        "stay": 88,
+        "trend": "increasing"
+      },
+      "千葉市美浜区": {
+        "weekday": 180000,
+        "weekend": 250000,
+        "stay": 140,
+        "trend": "increasing"
+      },
+      "船橋市": {
+        "weekday": 730000,
+        "weekend": 805000,
+        "stay": 70,
+        "trend": "stable"
+      },
+      "松戸市": {
+        "weekday": 308000,
+        "weekend": 313000,
+        "stay": 56,
+        "trend": "decreasing"
+      },
+      "柏市": {
+        "weekday": 310000,
+        "weekend": 365000,
+        "stay": 88,
+        "trend": "increasing"
+      },
+      "市川市": {
+        "weekday": 325000,
+        "weekend": 363000,
+        "stay": 68,
+        "trend": "stable"
+      },
+      "浦安市": {
+        "weekday": 267000,
+        "weekend": 640000,
+        "stay": 200,
+        "trend": "increasing"
+      },
+      "成田市": {
+        "weekday": 170000,
+        "weekend": 213000,
+        "stay": 148,
+        "trend": "increasing"
+      },
+      "木更津市": {
+        "weekday": 38000,
+        "weekend": 120000,
+        "stay": 195,
+        "trend": "stable"
+      },
+      "流山市": {
+        "weekday": 88000,
+        "weekend": 110000,
+        "stay": 85,
+        "trend": "increasing"
+      }
+    },
+    "school": {
+      "千葉市中央区": {
+        "score": 72,
+        "advancement": 0.58
+      },
+      "千葉市花見川区": {
+        "score": 75,
+        "advancement": 0.62
+      },
+      "千葉市美浜区": {
+        "score": 82,
+        "advancement": 0.7
+      },
+      "千葉市稲毛区": {
+        "score": 75,
+        "advancement": 0.63
+      },
+      "船橋市": {
+        "score": 76,
+        "advancement": 0.65
+      },
+      "松戸市": {
+        "score": 72,
+        "advancement": 0.6
+      },
+      "柏市": {
+        "score": 85,
+        "advancement": 0.74
+      },
+      "市川市": {
+        "score": 78,
+        "advancement": 0.67
+      },
+      "浦安市": {
+        "score": 88,
+        "advancement": 0.78
+      },
+      "成田市": {
+        "score": 68,
+        "advancement": 0.55
+      },
+      "木更津市": {
+        "score": 65,
+        "advancement": 0.52
+      },
+      "流山市": {
+        "score": 85,
+        "advancement": 0.75
+      }
+    },
+    "corporate": {
+      "千葉市中央区": {
+        "establishments": 5170,
+        "major": 53,
+        "employees": 72700
+      },
+      "千葉市花見川区": {
+        "establishments": 1250,
+        "major": 85,
+        "employees": 52000
+      },
+      "千葉市美浜区": {
+        "establishments": 780,
+        "major": 62,
+        "employees": 38000
+      },
+      "船橋市": {
+        "establishments": 7750,
+        "major": 92,
+        "employees": 121500
+      },
+      "松戸市": {
+        "establishments": 3800,
+        "major": 28,
+        "employees": 48000
+      },
+      "柏市": {
+        "establishments": 4580,
+        "major": 80,
+        "employees": 73000
+      },
+      "市川市": {
+        "establishments": 5300,
+        "major": 42,
+        "employees": 64000
+      },
+      "浦安市": {
+        "establishments": 1450,
+        "major": 23,
+        "employees": 40000
+      },
+      "成田市": {
+        "establishments": 2470,
+        "major": 70,
+        "employees": 73000
+      },
+      "木更津市": {
+        "establishments": 1780,
+        "major": 20,
+        "employees": 26500
+      },
+      "流山市": {
+        "establishments": 820,
+        "major": 18,
+        "employees": 12000
+      },
+      "習志野市": {
+        "establishments": 2800,
+        "major": 25,
+        "employees": 35000
+      }
+    },
+    "plateau": [],
+    "transport": {
+      "千葉市中央区": {
+        "stations": 2,
+        "dailyPassengers": 170500,
+        "lines": []
+      },
+      "千葉市花見川区": {
+        "stations": 1,
+        "dailyPassengers": 42000,
+        "lines": []
+      },
+      "千葉市美浜区": {
+        "stations": 1,
+        "dailyPassengers": 68000,
+        "lines": []
+      },
+      "千葉市稲毛区": {
+        "stations": 1,
+        "dailyPassengers": 38000,
+        "lines": []
+      },
+      "船橋市": {
+        "stations": 3,
+        "dailyPassengers": 421000,
+        "lines": []
+      },
+      "松戸市": {
+        "stations": 2,
+        "dailyPassengers": 183000,
+        "lines": []
+      },
+      "柏市": {
+        "stations": 2,
+        "dailyPassengers": 157000,
+        "lines": []
+      },
+      "市川市": {
+        "stations": 2,
+        "dailyPassengers": 160000,
+        "lines": []
+      },
+      "浦安市": {
+        "stations": 3,
+        "dailyPassengers": 212000,
+        "lines": []
+      },
+      "成田市": {
+        "stations": 2,
+        "dailyPassengers": 73000,
+        "lines": []
+      },
+      "木更津市": {
+        "stations": 1,
+        "dailyPassengers": 18500,
+        "lines": []
+      },
+      "流山市": {
+        "stations": 1,
+        "dailyPassengers": 55000,
+        "lines": []
+      }
+    },
+    "commercial": {
+      "千葉市中央区": {
+        "facilities": 3,
+        "malls": 0,
+        "cvs": 0,
+        "totalGfa": 0
+      },
+      "千葉市花見川区": {
+        "facilities": 2,
+        "malls": 0,
+        "cvs": 0,
+        "totalGfa": 0
+      },
+      "船橋市": {
+        "facilities": 3,
+        "malls": 0,
+        "cvs": 0,
+        "totalGfa": 0
+      },
+      "松戸市": {
+        "facilities": 2,
+        "malls": 0,
+        "cvs": 0,
+        "totalGfa": 0
+      },
+      "柏市": {
+        "facilities": 3,
+        "malls": 0,
+        "cvs": 0,
+        "totalGfa": 0
+      },
+      "市川市": {
+        "facilities": 1,
+        "malls": 0,
+        "cvs": 0,
+        "totalGfa": 0
+      },
+      "浦安市": {
+        "facilities": 2,
+        "malls": 0,
+        "cvs": 0,
+        "totalGfa": 0
+      },
+      "成田市": {
+        "facilities": 1,
+        "malls": 0,
+        "cvs": 0,
+        "totalGfa": 0
+      },
+      "木更津市": {
+        "facilities": 1,
+        "malls": 0,
+        "cvs": 0,
+        "totalGfa": 0
+      },
+      "流山市": {
+        "facilities": 1,
+        "malls": 0,
+        "cvs": 0,
+        "totalGfa": 0
+      },
+      "習志野市": {
+        "facilities": 1,
+        "malls": 0,
+        "cvs": 0,
+        "totalGfa": 0
+      }
+    },
+    "medical": {
+      "千葉市中央区": {
+        "facilities": 3,
+        "hospitals": 0,
+        "beds": 0
+      },
+      "千葉市花見川区": {
+        "facilities": 1,
+        "hospitals": 0,
+        "beds": 0
+      },
+      "千葉市美浜区": {
+        "facilities": 1,
+        "hospitals": 0,
+        "beds": 0
+      },
+      "船橋市": {
+        "facilities": 3,
+        "hospitals": 0,
+        "beds": 0
+      },
+      "松戸市": {
+        "facilities": 2,
+        "hospitals": 0,
+        "beds": 0
+      },
+      "柏市": {
+        "facilities": 3,
+        "hospitals": 0,
+        "beds": 0
+      },
+      "市川市": {
+        "facilities": 1,
+        "hospitals": 0,
+        "beds": 0
+      },
+      "浦安市": {
+        "facilities": 2,
+        "hospitals": 0,
+        "beds": 0
+      },
+      "成田市": {
+        "facilities": 1,
+        "hospitals": 0,
+        "beds": 0
+      },
+      "木更津市": {
+        "facilities": 1,
+        "hospitals": 0,
+        "beds": 0
+      },
+      "流山市": {
+        "facilities": 1,
+        "hospitals": 0,
+        "beds": 0
+      },
+      "習志野市": {
+        "facilities": 1,
+        "hospitals": 0,
+        "beds": 0
+      }
+    }
+  },
+  "fukuoka": {
+    "center": [
+      33.6875125,
+      130.59537083333333
+    ],
+    "zoom": 9,
+    "displayName": "福岡県",
+    "capabilities": {
+      "humanFlow": true,
+      "education": true,
+      "corporate": true,
+      "crime": true,
+      "plateau": false,
+      "transport": true,
+      "commercial": true,
+      "medical": true
+    },
+    "municipalities": {
+      "福岡市中央区": [
+        33.5902,
+        130.3985
+      ],
+      "福岡市博多区": [
+        33.5904,
+        130.42
+      ],
+      "福岡市東区": [
+        33.6183,
+        130.4324
+      ],
+      "福岡市南区": [
+        33.5538,
+        130.418
+      ],
+      "福岡市西区": [
+        33.5831,
+        130.339
+      ],
+      "福岡市城南区": [
+        33.5621,
+        130.3731
+      ],
+      "福岡市早良区": [
+        33.5696,
+        130.3498
+      ],
+      "福岡市北九州市": [
+        33.8834,
+        130.875
+      ],
+      "北九州市小倉北区": [
+        33.8834,
+        130.875
+      ],
+      "北九州市小倉南区": [
+        33.8501,
+        130.898
+      ],
+      "北九州市八幡西区": [
+        33.8701,
+        130.798
+      ],
+      "北九州市八幡東区": [
+        33.865,
+        130.828
+      ],
+      "北九州市戸畑区": [
+        33.8913,
+        130.8238
+      ],
+      "北九州市若松区": [
+        33.9042,
+        130.8013
+      ],
+      "北九州市門司区": [
+        33.9412,
+        130.9681
+      ],
+      "久留米市": [
+        33.3192,
+        130.5081
+      ],
+      "春日市": [
+        33.5341,
+        130.4681
+      ],
+      "大野城市": [
+        33.5351,
+        130.4781
+      ],
+      "筑紫野市": [
+        33.4912,
+        130.5121
+      ],
+      "太宰府市": [
+        33.5141,
+        130.5321
+      ],
+      "福津市": [
+        33.7751,
+        130.4901
+      ],
+      "宗像市": [
+        33.8051,
+        130.5401
+      ],
+      "古賀市": [
+        33.7251,
+        130.4701
+      ],
+      "飯塚市": [
+        33.6451,
+        130.6921
+      ]
+    },
+    "landPrices": {
+      "福岡市中央区": {
+        "price": 3433333,
+        "change": 3.6
+      },
+      "福岡市博多区": {
+        "price": 4050000,
+        "change": 3.7
+      },
+      "福岡市東区": {
+        "price": 342000,
+        "change": 1.6
+      },
+      "福岡市南区": {
+        "price": 315000,
+        "change": 1.4
+      },
+      "福岡市西区": {
+        "price": 260000,
+        "change": 1.1
+      },
+      "福岡市城南区": {
+        "price": 240000,
+        "change": 0.8
+      },
+      "福岡市早良区": {
+        "price": 275000,
+        "change": 1.2
+      },
+      "北九州市小倉北区": {
+        "price": 435000,
+        "change": 0.6
+      },
+      "北九州市八幡西区": {
+        "price": 158000,
+        "change": 0.3
+      },
+      "久留米市": {
+        "price": 152000,
+        "change": 0.5
+      },
+      "春日市": {
+        "price": 258000,
+        "change": 1.5
+      },
+      "大野城市": {
+        "price": 218000,
+        "change": 0.9
+      }
+    },
+    "priceBuckets": [
+      {
+        "min": 10000000,
+        "color": "#ff2d55",
+        "label": "1000万〜"
+      },
+      {
+        "min": 5000000,
+        "color": "#ff6b35",
+        "label": "500万〜1000万"
+      },
+      {
+        "min": 2000000,
+        "color": "#ffb340",
+        "label": "200万〜500万"
+      },
+      {
+        "min": 1000000,
+        "color": "#ffe066",
+        "label": "100万〜200万"
+      },
+      {
+        "min": 500000,
+        "color": "#a8e6cf",
+        "label": "50万〜100万"
+      },
+      {
+        "min": 0,
+        "color": "#69b7eb",
+        "label": "〜50万"
+      }
+    ],
+    "risk": {
+      "福岡市中央区": {
+        "flood": 90,
+        "earthquake": "6弱",
+        "overall": 58
+      },
+      "福岡市博多区": {
+        "flood": 54,
+        "earthquake": "6弱",
+        "overall": 46
+      },
+      "福岡市東区": {
+        "flood": 90,
+        "earthquake": "5強",
+        "overall": 44
+      },
+      "福岡市南区": {
+        "flood": 22,
+        "earthquake": "5強",
+        "overall": 21
+      },
+      "福岡市西区": {
+        "flood": 90,
+        "earthquake": "5強",
+        "overall": 43
+      },
+      "福岡市城南区": {
+        "flood": 22,
+        "earthquake": "5強",
+        "overall": 20
+      },
+      "福岡市早良区": {
+        "flood": 84,
+        "earthquake": "5強",
+        "overall": 41
+      },
+      "北九州市小倉北区": {
+        "flood": 22,
+        "earthquake": "6弱",
+        "overall": 30
+      },
+      "北九州市八幡西区": {
+        "flood": 84,
+        "earthquake": "5強",
+        "overall": 45
+      },
+      "久留米市": {
+        "flood": 22,
+        "earthquake": "5強",
+        "overall": 28
+      },
+      "春日市": {
+        "flood": 90,
+        "earthquake": "5強",
+        "overall": 44
+      },
+      "大野城市": {
+        "flood": 22,
+        "earthquake": "5強",
+        "overall": 20
+      }
+    },
+    "humanFlow": {
+      "福岡市博多区": {
+        "weekday": 495000,
+        "weekend": 391000,
+        "stay": 33,
+        "trend": "stable"
+      },
+      "福岡市中央区": {
+        "weekday": 590000,
+        "weekend": 563000,
+        "stay": 53,
+        "trend": "stable"
+      },
+      "福岡市早良区": {
+        "weekday": 230000,
+        "weekend": 193000,
+        "stay": 38,
+        "trend": "stable"
+      },
+      "福岡市東区": {
+        "weekday": 195000,
+        "weekend": 171000,
+        "stay": 36,
+        "trend": "stable"
+      },
+      "福岡市南区": {
+        "weekday": 185000,
+        "weekend": 157000,
+        "stay": 35,
+        "trend": "stable"
+      },
+      "福岡市城南区": {
+        "weekday": 83000,
+        "weekend": 70000,
+        "stay": 28,
+        "trend": "stable"
+      },
+      "福岡市西区": {
+        "weekday": 117000,
+        "weekend": 98000,
+        "stay": 33,
+        "trend": "stable"
+      },
+      "北九州市小倉北区": {
+        "weekday": 267000,
+        "weekend": 250000,
+        "stay": 55,
+        "trend": "stable"
+      },
+      "北九州市小倉南区": {
+        "weekday": 55000,
+        "weekend": 48000,
+        "stay": 33,
+        "trend": "stable"
+      },
+      "北九州市戸畑区": {
+        "weekday": 48000,
+        "weekend": 40000,
+        "stay": 30,
+        "trend": "stable"
+      },
+      "北九州市若松区": {
+        "weekday": 38000,
+        "weekend": 32000,
+        "stay": 28,
+        "trend": "stable"
+      },
+      "久留米市": {
+        "weekday": 95000,
+        "weekend": 85000,
+        "stay": 45,
+        "trend": "stable"
+      }
+    },
+    "school": {
+      "福岡市博多区": {
+        "score": 72,
+        "advancement": 68.5
+      },
+      "福岡市中央区": {
+        "score": 82,
+        "advancement": 76.8
+      },
+      "福岡市早良区": {
+        "score": 77,
+        "advancement": 72.3
+      },
+      "福岡市東区": {
+        "score": 73,
+        "advancement": 68
+      },
+      "福岡市南区": {
+        "score": 76,
+        "advancement": 71.2
+      },
+      "福岡市城南区": {
+        "score": 70,
+        "advancement": 65
+      },
+      "福岡市西区": {
+        "score": 72,
+        "advancement": 67.5
+      },
+      "北九州市小倉北区": {
+        "score": 68,
+        "advancement": 64
+      },
+      "北九州市小倉南区": {
+        "score": 67,
+        "advancement": 62.8
+      },
+      "北九州市戸畑区": {
+        "score": 65,
+        "advancement": 61.5
+      },
+      "久留米市": {
+        "score": 70,
+        "advancement": 66.5
+      },
+      "飯塚市": {
+        "score": 62,
+        "advancement": 58
+      }
+    },
+    "corporate": {
+      "福岡市博多区": {
+        "establishments": 6070,
+        "major": 211,
+        "employees": 125500
+      },
+      "福岡市中央区": {
+        "establishments": 7850,
+        "major": 302,
+        "employees": 163500
+      },
+      "福岡市早良区": {
+        "establishments": 2070,
+        "major": 57,
+        "employees": 33500
+      },
+      "福岡市東区": {
+        "establishments": 1420,
+        "major": 34,
+        "employees": 22200
+      },
+      "福岡市南区": {
+        "establishments": 1400,
+        "major": 35,
+        "employees": 22700
+      },
+      "福岡市城南区": {
+        "establishments": 560,
+        "major": 12,
+        "employees": 8800
+      },
+      "福岡市西区": {
+        "establishments": 680,
+        "major": 16,
+        "employees": 10500
+      },
+      "北九州市小倉北区": {
+        "establishments": 3780,
+        "major": 123,
+        "employees": 74500
+      },
+      "北九州市小倉南区": {
+        "establishments": 650,
+        "major": 18,
+        "employees": 10500
+      },
+      "北九州市戸畑区": {
+        "establishments": 480,
+        "major": 12,
+        "employees": 8000
+      },
+      "北九州市若松区": {
+        "establishments": 320,
+        "major": 8,
+        "employees": 5500
+      },
+      "久留米市": {
+        "establishments": 1250,
+        "major": 38,
+        "employees": 22000
+      },
+      "飯塚市": {
+        "establishments": 580,
+        "major": 14,
+        "employees": 9500
+      }
+    },
+    "plateau": [],
+    "transport": {
+      "福岡市博多区": {
+        "stations": 3,
+        "dailyPassengers": 195500,
+        "lines": [
+          "JR博多南線",
+          "JR鹿児島本線・新幹線",
+          "福岡市地下鉄空港線"
+        ]
+      },
+      "福岡市中央区": {
+        "stations": 5,
+        "dailyPassengers": 295500,
+        "lines": [
+          "福岡市地下鉄七隈線",
+          "福岡市地下鉄空港線",
+          "西鉄天神大牟田線"
+        ]
+      },
+      "福岡市早良区": {
+        "stations": 3,
+        "dailyPassengers": 122000,
+        "lines": [
+          "福岡市地下鉄空港線"
+        ]
+      },
+      "福岡市東区": {
+        "stations": 3,
+        "dailyPassengers": 108000,
+        "lines": [
+          "JR鹿児島本線",
+          "福岡市地下鉄箱崎線"
+        ]
+      },
+      "福岡市南区": {
+        "stations": 3,
+        "dailyPassengers": 131000,
+        "lines": [
+          "西鉄天神大牟田線"
+        ]
+      },
+      "福岡市城南区": {
+        "stations": 1,
+        "dailyPassengers": 22000,
+        "lines": [
+          "福岡市地下鉄七隈線"
+        ]
+      },
+      "福岡市西区": {
+        "stations": 2,
+        "dailyPassengers": 86000,
+        "lines": [
+          "JR筑肥線",
+          "福岡市地下鉄空港線・JR筑肥線"
+        ]
+      },
+      "北九州市小倉北区": {
+        "stations": 3,
+        "dailyPassengers": 152000,
+        "lines": [
+          "JR鹿児島本線・新幹線",
+          "北九州モノレール"
+        ]
+      },
+      "北九州市小倉南区": {
+        "stations": 2,
+        "dailyPassengers": 27000,
+        "lines": [
+          "北九州モノレール"
+        ]
+      },
+      "北九州市戸畑区": {
+        "stations": 1,
+        "dailyPassengers": 28000,
+        "lines": [
+          "JR鹿児島本線"
+        ]
+      },
+      "北九州市若松区": {
+        "stations": 1,
+        "dailyPassengers": 8500,
+        "lines": [
+          "JR若松線"
+        ]
+      },
+      "久留米市": {
+        "stations": 2,
+        "dailyPassengers": 90000,
+        "lines": [
+          "JR鹿児島本線・久大本線",
+          "西鉄天神大牟田線"
+        ]
+      },
+      "飯塚市": {
+        "stations": 1,
+        "dailyPassengers": 18000,
+        "lines": [
+          "JR筑豊本線"
+        ]
+      }
+    },
+    "commercial": {
+      "福岡市博多区": {
+        "facilities": 6,
+        "malls": 3,
+        "cvs": 2,
+        "totalGfa": 364730
+      },
+      "福岡市中央区": {
+        "facilities": 7,
+        "malls": 3,
+        "cvs": 1,
+        "totalGfa": 146130
+      },
+      "福岡市早良区": {
+        "facilities": 3,
+        "malls": 1,
+        "cvs": 0,
+        "totalGfa": 50620
+      },
+      "福岡市東区": {
+        "facilities": 3,
+        "malls": 1,
+        "cvs": 1,
+        "totalGfa": 99615
+      },
+      "福岡市南区": {
+        "facilities": 2,
+        "malls": 0,
+        "cvs": 0,
+        "totalGfa": 25160
+      },
+      "福岡市西区": {
+        "facilities": 1,
+        "malls": 1,
+        "cvs": 0,
+        "totalGfa": 82000
+      },
+      "北九州市小倉北区": {
+        "facilities": 4,
+        "malls": 2,
+        "cvs": 1,
+        "totalGfa": 117538
+      },
+      "北九州市小倉南区": {
+        "facilities": 1,
+        "malls": 1,
+        "cvs": 0,
+        "totalGfa": 78000
+      },
+      "久留米市": {
+        "facilities": 2,
+        "malls": 1,
+        "cvs": 1,
+        "totalGfa": 85105
+      },
+      "飯塚市": {
+        "facilities": 1,
+        "malls": 0,
+        "cvs": 0,
+        "totalGfa": 18000
+      }
+    },
+    "medical": {
+      "福岡市東区": {
+        "facilities": 3,
+        "hospitals": 1,
+        "beds": 1275
+      },
+      "福岡市城南区": {
+        "facilities": 2,
+        "hospitals": 1,
+        "beds": 1115
+      },
+      "福岡市博多区": {
+        "facilities": 5,
+        "hospitals": 2,
+        "beds": 1286
+      },
+      "福岡市中央区": {
+        "facilities": 4,
+        "hospitals": 1,
+        "beds": 620
+      },
+      "福岡市早良区": {
+        "facilities": 3,
+        "hospitals": 1,
+        "beds": 432
+      },
+      "福岡市南区": {
+        "facilities": 2,
+        "hospitals": 1,
+        "beds": 398
+      },
+      "北九州市小倉北区": {
+        "facilities": 5,
+        "hospitals": 2,
+        "beds": 1670
+      },
+      "北九州市小倉南区": {
+        "facilities": 1,
+        "hospitals": 1,
+        "beds": 488
+      },
+      "久留米市": {
+        "facilities": 2,
+        "hospitals": 2,
+        "beds": 1673
+      },
+      "飯塚市": {
+        "facilities": 1,
+        "hospitals": 1,
+        "beds": 1070
+      }
+    }
+  },
+  "hokkaido": {
+    "center": [
+      42.99427391304347,
+      141.71408695652173
+    ],
+    "zoom": 9,
+    "displayName": "北海道",
+    "capabilities": {
+      "humanFlow": true,
+      "education": true,
+      "corporate": true,
+      "crime": true,
+      "plateau": false,
+      "transport": true,
+      "commercial": true,
+      "medical": true
+    },
+    "municipalities": {
+      "札幌市中央区": [
+        43.0618,
+        141.3545
+      ],
+      "札幌市北区": [
+        43.0921,
+        141.3412
+      ],
+      "札幌市東区": [
+        43.0821,
+        141.3812
+      ],
+      "札幌市白石区": [
+        43.0521,
+        141.3981
+      ],
+      "札幌市豊平区": [
+        43.0321,
+        141.3812
+      ],
+      "札幌市南区": [
+        42.9821,
+        141.3412
+      ],
+      "札幌市西区": [
+        43.0721,
+        141.3012
+      ],
+      "札幌市厚別区": [
+        43.0421,
+        141.4381
+      ],
+      "札幌市手稲区": [
+        43.1121,
+        141.2512
+      ],
+      "札幌市清田区": [
+        42.9921,
+        141.4181
+      ],
+      "函館市": [
+        41.7688,
+        140.729
+      ],
+      "旭川市": [
+        43.7706,
+        142.3651
+      ],
+      "小樽市": [
+        43.1907,
+        140.9947
+      ],
+      "釧路市": [
+        42.9849,
+        144.382
+      ],
+      "帯広市": [
+        42.9237,
+        143.1965
+      ],
+      "北見市": [
+        43.8031,
+        143.8956
+      ],
+      "苫小牧市": [
+        42.6326,
+        141.6047
+      ],
+      "室蘭市": [
+        42.3151,
+        140.9739
+      ],
+      "江別市": [
+        43.1035,
+        141.5432
+      ],
+      "千歳市": [
+        42.824,
+        141.6518
+      ],
+      "恵庭市": [
+        42.8812,
+        141.5791
+      ],
+      "石狩市": [
+        43.1682,
+        141.3412
+      ],
+      "北広島市": [
+        42.9812,
+        141.5612
+      ]
+    },
+    "landPrices": {
+      "札幌市中央区": {
+        "price": 861750,
+        "change": 6.2
+      },
+      "札幌市北区": {
+        "price": 172000,
+        "change": 6.2
+      },
+      "札幌市白石区": {
+        "price": 138000,
+        "change": 6.2
+      },
+      "札幌市豊平区": {
+        "price": 155000,
+        "change": 4.7
+      },
+      "札幌市西区": {
+        "price": 158000,
+        "change": 8.9
+      },
+      "札幌市厚別区": {
+        "price": 118000,
+        "change": 0.3
+      },
+      "札幌市手稲区": {
+        "price": 105000,
+        "change": 0.2
+      },
+      "函館市": {
+        "price": 260000,
+        "change": 3.2
+      },
+      "旭川市": {
+        "price": 182000,
+        "change": 4
+      },
+      "小樽市": {
+        "price": 75000,
+        "change": 4.2
+      },
+      "釧路市": {
+        "price": 55000,
+        "change": 0
+      }
+    },
+    "priceBuckets": [
+      {
+        "min": 1000000,
+        "color": "#ff2d55",
+        "label": "100万〜"
+      },
+      {
+        "min": 500000,
+        "color": "#ff6b35",
+        "label": "50万〜100万"
+      },
+      {
+        "min": 300000,
+        "color": "#ffb340",
+        "label": "30万〜50万"
+      },
+      {
+        "min": 200000,
+        "color": "#ffe066",
+        "label": "20万〜30万"
+      },
+      {
+        "min": 150000,
+        "color": "#a8e6cf",
+        "label": "15万〜20万"
+      },
+      {
+        "min": 0,
+        "color": "#69b7eb",
+        "label": "〜15万"
+      }
+    ],
+    "risk": {
+      "札幌市中央区": {
+        "flood": 90,
+        "earthquake": "6強",
+        "overall": 61
+      },
+      "札幌市北区": {
+        "flood": 54,
+        "earthquake": "6強",
+        "overall": 48
+      },
+      "札幌市白石区": {
+        "flood": 90,
+        "earthquake": "6強",
+        "overall": 65
+      },
+      "札幌市豊平区": {
+        "flood": 22,
+        "earthquake": "6強",
+        "overall": 37
+      },
+      "札幌市西区": {
+        "flood": 90,
+        "earthquake": "6弱",
+        "overall": 50
+      },
+      "札幌市厚別区": {
+        "flood": 22,
+        "earthquake": "5強",
+        "overall": 20
+      },
+      "札幌市手稲区": {
+        "flood": 84,
+        "earthquake": "6弱",
+        "overall": 53
+      },
+      "函館市": {
+        "flood": 22,
+        "earthquake": "6弱",
+        "overall": 30
+      },
+      "旭川市": {
+        "flood": 84,
+        "earthquake": "5強",
+        "overall": 40
+      },
+      "小樽市": {
+        "flood": 22,
+        "earthquake": "6弱",
+        "overall": 31
+      },
+      "釧路市": {
+        "flood": 90,
+        "earthquake": "6強",
+        "overall": 68
+      }
+    },
+    "humanFlow": {
+      "札幌市中央区": {
+        "weekday": 715000,
+        "weekend": 715000,
+        "stay": 66,
+        "trend": "increasing"
+      },
+      "札幌市北区": {
+        "weekday": 167000,
+        "weekend": 145000,
+        "stay": 43,
+        "trend": "stable"
+      },
+      "札幌市東区": {
+        "weekday": 58000,
+        "weekend": 52000,
+        "stay": 38,
+        "trend": "stable"
+      },
+      "札幌市白石区": {
+        "weekday": 63000,
+        "weekend": 55000,
+        "stay": 42,
+        "trend": "stable"
+      },
+      "札幌市厚別区": {
+        "weekday": 88000,
+        "weekend": 80000,
+        "stay": 48,
+        "trend": "increasing"
+      },
+      "札幌市豊平区": {
+        "weekday": 54000,
+        "weekend": 48000,
+        "stay": 35,
+        "trend": "stable"
+      },
+      "札幌市清田区": {
+        "weekday": 41000,
+        "weekend": 38000,
+        "stay": 30,
+        "trend": "stable"
+      },
+      "札幌市南区": {
+        "weekday": 47000,
+        "weekend": 55000,
+        "stay": 55,
+        "trend": "stable"
+      },
+      "札幌市西区": {
+        "weekday": 68000,
+        "weekend": 62000,
+        "stay": 40,
+        "trend": "stable"
+      },
+      "札幌市手稲区": {
+        "weekday": 52000,
+        "weekend": 47000,
+        "stay": 38,
+        "trend": "stable"
+      },
+      "北海道旭川市": {
+        "weekday": 143000,
+        "weekend": 137000,
+        "stay": 63,
+        "trend": "stable"
+      },
+      "北海道函館市": {
+        "weekday": 141000,
+        "weekend": 208000,
+        "stay": 93,
+        "trend": "increasing"
+      },
+      "北海道苫小牧市": {
+        "weekday": 83000,
+        "weekend": 104000,
+        "stay": 65,
+        "trend": "increasing"
+      },
+      "北海道帯広市": {
+        "weekday": 82000,
+        "weekend": 83000,
+        "stay": 48,
+        "trend": "stable"
+      },
+      "北海道釧路市": {
+        "weekday": 66000,
+        "weekend": 95000,
+        "stay": 72,
+        "trend": "stable"
+      }
+    },
+    "school": {
+      "札幌市中央区": {
+        "score": 87,
+        "advancement": 84.5
+      },
+      "札幌市北区": {
+        "score": 76,
+        "advancement": 67.5
+      },
+      "札幌市東区": {
+        "score": 72,
+        "advancement": 63
+      },
+      "札幌市白石区": {
+        "score": 71,
+        "advancement": 61.5
+      },
+      "札幌市厚別区": {
+        "score": 75,
+        "advancement": 66.5
+      },
+      "札幌市豊平区": {
+        "score": 73,
+        "advancement": 64
+      },
+      "札幌市清田区": {
+        "score": 70,
+        "advancement": 60.5
+      },
+      "札幌市南区": {
+        "score": 77,
+        "advancement": 69
+      },
+      "札幌市西区": {
+        "score": 76,
+        "advancement": 68
+      },
+      "札幌市手稲区": {
+        "score": 73,
+        "advancement": 63.5
+      },
+      "北海道旭川市": {
+        "score": 72,
+        "advancement": 62
+      },
+      "北海道函館市": {
+        "score": 74,
+        "advancement": 65
+      },
+      "北海道苫小牧市": {
+        "score": 70,
+        "advancement": 60
+      },
+      "北海道帯広市": {
+        "score": 71,
+        "advancement": 61.5
+      },
+      "北海道釧路市": {
+        "score": 68,
+        "advancement": 57
+      }
+    },
+    "corporate": {
+      "札幌市中央区": {
+        "establishments": 11450,
+        "major": 415,
+        "employees": 218000
+      },
+      "札幌市北区": {
+        "establishments": 1850,
+        "major": 42,
+        "employees": 28000
+      },
+      "札幌市東区": {
+        "establishments": 1420,
+        "major": 28,
+        "employees": 18500
+      },
+      "札幌市白石区": {
+        "establishments": 1680,
+        "major": 35,
+        "employees": 22000
+      },
+      "札幌市厚別区": {
+        "establishments": 2100,
+        "major": 55,
+        "employees": 32000
+      },
+      "札幌市豊平区": {
+        "establishments": 1350,
+        "major": 22,
+        "employees": 16000
+      },
+      "札幌市西区": {
+        "establishments": 1580,
+        "major": 30,
+        "employees": 19500
+      },
+      "北海道旭川市": {
+        "establishments": 3630,
+        "major": 113,
+        "employees": 54000
+      },
+      "北海道函館市": {
+        "establishments": 3370,
+        "major": 113,
+        "employees": 53000
+      },
+      "北海道苫小牧市": {
+        "establishments": 3380,
+        "major": 110,
+        "employees": 64500
+      },
+      "北海道帯広市": {
+        "establishments": 1580,
+        "major": 52,
+        "employees": 24000
+      },
+      "北海道釧路市": {
+        "establishments": 2200,
+        "major": 70,
+        "employees": 35000
+      },
+      "札幌市南区": {
+        "establishments": 680,
+        "major": 12,
+        "employees": 8500
+      },
+      "札幌市手稲区": {
+        "establishments": 920,
+        "major": 18,
+        "employees": 11000
+      }
+    },
+    "plateau": [],
+    "transport": {
+      "札幌市中央区": {
+        "stations": 6,
+        "dailyPassengers": 603000,
+        "lines": [
+          "JR函館本線",
+          "地下鉄南北線",
+          "地下鉄東西線",
+          "地下鉄東豊線"
+        ]
+      },
+      "札幌市厚別区": {
+        "stations": 2,
+        "dailyPassengers": 97000,
+        "lines": [
+          "JR千歳線",
+          "地下鉄東西線"
+        ]
+      },
+      "札幌市豊平区": {
+        "stations": 1,
+        "dailyPassengers": 28000,
+        "lines": [
+          "地下鉄南北線"
+        ]
+      },
+      "札幌市南区": {
+        "stations": 1,
+        "dailyPassengers": 22000,
+        "lines": [
+          "地下鉄南北線"
+        ]
+      },
+      "札幌市西区": {
+        "stations": 2,
+        "dailyPassengers": 70000,
+        "lines": [
+          "JR函館本線",
+          "地下鉄東西線"
+        ]
+      },
+      "札幌市手稲区": {
+        "stations": 1,
+        "dailyPassengers": 24000,
+        "lines": [
+          "JR函館本線"
+        ]
+      },
+      "札幌市北区": {
+        "stations": 1,
+        "dailyPassengers": 31000,
+        "lines": [
+          "地下鉄南北線"
+        ]
+      },
+      "北海道旭川市": {
+        "stations": 3,
+        "dailyPassengers": 46000,
+        "lines": [
+          "JR函館本線",
+          "JR富良野線",
+          "JR石北本線"
+        ]
+      },
+      "北海道函館市": {
+        "stations": 4,
+        "dailyPassengers": 43200,
+        "lines": [
+          "JR函館本線",
+          "函館市電"
+        ]
+      },
+      "北海道苫小牧市": {
+        "stations": 1,
+        "dailyPassengers": 15500,
+        "lines": [
+          "JR室蘭本線"
+        ]
+      },
+      "北海道帯広市": {
+        "stations": 1,
+        "dailyPassengers": 12800,
+        "lines": [
+          "JR根室本線"
+        ]
+      },
+      "北海道釧路市": {
+        "stations": 2,
+        "dailyPassengers": 13700,
+        "lines": [
+          "JR根室本線",
+          "JR釧網本線"
+        ]
+      },
+      "北海道小樽市": {
+        "stations": 1,
+        "dailyPassengers": 14500,
+        "lines": [
+          "JR函館本線"
+        ]
+      },
+      "北海道千歳市": {
+        "stations": 2,
+        "dailyPassengers": 40500,
+        "lines": [
+          "JR千歳線"
+        ]
+      }
+    },
+    "commercial": {
+      "札幌市東区": {
+        "facilities": 1,
+        "malls": 1,
+        "cvs": 0,
+        "totalGfa": 85000
+      },
+      "札幌市厚別区": {
+        "facilities": 2,
+        "malls": 1,
+        "cvs": 0,
+        "totalGfa": 94800
+      },
+      "札幌市西区": {
+        "facilities": 1,
+        "malls": 1,
+        "cvs": 0,
+        "totalGfa": 14500
+      },
+      "札幌市中央区": {
+        "facilities": 9,
+        "malls": 3,
+        "cvs": 2,
+        "totalGfa": 126680
+      },
+      "札幌市北区": {
+        "facilities": 2,
+        "malls": 0,
+        "cvs": 1,
+        "totalGfa": 595
+      },
+      "北海道旭川市": {
+        "facilities": 5,
+        "malls": 0,
+        "cvs": 2,
+        "totalGfa": 3176
+      },
+      "北海道函館市": {
+        "facilities": 4,
+        "malls": 0,
+        "cvs": 1,
+        "totalGfa": 2702
+      },
+      "札幌市豊平区": {
+        "facilities": 1,
+        "malls": 0,
+        "cvs": 1,
+        "totalGfa": 125
+      },
+      "北海道帯広市": {
+        "facilities": 1,
+        "malls": 0,
+        "cvs": 0,
+        "totalGfa": 290
+      },
+      "北海道苫小牧市": {
+        "facilities": 1,
+        "malls": 1,
+        "cvs": 0,
+        "totalGfa": 65000
+      },
+      "北海道釧路市": {
+        "facilities": 1,
+        "malls": 1,
+        "cvs": 0,
+        "totalGfa": 28000
+      }
+    },
+    "medical": {
+      "札幌市北区": {
+        "facilities": 3,
+        "hospitals": 1,
+        "beds": 994
+      },
+      "札幌市中央区": {
+        "facilities": 5,
+        "hospitals": 2,
+        "beds": 1525
+      },
+      "札幌市豊平区": {
+        "facilities": 2,
+        "hospitals": 1,
+        "beds": 468
+      },
+      "札幌市東区": {
+        "facilities": 1,
+        "hospitals": 1,
+        "beds": 600
+      },
+      "札幌市手稲区": {
+        "facilities": 1,
+        "hospitals": 1,
+        "beds": 605
+      },
+      "北海道旭川市": {
+        "facilities": 4,
+        "hospitals": 2,
+        "beds": 1102
+      },
+      "北海道函館市": {
+        "facilities": 4,
+        "hospitals": 2,
+        "beds": 988
+      },
+      "北海道苫小牧市": {
+        "facilities": 2,
+        "hospitals": 1,
+        "beds": 406
+      },
+      "北海道帯広市": {
+        "facilities": 2,
+        "hospitals": 1,
+        "beds": 444
+      },
+      "北海道釧路市": {
+        "facilities": 1,
+        "hospitals": 1,
+        "beds": 388
+      },
+      "札幌市西区": {
+        "facilities": 1,
+        "hospitals": 0,
+        "beds": 0
+      }
+    }
+  },
+  "hyogo": {
+    "center": [
+      34.766895454545455,
+      135.15120454545453
+    ],
+    "zoom": 9,
+    "displayName": "兵庫県",
+    "capabilities": {
+      "humanFlow": true,
+      "education": true,
+      "corporate": true,
+      "crime": true,
+      "plateau": false,
+      "transport": true,
+      "commercial": true,
+      "medical": true
+    },
+    "municipalities": {
+      "神戸市中央区": [
+        34.6913,
+        135.1956
+      ],
+      "神戸市東灘区": [
+        34.7201,
+        135.2681
+      ],
+      "神戸市灘区": [
+        34.7201,
+        135.2181
+      ],
+      "神戸市兵庫区": [
+        34.6781,
+        135.1681
+      ],
+      "神戸市長田区": [
+        34.6581,
+        135.1481
+      ],
+      "神戸市須磨区": [
+        34.6281,
+        135.1281
+      ],
+      "神戸市垂水区": [
+        34.6181,
+        135.0981
+      ],
+      "神戸市西区": [
+        34.6781,
+        135.0481
+      ],
+      "神戸市北区": [
+        34.7681,
+        135.1181
+      ],
+      "姫路市": [
+        34.8394,
+        134.6939
+      ],
+      "西宮市": [
+        34.7381,
+        135.3381
+      ],
+      "尼崎市": [
+        34.7351,
+        135.4061
+      ],
+      "明石市": [
+        34.6551,
+        134.9981
+      ],
+      "宝塚市": [
+        34.7981,
+        135.3581
+      ],
+      "伊丹市": [
+        34.7781,
+        135.4081
+      ],
+      "川西市": [
+        34.8281,
+        135.4181
+      ],
+      "芦屋市": [
+        34.7281,
+        135.3081
+      ],
+      "加古川市": [
+        34.7551,
+        134.8381
+      ],
+      "三田市": [
+        34.8881,
+        135.2281
+      ],
+      "洲本市": [
+        34.3451,
+        134.8951
+      ],
+      "豊岡市": [
+        35.5481,
+        134.8181
+      ],
+      "篠山市": [
+        35.0751,
+        135.2281
+      ]
+    },
+    "landPrices": {
+      "神戸市中央区": {
+        "price": 3075000,
+        "change": 4.9
+      },
+      "神戸市東灘区": {
+        "price": 545000,
+        "change": 3.8
+      },
+      "神戸市灘区": {
+        "price": 405000,
+        "change": 3.8
+      },
+      "神戸市兵庫区": {
+        "price": 275000,
+        "change": 0.5
+      },
+      "神戸市長田区": {
+        "price": 207500,
+        "change": 0.3
+      },
+      "神戸市西区": {
+        "price": 188000,
+        "change": 3.3
+      },
+      "姫路市": {
+        "price": 485000,
+        "change": 3.6
+      },
+      "西宮市": {
+        "price": 565000,
+        "change": 3.7
+      },
+      "尼崎市": {
+        "price": 298000,
+        "change": 4.6
+      },
+      "明石市": {
+        "price": 248000,
+        "change": 5.5
+      },
+      "宝塚市": {
+        "price": 330000,
+        "change": 6.5
+      }
+    },
+    "priceBuckets": [
+      {
+        "min": 10000000,
+        "color": "#ff2d55",
+        "label": "1000万〜"
+      },
+      {
+        "min": 5000000,
+        "color": "#ff6b35",
+        "label": "500万〜1000万"
+      },
+      {
+        "min": 2000000,
+        "color": "#ffb340",
+        "label": "200万〜500万"
+      },
+      {
+        "min": 1000000,
+        "color": "#ffe066",
+        "label": "100万〜200万"
+      },
+      {
+        "min": 500000,
+        "color": "#a8e6cf",
+        "label": "50万〜100万"
+      },
+      {
+        "min": 0,
+        "color": "#69b7eb",
+        "label": "〜50万"
+      }
+    ],
+    "risk": {
+      "神戸市中央区": {
+        "flood": 90,
+        "earthquake": "6強",
+        "overall": 63
+      },
+      "神戸市東灘区": {
+        "flood": 54,
+        "earthquake": "7",
+        "overall": 61
+      },
+      "神戸市灘区": {
+        "flood": 90,
+        "earthquake": "7",
+        "overall": 69
+      },
+      "神戸市兵庫区": {
+        "flood": 22,
+        "earthquake": "6強",
+        "overall": 35
+      },
+      "神戸市長田区": {
+        "flood": 90,
+        "earthquake": "7",
+        "overall": 69
+      },
+      "神戸市西区": {
+        "flood": 22,
+        "earthquake": "6弱",
+        "overall": 24
+      },
+      "姫路市": {
+        "flood": 90,
+        "earthquake": "6弱",
+        "overall": 53
+      },
+      "西宮市": {
+        "flood": 22,
+        "earthquake": "7",
+        "overall": 50
+      },
+      "尼崎市": {
+        "flood": 84,
+        "earthquake": "6強",
+        "overall": 61
+      },
+      "明石市": {
+        "flood": 22,
+        "earthquake": "6弱",
+        "overall": 30
+      },
+      "宝塚市": {
+        "flood": 90,
+        "earthquake": "6強",
+        "overall": 54
+      }
+    },
+    "humanFlow": {
+      "神戸市中央区": {
+        "weekday": 557000,
+        "weekend": 568000,
+        "stay": 75,
+        "trend": "stable"
+      },
+      "神戸市兵庫区": {
+        "weekday": 52000,
+        "weekend": 41000,
+        "stay": 45,
+        "trend": "stable"
+      },
+      "神戸市長田区": {
+        "weekday": 48000,
+        "weekend": 38000,
+        "stay": 42,
+        "trend": "stable"
+      },
+      "神戸市須磨区": {
+        "weekday": 22000,
+        "weekend": 62000,
+        "stay": 110,
+        "trend": "stable"
+      },
+      "神戸市垂水区": {
+        "weekday": 61000,
+        "weekend": 55000,
+        "stay": 50,
+        "trend": "stable"
+      },
+      "神戸市西区": {
+        "weekday": 45000,
+        "weekend": 40000,
+        "stay": 55,
+        "trend": "stable"
+      },
+      "神戸市北区": {
+        "weekday": 18000,
+        "weekend": 22000,
+        "stay": 60,
+        "trend": "stable"
+      },
+      "神戸市東灘区": {
+        "weekday": 87000,
+        "weekend": 88000,
+        "stay": 57,
+        "trend": "stable"
+      },
+      "神戸市灘区": {
+        "weekday": 73000,
+        "weekend": 80000,
+        "stay": 71,
+        "trend": "stable"
+      },
+      "兵庫県姫路市": {
+        "weekday": 123000,
+        "weekend": 146000,
+        "stay": 91,
+        "trend": "stable"
+      },
+      "兵庫県尼崎市": {
+        "weekday": 173000,
+        "weekend": 127000,
+        "stay": 53,
+        "trend": "stable"
+      },
+      "兵庫県西宮市": {
+        "weekday": 106000,
+        "weekend": 110000,
+        "stay": 67,
+        "trend": "stable"
+      },
+      "兵庫県芦屋市": {
+        "weekday": 42000,
+        "weekend": 48000,
+        "stay": 70,
+        "trend": "stable"
+      },
+      "兵庫県伊丹市": {
+        "weekday": 55000,
+        "weekend": 45000,
+        "stay": 52,
+        "trend": "stable"
+      },
+      "兵庫県明石市": {
+        "weekday": 110000,
+        "weekend": 100000,
+        "stay": 52,
+        "trend": "stable"
+      }
+    },
+    "school": {
+      "兵庫県芦屋市": {
+        "score": 92,
+        "advancement": 78.5
+      },
+      "神戸市東灘区": {
+        "score": 88,
+        "advancement": 74.2
+      },
+      "兵庫県西宮市": {
+        "score": 86,
+        "advancement": 71.8
+      },
+      "神戸市灘区": {
+        "score": 82,
+        "advancement": 68.2
+      },
+      "神戸市中央区": {
+        "score": 80,
+        "advancement": 66
+      },
+      "神戸市兵庫区": {
+        "score": 68,
+        "advancement": 54.2
+      },
+      "神戸市長田区": {
+        "score": 66,
+        "advancement": 52.8
+      },
+      "神戸市須磨区": {
+        "score": 70,
+        "advancement": 56
+      },
+      "神戸市垂水区": {
+        "score": 74,
+        "advancement": 60.5
+      },
+      "神戸市西区": {
+        "score": 74,
+        "advancement": 60
+      },
+      "神戸市北区": {
+        "score": 71,
+        "advancement": 57.2
+      },
+      "兵庫県姫路市": {
+        "score": 76,
+        "advancement": 62.5
+      },
+      "兵庫県尼崎市": {
+        "score": 68,
+        "advancement": 53.8
+      },
+      "兵庫県伊丹市": {
+        "score": 78,
+        "advancement": 64
+      },
+      "兵庫県明石市": {
+        "score": 75,
+        "advancement": 61
+      }
+    },
+    "corporate": {
+      "神戸市中央区": {
+        "establishments": 7500,
+        "major": 635,
+        "employees": 293000
+      },
+      "神戸市兵庫区": {
+        "establishments": 980,
+        "major": 45,
+        "employees": 28000
+      },
+      "神戸市長田区": {
+        "establishments": 720,
+        "major": 32,
+        "employees": 18500
+      },
+      "神戸市東灘区": {
+        "establishments": 1250,
+        "major": 68,
+        "employees": 42000
+      },
+      "神戸市灘区": {
+        "establishments": 1080,
+        "major": 52,
+        "employees": 32000
+      },
+      "神戸市西区": {
+        "establishments": 880,
+        "major": 62,
+        "employees": 35000
+      },
+      "兵庫県尼崎市": {
+        "establishments": 6050,
+        "major": 445,
+        "employees": 216000
+      },
+      "兵庫県姫路市": {
+        "establishments": 4100,
+        "major": 280,
+        "employees": 147000
+      },
+      "兵庫県西宮市": {
+        "establishments": 3050,
+        "major": 203,
+        "employees": 106000
+      },
+      "兵庫県芦屋市": {
+        "establishments": 620,
+        "major": 38,
+        "employees": 22000
+      },
+      "兵庫県伊丹市": {
+        "establishments": 1680,
+        "major": 110,
+        "employees": 62000
+      },
+      "兵庫県明石市": {
+        "establishments": 1450,
+        "major": 88,
+        "employees": 48000
+      },
+      "神戸市垂水区": {
+        "establishments": 750,
+        "major": 35,
+        "employees": 22000
+      },
+      "神戸市北区": {
+        "establishments": 420,
+        "major": 22,
+        "employees": 12000
+      }
+    },
+    "plateau": [],
+    "transport": {
+      "神戸市中央区": {
+        "stations": 7,
+        "dailyPassengers": 772000,
+        "lines": [
+          "JR神戸線",
+          "神戸市営地下鉄海岸線",
+          "神戸市営地下鉄西神・山手線",
+          "阪急神戸本線",
+          "阪神本線"
+        ]
+      },
+      "神戸市兵庫区": {
+        "stations": 1,
+        "dailyPassengers": 48000,
+        "lines": [
+          "JR神戸線"
+        ]
+      },
+      "神戸市長田区": {
+        "stations": 1,
+        "dailyPassengers": 38000,
+        "lines": [
+          "神戸市営地下鉄西神・山手線"
+        ]
+      },
+      "神戸市垂水区": {
+        "stations": 1,
+        "dailyPassengers": 55000,
+        "lines": [
+          "JR神戸線"
+        ]
+      },
+      "神戸市西区": {
+        "stations": 1,
+        "dailyPassengers": 42000,
+        "lines": [
+          "神戸市営地下鉄西神・山手線"
+        ]
+      },
+      "神戸市北区": {
+        "stations": 1,
+        "dailyPassengers": 18000,
+        "lines": [
+          "神戸電鉄有馬線"
+        ]
+      },
+      "神戸市東灘区": {
+        "stations": 2,
+        "dailyPassengers": 76000,
+        "lines": [
+          "JR神戸線"
+        ]
+      },
+      "神戸市灘区": {
+        "stations": 1,
+        "dailyPassengers": 52000,
+        "lines": [
+          "JR神戸線"
+        ]
+      },
+      "兵庫県姫路市": {
+        "stations": 3,
+        "dailyPassengers": 168000,
+        "lines": [
+          "JR山陽本線",
+          "山陽新幹線",
+          "山陽電気鉄道本線"
+        ]
+      },
+      "兵庫県尼崎市": {
+        "stations": 2,
+        "dailyPassengers": 200000,
+        "lines": [
+          "JR神戸線",
+          "阪神本線"
+        ]
+      },
+      "兵庫県西宮市": {
+        "stations": 2,
+        "dailyPassengers": 153000,
+        "lines": [
+          "阪急神戸本線",
+          "阪神本線"
+        ]
+      },
+      "兵庫県芦屋市": {
+        "stations": 2,
+        "dailyPassengers": 60000,
+        "lines": [
+          "JR神戸線",
+          "阪急神戸本線"
+        ]
+      },
+      "兵庫県伊丹市": {
+        "stations": 1,
+        "dailyPassengers": 42000,
+        "lines": [
+          "阪急伊丹線"
+        ]
+      },
+      "兵庫県明石市": {
+        "stations": 3,
+        "dailyPassengers": 108500,
+        "lines": [
+          "JR神戸線",
+          "山陽新幹線"
+        ]
+      }
+    },
+    "commercial": {
+      "神戸市北区": {
+        "facilities": 1,
+        "malls": 1,
+        "cvs": 0,
+        "totalGfa": 95000
+      },
+      "神戸市中央区": {
+        "facilities": 9,
+        "malls": 3,
+        "cvs": 1,
+        "totalGfa": 134590
+      },
+      "兵庫県姫路市": {
+        "facilities": 5,
+        "malls": 2,
+        "cvs": 1,
+        "totalGfa": 130935
+      },
+      "兵庫県西宮市": {
+        "facilities": 3,
+        "malls": 1,
+        "cvs": 0,
+        "totalGfa": 82950
+      },
+      "兵庫県尼崎市": {
+        "facilities": 3,
+        "malls": 1,
+        "cvs": 1,
+        "totalGfa": 44380
+      },
+      "神戸市東灘区": {
+        "facilities": 2,
+        "malls": 1,
+        "cvs": 1,
+        "totalGfa": 28170
+      },
+      "兵庫県明石市": {
+        "facilities": 1,
+        "malls": 1,
+        "cvs": 0,
+        "totalGfa": 82000
+      },
+      "神戸市灘区": {
+        "facilities": 1,
+        "malls": 0,
+        "cvs": 0,
+        "totalGfa": 3200
+      },
+      "神戸市垂水区": {
+        "facilities": 1,
+        "malls": 0,
+        "cvs": 0,
+        "totalGfa": 2800
+      },
+      "兵庫県芦屋市": {
+        "facilities": 2,
+        "malls": 0,
+        "cvs": 1,
+        "totalGfa": 455
+      }
+    },
+    "medical": {
+      "神戸市中央区": {
+        "facilities": 5,
+        "hospitals": 2,
+        "beds": 1802
+      },
+      "神戸市灘区": {
+        "facilities": 2,
+        "hospitals": 1,
+        "beds": 420
+      },
+      "兵庫県西宮市": {
+        "facilities": 3,
+        "hospitals": 1,
+        "beds": 1000
+      },
+      "兵庫県姫路市": {
+        "facilities": 4,
+        "hospitals": 2,
+        "beds": 1080
+      },
+      "兵庫県尼崎市": {
+        "facilities": 3,
+        "hospitals": 1,
+        "beds": 720
+      },
+      "神戸市東灘区": {
+        "facilities": 2,
+        "hospitals": 1,
+        "beds": 380
+      },
+      "神戸市垂水区": {
+        "facilities": 1,
+        "hospitals": 1,
+        "beds": 320
+      },
+      "兵庫県明石市": {
+        "facilities": 3,
+        "hospitals": 1,
+        "beds": 360
+      },
+      "兵庫県伊丹市": {
+        "facilities": 1,
+        "hospitals": 1,
+        "beds": 500
+      },
+      "兵庫県芦屋市": {
+        "facilities": 2,
+        "hospitals": 0,
+        "beds": 0
+      }
+    }
+  },
+  "kanagawa": {
+    "center": [
+      35.472332432432424,
+      139.5252459459459
+    ],
+    "zoom": 9,
+    "displayName": "神奈川県",
+    "capabilities": {
+      "humanFlow": true,
+      "education": true,
+      "corporate": true,
+      "crime": true,
+      "plateau": false,
+      "transport": true,
+      "commercial": true,
+      "medical": true
+    },
+    "municipalities": {
+      "横浜市西区": [
+        35.4648,
+        139.6222
+      ],
+      "横浜市中区": [
+        35.4437,
+        139.638
+      ],
+      "横浜市神奈川区": [
+        35.4801,
+        139.6298
+      ],
+      "横浜市港北区": [
+        35.5076,
+        139.6251
+      ],
+      "横浜市都筑区": [
+        35.5432,
+        139.5812
+      ],
+      "横浜市青葉区": [
+        35.5601,
+        139.5398
+      ],
+      "横浜市鶴見区": [
+        35.5081,
+        139.6781
+      ],
+      "横浜市保土ケ谷区": [
+        35.4512,
+        139.5882
+      ],
+      "横浜市旭区": [
+        35.4651,
+        139.5498
+      ],
+      "横浜市磯子区": [
+        35.3981,
+        139.6381
+      ],
+      "横浜市金沢区": [
+        35.3801,
+        139.625
+      ],
+      "横浜市港南区": [
+        35.3981,
+        139.5981
+      ],
+      "横浜市南区": [
+        35.4198,
+        139.6182
+      ],
+      "横浜市栄区": [
+        35.3781,
+        139.5481
+      ],
+      "横浜市戸塚区": [
+        35.4012,
+        139.5381
+      ],
+      "横浜市泉区": [
+        35.4201,
+        139.5051
+      ],
+      "横浜市瀬谷区": [
+        35.4501,
+        139.4981
+      ],
+      "横浜市緑区": [
+        35.5181,
+        139.5681
+      ],
+      "川崎市川崎区": [
+        35.5312,
+        139.7021
+      ],
+      "川崎市幸区": [
+        35.5481,
+        139.6721
+      ],
+      "川崎市中原区": [
+        35.5678,
+        139.6601
+      ],
+      "川崎市高津区": [
+        35.5812,
+        139.6201
+      ],
+      "川崎市宮前区": [
+        35.5781,
+        139.5721
+      ],
+      "川崎市多摩区": [
+        35.5981,
+        139.5481
+      ],
+      "川崎市麻生区": [
+        35.6081,
+        139.5121
+      ],
+      "相模原市中央区": [
+        35.5712,
+        139.3731
+      ],
+      "相模原市南区": [
+        35.5198,
+        139.3781
+      ],
+      "相模原市緑区": [
+        35.6181,
+        139.3551
+      ],
+      "藤沢市": [
+        35.3378,
+        139.489
+      ],
+      "平塚市": [
+        35.3281,
+        139.3498
+      ],
+      "小田原市": [
+        35.2651,
+        139.1552
+      ],
+      "茅ヶ崎市": [
+        35.3322,
+        139.405
+      ],
+      "厚木市": [
+        35.4433,
+        139.3613
+      ],
+      "大和市": [
+        35.4891,
+        139.4612
+      ],
+      "海老名市": [
+        35.4479,
+        139.3912
+      ],
+      "座間市": [
+        35.4883,
+        139.4081
+      ],
+      "綾瀬市": [
+        35.4352,
+        139.4312
+      ]
+    },
+    "landPrices": {
+      "横浜市西区": {
+        "price": 4525000,
+        "change": 6.5
+      },
+      "横浜市中区": {
+        "price": 3350000,
+        "change": 5.5
+      },
+      "横浜市神奈川区": {
+        "price": 610000,
+        "change": 5.2
+      },
+      "横浜市港北区": {
+        "price": 2050000,
+        "change": 5.1
+      },
+      "横浜市都筑区": {
+        "price": 500000,
+        "change": 4.2
+      },
+      "横浜市青葉区": {
+        "price": 545000,
+        "change": 4.8
+      },
+      "川崎市川崎区": {
+        "price": 935000,
+        "change": 6.2
+      },
+      "川崎市中原区": {
+        "price": 1915000,
+        "change": 7.3
+      },
+      "相模原市中央区": {
+        "price": 290000,
+        "change": 3.6
+      },
+      "藤沢市": {
+        "price": 355000,
+        "change": 5
+      },
+      "平塚市": {
+        "price": 205000,
+        "change": 5.1
+      },
+      "小田原市": {
+        "price": 175000,
+        "change": 4.2
+      }
+    },
+    "priceBuckets": [
+      {
+        "min": 10000000,
+        "color": "#ff2d55",
+        "label": "1000万〜"
+      },
+      {
+        "min": 5000000,
+        "color": "#ff6b35",
+        "label": "500万〜1000万"
+      },
+      {
+        "min": 2000000,
+        "color": "#ffb340",
+        "label": "200万〜500万"
+      },
+      {
+        "min": 1000000,
+        "color": "#ffe066",
+        "label": "100万〜200万"
+      },
+      {
+        "min": 500000,
+        "color": "#a8e6cf",
+        "label": "50万〜100万"
+      },
+      {
+        "min": 0,
+        "color": "#69b7eb",
+        "label": "〜50万"
+      }
+    ],
+    "risk": {
+      "横浜市西区": {
+        "flood": 90,
+        "earthquake": "6強",
+        "overall": 78
+      },
+      "横浜市中区": {
+        "flood": 54,
+        "earthquake": "6強",
+        "overall": 66
+      },
+      "横浜市神奈川区": {
+        "flood": 90,
+        "earthquake": "6強",
+        "overall": 74
+      },
+      "横浜市港北区": {
+        "flood": 22,
+        "earthquake": "6強",
+        "overall": 50
+      },
+      "横浜市都筑区": {
+        "flood": 90,
+        "earthquake": "6強",
+        "overall": 69
+      },
+      "横浜市青葉区": {
+        "flood": 22,
+        "earthquake": "6強",
+        "overall": 45
+      },
+      "川崎市川崎区": {
+        "flood": 90,
+        "earthquake": "6強",
+        "overall": 78
+      },
+      "川崎市中原区": {
+        "flood": 22,
+        "earthquake": "6強",
+        "overall": 50
+      },
+      "相模原市中央区": {
+        "flood": 84,
+        "earthquake": "6強",
+        "overall": 67
+      },
+      "藤沢市": {
+        "flood": 22,
+        "earthquake": "6強",
+        "overall": 50
+      },
+      "平塚市": {
+        "flood": 90,
+        "earthquake": "6強",
+        "overall": 74
+      },
+      "小田原市": {
+        "flood": 22,
+        "earthquake": "6強",
+        "overall": 50
+      }
+    },
+    "humanFlow": {
+      "横浜市西区": {
+        "weekday": 475000,
+        "weekend": 470000,
+        "stay": 70,
+        "trend": "increasing"
+      },
+      "横浜市中区": {
+        "weekday": 280000,
+        "weekend": 275000,
+        "stay": 73,
+        "trend": "increasing"
+      },
+      "横浜市神奈川区": {
+        "weekday": 150000,
+        "weekend": 110000,
+        "stay": 39,
+        "trend": "stable"
+      },
+      "横浜市港北区": {
+        "weekday": 363000,
+        "weekend": 286000,
+        "stay": 50,
+        "trend": "increasing"
+      },
+      "横浜市都筑区": {
+        "weekday": 200000,
+        "weekend": 237000,
+        "stay": 67,
+        "trend": "increasing"
+      },
+      "横浜市青葉区": {
+        "weekday": 193000,
+        "weekend": 167000,
+        "stay": 49,
+        "trend": "stable"
+      },
+      "横浜市磯子区": {
+        "weekday": 117000,
+        "weekend": 91000,
+        "stay": 37,
+        "trend": "decreasing"
+      },
+      "横浜市金沢区": {
+        "weekday": 137000,
+        "weekend": 125000,
+        "stay": 49,
+        "trend": "stable"
+      },
+      "川崎市川崎区": {
+        "weekday": 265000,
+        "weekend": 273000,
+        "stay": 65,
+        "trend": "stable"
+      },
+      "川崎市中原区": {
+        "weekday": 253000,
+        "weekend": 207000,
+        "stay": 46,
+        "trend": "increasing"
+      },
+      "川崎市宮前区": {
+        "weekday": 150000,
+        "weekend": 128000,
+        "stay": 44,
+        "trend": "stable"
+      },
+      "神奈川県相模原市": {
+        "weekday": 125000,
+        "weekend": 105000,
+        "stay": 50,
+        "trend": "stable"
+      },
+      "神奈川県藤沢市": {
+        "weekday": 118000,
+        "weekend": 135000,
+        "stay": 58,
+        "trend": "stable"
+      },
+      "神奈川県平塚市": {
+        "weekday": 88000,
+        "weekend": 78000,
+        "stay": 48,
+        "trend": "stable"
+      },
+      "神奈川県小田原市": {
+        "weekday": 72000,
+        "weekend": 85000,
+        "stay": 55,
+        "trend": "stable"
+      },
+      "神奈川県鎌倉市": {
+        "weekday": 58000,
+        "weekend": 145000,
+        "stay": 95,
+        "trend": "increasing"
+      }
+    },
+    "school": {
+      "横浜市西区": {
+        "score": 76,
+        "advancement": 72.5
+      },
+      "横浜市中区": {
+        "score": 74,
+        "advancement": 70.2
+      },
+      "横浜市神奈川区": {
+        "score": 68,
+        "advancement": 62.5
+      },
+      "横浜市港北区": {
+        "score": 78,
+        "advancement": 74.5
+      },
+      "横浜市都筑区": {
+        "score": 80,
+        "advancement": 76.5
+      },
+      "横浜市青葉区": {
+        "score": 90,
+        "advancement": 85
+      },
+      "横浜市磯子区": {
+        "score": 65,
+        "advancement": 58.5
+      },
+      "横浜市金沢区": {
+        "score": 70,
+        "advancement": 65
+      },
+      "川崎市川崎区": {
+        "score": 65,
+        "advancement": 60
+      },
+      "川崎市中原区": {
+        "score": 80,
+        "advancement": 76
+      },
+      "川崎市宮前区": {
+        "score": 87,
+        "advancement": 82.5
+      },
+      "神奈川県相模原市": {
+        "score": 72,
+        "advancement": 67.5
+      },
+      "神奈川県藤沢市": {
+        "score": 75,
+        "advancement": 70.5
+      },
+      "神奈川県平塚市": {
+        "score": 68,
+        "advancement": 62
+      },
+      "神奈川県小田原市": {
+        "score": 70,
+        "advancement": 65.5
+      },
+      "神奈川県鎌倉市": {
+        "score": 88,
+        "advancement": 83
+      }
+    },
+    "corporate": {
+      "横浜市西区": {
+        "establishments": 7100,
+        "major": 90,
+        "employees": 310000
+      },
+      "横浜市中区": {
+        "establishments": 5530,
+        "major": 67,
+        "employees": 210000
+      },
+      "横浜市神奈川区": {
+        "establishments": 3830,
+        "major": 30,
+        "employees": 97000
+      },
+      "横浜市港北区": {
+        "establishments": 6680,
+        "major": 69,
+        "employees": 201000
+      },
+      "横浜市都筑区": {
+        "establishments": 2850,
+        "major": 28,
+        "employees": 88000
+      },
+      "横浜市青葉区": {
+        "establishments": 1250,
+        "major": 8,
+        "employees": 32000
+      },
+      "横浜市磯子区": {
+        "establishments": 1850,
+        "major": 15,
+        "employees": 52000
+      },
+      "横浜市金沢区": {
+        "establishments": 1250,
+        "major": 10,
+        "employees": 35000
+      },
+      "川崎市川崎区": {
+        "establishments": 6000,
+        "major": 60,
+        "employees": 207000
+      },
+      "川崎市中原区": {
+        "establishments": 5830,
+        "major": 60,
+        "employees": 200000
+      },
+      "川崎市宮前区": {
+        "establishments": 1250,
+        "major": 8,
+        "employees": 32000
+      },
+      "神奈川県相模原市": {
+        "establishments": 2250,
+        "major": 22,
+        "employees": 72000
+      },
+      "神奈川県藤沢市": {
+        "establishments": 1850,
+        "major": 18,
+        "employees": 58000
+      },
+      "神奈川県平塚市": {
+        "establishments": 1650,
+        "major": 15,
+        "employees": 52000
+      },
+      "神奈川県鎌倉市": {
+        "establishments": 850,
+        "major": 8,
+        "employees": 22000
+      }
+    },
+    "plateau": [],
+    "transport": {
+      "横浜市西区": {
+        "stations": 5,
+        "dailyPassengers": 1130000,
+        "lines": [
+          "JR東海道線",
+          "京急本線",
+          "東急東横線",
+          "横浜市営地下鉄ブルーライン",
+          "相鉄本線"
+        ]
+      },
+      "横浜市中区": {
+        "stations": 4,
+        "dailyPassengers": 240000,
+        "lines": [
+          "JR根岸線",
+          "横浜市営地下鉄ブルーライン"
+        ]
+      },
+      "横浜市港北区": {
+        "stations": 3,
+        "dailyPassengers": 440000,
+        "lines": [
+          "JR東海道新幹線",
+          "JR横浜線",
+          "横浜市営地下鉄ブルーライン"
+        ]
+      },
+      "横浜市都筑区": {
+        "stations": 2,
+        "dailyPassengers": 143000,
+        "lines": [
+          "横浜市営地下鉄グリーンライン"
+        ]
+      },
+      "横浜市青葉区": {
+        "stations": 2,
+        "dailyPassengers": 145000,
+        "lines": [
+          "東急田園都市線",
+          "横浜市営地下鉄ブルーライン"
+        ]
+      },
+      "横浜市保土ケ谷区": {
+        "stations": 1,
+        "dailyPassengers": 32000,
+        "lines": [
+          "相鉄本線"
+        ]
+      },
+      "川崎市川崎区": {
+        "stations": 3,
+        "dailyPassengers": 715000,
+        "lines": [
+          "JR南武線",
+          "JR東海道線",
+          "京急大師線"
+        ]
+      },
+      "川崎市中原区": {
+        "stations": 3,
+        "dailyPassengers": 520000,
+        "lines": [
+          "JR横須賀線",
+          "東急東横線",
+          "東急目黒線"
+        ]
+      },
+      "相模原市中央区": {
+        "stations": 1,
+        "dailyPassengers": 55000,
+        "lines": [
+          "JR横浜線"
+        ]
+      },
+      "藤沢市": {
+        "stations": 3,
+        "dailyPassengers": 273000,
+        "lines": [
+          "JR東海道線",
+          "小田急江ノ島線",
+          "江ノ島電鉄"
+        ]
+      },
+      "平塚市": {
+        "stations": 1,
+        "dailyPassengers": 95000,
+        "lines": [
+          "JR東海道線"
+        ]
+      },
+      "小田原市": {
+        "stations": 2,
+        "dailyPassengers": 218000,
+        "lines": [
+          "JR東海道新幹線",
+          "小田急小田原線"
+        ]
+      }
+    },
+    "commercial": {
+      "横浜市西区": {
+        "facilities": 9,
+        "malls": 4,
+        "cvs": 2,
+        "totalGfa": 206990
+      },
+      "横浜市中区": {
+        "facilities": 5,
+        "malls": 3,
+        "cvs": 1,
+        "totalGfa": 155375
+      },
+      "横浜市港北区": {
+        "facilities": 3,
+        "malls": 1,
+        "cvs": 1,
+        "totalGfa": 28370
+      },
+      "川崎市川崎区": {
+        "facilities": 4,
+        "malls": 1,
+        "cvs": 1,
+        "totalGfa": 180440
+      },
+      "川崎市中原区": {
+        "facilities": 4,
+        "malls": 2,
+        "cvs": 1,
+        "totalGfa": 70400
+      },
+      "藤沢市": {
+        "facilities": 3,
+        "malls": 1,
+        "cvs": 1,
+        "totalGfa": 79420
+      },
+      "平塚市": {
+        "facilities": 3,
+        "malls": 1,
+        "cvs": 1,
+        "totalGfa": 42375
+      },
+      "小田原市": {
+        "facilities": 3,
+        "malls": 1,
+        "cvs": 1,
+        "totalGfa": 15400
+      }
+    },
+    "medical": {
+      "横浜市西区": {
+        "facilities": 4,
+        "hospitals": 1,
+        "beds": 1000
+      },
+      "横浜市中区": {
+        "facilities": 5,
+        "hospitals": 1,
+        "beds": 540
+      },
+      "横浜市港北区": {
+        "facilities": 3,
+        "hospitals": 0,
+        "beds": 0
+      },
+      "横浜市都筑区": {
+        "facilities": 2,
+        "hospitals": 0,
+        "beds": 0
+      },
+      "横浜市青葉区": {
+        "facilities": 2,
+        "hospitals": 1,
+        "beds": 380
+      },
+      "川崎市川崎区": {
+        "facilities": 4,
+        "hospitals": 1,
+        "beds": 800
+      },
+      "川崎市中原区": {
+        "facilities": 4,
+        "hospitals": 1,
+        "beds": 1140
+      },
+      "相模原市中央区": {
+        "facilities": 3,
+        "hospitals": 1,
+        "beds": 940
+      },
+      "藤沢市": {
+        "facilities": 4,
+        "hospitals": 1,
+        "beds": 780
+      },
+      "小田原市": {
+        "facilities": 4,
+        "hospitals": 1,
+        "beds": 452
+      }
+    }
+  },
+  "kyoto": {
+    "center": [
+      35.051990476190475,
+      135.6322904761905
+    ],
+    "zoom": 9,
+    "displayName": "京都府",
+    "capabilities": {
+      "humanFlow": true,
+      "education": true,
+      "corporate": true,
+      "crime": true,
+      "plateau": false,
+      "transport": true,
+      "commercial": true,
+      "medical": true
+    },
+    "municipalities": {
+      "京都市中京区": [
+        35.0116,
+        135.7681
+      ],
+      "京都市下京区": [
+        34.9886,
+        135.7581
+      ],
+      "京都市上京区": [
+        35.0281,
+        135.7581
+      ],
+      "京都市東山区": [
+        34.9981,
+        135.7821
+      ],
+      "京都市左京区": [
+        35.0421,
+        135.7821
+      ],
+      "京都市右京区": [
+        35.0121,
+        135.7181
+      ],
+      "京都市伏見区": [
+        34.9381,
+        135.7681
+      ],
+      "京都市南区": [
+        34.9781,
+        135.7481
+      ],
+      "京都市北区": [
+        35.0681,
+        135.7481
+      ],
+      "京都市西京区": [
+        34.9981,
+        135.6981
+      ],
+      "京都市山科区": [
+        34.9881,
+        135.8181
+      ],
+      "宇治市": [
+        34.8848,
+        135.7981
+      ],
+      "長岡京市": [
+        34.9251,
+        135.6881
+      ],
+      "京田辺市": [
+        34.8151,
+        135.7681
+      ],
+      "亀岡市": [
+        35.0051,
+        135.5781
+      ],
+      "向日市": [
+        34.9451,
+        135.6981
+      ],
+      "木津川市": [
+        34.7651,
+        135.8081
+      ],
+      "舞鶴市": [
+        35.4751,
+        135.3781
+      ],
+      "福知山市": [
+        35.2951,
+        135.1181
+      ],
+      "京丹後市": [
+        35.6251,
+        134.8781
+      ],
+      "綾部市": [
+        35.3051,
+        135.2181
+      ]
+    },
+    "landPrices": {
+      "京都市中京区": {
+        "price": 5385000,
+        "change": 2.3
+      },
+      "京都市下京区": {
+        "price": 4100000,
+        "change": 1.9
+      },
+      "京都市上京区": {
+        "price": 385000,
+        "change": 0.7
+      },
+      "京都市東山区": {
+        "price": 680000,
+        "change": 2
+      },
+      "京都市左京区": {
+        "price": 405000,
+        "change": 1
+      },
+      "京都市右京区": {
+        "price": 250000,
+        "change": 0.5
+      },
+      "京都市伏見区": {
+        "price": 252000,
+        "change": 0.9
+      },
+      "京都市南区": {
+        "price": 185000,
+        "change": 0.5
+      },
+      "宇治市": {
+        "price": 210000,
+        "change": 0.9
+      },
+      "長岡京市": {
+        "price": 275000,
+        "change": 1.4
+      },
+      "京田辺市": {
+        "price": 200000,
+        "change": 0.8
+      }
+    },
+    "priceBuckets": [
+      {
+        "min": 10000000,
+        "color": "#ff2d55",
+        "label": "1000万〜"
+      },
+      {
+        "min": 5000000,
+        "color": "#ff6b35",
+        "label": "500万〜1000万"
+      },
+      {
+        "min": 2000000,
+        "color": "#ffb340",
+        "label": "200万〜500万"
+      },
+      {
+        "min": 1000000,
+        "color": "#ffe066",
+        "label": "100万〜200万"
+      },
+      {
+        "min": 500000,
+        "color": "#a8e6cf",
+        "label": "50万〜100万"
+      },
+      {
+        "min": 0,
+        "color": "#69b7eb",
+        "label": "〜50万"
+      }
+    ],
+    "risk": {
+      "京都市中京区": {
+        "flood": 54,
+        "earthquake": "6弱",
+        "overall": 35
+      },
+      "京都市下京区": {
+        "flood": 54,
+        "earthquake": "6弱",
+        "overall": 40
+      },
+      "京都市上京区": {
+        "flood": 54,
+        "earthquake": "6弱",
+        "overall": 35
+      },
+      "京都市東山区": {
+        "flood": 22,
+        "earthquake": "6弱",
+        "overall": 23
+      },
+      "京都市左京区": {
+        "flood": 84,
+        "earthquake": "6弱",
+        "overall": 45
+      },
+      "京都市右京区": {
+        "flood": 22,
+        "earthquake": "6弱",
+        "overall": 23
+      },
+      "京都市伏見区": {
+        "flood": 84,
+        "earthquake": "6強",
+        "overall": 56
+      },
+      "京都市南区": {
+        "flood": 22,
+        "earthquake": "6弱",
+        "overall": 29
+      },
+      "宇治市": {
+        "flood": 84,
+        "earthquake": "6強",
+        "overall": 56
+      },
+      "長岡京市": {
+        "flood": 22,
+        "earthquake": "6弱",
+        "overall": 24
+      },
+      "京田辺市": {
+        "flood": 90,
+        "earthquake": "6弱",
+        "overall": 47
+      }
+    },
+    "humanFlow": {
+      "京都市下京区": {
+        "weekday": 437000,
+        "weekend": 549000,
+        "stay": 42,
+        "trend": "increasing"
+      },
+      "京都市中京区": {
+        "weekday": 488000,
+        "weekend": 685000,
+        "stay": 50,
+        "trend": "increasing"
+      },
+      "京都市東山区": {
+        "weekday": 135000,
+        "weekend": 405000,
+        "stay": 97,
+        "trend": "increasing"
+      },
+      "京都市上京区": {
+        "weekday": 66000,
+        "weekend": 88000,
+        "stay": 38,
+        "trend": "stable"
+      },
+      "京都市左京区": {
+        "weekday": 100000,
+        "weekend": 228000,
+        "stay": 77,
+        "trend": "increasing"
+      },
+      "京都市北区": {
+        "weekday": 60000,
+        "weekend": 130000,
+        "stay": 64,
+        "trend": "increasing"
+      },
+      "京都市右京区": {
+        "weekday": 74000,
+        "weekend": 199000,
+        "stay": 78,
+        "trend": "increasing"
+      },
+      "京都市伏見区": {
+        "weekday": 110000,
+        "weekend": 233000,
+        "stay": 65,
+        "trend": "increasing"
+      },
+      "京都市山科区": {
+        "weekday": 68000,
+        "weekend": 75000,
+        "stay": 28,
+        "trend": "stable"
+      },
+      "京都市西京区": {
+        "weekday": 55000,
+        "weekend": 62000,
+        "stay": 32,
+        "trend": "stable"
+      },
+      "京都市南区": {
+        "weekday": 28000,
+        "weekend": 55000,
+        "stay": 65,
+        "trend": "stable"
+      },
+      "宇治市": {
+        "weekday": 35000,
+        "weekend": 82000,
+        "stay": 75,
+        "trend": "increasing"
+      }
+    },
+    "school": {
+      "京都市左京区": {
+        "score": 88,
+        "advancement": 78.5
+      },
+      "京都市上京区": {
+        "score": 91,
+        "advancement": 82.3
+      },
+      "京都市中京区": {
+        "score": 83,
+        "advancement": 72
+      },
+      "京都市下京区": {
+        "score": 79,
+        "advancement": 68.2
+      },
+      "京都市東山区": {
+        "score": 80,
+        "advancement": 69.5
+      },
+      "京都市北区": {
+        "score": 84,
+        "advancement": 73.5
+      },
+      "京都市右京区": {
+        "score": 81,
+        "advancement": 70
+      },
+      "京都市伏見区": {
+        "score": 80,
+        "advancement": 69.8
+      },
+      "京都市山科区": {
+        "score": 78,
+        "advancement": 67
+      },
+      "京都市西京区": {
+        "score": 82,
+        "advancement": 71
+      },
+      "京都市南区": {
+        "score": 75,
+        "advancement": 64.5
+      },
+      "宇治市": {
+        "score": 81,
+        "advancement": 70.5
+      },
+      "亀岡市": {
+        "score": 74,
+        "advancement": 63
+      },
+      "城陽市": {
+        "score": 76,
+        "advancement": 65.5
+      },
+      "長岡京市": {
+        "score": 83,
+        "advancement": 72.5
+      }
+    },
+    "corporate": {
+      "京都市下京区": {
+        "establishments": 6530,
+        "major": 243,
+        "employees": 137000
+      },
+      "京都市中京区": {
+        "establishments": 5540,
+        "major": 200,
+        "employees": 110500
+      },
+      "京都市東山区": {
+        "establishments": 1280,
+        "major": 42,
+        "employees": 22000
+      },
+      "京都市上京区": {
+        "establishments": 980,
+        "major": 35,
+        "employees": 18500
+      },
+      "京都市左京区": {
+        "establishments": 1450,
+        "major": 55,
+        "employees": 28000
+      },
+      "京都市北区": {
+        "establishments": 1180,
+        "major": 32,
+        "employees": 21500
+      },
+      "京都市右京区": {
+        "establishments": 2330,
+        "major": 76,
+        "employees": 41500
+      },
+      "京都市伏見区": {
+        "establishments": 3830,
+        "major": 137,
+        "employees": 74500
+      },
+      "京都市山科区": {
+        "establishments": 1850,
+        "major": 58,
+        "employees": 36000
+      },
+      "京都市西京区": {
+        "establishments": 2280,
+        "major": 82,
+        "employees": 45000
+      },
+      "京都市南区": {
+        "establishments": 1950,
+        "major": 65,
+        "employees": 38500
+      },
+      "宇治市": {
+        "establishments": 1620,
+        "major": 55,
+        "employees": 32000
+      },
+      "亀岡市": {
+        "establishments": 1250,
+        "major": 38,
+        "employees": 22500
+      },
+      "城陽市": {
+        "establishments": 1080,
+        "major": 32,
+        "employees": 19500
+      },
+      "長岡京市": {
+        "establishments": 2260,
+        "major": 84,
+        "employees": 43500
+      }
+    },
+    "plateau": [],
+    "transport": {
+      "京都市下京区": {
+        "stations": 3,
+        "dailyPassengers": 588000,
+        "lines": [
+          "JR東海道本線",
+          "京都市営地下鉄烏丸線",
+          "近鉄京都線"
+        ]
+      },
+      "京都市中京区": {
+        "stations": 5,
+        "dailyPassengers": 451000,
+        "lines": [
+          "京都市営地下鉄東西線",
+          "京都市営地下鉄烏丸線",
+          "京阪本線",
+          "阪急京都線"
+        ]
+      },
+      "京都市東山区": {
+        "stations": 1,
+        "dailyPassengers": 82000,
+        "lines": [
+          "京阪本線"
+        ]
+      },
+      "京都市左京区": {
+        "stations": 2,
+        "dailyPassengers": 73000,
+        "lines": [
+          "京阪鴨東線",
+          "叡山電鉄叡山本線"
+        ]
+      },
+      "京都市北区": {
+        "stations": 1,
+        "dailyPassengers": 42000,
+        "lines": [
+          "京都市営地下鉄烏丸線"
+        ]
+      },
+      "京都市上京区": {
+        "stations": 1,
+        "dailyPassengers": 35000,
+        "lines": [
+          "京都市営地下鉄烏丸線"
+        ]
+      },
+      "京都市右京区": {
+        "stations": 3,
+        "dailyPassengers": 78000,
+        "lines": [
+          "京都市営地下鉄東西線",
+          "嵯峨野観光線",
+          "阪急嵐山線"
+        ]
+      },
+      "京都市伏見区": {
+        "stations": 3,
+        "dailyPassengers": 178000,
+        "lines": [
+          "京都市営地下鉄烏丸線",
+          "近鉄京都線"
+        ]
+      },
+      "京都市山科区": {
+        "stations": 2,
+        "dailyPassengers": 127000,
+        "lines": [
+          "JR琵琶湖線",
+          "京都市営地下鉄東西線"
+        ]
+      },
+      "京都市西京区": {
+        "stations": 2,
+        "dailyPassengers": 127000,
+        "lines": [
+          "阪急京都線"
+        ]
+      },
+      "京都市南区": {
+        "stations": 1,
+        "dailyPassengers": 38000,
+        "lines": [
+          "近鉄京都線"
+        ]
+      },
+      "宇治市": {
+        "stations": 2,
+        "dailyPassengers": 63000,
+        "lines": [
+          "JR奈良線",
+          "近鉄京都線"
+        ]
+      },
+      "亀岡市": {
+        "stations": 1,
+        "dailyPassengers": 22000,
+        "lines": [
+          "JR山陰本線"
+        ]
+      },
+      "長岡京市": {
+        "stations": 1,
+        "dailyPassengers": 38000,
+        "lines": [
+          "JR東海道本線"
+        ]
+      }
+    },
+    "commercial": {
+      "京都市下京区": {
+        "facilities": 6,
+        "malls": 3,
+        "cvs": 1,
+        "totalGfa": 112185
+      },
+      "京都市中京区": {
+        "facilities": 7,
+        "malls": 3,
+        "cvs": 1,
+        "totalGfa": 109790
+      },
+      "京都市東山区": {
+        "facilities": 1,
+        "malls": 0,
+        "cvs": 1,
+        "totalGfa": 140
+      },
+      "京都市左京区": {
+        "facilities": 1,
+        "malls": 0,
+        "cvs": 1,
+        "totalGfa": 148
+      },
+      "京都市伏見区": {
+        "facilities": 2,
+        "malls": 0,
+        "cvs": 0,
+        "totalGfa": 3580
+      },
+      "京都市北区": {
+        "facilities": 1,
+        "malls": 0,
+        "cvs": 0,
+        "totalGfa": 2800
+      },
+      "京都市西京区": {
+        "facilities": 1,
+        "malls": 0,
+        "cvs": 0,
+        "totalGfa": 5500
+      },
+      "京都市山科区": {
+        "facilities": 1,
+        "malls": 0,
+        "cvs": 0,
+        "totalGfa": 1850
+      },
+      "京都市右京区": {
+        "facilities": 2,
+        "malls": 0,
+        "cvs": 1,
+        "totalGfa": 362
+      },
+      "宇治市": {
+        "facilities": 2,
+        "malls": 1,
+        "cvs": 0,
+        "totalGfa": 72180
+      },
+      "亀岡市": {
+        "facilities": 1,
+        "malls": 1,
+        "cvs": 0,
+        "totalGfa": 8500
+      },
+      "城陽市": {
+        "facilities": 1,
+        "malls": 0,
+        "cvs": 0,
+        "totalGfa": 2200
+      },
+      "長岡京市": {
+        "facilities": 2,
+        "malls": 0,
+        "cvs": 1,
+        "totalGfa": 2002
+      }
+    },
+    "medical": {
+      "京都市左京区": {
+        "facilities": 2,
+        "hospitals": 1,
+        "beds": 1121
+      },
+      "京都市中京区": {
+        "facilities": 4,
+        "hospitals": 1,
+        "beds": 700
+      },
+      "京都市伏見区": {
+        "facilities": 2,
+        "hospitals": 1,
+        "beds": 578
+      },
+      "京都市下京区": {
+        "facilities": 3,
+        "hospitals": 1,
+        "beds": 420
+      },
+      "京都市北区": {
+        "facilities": 2,
+        "hospitals": 1,
+        "beds": 380
+      },
+      "京都市右京区": {
+        "facilities": 1,
+        "hospitals": 1,
+        "beds": 520
+      },
+      "宇治市": {
+        "facilities": 4,
+        "hospitals": 2,
+        "beds": 647
+      },
+      "亀岡市": {
+        "facilities": 1,
+        "hospitals": 1,
+        "beds": 198
+      },
+      "長岡京市": {
+        "facilities": 2,
+        "hospitals": 1,
+        "beds": 210
+      },
+      "京都市上京区": {
+        "facilities": 1,
+        "hospitals": 0,
+        "beds": 0
+      },
+      "京都市東山区": {
+        "facilities": 1,
+        "hospitals": 0,
+        "beds": 0
+      },
+      "京都市山科区": {
+        "facilities": 1,
+        "hospitals": 0,
+        "beds": 0
+      },
+      "京都市西京区": {
+        "facilities": 1,
+        "hospitals": 0,
+        "beds": 0
+      },
+      "京都市南区": {
+        "facilities": 1,
+        "hospitals": 0,
+        "beds": 0
+      }
+    }
+  },
+  "osaka": {
+    "center": [
+      34.67116666666666,
+      135.5138333333333
+    ],
+    "zoom": 11,
+    "displayName": "大阪府",
+    "capabilities": {
+      "humanFlow": true,
+      "education": true,
+      "corporate": true,
+      "crime": true,
+      "plateau": true,
+      "transport": true,
+      "commercial": true,
+      "medical": true
+    },
+    "municipalities": {
+      "中央区": [
+        34.6723,
+        135.5013
+      ],
+      "北区": [
+        34.7024,
+        135.4983
+      ],
+      "浪速区": [
+        34.6625,
+        135.5012
+      ],
+      "天王寺区": [
+        34.653,
+        135.5187
+      ],
+      "阿倍野区": [
+        34.6346,
+        135.5142
+      ],
+      "西区": [
+        34.6781,
+        135.4901
+      ],
+      "福島区": [
+        34.6941,
+        135.4832
+      ],
+      "都島区": [
+        34.7108,
+        135.5201
+      ],
+      "淀川区": [
+        34.7321,
+        135.5001
+      ],
+      "東淀川区": [
+        34.7489,
+        135.5231
+      ],
+      "西淀川区": [
+        34.7012,
+        135.4521
+      ],
+      "此花区": [
+        34.6812,
+        135.4321
+      ],
+      "港区": [
+        34.6589,
+        135.4601
+      ],
+      "大正区": [
+        34.6451,
+        135.4712
+      ],
+      "住之江区": [
+        34.6112,
+        135.4832
+      ],
+      "住吉区": [
+        34.6123,
+        135.5067
+      ],
+      "東住吉区": [
+        34.6198,
+        135.5312
+      ],
+      "平野区": [
+        34.6212,
+        135.5567
+      ],
+      "生野区": [
+        34.6512,
+        135.5321
+      ],
+      "城東区": [
+        34.6912,
+        135.5412
+      ],
+      "鶴見区": [
+        34.7012,
+        135.5621
+      ],
+      "旭区": [
+        34.7189,
+        135.5412
+      ],
+      "東成区": [
+        34.6689,
+        135.5312
+      ],
+      "西成区": [
+        34.6312,
+        135.4912
+      ],
+      "堺市堺区": [
+        34.5731,
+        135.4834
+      ],
+      "堺市中区": [
+        34.5381,
+        135.5051
+      ],
+      "堺市北区": [
+        34.5621,
+        135.5123
+      ],
+      "堺市南区": [
+        34.4891,
+        135.4912
+      ],
+      "東大阪市": [
+        34.6782,
+        135.5912
+      ],
+      "豊中市": [
+        34.7812,
+        135.4701
+      ],
+      "吹田市": [
+        34.7621,
+        135.4921
+      ],
+      "高槻市": [
+        34.848,
+        135.6173
+      ],
+      "枚方市": [
+        34.8143,
+        135.6512
+      ]
+    },
+    "landPrices": {
+      "中央区": {
+        "price": 13300000,
+        "change": 3.9
+      },
+      "北区": {
+        "price": 12150000,
+        "change": 3.8
+      },
+      "浪速区": {
+        "price": 10200000,
+        "change": 4.1
+      },
+      "天王寺区": {
+        "price": 3500000,
+        "change": 2.9
+      },
+      "阿倍野区": {
+        "price": 4250000,
+        "change": 3.7
+      },
+      "西区": {
+        "price": 1320000,
+        "change": 3.1
+      },
+      "福島区": {
+        "price": 1160000,
+        "change": 3.6
+      },
+      "都島区": {
+        "price": 680000,
+        "change": 1.4
+      },
+      "淀川区": {
+        "price": 3950000,
+        "change": 3.9
+      },
+      "堺市堺区": {
+        "price": 520000,
+        "change": 0.8
+      },
+      "堺市中区": {
+        "price": 195000,
+        "change": 0.5
+      },
+      "東大阪市": {
+        "price": 302500,
+        "change": 0.8
+      },
+      "豊中市": {
+        "price": 550000,
+        "change": 1.6
+      },
+      "吹田市": {
+        "price": 830000,
+        "change": 1.7
+      },
+      "高槻市": {
+        "price": 432500,
+        "change": 0.8
+      },
+      "枚方市": {
+        "price": 385000,
+        "change": 1.1
+      }
+    },
+    "priceBuckets": [
+      {
+        "min": 10000000,
+        "color": "#ff2d55",
+        "label": "1000万〜"
+      },
+      {
+        "min": 5000000,
+        "color": "#ff6b35",
+        "label": "500万〜1000万"
+      },
+      {
+        "min": 2000000,
+        "color": "#ffb340",
+        "label": "200万〜500万"
+      },
+      {
+        "min": 1000000,
+        "color": "#ffe066",
+        "label": "100万〜200万"
+      },
+      {
+        "min": 500000,
+        "color": "#a8e6cf",
+        "label": "50万〜100万"
+      },
+      {
+        "min": 0,
+        "color": "#69b7eb",
+        "label": "〜50万"
+      }
+    ],
+    "risk": {
+      "中央区": {
+        "flood": 90,
+        "earthquake": "6弱",
+        "overall": 57
+      },
+      "北区": {
+        "flood": 54,
+        "earthquake": "6弱",
+        "overall": 45
+      },
+      "浪速区": {
+        "flood": 90,
+        "earthquake": "6弱",
+        "overall": 62
+      },
+      "天王寺区": {
+        "flood": 22,
+        "earthquake": "6弱",
+        "overall": 28
+      },
+      "阿倍野区": {
+        "flood": 90,
+        "earthquake": "6弱",
+        "overall": 52
+      },
+      "西区": {
+        "flood": 22,
+        "earthquake": "6弱",
+        "overall": 33
+      },
+      "福島区": {
+        "flood": 90,
+        "earthquake": "6弱",
+        "overall": 57
+      },
+      "都島区": {
+        "flood": 22,
+        "earthquake": "6弱",
+        "overall": 33
+      },
+      "淀川区": {
+        "flood": 84,
+        "earthquake": "6弱",
+        "overall": 60
+      },
+      "住之江区": {
+        "flood": 35,
+        "earthquake": "6弱",
+        "overall": 42
+      },
+      "此花区": {
+        "flood": 35,
+        "earthquake": "6弱",
+        "overall": 42
+      },
+      "堺市堺区": {
+        "flood": 22,
+        "earthquake": "6弱",
+        "overall": 33
+      },
+      "東大阪市": {
+        "flood": 22,
+        "earthquake": "6弱",
+        "overall": 33
+      },
+      "豊中市": {
+        "flood": 90,
+        "earthquake": "6弱",
+        "overall": 51
+      },
+      "吹田市": {
+        "flood": 54,
+        "earthquake": "6弱",
+        "overall": 38
+      }
+    },
+    "humanFlow": {
+      "大阪市北区": {
+        "weekday": 517000,
+        "weekend": 436000,
+        "stay": 50,
+        "trend": "stable"
+      },
+      "大阪市中央区": {
+        "weekday": 947000,
+        "weekend": 782000,
+        "stay": 65,
+        "trend": "stable"
+      },
+      "大阪市西区": {
+        "weekday": 152000,
+        "weekend": 112000,
+        "stay": 41,
+        "trend": "stable"
+      },
+      "大阪市天王寺区": {
+        "weekday": 355000,
+        "weekend": 323000,
+        "stay": 62,
+        "trend": "stable"
+      },
+      "大阪市浪速区": {
+        "weekday": 173000,
+        "weekend": 200000,
+        "stay": 55,
+        "trend": "stable"
+      },
+      "大阪市福島区": {
+        "weekday": 82000,
+        "weekend": 72000,
+        "stay": 42,
+        "trend": "stable"
+      },
+      "大阪市淀川区": {
+        "weekday": 274000,
+        "weekend": 200000,
+        "stay": 53,
+        "trend": "stable"
+      },
+      "大阪市東成区": {
+        "weekday": 54000,
+        "weekend": 48000,
+        "stay": 35,
+        "trend": "stable"
+      },
+      "大阪市生野区": {
+        "weekday": 78000,
+        "weekend": 92000,
+        "stay": 52,
+        "trend": "stable"
+      },
+      "大阪市鶴見区": {
+        "weekday": 42000,
+        "weekend": 48000,
+        "stay": 30,
+        "trend": "stable"
+      },
+      "大阪市住吉区": {
+        "weekday": 55000,
+        "weekend": 58000,
+        "stay": 36,
+        "trend": "stable"
+      },
+      "大阪市此花区": {
+        "weekday": 38000,
+        "weekend": 35000,
+        "stay": 28,
+        "trend": "stable"
+      },
+      "大阪府豊中市": {
+        "weekday": 200000,
+        "weekend": 177000,
+        "stay": 47,
+        "trend": "stable"
+      },
+      "大阪府吹田市": {
+        "weekday": 213000,
+        "weekend": 180000,
+        "stay": 48,
+        "trend": "stable"
+      },
+      "大阪府東大阪市": {
+        "weekday": 88000,
+        "weekend": 82000,
+        "stay": 44,
+        "trend": "stable"
+      },
+      "大阪府枚方市": {
+        "weekday": 82000,
+        "weekend": 88000,
+        "stay": 48,
+        "trend": "stable"
+      },
+      "大阪府堺市": {
+        "weekday": 95000,
+        "weekend": 105000,
+        "stay": 52,
+        "trend": "stable"
+      }
+    },
+    "school": {
+      "大阪市北区": {
+        "score": 88,
+        "advancement": 72.5
+      },
+      "大阪市中央区": {
+        "score": 81,
+        "advancement": 64.3
+      },
+      "大阪市西区": {
+        "score": 75,
+        "advancement": 58
+      },
+      "大阪市天王寺区": {
+        "score": 83,
+        "advancement": 67.5
+      },
+      "大阪市浪速区": {
+        "score": 70,
+        "advancement": 53.8
+      },
+      "大阪市福島区": {
+        "score": 76,
+        "advancement": 59.5
+      },
+      "大阪市淀川区": {
+        "score": 78,
+        "advancement": 61.2
+      },
+      "大阪市東成区": {
+        "score": 66,
+        "advancement": 50.3
+      },
+      "大阪市生野区": {
+        "score": 65,
+        "advancement": 49.8
+      },
+      "大阪市鶴見区": {
+        "score": 72,
+        "advancement": 55.5
+      },
+      "大阪市住吉区": {
+        "score": 73,
+        "advancement": 56.2
+      },
+      "大阪市此花区": {
+        "score": 62,
+        "advancement": 47
+      },
+      "大阪府豊中市": {
+        "score": 87,
+        "advancement": 71.8
+      },
+      "大阪府吹田市": {
+        "score": 89,
+        "advancement": 73.5
+      },
+      "大阪府東大阪市": {
+        "score": 74,
+        "advancement": 57.2
+      },
+      "大阪府枚方市": {
+        "score": 77,
+        "advancement": 60
+      },
+      "大阪府堺市": {
+        "score": 75,
+        "advancement": 58.5
+      }
+    },
+    "corporate": {
+      "大阪市北区": {
+        "establishments": 6090,
+        "major": 382,
+        "employees": 327000
+      },
+      "大阪市中央区": {
+        "establishments": 14990,
+        "major": 955,
+        "employees": 767000
+      },
+      "大阪市西区": {
+        "establishments": 2600,
+        "major": 123,
+        "employees": 90000
+      },
+      "大阪市天王寺区": {
+        "establishments": 2150,
+        "major": 110,
+        "employees": 88000
+      },
+      "大阪市福島区": {
+        "establishments": 1350,
+        "major": 58,
+        "employees": 48000
+      },
+      "大阪市淀川区": {
+        "establishments": 4340,
+        "major": 227,
+        "employees": 190000
+      },
+      "大阪市浪速区": {
+        "establishments": 680,
+        "major": 18,
+        "employees": 15000
+      },
+      "大阪市生野区": {
+        "establishments": 950,
+        "major": 22,
+        "employees": 18500
+      },
+      "大阪市東成区": {
+        "establishments": 620,
+        "major": 14,
+        "employees": 12000
+      },
+      "大阪市住吉区": {
+        "establishments": 580,
+        "major": 12,
+        "employees": 11000
+      },
+      "大阪府豊中市": {
+        "establishments": 3920,
+        "major": 213,
+        "employees": 170000
+      },
+      "大阪府吹田市": {
+        "establishments": 5130,
+        "major": 310,
+        "employees": 240000
+      },
+      "大阪府東大阪市": {
+        "establishments": 1850,
+        "major": 72,
+        "employees": 65000
+      },
+      "大阪府堺市": {
+        "establishments": 2450,
+        "major": 98,
+        "employees": 88000
+      }
+    },
+    "plateau": [
+      {
+        "name": "あべのハルカス",
+        "city": "大阪市",
+        "height": 300,
+        "lat": 34.6467,
+        "lng": 135.5136
+      },
+      {
+        "name": "梅田スカイビル",
+        "city": "大阪市",
+        "height": 173,
+        "lat": 34.7056,
+        "lng": 135.4937
+      },
+      {
+        "name": "グランフロント大阪（北館）",
+        "city": "大阪市",
+        "height": 200,
+        "lat": 34.7031,
+        "lng": 135.4953
+      },
+      {
+        "name": "大阪マルビル",
+        "city": "大阪市",
+        "height": 123,
+        "lat": 34.7026,
+        "lng": 135.4984
+      },
+      {
+        "name": "大阪富国生命ビル",
+        "city": "大阪市",
+        "height": 153,
+        "lat": 34.6998,
+        "lng": 135.496
+      },
+      {
+        "name": "ハービスOSAKA",
+        "city": "大阪市",
+        "height": 190,
+        "lat": 34.6969,
+        "lng": 135.4965
+      },
+      {
+        "name": "ザ・リッツ・カールトン大阪",
+        "city": "大阪市",
+        "height": 173,
+        "lat": 34.7009,
+        "lng": 135.4966
+      },
+      {
+        "name": "大阪ステーションシティ（ノースゲートビルディング）",
+        "city": "大阪市",
+        "height": 150,
+        "lat": 34.7028,
+        "lng": 135.4964
+      },
+      {
+        "name": "クリスタルタワー",
+        "city": "大阪市",
+        "height": 157,
+        "lat": 34.6897,
+        "lng": 135.5189
+      },
+      {
+        "name": "中之島フェスティバルタワー",
+        "city": "大阪市",
+        "height": 200,
+        "lat": 34.6924,
+        "lng": 135.524
+      },
+      {
+        "name": "コスモタワー（大阪府咲洲庁舎）",
+        "city": "大阪市",
+        "height": 256,
+        "lat": 34.6497,
+        "lng": 135.4303
+      },
+      {
+        "name": "大阪国際ビルディング",
+        "city": "大阪市",
+        "height": 133,
+        "lat": 34.6904,
+        "lng": 135.5026
+      },
+      {
+        "name": "中之島フェスティバルタワー・ウエスト",
+        "city": "大阪市",
+        "height": 195,
+        "lat": 34.6923,
+        "lng": 135.5229
+      },
+      {
+        "name": "日本生命大阪梅田ビル",
+        "city": "大阪市",
+        "height": 133,
+        "lat": 34.6954,
+        "lng": 135.4908
+      },
+      {
+        "name": "WTCコスモタワー（コスモスクエア）",
+        "city": "大阪市",
+        "height": 252,
+        "lat": 34.6497,
+        "lng": 135.4303
+      },
+      {
+        "name": "なんばパークスタワー",
+        "city": "大阪市",
+        "height": 100,
+        "lat": 34.6612,
+        "lng": 135.5014
+      },
+      {
+        "name": "大阪マリオット都ホテル（あべのハルカス内）",
+        "city": "大阪市",
+        "height": 260,
+        "lat": 34.6467,
+        "lng": 135.5138
+      },
+      {
+        "name": "千里阪急ホテル",
+        "city": "豊中市",
+        "height": 100,
+        "lat": 34.7956,
+        "lng": 135.4752
+      },
+      {
+        "name": "江坂阪急ビル",
+        "city": "吹田市",
+        "height": 85,
+        "lat": 34.759,
+        "lng": 135.51
+      },
+      {
+        "name": "スカイビルタワーイースト",
+        "city": "大阪市",
+        "height": 173,
+        "lat": 34.7059,
+        "lng": 135.494
+      },
+      {
+        "name": "ホテルグランヴィア大阪",
+        "city": "大阪市",
+        "height": 138,
+        "lat": 34.7025,
+        "lng": 135.4966
+      },
+      {
+        "name": "ユニバーサルシティウォーク大阪（USJゲートタワー）",
+        "city": "大阪市",
+        "height": 65,
+        "lat": 34.6652,
+        "lng": 135.432
+      }
+    ],
+    "transport": {
+      "大阪市北区": {
+        "stations": 6,
+        "dailyPassengers": 1458000,
+        "lines": [
+          "JR環状線",
+          "大阪メトロ四つ橋線",
+          "大阪メトロ御堂筋線",
+          "大阪メトロ谷町線",
+          "阪急京都本線",
+          "阪神本線"
+        ]
+      },
+      "大阪市中央区": {
+        "stations": 4,
+        "dailyPassengers": 650000,
+        "lines": [
+          "大阪メトロ中央線",
+          "大阪メトロ御堂筋線",
+          "大阪メトロ長堀鶴見緑地線"
+        ]
+      },
+      "大阪市浪速区": {
+        "stations": 4,
+        "dailyPassengers": 675000,
+        "lines": [
+          "南海難波線",
+          "大阪メトロ千日前線",
+          "大阪メトロ御堂筋線",
+          "近鉄難波線"
+        ]
+      },
+      "大阪市天王寺区": {
+        "stations": 3,
+        "dailyPassengers": 580000,
+        "lines": [
+          "JR大阪環状線",
+          "大阪メトロ御堂筋線",
+          "大阪メトロ谷町線"
+        ]
+      },
+      "大阪市淀川区": {
+        "stations": 3,
+        "dailyPassengers": 740000,
+        "lines": [
+          "JR東海道新幹線",
+          "JR東海道本線",
+          "大阪メトロ御堂筋線"
+        ]
+      },
+      "大阪市東淀川区": {
+        "stations": 1,
+        "dailyPassengers": 55000,
+        "lines": [
+          "JR東海道本線"
+        ]
+      },
+      "大阪市都島区": {
+        "stations": 1,
+        "dailyPassengers": 52000,
+        "lines": [
+          "大阪メトロ谷町線"
+        ]
+      },
+      "大阪市福島区": {
+        "stations": 1,
+        "dailyPassengers": 38000,
+        "lines": [
+          "JR大阪環状線"
+        ]
+      },
+      "大阪市西区": {
+        "stations": 1,
+        "dailyPassengers": 32000,
+        "lines": [
+          "大阪メトロ千日前線"
+        ]
+      },
+      "大阪市住吉区": {
+        "stations": 1,
+        "dailyPassengers": 62000,
+        "lines": [
+          "大阪メトロ御堂筋線"
+        ]
+      },
+      "豊中市": {
+        "stations": 2,
+        "dailyPassengers": 110000,
+        "lines": [
+          "大阪モノレール",
+          "阪急宝塚本線"
+        ]
+      },
+      "吹田市": {
+        "stations": 1,
+        "dailyPassengers": 82000,
+        "lines": [
+          "大阪メトロ御堂筋線"
+        ]
+      },
+      "東大阪市": {
+        "stations": 1,
+        "dailyPassengers": 28000,
+        "lines": [
+          "大阪メトロ中央線"
+        ]
+      },
+      "堺市堺区": {
+        "stations": 1,
+        "dailyPassengers": 55000,
+        "lines": [
+          "南海高野線"
+        ]
+      }
+    },
+    "commercial": {
+      "大阪市北区": {
+        "facilities": 8,
+        "malls": 4,
+        "cvs": 2,
+        "totalGfa": 263675
+      },
+      "大阪市中央区": {
+        "facilities": 6,
+        "malls": 2,
+        "cvs": 2,
+        "totalGfa": 90685
+      },
+      "大阪市浪速区": {
+        "facilities": 5,
+        "malls": 2,
+        "cvs": 1,
+        "totalGfa": 108820
+      },
+      "大阪市天王寺区": {
+        "facilities": 4,
+        "malls": 2,
+        "cvs": 1,
+        "totalGfa": 120420
+      },
+      "大阪市淀川区": {
+        "facilities": 2,
+        "malls": 0,
+        "cvs": 2,
+        "totalGfa": 230
+      },
+      "豊中市": {
+        "facilities": 2,
+        "malls": 1,
+        "cvs": 1,
+        "totalGfa": 22115
+      },
+      "吹田市": {
+        "facilities": 2,
+        "malls": 1,
+        "cvs": 1,
+        "totalGfa": 18120
+      },
+      "東大阪市": {
+        "facilities": 2,
+        "malls": 1,
+        "cvs": 1,
+        "totalGfa": 55115
+      },
+      "堺市堺区": {
+        "facilities": 2,
+        "malls": 1,
+        "cvs": 1,
+        "totalGfa": 75120
+      }
+    },
+    "medical": {
+      "大阪市北区": {
+        "facilities": 5,
+        "hospitals": 2,
+        "beds": 1580
+      },
+      "大阪市中央区": {
+        "facilities": 4,
+        "hospitals": 1,
+        "beds": 1000
+      },
+      "大阪市浪速区": {
+        "facilities": 3,
+        "hospitals": 0,
+        "beds": 0
+      },
+      "大阪市天王寺区": {
+        "facilities": 4,
+        "hospitals": 1,
+        "beds": 850
+      },
+      "大阪市淀川区": {
+        "facilities": 3,
+        "hospitals": 1,
+        "beds": 500
+      },
+      "大阪市都島区": {
+        "facilities": 3,
+        "hospitals": 1,
+        "beds": 1070
+      },
+      "豊中市": {
+        "facilities": 3,
+        "hospitals": 1,
+        "beds": 480
+      },
+      "吹田市": {
+        "facilities": 2,
+        "hospitals": 1,
+        "beds": 450
+      },
+      "堺市堺区": {
+        "facilities": 3,
+        "hospitals": 1,
+        "beds": 640
+      }
+    }
+  },
+  "saitama": {
+    "center": [
+      35.885765217391295,
+      139.62484782608698
+    ],
+    "zoom": 10,
+    "displayName": "埼玉県",
+    "capabilities": {
+      "humanFlow": true,
+      "education": true,
+      "corporate": true,
+      "crime": true,
+      "plateau": false,
+      "transport": true,
+      "commercial": true,
+      "medical": true
+    },
+    "municipalities": {
+      "さいたま市大宮区": [
+        35.9062,
+        139.6233
+      ],
+      "さいたま市浦和区": [
+        35.8617,
+        139.6455
+      ],
+      "さいたま市中央区": [
+        35.8912,
+        139.6302
+      ],
+      "さいたま市西区": [
+        35.9112,
+        139.5682
+      ],
+      "さいたま市北区": [
+        35.9312,
+        139.6282
+      ],
+      "さいたま市見沼区": [
+        35.9212,
+        139.6682
+      ],
+      "さいたま市緑区": [
+        35.8712,
+        139.6882
+      ],
+      "さいたま市桜区": [
+        35.8712,
+        139.6082
+      ],
+      "さいたま市南区": [
+        35.8412,
+        139.6482
+      ],
+      "さいたま市岩槻区": [
+        35.9512,
+        139.7082
+      ],
+      "さいたま市": [
+        35.8617,
+        139.6455
+      ],
+      "川越市": [
+        35.9252,
+        139.4858
+      ],
+      "熊谷市": [
+        36.1477,
+        139.3888
+      ],
+      "川口市": [
+        35.8067,
+        139.7227
+      ],
+      "所沢市": [
+        35.7999,
+        139.4686
+      ],
+      "越谷市": [
+        35.8901,
+        139.7907
+      ],
+      "草加市": [
+        35.8279,
+        139.8062
+      ],
+      "春日部市": [
+        35.975,
+        139.7526
+      ],
+      "上尾市": [
+        35.9773,
+        139.5942
+      ],
+      "朝霞市": [
+        35.7973,
+        139.5936
+      ],
+      "志木市": [
+        35.8344,
+        139.5769
+      ],
+      "和光市": [
+        35.7787,
+        139.6064
+      ],
+      "新座市": [
+        35.7932,
+        139.5231
+      ]
+    },
+    "landPrices": {
+      "さいたま市大宮区": {
+        "price": 380000,
+        "change": 3.6
+      },
+      "さいたま市浦和区": {
+        "price": 320000,
+        "change": 3.2
+      },
+      "さいたま市中央区": {
+        "price": 200000,
+        "change": 2.5
+      },
+      "川越市": {
+        "price": 210000,
+        "change": 2.5
+      },
+      "所沢市": {
+        "price": 190000,
+        "change": 2.4
+      },
+      "越谷市": {
+        "price": 185000,
+        "change": 2.9
+      },
+      "川口市": {
+        "price": 240000,
+        "change": 3.1
+      },
+      "熊谷市": {
+        "price": 150000,
+        "change": 1.2
+      }
+    },
+    "priceBuckets": [
+      {
+        "min": 1000000,
+        "color": "#ff2d55",
+        "label": "100万〜"
+      },
+      {
+        "min": 500000,
+        "color": "#ff6b35",
+        "label": "50万〜100万"
+      },
+      {
+        "min": 300000,
+        "color": "#ffb340",
+        "label": "30万〜50万"
+      },
+      {
+        "min": 200000,
+        "color": "#ffe066",
+        "label": "20万〜30万"
+      },
+      {
+        "min": 150000,
+        "color": "#a8e6cf",
+        "label": "15万〜20万"
+      },
+      {
+        "min": 0,
+        "color": "#69b7eb",
+        "label": "〜15万"
+      }
+    ],
+    "risk": {
+      "さいたま市大宮区": {
+        "flood": 84,
+        "earthquake": "7",
+        "overall": 81
+      },
+      "さいたま市浦和区": {
+        "flood": 48,
+        "earthquake": "7",
+        "overall": 69
+      },
+      "さいたま市中央区": {
+        "flood": 84,
+        "earthquake": "7",
+        "overall": 86
+      },
+      "さいたま市見沼区": {
+        "flood": 84,
+        "earthquake": "6強",
+        "overall": 65
+      },
+      "さいたま市桜区": {
+        "flood": 35,
+        "earthquake": "6強",
+        "overall": 42
+      },
+      "さいたま市北区": {
+        "flood": 35,
+        "earthquake": "6強",
+        "overall": 47
+      },
+      "川越市": {
+        "flood": 90,
+        "earthquake": "6強",
+        "overall": 67
+      },
+      "所沢市": {
+        "flood": 48,
+        "earthquake": "6強",
+        "overall": 47
+      },
+      "越谷市": {
+        "flood": 84,
+        "earthquake": "7",
+        "overall": 86
+      },
+      "川口市": {
+        "flood": 48,
+        "earthquake": "7",
+        "overall": 73
+      },
+      "熊谷市": {
+        "flood": 90,
+        "earthquake": "6強",
+        "overall": 67
+      },
+      "草加市": {
+        "flood": 90,
+        "earthquake": "7",
+        "overall": 88
+      },
+      "春日部市": {
+        "flood": 90,
+        "earthquake": "7",
+        "overall": 88
+      },
+      "上尾市": {
+        "flood": 35,
+        "earthquake": "6強",
+        "overall": 47
+      },
+      "新座市": {
+        "flood": 35,
+        "earthquake": "6強",
+        "overall": 42
+      },
+      "入間市": {
+        "flood": 35,
+        "earthquake": "6強",
+        "overall": 42
+      },
+      "朝霞市": {
+        "flood": 48,
+        "earthquake": "6強",
+        "overall": 52
+      },
+      "志木市": {
+        "flood": 35,
+        "earthquake": "6強",
+        "overall": 47
+      },
+      "和光市": {
+        "flood": 35,
+        "earthquake": "6強",
+        "overall": 42
+      },
+      "蕨市": {
+        "flood": 35,
+        "earthquake": "7",
+        "overall": 69
+      }
+    },
+    "humanFlow": {
+      "さいたま市大宮区": {
+        "weekday": 230000,
+        "weekend": 272000,
+        "stay": 55,
+        "trend": "stable"
+      },
+      "さいたま市浦和区": {
+        "weekday": 124000,
+        "weekend": 153000,
+        "stay": 57,
+        "trend": "stable"
+      },
+      "さいたま市中央区": {
+        "weekday": 103000,
+        "weekend": 90000,
+        "stay": 75,
+        "trend": "increasing"
+      },
+      "川越市": {
+        "weekday": 121000,
+        "weekend": 179000,
+        "stay": 63,
+        "trend": "increasing"
+      },
+      "所沢市": {
+        "weekday": 80000,
+        "weekend": 108000,
+        "stay": 62,
+        "trend": "stable"
+      },
+      "越谷市": {
+        "weekday": 131000,
+        "weekend": 186000,
+        "stay": 67,
+        "trend": "stable"
+      },
+      "川口市": {
+        "weekday": 148000,
+        "weekend": 139000,
+        "stay": 48,
+        "trend": "increasing"
+      },
+      "熊谷市": {
+        "weekday": 57000,
+        "weekend": 66000,
+        "stay": 59,
+        "trend": "decreasing"
+      },
+      "草加市": {
+        "weekday": 70000,
+        "weekend": 80000,
+        "stay": 55,
+        "trend": "stable"
+      },
+      "春日部市": {
+        "weekday": 45000,
+        "weekend": 42000,
+        "stay": 48,
+        "trend": "decreasing"
+      },
+      "朝霞市": {
+        "weekday": 38000,
+        "weekend": 32000,
+        "stay": 42,
+        "trend": "stable"
+      },
+      "和光市": {
+        "weekday": 48000,
+        "weekend": 35000,
+        "stay": 38,
+        "trend": "increasing"
+      },
+      "新座市": {
+        "weekday": 42000,
+        "weekend": 38000,
+        "stay": 45,
+        "trend": "stable"
+      }
+    },
+    "school": {
+      "さいたま市大宮区": {
+        "score": 72,
+        "advancement": 0.72
+      },
+      "さいたま市浦和区": {
+        "score": 82,
+        "advancement": 0.85
+      },
+      "さいたま市中央区": {
+        "score": 74,
+        "advancement": 0.72
+      },
+      "川越市": {
+        "score": 70,
+        "advancement": 0.68
+      },
+      "所沢市": {
+        "score": 68,
+        "advancement": 0.65
+      },
+      "越谷市": {
+        "score": 67,
+        "advancement": 0.65
+      },
+      "川口市": {
+        "score": 65,
+        "advancement": 0.62
+      },
+      "熊谷市": {
+        "score": 62,
+        "advancement": 0.58
+      },
+      "草加市": {
+        "score": 62,
+        "advancement": 0.58
+      },
+      "春日部市": {
+        "score": 60,
+        "advancement": 0.56
+      },
+      "朝霞市": {
+        "score": 72,
+        "advancement": 0.7
+      },
+      "和光市": {
+        "score": 75,
+        "advancement": 0.74
+      },
+      "新座市": {
+        "score": 68,
+        "advancement": 0.65
+      }
+    },
+    "corporate": {
+      "さいたま市大宮区": {
+        "establishments": 10700,
+        "major": 50,
+        "employees": 227000
+      },
+      "さいたま市浦和区": {
+        "establishments": 6200,
+        "major": 35,
+        "employees": 125000
+      },
+      "さいたま市中央区": {
+        "establishments": 8000,
+        "major": 86,
+        "employees": 160000
+      },
+      "川越市": {
+        "establishments": 7600,
+        "major": 40,
+        "employees": 123000
+      },
+      "所沢市": {
+        "establishments": 7000,
+        "major": 57,
+        "employees": 127000
+      },
+      "越谷市": {
+        "establishments": 5700,
+        "major": 28,
+        "employees": 103000
+      },
+      "川口市": {
+        "establishments": 15500,
+        "major": 78,
+        "employees": 298000
+      },
+      "熊谷市": {
+        "establishments": 5300,
+        "major": 26,
+        "employees": 90000
+      },
+      "草加市": {
+        "establishments": 3500,
+        "major": 15,
+        "employees": 65000
+      },
+      "春日部市": {
+        "establishments": 3200,
+        "major": 12,
+        "employees": 58000
+      },
+      "朝霞市": {
+        "establishments": 2800,
+        "major": 18,
+        "employees": 52000
+      },
+      "和光市": {
+        "establishments": 3200,
+        "major": 22,
+        "employees": 68000
+      },
+      "新座市": {
+        "establishments": 2500,
+        "major": 12,
+        "employees": 45000
+      },
+      "入間市": {
+        "establishments": 2200,
+        "major": 10,
+        "employees": 38000
+      }
+    },
+    "plateau": [],
+    "transport": {
+      "さいたま市大宮区": {
+        "stations": 2,
+        "dailyPassengers": 314000,
+        "lines": []
+      },
+      "さいたま市浦和区": {
+        "stations": 3,
+        "dailyPassengers": 282000,
+        "lines": []
+      },
+      "さいたま市中央区": {
+        "stations": 2,
+        "dailyPassengers": 113000,
+        "lines": []
+      },
+      "さいたま市見沼区": {
+        "stations": 1,
+        "dailyPassengers": 42000,
+        "lines": []
+      },
+      "川越市": {
+        "stations": 3,
+        "dailyPassengers": 148000,
+        "lines": []
+      },
+      "所沢市": {
+        "stations": 2,
+        "dailyPassengers": 167000,
+        "lines": []
+      },
+      "越谷市": {
+        "stations": 3,
+        "dailyPassengers": 198000,
+        "lines": []
+      },
+      "川口市": {
+        "stations": 3,
+        "dailyPassengers": 201000,
+        "lines": []
+      },
+      "熊谷市": {
+        "stations": 2,
+        "dailyPassengers": 84000,
+        "lines": []
+      },
+      "草加市": {
+        "stations": 1,
+        "dailyPassengers": 68000,
+        "lines": []
+      },
+      "春日部市": {
+        "stations": 1,
+        "dailyPassengers": 62000,
+        "lines": []
+      },
+      "朝霞市": {
+        "stations": 1,
+        "dailyPassengers": 38000,
+        "lines": []
+      },
+      "和光市": {
+        "stations": 1,
+        "dailyPassengers": 78000,
+        "lines": []
+      },
+      "新座市": {
+        "stations": 1,
+        "dailyPassengers": 65000,
+        "lines": []
+      }
+    },
+    "commercial": {
+      "さいたま市大宮区": {
+        "facilities": 5,
+        "malls": 0,
+        "cvs": 0,
+        "totalGfa": 0
+      },
+      "さいたま市浦和区": {
+        "facilities": 2,
+        "malls": 0,
+        "cvs": 0,
+        "totalGfa": 0
+      },
+      "さいたま市中央区": {
+        "facilities": 1,
+        "malls": 0,
+        "cvs": 0,
+        "totalGfa": 0
+      },
+      "川越市": {
+        "facilities": 3,
+        "malls": 0,
+        "cvs": 0,
+        "totalGfa": 0
+      },
+      "所沢市": {
+        "facilities": 2,
+        "malls": 0,
+        "cvs": 0,
+        "totalGfa": 0
+      },
+      "越谷市": {
+        "facilities": 2,
+        "malls": 0,
+        "cvs": 0,
+        "totalGfa": 0
+      },
+      "川口市": {
+        "facilities": 2,
+        "malls": 0,
+        "cvs": 0,
+        "totalGfa": 0
+      },
+      "熊谷市": {
+        "facilities": 2,
+        "malls": 0,
+        "cvs": 0,
+        "totalGfa": 0
+      },
+      "草加市": {
+        "facilities": 1,
+        "malls": 0,
+        "cvs": 0,
+        "totalGfa": 0
+      },
+      "春日部市": {
+        "facilities": 1,
+        "malls": 0,
+        "cvs": 0,
+        "totalGfa": 0
+      },
+      "朝霞市": {
+        "facilities": 1,
+        "malls": 0,
+        "cvs": 0,
+        "totalGfa": 0
+      },
+      "和光市": {
+        "facilities": 1,
+        "malls": 0,
+        "cvs": 0,
+        "totalGfa": 0
+      }
+    },
+    "medical": {
+      "さいたま市大宮区": {
+        "facilities": 3,
+        "hospitals": 0,
+        "beds": 0
+      },
+      "さいたま市浦和区": {
+        "facilities": 2,
+        "hospitals": 0,
+        "beds": 0
+      },
+      "さいたま市中央区": {
+        "facilities": 1,
+        "hospitals": 0,
+        "beds": 0
+      },
+      "川越市": {
+        "facilities": 2,
+        "hospitals": 0,
+        "beds": 0
+      },
+      "所沢市": {
+        "facilities": 2,
+        "hospitals": 0,
+        "beds": 0
+      },
+      "越谷市": {
+        "facilities": 2,
+        "hospitals": 0,
+        "beds": 0
+      },
+      "川口市": {
+        "facilities": 2,
+        "hospitals": 0,
+        "beds": 0
+      },
+      "熊谷市": {
+        "facilities": 2,
+        "hospitals": 0,
+        "beds": 0
+      },
+      "草加市": {
+        "facilities": 1,
+        "hospitals": 0,
+        "beds": 0
+      },
+      "春日部市": {
+        "facilities": 1,
+        "hospitals": 0,
+        "beds": 0
+      },
+      "朝霞市": {
+        "facilities": 1,
+        "hospitals": 0,
+        "beds": 0
+      },
+      "和光市": {
+        "facilities": 1,
+        "hospitals": 0,
+        "beds": 0
+      }
+    }
+  },
+  "tokyo": {
+    "center": [
+      35.694673913043474,
+      139.74103478260872
+    ],
+    "zoom": 12,
+    "displayName": "東京都",
+    "capabilities": {
+      "humanFlow": true,
+      "education": true,
+      "corporate": true,
+      "crime": true,
+      "plateau": true,
+      "transport": true,
+      "commercial": true,
+      "medical": true
+    },
+    "municipalities": {
+      "千代田区": [
+        35.694,
+        139.7536
+      ],
+      "中央区": [
+        35.6709,
+        139.7727
+      ],
+      "港区": [
+        35.6585,
+        139.7514
+      ],
+      "新宿区": [
+        35.6938,
+        139.7036
+      ],
+      "文京区": [
+        35.7081,
+        139.7521
+      ],
+      "台東区": [
+        35.7126,
+        139.78
+      ],
+      "墨田区": [
+        35.7108,
+        139.8019
+      ],
+      "江東区": [
+        35.6729,
+        139.8171
+      ],
+      "品川区": [
+        35.6092,
+        139.7302
+      ],
+      "目黒区": [
+        35.6414,
+        139.6982
+      ],
+      "大田区": [
+        35.5613,
+        139.716
+      ],
+      "世田谷区": [
+        35.6462,
+        139.6532
+      ],
+      "渋谷区": [
+        35.664,
+        139.6982
+      ],
+      "中野区": [
+        35.7077,
+        139.6639
+      ],
+      "杉並区": [
+        35.6995,
+        139.6364
+      ],
+      "豊島区": [
+        35.7264,
+        139.7163
+      ],
+      "北区": [
+        35.7527,
+        139.7349
+      ],
+      "荒川区": [
+        35.7359,
+        139.7834
+      ],
+      "板橋区": [
+        35.7516,
+        139.7092
+      ],
+      "練馬区": [
+        35.7355,
+        139.6516
+      ],
+      "足立区": [
+        35.7746,
+        139.8044
+      ],
+      "葛飾区": [
+        35.7432,
+        139.8472
+      ],
+      "江戸川区": [
+        35.7067,
+        139.8683
+      ]
+    },
+    "landPrices": {
+      "千代田区": {
+        "price": 10675000,
+        "change": 2.2
+      },
+      "中央区": {
+        "price": 12050000,
+        "change": 2.7
+      },
+      "港区": {
+        "price": 4875000,
+        "change": 2.2
+      },
+      "新宿区": {
+        "price": 3525000,
+        "change": 1.5
+      },
+      "渋谷区": {
+        "price": 5150000,
+        "change": 2.6
+      },
+      "品川区": {
+        "price": 1740000,
+        "change": 1.4
+      },
+      "目黒区": {
+        "price": 1525000,
+        "change": 1.5
+      },
+      "大田区": {
+        "price": 1040000,
+        "change": 0.8
+      },
+      "世田谷区": {
+        "price": 1100000,
+        "change": 1.2
+      },
+      "杉並区": {
+        "price": 835000,
+        "change": 0.9
+      },
+      "豊島区": {
+        "price": 2940000,
+        "change": 1.6
+      },
+      "北区": {
+        "price": 600000,
+        "change": 0.8
+      },
+      "板橋区": {
+        "price": 490000,
+        "change": 0.6
+      },
+      "練馬区": {
+        "price": 500000,
+        "change": 0.6
+      },
+      "文京区": {
+        "price": 1625000,
+        "change": 1.5
+      },
+      "台東区": {
+        "price": 1860000,
+        "change": 1.2
+      },
+      "墨田区": {
+        "price": 680000,
+        "change": 1.3
+      },
+      "江東区": {
+        "price": 1340000,
+        "change": 1.9
+      },
+      "荒川区": {
+        "price": 565000,
+        "change": 0.9
+      },
+      "足立区": {
+        "price": 550000,
+        "change": 0.8
+      },
+      "葛飾区": {
+        "price": 350000,
+        "change": 0.4
+      },
+      "江戸川区": {
+        "price": 415000,
+        "change": 0.6
+      },
+      "中野区": {
+        "price": 890000,
+        "change": 1
+      }
+    },
+    "priceBuckets": [
+      {
+        "min": 10000000,
+        "color": "#ff2d55",
+        "label": "1000万〜"
+      },
+      {
+        "min": 5000000,
+        "color": "#ff6b35",
+        "label": "500万〜1000万"
+      },
+      {
+        "min": 2000000,
+        "color": "#ffb340",
+        "label": "200万〜500万"
+      },
+      {
+        "min": 1000000,
+        "color": "#ffe066",
+        "label": "100万〜200万"
+      },
+      {
+        "min": 500000,
+        "color": "#a8e6cf",
+        "label": "50万〜100万"
+      },
+      {
+        "min": 0,
+        "color": "#69b7eb",
+        "label": "〜50万"
+      }
+    ],
+    "risk": {
+      "千代田区": {
+        "flood": 90,
+        "earthquake": "6強",
+        "overall": 61
+      },
+      "中央区": {
+        "flood": 54,
+        "earthquake": "6強",
+        "overall": 58
+      },
+      "港区": {
+        "flood": 90,
+        "earthquake": "6強",
+        "overall": 66
+      },
+      "新宿区": {
+        "flood": 22,
+        "earthquake": "6弱",
+        "overall": 32
+      },
+      "文京区": {
+        "flood": 90,
+        "earthquake": "6弱",
+        "overall": 56
+      },
+      "台東区": {
+        "flood": 22,
+        "earthquake": "6強",
+        "overall": 42
+      },
+      "墨田区": {
+        "flood": 84,
+        "earthquake": "6強",
+        "overall": 68
+      },
+      "江東区": {
+        "flood": 22,
+        "earthquake": "6強",
+        "overall": 47
+      },
+      "品川区": {
+        "flood": 84,
+        "earthquake": "6弱",
+        "overall": 59
+      },
+      "目黒区": {
+        "flood": 22,
+        "earthquake": "6弱",
+        "overall": 32
+      },
+      "大田区": {
+        "flood": 90,
+        "earthquake": "6強",
+        "overall": 66
+      },
+      "世田谷区": {
+        "flood": 22,
+        "earthquake": "6弱",
+        "overall": 32
+      },
+      "渋谷区": {
+        "flood": 90,
+        "earthquake": "6弱",
+        "overall": 56
+      },
+      "中野区": {
+        "flood": 22,
+        "earthquake": "6弱",
+        "overall": 32
+      },
+      "杉並区": {
+        "flood": 90,
+        "earthquake": "5強",
+        "overall": 50
+      },
+      "豊島区": {
+        "flood": 54,
+        "earthquake": "6弱",
+        "overall": 43
+      },
+      "北区": {
+        "flood": 90,
+        "earthquake": "6弱",
+        "overall": 61
+      },
+      "荒川区": {
+        "flood": 90,
+        "earthquake": "6強",
+        "overall": 71
+      },
+      "板橋区": {
+        "flood": 90,
+        "earthquake": "6弱",
+        "overall": 56
+      },
+      "練馬区": {
+        "flood": 22,
+        "earthquake": "5強",
+        "overall": 26
+      },
+      "足立区": {
+        "flood": 90,
+        "earthquake": "6強",
+        "overall": 71
+      },
+      "葛飾区": {
+        "flood": 48,
+        "earthquake": "6強",
+        "overall": 56
+      },
+      "江戸川区": {
+        "flood": 54,
+        "earthquake": "6強",
+        "overall": 58
+      }
+    },
+    "humanFlow": {
+      "東京都新宿区": {
+        "weekday": 935000,
+        "weekend": 490000,
+        "stay": 73,
+        "trend": "increasing"
+      },
+      "東京都渋谷区": {
+        "weekday": 600000,
+        "weekend": 608000,
+        "stay": 85,
+        "trend": "increasing"
+      },
+      "東京都千代田区": {
+        "weekday": 650000,
+        "weekend": 430000,
+        "stay": 72,
+        "trend": "increasing"
+      },
+      "東京都中央区": {
+        "weekday": 395000,
+        "weekend": 267000,
+        "stay": 68,
+        "trend": "stable"
+      },
+      "東京都港区": {
+        "weekday": 473000,
+        "weekend": 388000,
+        "stay": 79,
+        "trend": "increasing"
+      },
+      "東京都豊島区": {
+        "weekday": 305000,
+        "weekend": 258000,
+        "stay": 80,
+        "trend": "stable"
+      },
+      "東京都台東区": {
+        "weekday": 333000,
+        "weekend": 367000,
+        "stay": 100,
+        "trend": "increasing"
+      },
+      "東京都墨田区": {
+        "weekday": 145000,
+        "weekend": 128000,
+        "stay": 68,
+        "trend": "stable"
+      },
+      "東京都江東区": {
+        "weekday": 118000,
+        "weekend": 95000,
+        "stay": 72,
+        "trend": "increasing"
+      },
+      "東京都品川区": {
+        "weekday": 132000,
+        "weekend": 88000,
+        "stay": 60,
+        "trend": "increasing"
+      },
+      "東京都目黒区": {
+        "weekday": 88000,
+        "weekend": 105000,
+        "stay": 92,
+        "trend": "increasing"
+      },
+      "東京都世田谷区": {
+        "weekday": 173000,
+        "weekend": 223000,
+        "stay": 92,
+        "trend": "increasing"
+      },
+      "東京都杉並区": {
+        "weekday": 72000,
+        "weekend": 98000,
+        "stay": 88,
+        "trend": "stable"
+      },
+      "東京都中野区": {
+        "weekday": 112000,
+        "weekend": 95000,
+        "stay": 70,
+        "trend": "stable"
+      },
+      "東京都北区": {
+        "weekday": 125000,
+        "weekend": 108000,
+        "stay": 65,
+        "trend": "stable"
+      },
+      "東京都荒川区": {
+        "weekday": 88000,
+        "weekend": 72000,
+        "stay": 55,
+        "trend": "stable"
+      },
+      "東京都板橋区": {
+        "weekday": 78000,
+        "weekend": 85000,
+        "stay": 62,
+        "trend": "decreasing"
+      },
+      "東京都練馬区": {
+        "weekday": 95000,
+        "weekend": 88000,
+        "stay": 60,
+        "trend": "stable"
+      },
+      "東京都足立区": {
+        "weekday": 145000,
+        "weekend": 128000,
+        "stay": 68,
+        "trend": "stable"
+      }
+    },
+    "school": {
+      "東京都文京区": {
+        "score": 92,
+        "advancement": 86.5
+      },
+      "東京都千代田区": {
+        "score": 94,
+        "advancement": 90.5
+      },
+      "東京都港区": {
+        "score": 93,
+        "advancement": 89
+      },
+      "東京都渋谷区": {
+        "score": 88,
+        "advancement": 83.5
+      },
+      "東京都目黒区": {
+        "score": 85,
+        "advancement": 79.8
+      },
+      "東京都世田谷区": {
+        "score": 87,
+        "advancement": 81.5
+      },
+      "東京都杉並区": {
+        "score": 81,
+        "advancement": 75
+      },
+      "東京都中野区": {
+        "score": 75,
+        "advancement": 68
+      },
+      "東京都豊島区": {
+        "score": 80,
+        "advancement": 74.5
+      },
+      "東京都新宿区": {
+        "score": 85,
+        "advancement": 79.5
+      },
+      "東京都台東区": {
+        "score": 74,
+        "advancement": 66
+      },
+      "東京都北区": {
+        "score": 72,
+        "advancement": 64.5
+      },
+      "東京都板橋区": {
+        "score": 76,
+        "advancement": 69
+      },
+      "東京都練馬区": {
+        "score": 77,
+        "advancement": 70.5
+      },
+      "東京都江東区": {
+        "score": 78,
+        "advancement": 71.5
+      },
+      "東京都品川区": {
+        "score": 79,
+        "advancement": 73
+      },
+      "東京都足立区": {
+        "score": 68,
+        "advancement": 60
+      },
+      "東京都葛飾区": {
+        "score": 67,
+        "advancement": 59.5
+      },
+      "東京都江戸川区": {
+        "score": 66,
+        "advancement": 58
+      }
+    },
+    "corporate": {
+      "東京都千代田区": {
+        "establishments": 44500,
+        "major": 1085,
+        "employees": 1215000
+      },
+      "東京都中央区": {
+        "establishments": 27300,
+        "major": 555,
+        "employees": 670000
+      },
+      "東京都港区": {
+        "establishments": 35500,
+        "major": 865,
+        "employees": 1060000
+      },
+      "東京都渋谷区": {
+        "establishments": 23000,
+        "major": 525,
+        "employees": 635000
+      },
+      "東京都新宿区": {
+        "establishments": 24000,
+        "major": 515,
+        "employees": 618000
+      },
+      "東京都豊島区": {
+        "establishments": 10500,
+        "major": 195,
+        "employees": 245000
+      },
+      "東京都台東区": {
+        "establishments": 8200,
+        "major": 120,
+        "employees": 165000
+      },
+      "東京都墨田区": {
+        "establishments": 6800,
+        "major": 95,
+        "employees": 138000
+      },
+      "東京都江東区": {
+        "establishments": 9500,
+        "major": 185,
+        "employees": 225000
+      },
+      "東京都品川区": {
+        "establishments": 8800,
+        "major": 175,
+        "employees": 210000
+      },
+      "東京都目黒区": {
+        "establishments": 5500,
+        "major": 88,
+        "employees": 118000
+      },
+      "東京都文京区": {
+        "establishments": 4800,
+        "major": 72,
+        "employees": 95000
+      },
+      "東京都北区": {
+        "establishments": 5200,
+        "major": 68,
+        "employees": 105000
+      },
+      "東京都荒川区": {
+        "establishments": 4200,
+        "major": 52,
+        "employees": 85000
+      },
+      "東京都板橋区": {
+        "establishments": 4500,
+        "major": 55,
+        "employees": 88000
+      },
+      "東京都練馬区": {
+        "establishments": 5800,
+        "major": 62,
+        "employees": 108000
+      },
+      "東京都足立区": {
+        "establishments": 6500,
+        "major": 75,
+        "employees": 125000
+      },
+      "東京都世田谷区": {
+        "establishments": 6200,
+        "major": 95,
+        "employees": 132000
+      }
+    },
+    "plateau": [
+      {
+        "name": "東京都庁第一本庁舎",
+        "city": "東京都",
+        "height": 243,
+        "lat": 35.6896,
+        "lng": 139.6922
+      },
+      {
+        "name": "新宿パークタワー",
+        "city": "東京都",
+        "height": 235,
+        "lat": 35.6867,
+        "lng": 139.6906
+      },
+      {
+        "name": "モード学園コクーンタワー",
+        "city": "東京都",
+        "height": 203,
+        "lat": 35.6912,
+        "lng": 139.6924
+      },
+      {
+        "name": "住友不動産新宿グランドタワー",
+        "city": "東京都",
+        "height": 205,
+        "lat": 35.6903,
+        "lng": 139.6895
+      },
+      {
+        "name": "新宿三井ビルディング",
+        "city": "東京都",
+        "height": 225,
+        "lat": 35.6914,
+        "lng": 139.6936
+      },
+      {
+        "name": "新宿センタービル",
+        "city": "東京都",
+        "height": 223,
+        "lat": 35.6916,
+        "lng": 139.693
+      },
+      {
+        "name": "新宿住友ビル",
+        "city": "東京都",
+        "height": 210,
+        "lat": 35.6921,
+        "lng": 139.6943
+      },
+      {
+        "name": "東京オペラシティタワー",
+        "city": "東京都",
+        "height": 234,
+        "lat": 35.6853,
+        "lng": 139.6993
+      },
+      {
+        "name": "六本木ヒルズ森タワー",
+        "city": "東京都",
+        "height": 238,
+        "lat": 35.6604,
+        "lng": 139.7292
+      },
+      {
+        "name": "東京ミッドタウンタワー",
+        "city": "東京都",
+        "height": 248,
+        "lat": 35.6652,
+        "lng": 139.7311
+      },
+      {
+        "name": "愛宕グリーンヒルズMORIタワー",
+        "city": "東京都",
+        "height": 200,
+        "lat": 35.6634,
+        "lng": 139.7489
+      },
+      {
+        "name": "東京ワールドゲートサクラタワー",
+        "city": "東京都",
+        "height": 198,
+        "lat": 35.6667,
+        "lng": 139.75
+      },
+      {
+        "name": "渋谷スクランブルスクエア",
+        "city": "東京都",
+        "height": 230,
+        "lat": 35.6581,
+        "lng": 139.7022
+      },
+      {
+        "name": "セルリアンタワー",
+        "city": "東京都",
+        "height": 184,
+        "lat": 35.6565,
+        "lng": 139.6992
+      },
+      {
+        "name": "渋谷ストリーム",
+        "city": "東京都",
+        "height": 180,
+        "lat": 35.6575,
+        "lng": 139.7032
+      },
+      {
+        "name": "大手町タワー",
+        "city": "東京都",
+        "height": 200,
+        "lat": 35.6876,
+        "lng": 139.7666
+      },
+      {
+        "name": "パレスホテル東京",
+        "city": "東京都",
+        "height": 120,
+        "lat": 35.685,
+        "lng": 139.7617
+      },
+      {
+        "name": "東京国際フォーラム",
+        "city": "東京都",
+        "height": 60,
+        "lat": 35.6768,
+        "lng": 139.7638
+      },
+      {
+        "name": "東京駅丸の内南口ビル（JPタワー）",
+        "city": "東京都",
+        "height": 200,
+        "lat": 35.6814,
+        "lng": 139.7672
+      },
+      {
+        "name": "晴海トリトンスクエアタワーX",
+        "city": "東京都",
+        "height": 195,
+        "lat": 35.6586,
+        "lng": 139.7769
+      },
+      {
+        "name": "東京スカイツリー",
+        "city": "東京都",
+        "height": 634,
+        "lat": 35.7101,
+        "lng": 139.8107
+      },
+      {
+        "name": "東京ゲートブリッジ近接タワー豊洲（アーバンドック）",
+        "city": "東京都",
+        "height": 108,
+        "lat": 35.6528,
+        "lng": 139.7944
+      },
+      {
+        "name": "サンシャイン60",
+        "city": "東京都",
+        "height": 240,
+        "lat": 35.7285,
+        "lng": 139.7192
+      },
+      {
+        "name": "浅草ビューホテル",
+        "city": "東京都",
+        "height": 115,
+        "lat": 35.7135,
+        "lng": 139.7936
+      },
+      {
+        "name": "大崎ブライトコアタワー",
+        "city": "東京都",
+        "height": 155,
+        "lat": 35.6193,
+        "lng": 139.7285
+      },
+      {
+        "name": "文京シビックセンター",
+        "city": "東京都",
+        "height": 142,
+        "lat": 35.7077,
+        "lng": 139.7519
+      },
+      {
+        "name": "ハイアットリージェンシー東京",
+        "city": "東京都",
+        "height": 182,
+        "lat": 35.6883,
+        "lng": 139.6912
+      }
+    ],
+    "transport": {
+      "東京都千代田区": {
+        "stations": 6,
+        "dailyPassengers": 1860000,
+        "lines": [
+          "JR中央線",
+          "JR山手線",
+          "JR東海道本線",
+          "東京メトロ丸ノ内線"
+        ]
+      },
+      "東京都新宿区": {
+        "stations": 6,
+        "dailyPassengers": 2610000,
+        "lines": [
+          "JR中央線",
+          "JR山手線",
+          "京王線",
+          "小田急小田原線",
+          "東京メトロ丸ノ内線",
+          "都営新宿線"
+        ]
+      },
+      "東京都渋谷区": {
+        "stations": 4,
+        "dailyPassengers": 1030000,
+        "lines": [
+          "JR山手線",
+          "東京メトロ銀座線",
+          "東急東横線",
+          "東急田園都市線"
+        ]
+      },
+      "東京都港区": {
+        "stations": 4,
+        "dailyPassengers": 845000,
+        "lines": [
+          "JR山手線",
+          "JR東海道本線",
+          "東京メトロ日比谷線",
+          "都営大江戸線"
+        ]
+      },
+      "東京都中央区": {
+        "stations": 2,
+        "dailyPassengers": 175000,
+        "lines": [
+          "東京メトロ東西線",
+          "東京メトロ銀座線"
+        ]
+      },
+      "東京都豊島区": {
+        "stations": 4,
+        "dailyPassengers": 1230000,
+        "lines": [
+          "JR山手線",
+          "東京メトロ丸ノ内線",
+          "東武東上線",
+          "西武池袋線"
+        ]
+      },
+      "東京都台東区": {
+        "stations": 3,
+        "dailyPassengers": 455000,
+        "lines": [
+          "JR京浜東北線",
+          "JR山手線",
+          "東京メトロ銀座線"
+        ]
+      },
+      "東京都文京区": {
+        "stations": 2,
+        "dailyPassengers": 127000,
+        "lines": [
+          "東京メトロ丸ノ内線",
+          "東京メトロ南北線"
+        ]
+      },
+      "東京都江東区": {
+        "stations": 2,
+        "dailyPassengers": 130000,
+        "lines": [
+          "東京メトロ有楽町線"
+        ]
+      },
+      "東京都世田谷区": {
+        "stations": 1,
+        "dailyPassengers": 105000,
+        "lines": [
+          "東急田園都市線"
+        ]
+      },
+      "東京都杉並区": {
+        "stations": 1,
+        "dailyPassengers": 145000,
+        "lines": [
+          "JR中央線"
+        ]
+      }
+    },
+    "commercial": {
+      "東京都新宿区": {
+        "facilities": 6,
+        "malls": 2,
+        "cvs": 2,
+        "totalGfa": 123665
+      },
+      "東京都渋谷区": {
+        "facilities": 6,
+        "malls": 2,
+        "cvs": 2,
+        "totalGfa": 116725
+      },
+      "東京都千代田区": {
+        "facilities": 4,
+        "malls": 2,
+        "cvs": 1,
+        "totalGfa": 82280
+      },
+      "東京都港区": {
+        "facilities": 4,
+        "malls": 2,
+        "cvs": 1,
+        "totalGfa": 133300
+      },
+      "東京都豊島区": {
+        "facilities": 5,
+        "malls": 2,
+        "cvs": 1,
+        "totalGfa": 120555
+      },
+      "東京都台東区": {
+        "facilities": 3,
+        "malls": 1,
+        "cvs": 1,
+        "totalGfa": 18380
+      },
+      "東京都世田谷区": {
+        "facilities": 3,
+        "malls": 1,
+        "cvs": 1,
+        "totalGfa": 15395
+      },
+      "東京都杉並区": {
+        "facilities": 3,
+        "malls": 1,
+        "cvs": 1,
+        "totalGfa": 25310
+      },
+      "東京都江東区": {
+        "facilities": 1,
+        "malls": 1,
+        "cvs": 0,
+        "totalGfa": 84000
+      }
+    },
+    "medical": {
+      "東京都新宿区": {
+        "facilities": 4,
+        "hospitals": 1,
+        "beds": 850
+      },
+      "東京都千代田区": {
+        "facilities": 3,
+        "hospitals": 1,
+        "beds": 480
+      },
+      "東京都港区": {
+        "facilities": 3,
+        "hospitals": 1,
+        "beds": 900
+      },
+      "東京都渋谷区": {
+        "facilities": 4,
+        "hospitals": 1,
+        "beds": 300
+      },
+      "東京都豊島区": {
+        "facilities": 4,
+        "hospitals": 1,
+        "beds": 1050
+      },
+      "東京都台東区": {
+        "facilities": 3,
+        "hospitals": 1,
+        "beds": 350
+      },
+      "東京都江東区": {
+        "facilities": 3,
+        "hospitals": 1,
+        "beds": 400
+      },
+      "東京都文京区": {
+        "facilities": 3,
+        "hospitals": 1,
+        "beds": 1000
+      },
+      "東京都世田谷区": {
+        "facilities": 3,
+        "hospitals": 1,
+        "beds": 700
+      }
+    }
+  }
+}

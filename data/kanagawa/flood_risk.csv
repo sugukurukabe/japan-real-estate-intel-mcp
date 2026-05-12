@@ -1,0 +1,13 @@
+city,district,river_flood_risk,inland_flood_risk,storm_surge_risk,hazard_zone,notes
+横浜市西区,横浜市西区中心部,low,medium,high,danger,相模湾・東京湾の津波リスク
+横浜市中区,横浜市中区中心部,medium,low,low,warning,多摩川・鶴見川の氾濫に注意
+横浜市神奈川区,横浜市神奈川区中心部,low,medium,high,danger,相模湾・東京湾の津波リスク
+横浜市港北区,横浜市港北区中心部,low,low,low,caution,関東大震災の震源域。相模トラフ沿い
+横浜市都筑区,横浜市都筑区中心部,low,high,high,danger,相模湾・東京湾の津波リスク
+横浜市青葉区,横浜市青葉区中心部,low,low,low,caution,関東大震災の震源域。相模トラフ沿い
+川崎市川崎区,川崎市川崎区中心部,medium,high,high,danger,相模湾・東京湾の津波リスク
+川崎市中原区,川崎市中原区中心部,low,low,low,caution,関東大震災の震源域。相模トラフ沿い
+相模原市中央区,相模原市中央区中心部,medium,high,medium,warning,相模湾・東京湾の津波リスク
+藤沢市,藤沢市中心部,low,low,low,caution,関東大震災の震源域。相模トラフ沿い
+平塚市,平塚市中心部,high,high,medium,danger,相模湾・東京湾の津波リスク
+小田原市,小田原市中心部,low,low,low,caution,関東大震災の震源域。相模トラフ沿い

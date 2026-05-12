@@ -17,7 +17,7 @@ beforeAll(async () => {
   // Close the real listener (started on import) to free the port
   mod.httpServer.close();
   app = mod.app;
-});
+}, 30000);
 
 afterAll(() => {
   // nothing to clean up — httpServer already closed

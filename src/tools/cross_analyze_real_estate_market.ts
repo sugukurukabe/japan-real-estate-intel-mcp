@@ -94,7 +94,7 @@ export function crossAnalyze(input: CrossAnalyzeInput): CrossAnalyzeOutput {
         }
       }
     } else {
-      keyInsights.push(`${loader.displayName}の人流データは v2.x で対応予定です。`);
+      keyInsights.push(`${loader.displayName}では人流データを提供していません。`);
     }
   }
 
@@ -109,7 +109,7 @@ export function crossAnalyze(input: CrossAnalyzeInput): CrossAnalyzeOutput {
         keyInsights.push(`教育環境スコア平均${avgScore}/100。最高評価学区: ${top.elementary_school}。`);
       }
     } else {
-      keyInsights.push(`${loader.displayName}の教育データは v2.x で対応予定です。`);
+      keyInsights.push(`${loader.displayName}では教育データを提供していません。`);
     }
   }
 
@@ -124,7 +124,7 @@ export function crossAnalyze(input: CrossAnalyzeInput): CrossAnalyzeOutput {
         keyInsights.push(`事業所数${totalEst.toLocaleString()}、大企業${majorCount}社。法人需要が${totalEst > 5000 ? '高い' : '中程度'}。`);
       }
     } else {
-      keyInsights.push(`${loader.displayName}の企業立地データは v2.x で対応予定です。`);
+      keyInsights.push(`${loader.displayName}では企業立地データを提供していません。`);
     }
   }
 
@@ -142,7 +142,7 @@ export function crossAnalyze(input: CrossAnalyzeInput): CrossAnalyzeOutput {
         keyInsights.push(`駅数${stationCount}、1日乗降客数${totalDailyPassengers.toLocaleString()}人。交通利便性スコア${transportScore}/100。`);
       }
     } else {
-      keyInsights.push(`${loader.displayName}の交通データは v2.x で対応予定です。`);
+      keyInsights.push(`${loader.displayName}では交通データを提供していません。`);
     }
   }
 
@@ -162,7 +162,7 @@ export function crossAnalyze(input: CrossAnalyzeInput): CrossAnalyzeOutput {
         keyInsights.push(`商業施設${records.length}件、延床面積${totalGFA.toLocaleString()}㎡。`);
       }
     } else {
-      keyInsights.push(`${loader.displayName}の商業施設データは v2.x で対応予定です。`);
+      keyInsights.push(`${loader.displayName}では商業施設データを提供していません。`);
     }
   }
 
@@ -180,7 +180,7 @@ export function crossAnalyze(input: CrossAnalyzeInput): CrossAnalyzeOutput {
         keyInsights.push(`医療施設${facilityCount}件（病院${hospitalCount}）、病床数${totalBeds.toLocaleString()}床。`);
       }
     } else {
-      keyInsights.push(`${loader.displayName}の医療施設データは v2.x で対応予定です。`);
+      keyInsights.push(`${loader.displayName}では医療施設データを提供していません。`);
     }
   }
 

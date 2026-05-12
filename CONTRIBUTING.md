@@ -49,13 +49,21 @@ pnpm install
 
 3. Register the loader in `src/data-loaders/index.ts`:
    ```ts
-   import { MyLoader } from './my-loader.js';
-   registry.register(new MyLoader());
+   import { MyPrefLoader } from './my-pref-loader.js';
+   registerLoader(new MyPrefLoader());
    ```
 
 4. Add prefecture to `src/prefecture/resolver.ts` PREFECTURE_KEYS map.
 
 5. Write tests in `tests/{prefecture}.test.ts`.
+
+## Adding or renaming an MCP tool
+
+When you add, remove, or rename a tool in [`src/server.ts`](src/server.ts) (`server.tool(...)` / `registerAppTool(...)`), you must keep [Anthropic MCP Registry](https://registry.modelcontextprotocol.io) metadata in sync:
+
+1. Add the exact tool name string to the `tools` array in [`server.json`](server.json) at the repository root (same set and spelling as runtime; no duplicates).
+2. Run `pnpm test` — [`tests/server_json_tools_sync.test.ts`](tests/server_json_tools_sync.test.ts) fails if `server.json` and `createServer()` drift apart.
+3. On release, follow [docs/registry-submission.md](docs/registry-submission.md) to run `mcp-publisher publish --file server.json` after version bumps in `server.json`.
 
 ## Pull Request Guidelines
 
@@ -64,8 +72,9 @@ pnpm install
 - **Type-check clean** — `pnpm lint` must produce no errors
 - **No ESLint errors** — `pnpm lint:eslint` must exit 0
 - **Coverage maintained** — aim to keep ≥ 70% line coverage
-- **Update CHANGELOG.md** under the `[Unreleased]` section
+- **Update CHANGELOG.md** under the latest version section (e.g. `## [6.15.0]`)
 - **Describe data sources** in a comment or README when adding new data files
+- **MCP tools** — If you add, remove, or rename tools, update `server.json` `tools` in the same PR and ensure `pnpm test` passes (see [Adding or renaming an MCP tool](#adding-or-renaming-an-mcp-tool))
 
 ## Code Style
 

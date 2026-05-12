@@ -1,3 +1,4 @@
+.cursor/
 node_modules/
 dist/
 ui/dashboard.js
@@ -5,7 +6,12 @@ ui/dashboard.css
 *.tsbuildinfo
 .env
 .env.*
+!.env.example
 *.log
 .DS_Store
 Thumbs.db
 coverage/
+# Local OAuth token store (never commit)
+db/*.sqlite
+db/*.sqlite-shm
+db/*.sqlite-wal

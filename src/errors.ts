@@ -5,6 +5,8 @@
  * errors from unexpected runtime failures with a single instanceof check.
  */
 
+import { ZodError } from 'zod';
+
 export class McpBaseError extends Error {
   /** HTTP-equivalent status for logging purposes only */
   readonly statusCode: number;
@@ -51,7 +53,7 @@ export class InvalidPrefectureError extends McpBaseError {
 
   constructor(prefecture: string) {
     super(
-      `未対応の都道府県です: "${prefecture}"。対応: 愛知県, 東京都, 大阪府`,
+      `未対応の都道府県です: "${prefecture}"。対応: 愛知県, 東京都, 大阪府, 福岡県, 北海道, 神奈川県, 京都府, 兵庫県, 埼玉県, 千葉県`,
       400,
     );
     this.prefecture = prefecture;
@@ -105,6 +107,12 @@ export class ValidationError extends McpBaseError {
  */
 export function formatErrorMessage(err: unknown): string {
   if (err instanceof McpBaseError) return err.message;
+  if (err instanceof ZodError) {
+    const summary = err.issues
+      .map((i) => `${i.path.join('.')}: ${i.message}`)
+      .join('; ');
+    return `入力検証エラー: ${summary}`;
+  }
   if (err instanceof Error) return `内部エラー: ${err.message}`;
   return '予期しないエラーが発生しました';
 }
@@ -114,5 +122,6 @@ export function formatErrorMessage(err: unknown): string {
  * should be surfaced to the client as-is (not logged at error level).
  */
 export function isClientError(err: unknown): boolean {
+  if (err instanceof ZodError) return true;
   return err instanceof McpBaseError && err.statusCode < 500;
 }

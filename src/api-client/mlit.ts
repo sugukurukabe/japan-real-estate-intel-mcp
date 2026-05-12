@@ -106,6 +106,24 @@ export class MlitClient {
   }
 
   /**
+   * Fetches transactions filtered to a specific municipality and district.
+   * Wraps fetchTransactions with post-fetch filtering by city and chochou name.
+   */
+  async fetchTransactionsByChochou(
+    prefKey: string,
+    city: string,
+    chochou: string,
+    year: number,
+  ): Promise<MlitTransaction[]> {
+    const all = await this.fetchTransactions(prefKey, year);
+    return all.filter(
+      (t) =>
+        t.Municipality.includes(city) &&
+        t.DistrictName.includes(chochou.replace(/[一二三四五六七八九十]丁目$/, '')),
+    );
+  }
+
+  /**
    * Converts MLIT transaction records to the transactions.csv row format.
    *
    * Filters out records with missing or zero UnitPrice.

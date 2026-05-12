@@ -1,0 +1,12 @@
+city,seismic_intensity_30yr,liquefaction_risk,slope_failure_risk,overall_risk_score,notes
+札幌市中央区,57,low,medium,2,千島海溝地震の長周期震動に注意
+札幌市北区,75,low,low,5,千島海溝地震の長周期震動に注意
+札幌市白石区,57,low,low,1,千島海溝地震の長周期震動に注意
+札幌市豊平区,60,medium,low,3,千島海溝地震の長周期震動に注意
+札幌市西区,78,high,low,9,千島海溝地震の長周期震動に注意
+札幌市厚別区,74,medium,low,6,千島海溝地震の長周期震動に注意
+札幌市手稲区,64,low,medium,4,千島海溝地震の長周期震動に注意
+函館市,57,medium,high,4,千島海溝地震の長周期震動に注意
+旭川市,80,low,medium,7,千島海溝地震の長周期震動に注意
+小樽市,74,low,low,5,千島海溝地震の長周期震動に注意
+釧路市,61,low,medium,3,千島海溝地震の長周期震動に注意

@@ -4,9 +4,9 @@
 
 | Version | Supported |
 |---------|-----------|
-| 2.9.x   | ✅ Active  |
-| 2.8.x   | ⚠️ Bug fixes only |
-| < 2.8   | ❌ No longer supported |
+| 6.x     | ✅ Active  |
+| 5.x     | ⚠️ Bug fixes only |
+| < 5.0   | ❌ No longer supported |
 
 ## Reporting a Vulnerability
 
@@ -24,7 +24,7 @@
 
 ### Option 2: Direct Contact
 
-Email: **[maintainer contact via GitHub profile]**
+Email: **See the [GitHub profile](https://github.com/sugukuru) for contact info**
 
 ### What to Expect
 
@@ -47,9 +47,9 @@ This project is an **MCP server** that serves as a data analysis layer over Japa
 **Out of scope:**
 - Inaccuracies in sample/mock data (open a regular issue)
 - Issues requiring physical access to the server
-- Denial-of-service via legitimate tool calls (rate limiting planned for v3.0.0)
+- Denial-of-service via legitimate tool calls (rate limiting is in place)
 
-## Security Measures in Place (v2.5.0+)
+## Security Measures in Place (v6.15.0)
 
 - `helmet` middleware sets security-related HTTP headers on all HTTP mode responses
 - Request body limited to 10 MB (`express.json({ limit: '10mb' })`)
@@ -63,4 +63,7 @@ This project is an **MCP server** that serves as a data analysis layer over Japa
 
 - Sample data files (`data/*/`) are **mock/synthetic data** and do not represent real-world conditions
 - The stdio transport does not support authentication (relies on OS-level process isolation)
-- No rate limiting in current version (planned for v3.0.0)
+- Rate limiting is enabled by default (express-rate-limit, configurable via env)
+- Sentry error tracking opt-in via SENTRY_DSN
+- X-Request-ID tracing on all HTTP requests
+- Content Security Policy enabled for static UI paths

@@ -1,0 +1,13 @@
+city,seismic_intensity_30yr,liquefaction_risk,slope_failure_risk,overall_risk_score,notes
+横浜市西区,65,low,medium,4,関東大震災の震源域。相模トラフ沿い
+横浜市中区,81,medium,low,7,関東大震災の震源域。相模トラフ沿い
+横浜市神奈川区,64,low,low,3,関東大震災の震源域。相模トラフ沿い
+横浜市港北区,72,medium,low,5,関東大震災の震源域。相模トラフ沿い
+横浜市都筑区,76,high,low,8,関東大震災の震源域。相模トラフ沿い
+横浜市青葉区,63,high,low,6,関東大震災の震源域。相模トラフ沿い
+川崎市川崎区,85,low,medium,8,関東大震災の震源域。相模トラフ沿い
+川崎市中原区,71,medium,high,7,関東大震災の震源域。相模トラフ沿い
+相模原市中央区,83,low,medium,8,関東大震災の震源域。相模トラフ沿い
+藤沢市,85,low,low,7,関東大震災の震源域。相模トラフ沿い
+平塚市,68,low,medium,5,関東大震災の震源域。相模トラフ沿い
+小田原市,85,medium,low,8,関東大震災の震源域。相模トラフ沿い

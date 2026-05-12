@@ -72,5 +72,13 @@ if b'SaitamaLoader' in idx and b'ChibaLoader' in idx:
 else:
     issues.append(('MISSING', 'Loaders not registered'))
 
+# 10. fetch-real-data should derive supported prefectures from listAvailable(), not a hardcoded list
+with open('scripts/fetch-real-data.ts', 'rb') as f:
+    frd = f.read()
+if b'listAvailable()' in frd and b'SUPPORTED_PREFECTURES = listAvailable()' in frd:
+    issues.append(('OK', 'fetch-real-data uses listAvailable for SUPPORTED_PREFECTURES'))
+else:
+    issues.append(('MISSING', 'fetch-real-data should set SUPPORTED_PREFECTURES from listAvailable()'))
+
 for status, msg in issues:
     print(f'[{status}] {msg}')

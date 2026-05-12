@@ -6,6 +6,7 @@ import type {
   CrimeStatsRecord, PlateauBuildingRecord,
   TransportRecord, CommercialFacilityRecord, MedicalFacilityRecord,
   NeighborhoodRecord,
+  ZoningRecord, VacancyRecord, PopulationProjectionRecord, RosenkaRecord,
 } from './types.js';
 import { getPrefectureDisplayName } from '../prefecture/resolver.js';
 
@@ -19,6 +20,7 @@ export class StubLoader implements PrefectureLoader {
     transactions: false, humanFlow: false, education: false, corporate: false,
     crime: false, plateau: false, transport: false, commercial: false,
     medical: false, neighborhoods: false,
+    zoning: false, vacancy: false, populationProjection: false, rosenka: false,
   };
 
   constructor(key: string) {
@@ -46,4 +48,17 @@ export class StubLoader implements PrefectureLoader {
   getCommercialFacilities(): CommercialFacilityRecord[] { return []; }
   getMedicalFacilities(): MedicalFacilityRecord[] { return []; }
   getNeighborhoods(): NeighborhoodRecord[] { return []; }
+  getZoning(): ZoningRecord[] { return []; }
+  getVacancy(): VacancyRecord[] { return []; }
+  getPopulationProjection(): PopulationProjectionRecord[] { return []; }
+  getRosenka(): RosenkaRecord[] { return []; }
+  getCities(): string[] { return []; }
+
+  getMunicipalityPins(): Record<string, [number, number]> {
+    return {};
+  }
+
+  getDefaultMapView(): { center: [number, number]; zoom: number } {
+    return { center: [35.6812, 139.7671], zoom: 10 };
+  }
 }

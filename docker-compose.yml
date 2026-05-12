@@ -14,8 +14,8 @@ services:
     expose:
       - "3100"
     volumes:
-      # Persist any runtime-written data (optional)
       - rei_data:/app/data
+      - rei_sqlite:/app/db
     healthcheck:
       test: ["CMD", "wget", "-qO-", "http://127.0.0.1:3100/health"]
       interval: 30s
@@ -25,11 +25,13 @@ services:
     networks:
       - rei_net
 
-  # ── Caddy: automatic HTTPS reverse proxy ─────────────────────────────────
+  # ── Caddy: automatic HTTPS reverse proxy (Option A) ─────────────────────
+  # Use when deploying to a VPS with a public IP + domain.
   caddy:
     image: caddy:2-alpine
     container_name: rei-caddy
     restart: unless-stopped
+    profiles: ["caddy"]
     ports:
       - "80:80"
       - "443:443"
@@ -44,8 +46,26 @@ services:
     networks:
       - rei_net
 
+  # ── CloudFlare Tunnel (Option B) ────────────────────────────────────────
+  # Use when deploying behind NAT / no public IP / no domain yet.
+  # Set TUNNEL_TOKEN in .env.production (from `cloudflared tunnel create`).
+  cloudflared:
+    image: cloudflare/cloudflared:latest
+    container_name: rei-cloudflared
+    restart: unless-stopped
+    profiles: ["tunnel"]
+    command: tunnel run
+    environment:
+      TUNNEL_TOKEN: ${TUNNEL_TOKEN:-}
+    depends_on:
+      mcp:
+        condition: service_healthy
+    networks:
+      - rei_net
+
 volumes:
   rei_data:
+  rei_sqlite:
   caddy_data:
   caddy_config:
 

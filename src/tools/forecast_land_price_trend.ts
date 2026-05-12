@@ -6,6 +6,7 @@ import type {
 import type { LandPriceRecord } from '../data-loaders/types.js';
 import { resolvePrefecture } from '../prefecture/resolver.js';
 import { getLoader } from '../data-loaders/index.js';
+import { computeTriangulationForCity, BENCHMARK } from '../analysis/price_triangulation.js';
 
 function linearRegression(xs: number[], ys: number[]): { slope: number; intercept: number; r2: number } {
   const n = xs.length;
@@ -124,9 +125,21 @@ export function forecastLandPriceTrend(input: ForecastLandPriceTrendInput): Fore
     ? 'caution'
     : 'hold';
 
+  // Price triangulation context (v6.15.0)
+  const tri = computeTriangulationForCity(loader, input.city);
+  const triangulationContext = tri ? {
+    rosenka: tri.rosenka,
+    currentSpread: tri.assessmentGap,
+    fairValueRange: {
+      low: Math.round(tri.rosenka),
+      high: Math.round(tri.koji * BENCHMARK.nationalTxKojiRatio),
+    },
+    signal: tri.signal,
+  } : undefined;
+
   let markdownReport: string | undefined;
   if (input.includeMarkdown) {
-    markdownReport = buildMarkdown({ input, series, cagr, trendDirection, trendStrength, keyDrivers, riskFactors, investmentSignal, latestPrice });
+    markdownReport = buildMarkdown({ input, series, cagr, trendDirection, trendStrength, keyDrivers, riskFactors, investmentSignal, latestPrice, triangulationContext });
   }
 
   return {
@@ -175,8 +188,14 @@ function buildMarkdown(opts: {
   riskFactors: string[];
   investmentSignal: string;
   latestPrice: number | null;
+  triangulationContext?: {
+    rosenka: number;
+    currentSpread: number;
+    fairValueRange: { low: number; high: number };
+    signal: string;
+  };
 }): string {
-  const { input, series, cagr, trendDirection, trendStrength, keyDrivers, riskFactors, investmentSignal, latestPrice } = opts;
+  const { input, series, cagr, trendDirection, trendStrength, keyDrivers, riskFactors, investmentSignal, latestPrice, triangulationContext } = opts;
   const signal = investmentSignal === 'buy' ? '買い推奨' : investmentSignal === 'hold' ? '様子見' : '慎重対応';
   const dir = trendDirection === 'rising' ? '上昇' : trendDirection === 'declining' ? '下落' : '横ばい';
   const historical = series.filter(s => !s.isForecast);
@@ -214,6 +233,16 @@ function buildMarkdown(opts: {
     `## リスク要因`,
     ...riskFactors.map(r => `- ${r}`),
     '',
+    ...(triangulationContext ? [
+      `## 価格トライアングル（三角測量コンテキスト）`,
+      `| 指標 | 値 |`,
+      `|------|-----|`,
+      `| 路線価（推計） | ${triangulationContext.rosenka.toLocaleString()} 円/㎡ |`,
+      `| 取引vs路線価スプレッド | ${triangulationContext.currentSpread >= 0 ? '+' : ''}${triangulationContext.currentSpread.toLocaleString()} 円/㎡ |`,
+      `| 適正価格レンジ | ${triangulationContext.fairValueRange.low.toLocaleString()} 〜 ${triangulationContext.fairValueRange.high.toLocaleString()} 円/㎡ |`,
+      `| アービトラージシグナル | ${triangulationContext.signal} |`,
+      '',
+    ] : []),
     `> ※本予測は過去の地価公示データを元にした簡易モデルです。投資判断には最新の専門家意見をご確認ください。`,
   ];
   return rows.join('\n');

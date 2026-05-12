@@ -3,6 +3,28 @@ import { z } from 'zod';
 const prefectureField = z.string().default('愛知県').describe('都道府県名（和名/英名/ISO 3166-2 コード対応）');
 const neighborhoodField = z.string().optional().describe("町丁目（例: '名駅南1丁目'）。v2.4 では町丁目レベル実データに対応（対応都道府県のみ）");
 
+/**
+ * 共通出力モードフィールド。compact = TL;DR + 主要数値のみ、detailed = 全文Markdown付き
+ */
+export const outputModeField = z
+  .enum(['compact', 'detailed'])
+  .optional()
+  .default('compact')
+  .describe('Output verbosity. compact=TL;DR + key numbers only (default), detailed=full Markdown report | 出力詳細度。compact=主要数値のみ（デフォルト）、detailed=全文レポート付き');
+
+/**
+ * ツール結果にTL;DR行を付与するヘルパー。
+ * compact モードでは Markdown 本文を短縮し先頭にサマリー行を追加する。
+ */
+export function withCompactOutput(
+  text: string,
+  tldr: string,
+  mode: 'compact' | 'detailed' = 'compact',
+): string {
+  if (mode === 'detailed') return text;
+  return `**${tldr}**\n\n${text}`;
+}
+
 // ── cross_analyze_real_estate_market (v2.0 unified) ──
 
 export const CrossAnalyzeInput = z.object({
@@ -21,6 +43,7 @@ export const CrossAnalyzeInput = z.object({
   focusMetrics: z
     .array(z.enum(['price_trend', 'yield', 'demand_supply', 'risk_score']))
     .optional(),
+  output_mode: outputModeField,
 });
 export type CrossAnalyzeInput = z.infer<typeof CrossAnalyzeInput>;
 
@@ -244,6 +267,43 @@ export const OpenDashboardOutput = z.object({
 });
 export type OpenDashboardOutput = z.infer<typeof OpenDashboardOutput>;
 
+// ── quick_visual_summary (ChatGPT render tool) ──
+
+export const QuickVisualSummaryInput = z.object({
+  prefecture: prefectureField,
+  area: z.string().optional().describe("Target area to focus the visual summary on | 表示対象エリア"),
+  intent: z
+    .enum(['investment', 'arbitrage', 'comparison', 'renovation', 'contract', 'store', 'overview', 'cashflow'])
+    .default('overview')
+    .describe('User goal for choosing the best visual starting point | 表示目的'),
+  mode: z.enum(['2d', '3d']).default('2d').describe('Dashboard mode | ダッシュボード表示モード'),
+  compact: z.boolean().default(true).describe('Optimize copy and layout for ChatGPT mobile/compact views'),
+});
+export type QuickVisualSummaryInput = z.infer<typeof QuickVisualSummaryInput>;
+
+export const VisualNextAction = z.object({
+  label: z.string().describe('Button/action label shown to the user'),
+  prompt: z.string().describe('Follow-up prompt suitable for sending back to ChatGPT'),
+  tool: z.string().optional().describe('Suggested MCP tool for the model to call'),
+});
+export type VisualNextAction = z.infer<typeof VisualNextAction>;
+
+export const QuickVisualSummaryOutput = z.object({
+  title: z.string(),
+  summary: z.string(),
+  prefecture: z.string(),
+  area: z.string(),
+  intent: z.enum(['investment', 'arbitrage', 'comparison', 'renovation', 'contract', 'store', 'overview', 'cashflow']),
+  dashboardUri: z.string().describe('MCP Apps ui:// resource URI'),
+  dashboardUrl: z.string().describe('Browser fallback URL or path'),
+  layer: z.string(),
+  mode: z.enum(['2d', '3d']),
+  nextActions: z.array(VisualNextAction),
+  markdownReport: z.string().describe('Compact markdown fallback for non-UI clients'),
+  attribution: z.string(),
+});
+export type QuickVisualSummaryOutput = z.infer<typeof QuickVisualSummaryOutput>;
+
 // ── compare_prefectures (v2.1 new) ──
 
 export const ComparePrefecturesInput = z.object({
@@ -419,6 +479,7 @@ export const ForecastLandPriceTrendInput = z.object({
   method: z.enum(['linear', 'moving_avg']).default('linear')
     .describe('予測手法。linear=線形回帰、moving_avg=移動平均外挿'),
   includeMarkdown: z.boolean().default(true),
+  output_mode: outputModeField,
 });
 export type ForecastLandPriceTrendInput = z.infer<typeof ForecastLandPriceTrendInput>;
 
@@ -583,3 +644,629 @@ export const LandscapeOutput = z.object({
   markdownReport: z.string().optional(),
 });
 export type LandscapeOutput = z.infer<typeof LandscapeOutput>;
+
+// ── discover_opportunities (v6.5.0) ──
+
+export const DiscoverOpportunitiesInput = z.object({
+  prefecture: prefectureField,
+  goal: z.enum(['investment', 'store', 'family', 'office', 'development']).default('investment')
+    .describe('探索目的'),
+  horizon: z.enum(['1y', '3y', '5y']).default('3y'),
+  riskTolerance: z.enum(['low', 'medium', 'high']).default('medium'),
+  budgetLevel: z.enum(['low', 'middle', 'high', 'any']).default('any')
+    .describe('想定予算帯。low=㎡15万以下, middle=15-50万, high=50万超'),
+  limit: z.number().int().min(1).max(10).default(5)
+    .describe('返却する候補数'),
+  includeMarkdown: z.boolean().default(true),
+  includeExternalFreshness: z.boolean().default(false)
+    .describe('true かつ MLIT_API_KEY 環境変数があるとき、MLIT API から最新取引を取得しシグナルに反映'),
+  useGeminiNarrative: z.boolean().default(false)
+    .describe('true かつ GOOGLE_GENAI_API_KEY があるとき、Gemini でカードに creativeAngle と質問候補を追加'),
+  output_mode: outputModeField,
+});
+export type DiscoverOpportunitiesInput = z.infer<typeof DiscoverOpportunitiesInput>;
+
+export const OpportunitySignalType = z.enum([
+  'undervalued_growth',
+  'high_flow_low_commercial',
+  'education_medical_hub',
+  'corporate_momentum',
+  'low_risk_upside',
+  'transit_oriented',
+  'population_inflow',
+  'declining_area',
+  'discount_arbitrage',
+]);
+export type OpportunitySignalType = z.infer<typeof OpportunitySignalType>;
+
+export const FreshTransactionSignal = z.object({
+  sampleCount: z.number(),
+  medianPricePerSqm: z.number(),
+  deltaVsHistorical: z.number().describe('CSV履歴比の乖離率(%)'),
+  fetchedAt: z.string(),
+}).nullable();
+export type FreshTransactionSignal = z.infer<typeof FreshTransactionSignal>;
+
+export const OpportunityUiAction = z.object({
+  label: z.string(),
+  tool: z.string(),
+  args: z.record(z.unknown()),
+});
+export type OpportunityUiAction = z.infer<typeof OpportunityUiAction>;
+
+export const OpportunityCard = z.object({
+  title: z.string().describe('仮説タイトル'),
+  city: z.string(),
+  score: z.number().min(0).max(100).describe('機会スコア'),
+  signalType: OpportunitySignalType,
+  why: z.array(z.string()).describe('この仮説の根拠（3-5点）'),
+  evidence: z.object({
+    pricePerSqm: z.number().nullable(),
+    priceChangeRate: z.number().nullable(),
+    riskScore: z.number().nullable(),
+    humanFlowWeekday: z.number().nullable(),
+    humanFlowTrend: z.string().nullable(),
+    educationScore: z.number().nullable(),
+    corporateCount: z.number().nullable(),
+    transportScore: z.number().nullable(),
+    commercialFacilities: z.number().nullable(),
+    medicalFacilities: z.number().nullable(),
+    population: z.number().nullable(),
+    agingRate: z.number().nullable(),
+    freshTransactionSignal: FreshTransactionSignal.optional(),
+  }),
+  risks: z.array(z.string()),
+  recommendedTools: z.array(z.string()).describe('深掘り用の推奨ツール名'),
+  uiActions: z.array(OpportunityUiAction).describe('UIボタン定義'),
+  creativeAngle: z.string().nullable().optional().describe('Gemini生成の独創的洞察'),
+  userQuestionSuggestions: z.array(z.string()).optional().describe('Gemini生成のフォローアップ質問候補'),
+});
+export type OpportunityCard = z.infer<typeof OpportunityCard>;
+
+export const DiscoverOpportunitiesOutput = z.object({
+  summary: z.string(),
+  cards: z.array(OpportunityCard),
+  dataCoverage: z.object({
+    prefecture: z.string(),
+    citiesScanned: z.number(),
+    availableMetrics: z.array(z.string()),
+    missingMetrics: z.array(z.string()),
+  }),
+  nextActions: z.array(z.string()),
+  attribution: z.string(),
+  markdownReport: z.string().optional(),
+});
+export type DiscoverOpportunitiesOutput = z.infer<typeof DiscoverOpportunitiesOutput>;
+
+// ── v6.8.0 Renovation / Nagoya tools ───────────────────────────────────────
+
+export const RenovationYieldInput = z.object({
+  ward: z.string().describe('名古屋市の区名 (例: 中区, 中村区)'),
+  chochou: z.string().describe('町丁目名 (例: 栄三丁目, 名駅一丁目)'),
+  buildingAge: z.number().min(0).max(100).describe('築年数'),
+  floorArea: z.number().min(10).max(2000).describe('専有面積 (㎡)'),
+  acquisitionPrice: z.number().optional().describe('取得予定価格 (円)。省略時は推定'),
+  propertyType: z.enum(['mansion', 'house', 'office']).default('mansion').describe('物件種別'),
+});
+export type RenovationYieldInput = z.infer<typeof RenovationYieldInput>;
+
+export const FutureTimelineInput = z.object({
+  ward: z.string().describe('名古屋市の区名 (例: 中区)'),
+  chochou: z.string().default('').describe('町丁目名 (省略時は区全体)'),
+});
+export type FutureTimelineInput = z.infer<typeof FutureTimelineInput>;
+
+export const ChochouProfileInput = z.object({
+  ward: z.string().describe('名古屋市の区名'),
+  chochou: z.string().default('').describe('町丁目名 (省略時は区全体)'),
+  output_mode: outputModeField,
+});
+export type ChochouProfileInput = z.infer<typeof ChochouProfileInput>;
+
+export const RecommendRenovationTargetsInput = z.object({
+  buildingAge: z.number().min(0).max(100).default(30).describe('想定築年数'),
+  floorArea: z.number().min(10).max(2000).default(70).describe('想定面積 (㎡)'),
+  propertyType: z.enum(['mansion', 'house', 'office']).default('mansion'),
+  limit: z.number().min(1).max(20).default(10).describe('上位何件を返すか'),
+});
+export type RecommendRenovationTargetsInput = z.infer<typeof RecommendRenovationTargetsInput>;
+
+// ── v6.9.0 Contract Intelligence tools ───────────────────────────────────────
+
+export const ContractSupportInput = z.object({
+  ward: z.string().describe('名古屋市の区名 (例: 中区, 中村区)'),
+  chochou: z.string().default('').describe('町丁目名 (省略時は区全体)'),
+  buildingAge: z.number().min(0).max(100).describe('築年数'),
+  floorArea: z.number().min(10).max(2000).describe('専有面積 (㎡)'),
+  price: z.number().describe('取得予定価格 (円)'),
+  propertyType: z.enum(['mansion', 'house', 'office']).default('mansion').describe('物件種別'),
+  proposedClauses: z.array(z.string()).optional().describe('すでに検討中の特約・条項（任意）'),
+});
+export type ContractSupportInput = z.infer<typeof ContractSupportInput>;
+
+export const ContractSupportOutput = z.object({
+  summary: z.string(),
+  riskMatrix: z.array(z.object({
+    clause: z.string(),
+    riskLevel: z.enum(['low', 'medium', 'high']),
+    reason: z.string(),
+    mitigation: z.string(),
+  })),
+  negotiationAnchors: z.array(z.object({
+    topic: z.string(),
+    currentPriceImpact: z.string(),
+    futureUplift: z.string(),
+    recommendation: z.string(),
+  })),
+  recommendedClauses: z.array(z.object({
+    clause: z.string(),
+    rationale: z.string(),
+    priority: z.enum(['must', 'recommended', 'optional']),
+  })),
+  markdown: z.string(),
+  pdfBase64: z.string().optional(),
+});
+export type ContractSupportOutput = z.infer<typeof ContractSupportOutput>;
+
+export const AssessContractRiskInput = z.object({
+  ward: z.string().describe('名古屋市の区名'),
+  chochou: z.string().default('').describe('町丁目名'),
+  proposedTerms: z.record(z.unknown()).describe('提案中の契約条項（JSON 形式）'),
+});
+export type AssessContractRiskInput = z.infer<typeof AssessContractRiskInput>;
+
+export const AssessContractRiskOutput = z.object({
+  overallRiskScore: z.number().min(0).max(100),
+  clauseRisks: z.array(z.object({
+    clause: z.string(),
+    riskScore: z.number(),
+    level: z.enum(['low', 'medium', 'high']),
+    explanation: z.string(),
+    suggestedFix: z.string().optional(),
+  })),
+  dealBreakerFlags: z.array(z.string()),
+  summary: z.string(),
+});
+export type AssessContractRiskOutput = z.infer<typeof AssessContractRiskOutput>;
+
+// ── purchase review decision support ────────────────────────────────────────
+
+export const PurchasePropertyType = z.enum([
+  'mansion',
+  'house',
+  'building',
+  'store',
+  'land',
+  'office',
+  'mixed',
+]);
+export type PurchasePropertyType = z.infer<typeof PurchasePropertyType>;
+
+export const PurchaseReviewInput = z.object({
+  prefecture: prefectureField,
+  city: z.string().describe("市区町村（例: '名古屋市中区', '新宿区'）"),
+  district: z.string().optional().describe('町丁目・地区名（販売図面から分かる範囲で可）'),
+  addressMemo: z.string().optional().describe('販売図面・物件資料に記載された住所メモ'),
+  propertyType: PurchasePropertyType.default('mansion').describe('物件種別'),
+  askingPrice: z.number().positive().describe('売出価格・購入打診価格（円）'),
+  negotiablePrice: z.number().positive().optional().describe('交渉後に狙う価格（円）'),
+  landAreaSqm: z.number().positive().optional().describe('土地面積（㎡）'),
+  buildingAreaSqm: z.number().positive().optional().describe('建物面積（㎡）'),
+  exclusiveAreaSqm: z.number().positive().optional().describe('専有面積（㎡）'),
+  buildingAge: z.number().min(0).max(120).optional().describe('築年数'),
+  structure: z.string().optional().describe('構造（RC/SRC/S/木造など）'),
+  floors: z.number().int().positive().optional().describe('階数'),
+  currentAnnualRent: z.number().min(0).optional().describe('現況年間賃料（円）'),
+  expectedAnnualRent: z.number().min(0).optional().describe('想定年間賃料（円）'),
+  occupancyRate: z.number().min(0).max(1).optional().describe('想定稼働率（0-1）'),
+  operatingExpenseAnnual: z.number().min(0).optional().describe('年間運営費・管理費・修繕費等（円）'),
+  renovationCost: z.number().min(0).optional().describe('想定リノベ/修繕費（円）'),
+  propertyTaxAnnual: z.number().min(0).optional().describe('固定資産税等（円/年）'),
+  kojiPricePerSqm: z.number().positive().optional().describe('参考公示地価（円/㎡）'),
+  rosenkaPricePerSqm: z.number().positive().optional().describe('参考路線価（円/㎡）'),
+  transactionMedianPerSqm: z.number().positive().optional().describe('近隣取引相場中央値（円/㎡）'),
+  recommenderClaim: z.string().optional().describe('仲介会社・営業担当などが勧めている理由'),
+  proposedTerms: z.object({
+    financingDays: z.number().int().min(0).max(90).optional(),
+    buildingInspection: z.boolean().optional(),
+    defectLiabilityMonths: z.number().int().min(0).max(60).optional(),
+    handoverCondition: z.string().optional(),
+    existingLease: z.boolean().optional(),
+    earlyTerminationPenalty: z.boolean().optional(),
+  }).optional().describe('提案中の契約条件'),
+  output_mode: outputModeField,
+});
+export type PurchaseReviewInput = z.infer<typeof PurchaseReviewInput>;
+
+export const PurchaseDecision = z.enum(['buy', 'negotiate', 'hold', 'reject']);
+export type PurchaseDecision = z.infer<typeof PurchaseDecision>;
+
+export const PurchaseReviewAxis = z.object({
+  axis: z.enum(['price', 'yield', 'location', 'future', 'risk', 'contract']),
+  label: z.string(),
+  score: z.number().min(0).max(100),
+  summary: z.string(),
+  evidence: z.array(z.string()),
+});
+export type PurchaseReviewAxis = z.infer<typeof PurchaseReviewAxis>;
+
+export const PurchaseReviewOutput = z.object({
+  decision: PurchaseDecision,
+  decisionLabel: z.string(),
+  overallScore: z.number().min(0).max(100),
+  priceScore: z.number().min(0).max(100),
+  yieldScore: z.number().min(0).max(100),
+  riskScore: z.number().min(0).max(100),
+  futureScore: z.number().min(0).max(100),
+  contractScore: z.number().min(0).max(100),
+  keyNumbers: z.object({
+    askingPrice: z.number(),
+    pricePerSqm: z.number().nullable(),
+    pricePerTsubo: z.number().nullable(),
+    kojiPricePerSqm: z.number().nullable(),
+    rosenkaPerSqm: z.number().nullable(),
+    transactionMedianPerSqm: z.number().nullable(),
+    askingToKojiRatio: z.number().nullable(),
+    askingToTransactionRatio: z.number().nullable(),
+    grossYield: z.number().nullable(),
+    netYield: z.number().nullable(),
+    downsideNetYield: z.number().nullable(),
+    paybackYears: z.number().nullable(),
+  }),
+  axes: z.array(PurchaseReviewAxis),
+  redFlags: z.array(z.string()),
+  negotiationPoints: z.array(z.string()),
+  missingInformation: z.array(z.string()),
+  recommendedClauses: z.array(z.object({
+    clause: z.string(),
+    rationale: z.string(),
+    priority: z.enum(['must', 'recommended', 'optional']),
+  })),
+  dataSources: z.array(z.string()),
+  markdownReport: z.string(),
+  dashboardUri: z.string(),
+  attribution: z.string(),
+});
+export type PurchaseReviewOutput = z.infer<typeof PurchaseReviewOutput>;
+
+// ── leveraged cash flow simulation ──────────────────────────────────────────
+
+export const LeveragedPaymentType = z.enum(['equal_payment', 'equal_principal']);
+export type LeveragedPaymentType = z.infer<typeof LeveragedPaymentType>;
+
+export const LeveragedCashflowInput = z.object({
+  prefecture: prefectureField,
+  city: z.string().describe("市区町村（例: '名古屋市中区', '新宿区'）"),
+  district: z.string().optional().describe('町丁目・地区名（任意）'),
+  propertyType: PurchasePropertyType.default('mansion').describe('物件種別'),
+  askingPrice: z.number().positive().describe('購入価格・売出価格（円）'),
+  purchaseCost: z.number().min(0).default(0).describe('仲介手数料・登記費用など初期取得費用（円）'),
+  renovationCost: z.number().min(0).default(0).describe('初期修繕・リノベーション費用（円）'),
+  landValueRatio: z.number().min(0).max(1).default(0.4).describe('土地按分比率。建物減価償却のために使用（0-1）'),
+  annualRent: z.number().positive().describe('初年度の想定年間賃料収入（円）'),
+  otherIncomeAnnual: z.number().min(0).default(0).describe('駐車場・看板等のその他年間収入（円）'),
+  vacancyRate: z.number().min(0).max(1).default(0.05).describe('初年度の想定空室率（0-1）'),
+  operatingExpenseAnnual: z.number().min(0).default(0).describe('管理費・修繕費・保険料など年間運営費（円）'),
+  propertyTaxAnnual: z.number().min(0).default(0).describe('固定資産税・都市計画税等（円/年）'),
+  annualCapex: z.number().min(0).default(0).describe('毎年の資本的支出・大規模修繕積立相当（円/年）'),
+  loan: z.object({
+    ltvPct: z.number().min(0).max(100).default(70).describe('借入比率 LTV（%）'),
+    loanAmount: z.number().positive().optional().describe('借入額（円）。指定時はLTVより優先'),
+    interestRatePct: z.number().min(0).max(20).describe('年利（%）'),
+    termYears: z.number().int().min(1).max(50).default(25).describe('返済期間（年）'),
+    paymentType: LeveragedPaymentType.default('equal_payment').describe('返済方式'),
+    interestOnlyYears: z.number().int().min(0).max(10).default(0).describe('元金据置年数'),
+  }).describe('銀行借入条件'),
+  assumptions: z.object({
+    simulationYears: z.number().int().min(1).max(30).default(10).describe('シミュレーション年数'),
+    rentGrowthPct: z.number().min(-20).max(20).default(1).describe('年間賃料成長率（%）'),
+    expenseGrowthPct: z.number().min(-20).max(20).default(1).describe('年間経費上昇率（%）'),
+    exitCapRatePct: z.number().min(0.1).max(30).optional().describe('売却時キャップレート（%）。未指定なら売却益を含めない'),
+    exitCostPct: z.number().min(0).max(20).default(3).describe('売却時費用率（%）'),
+    depreciationYears: z.number().int().min(1).max(60).optional().describe('建物減価償却年数。未指定なら物件種別から推定'),
+    marginalTaxRatePct: z.number().min(0).max(55).default(20).describe('所得税・住民税の簡易限界税率（%）'),
+  }).default({}).describe('10年収支・税務前提'),
+  output_mode: outputModeField,
+});
+export type LeveragedCashflowInput = z.infer<typeof LeveragedCashflowInput>;
+
+export const LeveragedCashflowYear = z.object({
+  year: z.number().int(),
+  grossRent: z.number(),
+  vacancyLoss: z.number(),
+  effectiveIncome: z.number(),
+  operatingExpense: z.number(),
+  propertyTax: z.number(),
+  noi: z.number(),
+  interestPayment: z.number(),
+  principalPayment: z.number(),
+  debtService: z.number(),
+  beforeTaxCashflow: z.number(),
+  depreciation: z.number(),
+  taxableIncome: z.number(),
+  estimatedTax: z.number(),
+  afterTaxCashflow: z.number(),
+  loanBalance: z.number(),
+  cumulativeAfterTaxCashflow: z.number(),
+  dscr: z.number().nullable(),
+});
+export type LeveragedCashflowYear = z.infer<typeof LeveragedCashflowYear>;
+
+export const LeveragedCashflowOutput = z.object({
+  prefecture: z.string(),
+  city: z.string(),
+  district: z.string().nullable(),
+  summary: z.string(),
+  summaryKpis: z.object({
+    initialEquity: z.number(),
+    loanAmount: z.number(),
+    ltvPct: z.number(),
+    annualDebtServiceYear1: z.number(),
+    year1Noi: z.number(),
+    year1Dscr: z.number().nullable(),
+    year1CashOnCashPct: z.number().nullable(),
+    minDscr: z.number().nullable(),
+    totalAfterTaxCashflow: z.number(),
+    terminalSaleProceeds: z.number().nullable(),
+    tenYearIrrPct: z.number().nullable(),
+    equityMultiple: z.number().nullable(),
+  }),
+  assumptions: z.object({
+    simulationYears: z.number(),
+    interestRatePct: z.number(),
+    termYears: z.number(),
+    paymentType: LeveragedPaymentType,
+    rentGrowthPct: z.number(),
+    expenseGrowthPct: z.number(),
+    vacancyRate: z.number(),
+    depreciationYears: z.number(),
+    marginalTaxRatePct: z.number(),
+  }),
+  yearlyRows: z.array(LeveragedCashflowYear),
+  sensitivity: z.array(z.object({
+    label: z.string(),
+    interestRatePct: z.number(),
+    vacancyRate: z.number(),
+    tenYearIrrPct: z.number().nullable(),
+    totalAfterTaxCashflow: z.number(),
+    minDscr: z.number().nullable(),
+  })),
+  redFlags: z.array(z.string()),
+  recommendations: z.array(z.string()),
+  markdownReport: z.string(),
+  dashboardUri: z.string(),
+  attribution: z.string(),
+});
+export type LeveragedCashflowOutput = z.infer<typeof LeveragedCashflowOutput>;
+
+// ── composite_value_score (v6.12.0) ──
+
+// ── get_zoning_info (v6.13.0) ──
+
+export const ZoningInfoInput = z.object({
+  prefecture: prefectureField,
+  area: z.string().describe("Target area (e.g. '名古屋市中区', '新宿区') | 対象エリア"),
+  district: z.string().optional().describe("Specific district (e.g. '栄', '西新宿') | 地区名"),
+});
+export type ZoningInfoInput = z.infer<typeof ZoningInfoInput>;
+
+export const ZoningInfoOutput = z.object({
+  area: z.string(),
+  records: z.array(z.object({
+    city: z.string(),
+    district: z.string(),
+    zone_type: z.string().describe('用途地域 (e.g. 商業地域, 第1種住居地域)'),
+    coverage_ratio: z.number().describe('建蔽率 (%)'),
+    floor_area_ratio: z.number().describe('容積率 (%)'),
+    height_limit: z.number().nullable().describe('高さ制限 (m) — null=制限なし'),
+  })),
+  zoneDistribution: z.record(z.number()).describe('用途地域別の件数分布'),
+  summary: z.string(),
+  attribution: z.string(),
+});
+export type ZoningInfoOutput = z.infer<typeof ZoningInfoOutput>;
+
+// ── get_vacancy_stats (v6.13.0) ──
+
+export const VacancyStatsInput = z.object({
+  prefecture: prefectureField,
+  area: z.string().optional().describe("Target city (e.g. '名古屋市中区') — omit for full prefecture | 対象市区町村"),
+});
+export type VacancyStatsInput = z.infer<typeof VacancyStatsInput>;
+
+export const VacancyStatsOutput = z.object({
+  area: z.string(),
+  records: z.array(z.object({
+    city: z.string(),
+    total_housing: z.number(),
+    total_vacant: z.number(),
+    vacancy_rate: z.number().describe('空き家率 (%)'),
+    for_rent: z.number(),
+    for_sale: z.number(),
+    other_vacant: z.number(),
+  })),
+  prefectureAvgRate: z.number().describe('都道府県平均空き家率 (%)'),
+  nationalAvgRate: z.number().describe('全国平均空き家率 (%) ≈ 13.6'),
+  summary: z.string(),
+  attribution: z.string(),
+});
+export type VacancyStatsOutput = z.infer<typeof VacancyStatsOutput>;
+
+// ── get_population_outlook (v6.13.0) ──
+
+export const PopulationOutlookInput = z.object({
+  prefecture: prefectureField,
+  area: z.string().optional().describe("Target city (e.g. '名古屋市中区') — omit for full prefecture | 対象市区町村"),
+});
+export type PopulationOutlookInput = z.infer<typeof PopulationOutlookInput>;
+
+export const PopulationOutlookOutput = z.object({
+  area: z.string(),
+  records: z.array(z.object({
+    city: z.string(),
+    pop_2020: z.number(),
+    pop_2030: z.number(),
+    pop_2040: z.number(),
+    pop_2050: z.number(),
+    decline_rate_2050: z.number().describe('2050年までの人口減少率 (%)'),
+  })),
+  prefectureAvgDecline: z.number().describe('都道府県平均減少率 (%)'),
+  summary: z.string(),
+  attribution: z.string(),
+});
+export type PopulationOutlookOutput = z.infer<typeof PopulationOutlookOutput>;
+
+// ── get_real_estate_macro_snapshot (bundled data + optional e-Stat / FRED) ──
+
+export const MacroSnapshotInput = z.object({
+  prefecture: prefectureField,
+  area: z.string().optional().describe("Optional city filter (e.g. '名古屋市中区') | 市区町村で絞り込み"),
+  includeExternalSeries: z.boolean().default(true).describe(
+    'If true, fetch construction starts (e-Stat, needs ESTAT_APP_ID) and policy-rate proxy (FRED CSV, no key). | e-Stat着工・FRED金利系列を併記',
+  ),
+});
+export type MacroSnapshotInput = z.infer<typeof MacroSnapshotInput>;
+
+export const MacroSnapshotOutput = z.object({
+  prefectureKey: z.string(),
+  prefectureDisplay: z.string(),
+  areaFilter: z.string().nullable(),
+  landPrice: z.object({
+    latestYear: z.number().nullable(),
+    priorYear: z.number().nullable(),
+    medianLatestPerSqm: z.number().nullable(),
+    medianPriorPerSqm: z.number().nullable(),
+    yoyMedianPct: z.number().nullable(),
+    avgChangeRateLatestYear: z.number().nullable(),
+    rowsLatestYear: z.number(),
+  }),
+  transactions: z.object({
+    years: z.array(z.object({
+      year: z.number(),
+      count: z.number(),
+      medianPricePerSqm: z.number().nullable(),
+    })),
+    definition: z.string(),
+  }),
+  population: z.object({
+    avgDecline2050: z.number().nullable(),
+    municipalityCount: z.number(),
+    definition: z.string(),
+  }),
+  construction: z.object({
+    latestTime: z.string(),
+    latestTotal: z.number(),
+    priorTime: z.string().nullable(),
+    priorTotal: z.number().nullable(),
+    yoyPct: z.number().nullable(),
+    attribution: z.string(),
+  }).nullable(),
+  policyRate: z.object({
+    seriesId: z.string(),
+    latestObservationDate: z.string(),
+    latestRatePct: z.number(),
+    yearAgoObservationDate: z.string(),
+    yearAgoRatePct: z.number(),
+    deltaPercentagePoints: z.number(),
+    sourceUrl: z.string(),
+    attribution: z.string(),
+  }).nullable(),
+  externalWarnings: z.array(z.string()),
+  summary: z.string(),
+  attribution: z.array(z.string()),
+});
+export type MacroSnapshotOutput = z.infer<typeof MacroSnapshotOutput>;
+
+export const CompositeAxisWeights = z.object({
+  landPrice: z.number().min(0).max(1).default(0.25).describe('Weight for land price axis (0-1)'),
+  education: z.number().min(0).max(1).default(0.20).describe('Weight for education/school axis (0-1)'),
+  transport: z.number().min(0).max(1).default(0.20).describe('Weight for transport accessibility axis (0-1)'),
+  futurePlan: z.number().min(0).max(1).default(0.20).describe('Weight for future development plan axis (0-1)'),
+  riskSafety: z.number().min(0).max(1).default(0.15).describe('Weight for risk/safety axis (0-1)'),
+}).describe('Custom weights for the 5-axis composite score');
+
+export const CompositeValueScoreInput = z.object({
+  prefecture: prefectureField,
+  area: z.string().describe("Target area (e.g. '名古屋市中区', '新宿区') | 対象エリア"),
+  horizon: z.enum(['1y', '3y', '5y']).default('3y').describe('Analysis horizon | 分析期間'),
+  weights: CompositeAxisWeights.optional().describe('Custom axis weights (defaults: 0.25/0.20/0.20/0.20/0.15) | 軸の重み'),
+  includeNarrative: z.boolean().default(true).describe('Generate AI narrative summary (requires Gemini API key) | AI ナラティブ生成'),
+  includeMarkdown: z.boolean().default(true).describe('Include Markdown report | Markdown レポートを含む'),
+  output_mode: outputModeField,
+});
+export type CompositeValueScoreInput = z.infer<typeof CompositeValueScoreInput>;
+
+export const CompositeAxisScore = z.object({
+  axis: z.string().describe('Axis name'),
+  label: z.string().describe('Display label (JP)'),
+  score: z.number().min(0).max(100).describe('Normalized score 0-100'),
+  rawValue: z.string().describe('Human-readable raw metric'),
+  evidence: z.string().describe('Data source citation'),
+});
+export type CompositeAxisScore = z.infer<typeof CompositeAxisScore>;
+
+export const CompositeValueScoreOutput = z.object({
+  compositeScore: z.number().min(0).max(100).describe('Overall composite score 0-100'),
+  tier: z.enum(['S', 'A', 'B', 'C']).describe('Tier rating: S(80+) A(65-79) B(50-64) C(<50)'),
+  axes: z.array(CompositeAxisScore).describe('Per-axis scores with evidence'),
+  peerComparison: z.array(z.object({
+    city: z.string(),
+    compositeScore: z.number(),
+    tier: z.enum(['S', 'A', 'B', 'C']),
+    zScore: z.number().describe('Standard deviations from prefecture mean'),
+  })).describe('Top/bottom peer cities for comparison'),
+  narrative: z.string().optional().describe('AI-generated executive summary (if Gemini available)'),
+  markdownReport: z.string().optional().describe('Full Markdown report'),
+  attribution: z.string(),
+});
+export type CompositeValueScoreOutput = z.infer<typeof CompositeValueScoreOutput>;
+
+// ── v6.15.0 Price Triangulation ────────────────────────────────────────────
+
+export const ArbitrageSignalType = z.enum([
+  'discount',        // 取引価格 < 路線価 → 割安・買い場シグナル
+  'inheritance_edge', // 路線価/公示比 < 0.75 → 相続税評価有利
+  'overheated',      // 取引/公示比 > 1.30 → 市場過熱
+  'fair',            // 標準範囲
+]);
+export type ArbitrageSignalType = z.infer<typeof ArbitrageSignalType>;
+
+export const ArbitrageScanInput = z.object({
+  prefecture: prefectureField,
+  signalType: ArbitrageSignalType.optional()
+    .describe("Filter by signal type: 'discount' | 'inheritance_edge' | 'overheated' | 'fair' | omit for all | シグナル種別フィルター"),
+  limit: z.number().int().min(1).max(20).default(10)
+    .describe('Max cities to return | 最大返却市区町村数'),
+  includeLive: z.boolean().default(false)
+    .describe('Fetch latest MLIT transactions live (requires MLIT_API_KEY) | ライブ取引価格取得'),
+  output_mode: outputModeField,
+});
+export type ArbitrageScanInput = z.infer<typeof ArbitrageScanInput>;
+
+export const ArbitrageSignalItem = z.object({
+  city: z.string().describe('市区町村名'),
+  rosenka: z.number().describe('路線価中央値 (円/㎡)'),
+  koji: z.number().describe('公示地価中央値 (円/㎡)'),
+  transactionMedian: z.number().describe('取引価格中央値 (円/㎡)'),
+  rosenkaKojiRatio: z.number().describe('路線価/公示比 (基準: ≈0.80)'),
+  transactionKojiRatio: z.number().describe('取引/公示比 (基準: ≈1.05)'),
+  assessmentGap: z.number().describe('取引vs路線価の差 (正=取引が路線価超)'),
+  signal: ArbitrageSignalType.describe('シグナル分類'),
+  interpretation: z.string().describe('日本語解釈テキスト'),
+});
+export type ArbitrageSignalItem = z.infer<typeof ArbitrageSignalItem>;
+
+export const ArbitrageScanOutput = z.object({
+  prefecture: z.string(),
+  scannedCities: z.number().describe('スキャンした市区町村数'),
+  items: z.array(ArbitrageSignalItem).describe('検出シグナル一覧'),
+  benchmark: z.object({
+    nationalRosenkaKojiRatio: z.number().describe('全国標準: 路線価/公示比 ≈ 0.80'),
+    nationalTxKojiRatio: z.number().describe('全国標準: 取引/公示比 ≈ 1.05'),
+  }).describe('比較用ベンチマーク'),
+  markdownReport: z.string().describe('Markdown 形式の分析レポート'),
+  dataYear: z.number().describe('データ年次'),
+  liveDataUsed: z.boolean().describe('MLIT ライブ取引データ使用'),
+  attribution: z.string(),
+});
+export type ArbitrageScanOutput = z.infer<typeof ArbitrageScanOutput>;

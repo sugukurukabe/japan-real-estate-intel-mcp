@@ -1,0 +1,79 @@
+{
+  "$schema": "https://registry.modelcontextprotocol.io/schema/server.json",
+  "name": "jp.realestate-mcp/server",
+  "description": "Japan real estate intelligence MCP server: land price, rosenka, transactions, population, disaster risk, renovation yield, contract support for 10 prefectures. Cross-analysis of 17+ data sources including PLATEAU 3D, foot traffic, education, corporate presence, transport, and medical facilities.",
+  "version_detail": {
+    "version": "6.15.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/sugukuru/japan-real-estate-intel-mcp"
+  },
+  "packages": [
+    {
+      "registry_name": "npm",
+      "name": "@sugukuru/japan-real-estate-intel-mcp",
+      "version": "6.15.0",
+      "runtime": "node",
+      "runtime_arguments": ["--experimental-vm-modules"],
+      "environment_variables": [
+        {
+          "name": "API_KEY",
+          "description": "API key for HTTP mode authentication (optional for stdio)",
+          "required": false
+        },
+        {
+          "name": "MLIT_API_KEY",
+          "description": "MLIT Real Estate Information Library API key for live transaction data",
+          "required": false
+        },
+        {
+          "name": "ESTAT_APP_ID",
+          "description": "e-Stat government statistics API application ID",
+          "required": false
+        }
+      ]
+    }
+  ],
+  "remotes": [
+    {
+      "transport_type": "streamable-http",
+      "url": "https://realestate-mcp.jp/mcp"
+    }
+  ],
+  "tools": [
+    "cross_analyze_real_estate_market",
+    "assess_property_risk",
+    "assess_family_friendly_score",
+    "predict_corporate_demand",
+    "generate_area_report",
+    "open_dashboard",
+    "compare_prefectures",
+    "drill_down_local_analysis",
+    "evaluate_store_location",
+    "simulate_landscape_impact",
+    "forecast_land_price_trend",
+    "scenario_what_if",
+    "portfolio_optimizer",
+    "simulate_aichi_future",
+    "discover_opportunities",
+    "analyze_renovation_yield",
+    "get_future_timeline",
+    "get_chochou_profile",
+    "recommend_renovation_targets",
+    "generate_contract_support_package",
+    "assess_contract_risk",
+    "composite_value_score",
+    "get_zoning_info",
+    "get_vacancy_stats",
+    "get_population_outlook",
+    "get_real_estate_macro_snapshot",
+    "detect_arbitrage_signals",
+    "quick_visual_summary",
+    "review_purchase_recommendation",
+    "simulate_leveraged_cashflow",
+    "search",
+    "fetch",
+    "search_area_candidates"
+  ]
+}

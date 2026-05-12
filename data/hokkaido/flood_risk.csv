@@ -1,0 +1,12 @@
+city,district,river_flood_risk,inland_flood_risk,storm_surge_risk,hazard_zone,notes
+札幌市中央区,札幌市中央区中心部,low,medium,high,danger,津波リスクが太平洋側で高い
+札幌市北区,札幌市北区中心部,medium,low,low,warning,石狩川・豊平川の融雪出水リスク
+札幌市白石区,札幌市白石区中心部,low,medium,high,danger,津波リスクが太平洋側で高い
+札幌市豊平区,札幌市豊平区中心部,low,low,low,caution,千島海溝地震の長周期震動に注意
+札幌市西区,札幌市西区中心部,low,high,high,danger,津波リスクが太平洋側で高い
+札幌市厚別区,札幌市厚別区中心部,low,low,low,caution,千島海溝地震の長周期震動に注意
+札幌市手稲区,札幌市手稲区中心部,medium,high,medium,warning,津波リスクが太平洋側で高い
+函館市,函館市中心部,low,low,low,caution,千島海溝地震の長周期震動に注意
+旭川市,旭川市中心部,medium,high,medium,warning,津波リスクが太平洋側で高い
+小樽市,小樽市中心部,low,low,low,caution,千島海溝地震の長周期震動に注意
+釧路市,釧路市中心部,high,high,low,danger,石狩川・豊平川の融雪出水リスク

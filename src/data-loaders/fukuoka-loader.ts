@@ -46,6 +46,7 @@ export class FukuokaLoader extends BaseLoader {
   readonly capabilities: LoaderCapabilities = {
     transactions: true, humanFlow: true, education: true, corporate: true, crime: true, plateau: false,
     transport: true, commercial: true, medical: true, neighborhoods: true,
+    zoning: true, vacancy: true, populationProjection: true, rosenka: true,
   };
 
   protected readonly geocodeMap = FUKUOKA_GEOCODE;

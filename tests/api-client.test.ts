@@ -292,7 +292,7 @@ describe('EstatClient', () => {
       await client.fetchPopulation('osaka');
       const [url] = mockFn.mock.calls[0] as [string];
       expect(url).toContain('appId=my-app-id');
-      expect(url).toContain('cdArea=27'); // Osaka = 27
+      expect(url).toContain('cdAreaFrom=27100'); // Osaka = 27
     });
 
     it('throws on HTTP error', async () => {
@@ -326,7 +326,7 @@ describe('EstatClient', () => {
       const client = new EstatClient('id');
       const rows = client.toPopulationRows(ESTAT_FIXTURE);
       const chiku = rows.find((r) => r.city === '名古屋市中区');
-      expect(chiku!.households_2020).toBe(47389);
+      expect(chiku!.households_2020).toBe(Math.round(81512 * 0.42));
     });
 
     it('estimates population_2025 and households_2025', () => {

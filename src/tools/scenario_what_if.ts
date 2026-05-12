@@ -67,6 +67,7 @@ export function scenarioWhatIf(input: ScenarioWhatIfInput): ScenarioWhatIfOutput
     includeHumanFlow: cap?.humanFlow ?? false,
     includeEducation: false,
     includeCorporate: false,
+    output_mode: 'detailed',
     includeTransport: false,
     includeCommercial: false,
     includeMedical: false,

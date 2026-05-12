@@ -1,0 +1,45 @@
+apiVersion: run.googleapis.com/v1
+kind: Job
+metadata:
+  name: rei-data-refresh
+  labels:
+    app: japan-real-estate-intel
+spec:
+  template:
+    spec:
+      template:
+        spec:
+          containers:
+            - image: gcr.io/PROJECT_ID/rei-data-refresh:latest
+              command: ["node", "dist/jobs/refresh-data.js"]
+              env:
+                - name: GCP_PROJECT
+                  value: "PROJECT_ID"
+                - name: BQ_DATASET
+                  value: "japan_real_estate"
+                - name: MLIT_API_KEY
+                  valueFrom:
+                    secretKeyRef:
+                      name: mlit-api-key
+                      key: latest
+              resources:
+                limits:
+                  cpu: "1"
+                  memory: "512Mi"
+          serviceAccountName: rei-data-refresh@PROJECT_ID.iam.gserviceaccount.com
+          maxRetries: 2
+          timeoutSeconds: 600
+---
+apiVersion: batch.googleapis.com/v1
+kind: CronJob
+metadata:
+  name: rei-data-refresh-schedule
+spec:
+  schedule: "0 6 * * MON"
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+            - image: gcr.io/PROJECT_ID/rei-data-refresh:latest
+              command: ["node", "dist/jobs/refresh-data.js"]

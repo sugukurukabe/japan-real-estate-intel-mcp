@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Privacy Policy — Japan Real Estate Intel MCP</title>
+  <style>
+    :root{--bg:#0d1117;--surface:#161b22;--text:#c9d1d9;--heading:#e6edf3;--accent:#58a6ff;--border:#30363d}
+    *{margin:0;padding:0;box-sizing:border-box}
+    body{font-family:-apple-system,BlinkMacSystemFont,system-ui,sans-serif;background:var(--bg);color:var(--text);line-height:1.7;padding:2rem 1rem}
+    .container{max-width:720px;margin:0 auto}
+    h1{color:var(--heading);font-size:1.6rem;margin-bottom:.5rem}
+    h2{color:var(--heading);font-size:1.2rem;margin:1.5rem 0 .5rem;border-bottom:1px solid var(--border);padding-bottom:.3rem}
+    p,ul{margin-bottom:1rem}
+    ul{padding-left:1.5rem}
+    a{color:var(--accent)}
+    .lang-toggle{display:flex;gap:.5rem;margin-bottom:1.5rem}
+    .lang-toggle button{padding:.4rem 1rem;border:1px solid var(--border);border-radius:6px;background:var(--surface);color:var(--text);cursor:pointer;font-size:.85rem}
+    .lang-toggle button.active{background:var(--accent);color:#fff;border-color:var(--accent)}
+    .section{display:none}
+    .section.active{display:block}
+    .effective{font-size:.85rem;color:#8b949e;margin-bottom:1.5rem}
+  </style>
+</head>
+<body>
+<div class="container">
+  <h1>Privacy Policy / プライバシーポリシー</h1>
+  <div class="lang-toggle">
+    <button class="active" onclick="toggle('en')">English</button>
+    <button onclick="toggle('ja')">日本語</button>
+  </div>
+
+  <div id="en" class="section active">
+    <p class="effective">Effective: 2026-05-11 &mdash; Last updated: 2026-05-11</p>
+
+    <h2>1. Operator</h2>
+    <p>Japan Real Estate Intel MCP ("Service") is operated by sugukuru ("we").<br>
+    Contact: via GitHub Issues at <a href="https://github.com/sugukuru/japan-real-estate-intel-mcp/issues">github.com/sugukuru/japan-real-estate-intel-mcp</a></p>
+
+    <h2>2. Data We Collect</h2>
+    <ul>
+      <li><strong>MCP Session Data:</strong> A random UUID per session. No persistent user accounts.</li>
+      <li><strong>OAuth 2.1 Tokens (if enabled):</strong> Authorization codes and access tokens stored in a local SQLite database. Tokens expire after the configured lifetime.</li>
+      <li><strong>Server Logs:</strong> IP address (via reverse proxy), request path, user-agent, timestamps. Retained for 30 days for operational purposes.</li>
+      <li><strong>API Keys:</strong> If you provide an API_KEY for authentication, it is compared in-memory. We do not log API key values.</li>
+    </ul>
+
+    <h2>3. Data We Do NOT Collect</h2>
+    <ul>
+      <li>Names, email addresses, or phone numbers</li>
+      <li>Conversation content between you and the AI model</li>
+      <li>Financial or payment information</li>
+      <li>Location data beyond what you explicitly provide as tool inputs</li>
+    </ul>
+
+    <h2>4. How We Use Data</h2>
+    <ul>
+      <li>Session management and rate limiting</li>
+      <li>Error monitoring and service reliability</li>
+      <li>Abuse prevention</li>
+    </ul>
+
+    <h2>5. Third-Party Services</h2>
+    <ul>
+      <li><strong>Government APIs (MLIT, e-Stat):</strong> We relay queries to Japanese government open-data APIs. No personal data is sent.</li>
+      <li><strong>Google Gemini (optional):</strong> If configured, area analysis prompts are sent to Google's API. See <a href="https://policies.google.com/privacy">Google Privacy Policy</a>.</li>
+      <li><strong>Sentry (optional):</strong> If SENTRY_DSN is configured, error reports may include stack traces and request metadata.</li>
+      <li><strong>Tile servers:</strong> Map tiles are loaded from OpenStreetMap and CARTO CDNs. See their respective privacy policies.</li>
+    </ul>
+
+    <h2>6. Data Retention</h2>
+    <p>MCP sessions expire after 30 minutes of inactivity. OAuth tokens expire per configuration (default: 1 hour). Server logs are retained for 30 days.</p>
+
+    <h2>7. Your Rights (GDPR / APPI)</h2>
+    <p>Since we collect minimal personal data, most GDPR/APPI rights are satisfied by default. You may request deletion of server logs referencing your IP address by contacting us via GitHub Issues. We will respond within 30 days.</p>
+
+    <h2>8. Security</h2>
+    <p>We use HTTPS (TLS 1.3 via Caddy), helmet security headers, rate limiting, and optional API key authentication. See our <a href="https://github.com/sugukuru/japan-real-estate-intel-mcp/blob/main/SECURITY.md">Security Policy</a>.</p>
+
+    <h2>9. Children</h2>
+    <p>This Service is not directed to children under 16. We do not knowingly collect data from minors.</p>
+
+    <h2>10. Changes</h2>
+    <p>We may update this policy. Changes will be posted here with an updated effective date. Continued use constitutes acceptance.</p>
+  </div>
+
+  <div id="ja" class="section">
+    <p class="effective">発効日: 2026-05-11 &mdash; 最終更新: 2026-05-11</p>
+
+    <h2>1. 運営者</h2>
+    <p>Japan Real Estate Intel MCP（以下「本サービス」）は sugukuru（以下「当方」）が運営しています。<br>
+    連絡先: <a href="https://github.com/sugukuru/japan-real-estate-intel-mcp/issues">GitHub Issues</a></p>
+
+    <h2>2. 収集するデータ</h2>
+    <ul>
+      <li><strong>MCPセッションデータ:</strong> セッションごとのランダムUUID。永続的なユーザーアカウントはありません。</li>
+      <li><strong>OAuth 2.1トークン（有効時）:</strong> 認可コードとアクセストークンをローカルSQLiteデータベースに保存。設定された有効期限で失効します。</li>
+      <li><strong>サーバーログ:</strong> IPアドレス（リバースプロキシ経由）、リクエストパス、ユーザーエージェント、タイムスタンプ。運用目的で30日間保持。</li>
+      <li><strong>APIキー:</strong> 認証用APIキーはメモリ内で比較されます。APIキーの値はログに記録しません。</li>
+    </ul>
+
+    <h2>3. 収集しないデータ</h2>
+    <ul>
+      <li>氏名・メールアドレス・電話番号</li>
+      <li>AIモデルとの会話内容</li>
+      <li>財務・決済情報</li>
+      <li>ツール入力として明示的に提供されたもの以外の位置情報</li>
+    </ul>
+
+    <h2>4. データの利用目的</h2>
+    <ul>
+      <li>セッション管理とレート制限</li>
+      <li>エラー監視とサービス信頼性の維持</li>
+      <li>不正利用の防止</li>
+    </ul>
+
+    <h2>5. 第三者サービス</h2>
+    <ul>
+      <li><strong>政府API（MLIT, e-Stat）:</strong> 日本政府のオープンデータAPIにクエリを中継します。個人データは送信されません。</li>
+      <li><strong>Google Gemini（オプション）:</strong> 設定時、エリア分析プロンプトがGoogleのAPIに送信されます。<a href="https://policies.google.com/privacy">Google プライバシーポリシー</a>を参照。</li>
+      <li><strong>Sentry（オプション）:</strong> SENTRY_DSN設定時、エラーレポートにスタックトレースとリクエストメタデータが含まれる場合があります。</li>
+      <li><strong>タイルサーバー:</strong> 地図タイルはOpenStreetMapおよびCARTO CDNから読み込まれます。</li>
+    </ul>
+
+    <h2>6. データの保持期間</h2>
+    <p>MCPセッションは30分間の非アクティブ後に失効します。OAuthトークンは設定に従い失効（デフォルト: 1時間）。サーバーログは30日間保持されます。</p>
+
+    <h2>7. あなたの権利（GDPR / 個人情報保護法）</h2>
+    <p>収集する個人データは最小限であるため、GDPR/個人情報保護法上の権利は原則として満たされています。IPアドレスを含むサーバーログの削除をGitHub Issuesを通じてご請求いただけます。30日以内に対応いたします。</p>
+
+    <h2>8. セキュリティ</h2>
+    <p>HTTPS（Caddy経由のTLS 1.3）、helmetセキュリティヘッダー、レート制限、オプションのAPIキー認証を使用しています。詳細は<a href="https://github.com/sugukuru/japan-real-estate-intel-mcp/blob/main/SECURITY.md">セキュリティポリシー</a>をご覧ください。</p>
+
+    <h2>9. 未成年者</h2>
+    <p>本サービスは16歳未満の方を対象としていません。未成年者のデータを故意に収集することはありません。</p>
+
+    <h2>10. 変更</h2>
+    <p>本ポリシーは更新される場合があります。変更は発効日を更新の上、本ページに掲載されます。継続利用は承諾とみなされます。</p>
+  </div>
+</div>
+<script>
+function toggle(lang) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.getElementById(lang).classList.add('active');
+  document.querySelectorAll('.lang-toggle button').forEach(b => b.classList.remove('active'));
+  event.target.classList.add('active');
+}
+</script>
+</body>
+</html>

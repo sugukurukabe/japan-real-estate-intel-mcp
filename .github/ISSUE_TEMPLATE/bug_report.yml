@@ -1,0 +1,55 @@
+name: Bug Report
+description: Report a bug or unexpected behavior
+labels: ["bug"]
+body:
+  - type: textarea
+    id: description
+    attributes:
+      label: Bug Description
+      description: A clear description of the bug.
+    validations:
+      required: true
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Steps to Reproduce
+      description: Steps to reproduce the behavior.
+      value: |
+        1. Call tool '...' with args { ... }
+        2. Observe output
+        3. Expected vs actual behavior
+    validations:
+      required: true
+  - type: dropdown
+    id: transport
+    attributes:
+      label: Transport
+      options:
+        - stdio
+        - Streamable HTTP
+        - Both
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: Server Version
+      placeholder: "6.11.0"
+    validations:
+      required: true
+  - type: dropdown
+    id: client
+    attributes:
+      label: MCP Client
+      options:
+        - Claude Desktop
+        - Cursor
+        - ChatGPT
+        - Custom
+    validations:
+      required: true
+  - type: textarea
+    id: logs
+    attributes:
+      label: Relevant Log Output
+      render: shell

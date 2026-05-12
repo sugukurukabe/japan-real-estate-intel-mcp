@@ -1,4 +1,440 @@
 # Changelog
+## [6.15.0] - 2026-05-11
+
+### Added — v6.15.0 価格トライアングル武器化パック
+
+#### Phase 1 — データ層
+- **`RosenkaRecord` interface** added to `src/data-loaders/types.ts` (city, district, year, median/max/min_per_sqm, sample_lines)
+- **`LoaderCapabilities.rosenka`** boolean flag added
+- **`BaseLoader.getRosenka()`** default implementation (loads `rosenka.csv`)
+- **`PrefectureLoader.getRosenka()`** added to interface
+- All 10 prefecture loaders updated with `rosenka: true` capability
+- **`scripts/fetch-rosenka.ts`** (new) — generates `data/{pref}/rosenka.csv` from `land_price.csv` using 路線価 ≈ 公示 × 0.80 ratio (519 rows across 10 prefectures)
+
+#### Phase 2 — 新ツール
+- **`ArbitrageSignalType`** Zod enum (`discount` | `inheritance_edge` | `overheated` | `fair`)
+- **`ArbitrageScanInput` / `ArbitrageSignalItem` / `ArbitrageScanOutput`** Zod schemas in `src/schemas.ts`
+- **`src/analysis/price_triangulation.ts`** (new) — `computeTriangulationForCity()`, `tryFetchLiveTransactionMedian()`, `buildMarkdownReport()`, `BENCHMARK` constants
+- **`src/tools/detect_arbitrage_signals.ts`** (new) — tool implementation
+- **`detect_arbitrage_signals`** registered in `src/server.ts` with TL;DR output mode
+- **`arbitrage_scan`** prompt registered (completable prefecture + signal_type)
+
+#### Phase 3 — 連環反映
+- **`composite_value_score`**: `computeLandPriceAxis` now calls `computeTriangulationForCity` and adds a `valueUpside` bonus (up to +10 pts) for discount-signal cities; evidence cites 路線価 data
+- **`discover_opportunities`**: pre-computes discount flags and assigns `discount_arbitrage` signal to matching cities
+- **`OpportunitySignalType`** enum extended with `'discount_arbitrage'`; `SIGNAL_TITLES` updated
+- **`forecast_land_price_trend`**: adds `triangulationContext` ({rosenka, currentSpread, fairValueRange, signal}) to Markdown output
+
+#### Phase 4 — UI
+- **Price Triangulation panel** added to `updateInsightPanel()` in `ui-src/main.ts`:
+  - 3-bar horizontal chart (路線価 / 公示 / 取引中央値)
+  - Color-coded `assessmentGap` badge (🟢 割安 / ⚪ 適正 / 🔴 過熱)
+  - `.rei-reveal` fade-in animation applied
+  - `id="price-triangle-panel"` for test targeting
+
+#### Phase 5 — テスト
+- `tests/rosenka.test.ts` (new, 8 tests)
+- `tests/price_triangulation.test.ts` (new, 8 tests)
+- `tests/detect_arbitrage_signals.test.ts` (new, 6 tests)
+- `tests/metadata.test.ts`: added `detect_arbitrage_signals` tool check
+- `tests/opportunity.test.ts`: added `discount_arbitrage` signal and triangulation panel tests
+- `tests/composite_ui.test.ts`: added rosenka citation check
+
+#### Macro snapshot (追加)
+
+- **`get_real_estate_macro_snapshot`** — 地価中央値YoY・取引3年・2050人口減の一枚化。`ESTAT_APP_ID` 設定時は e-Stat 建築物着工（`0003119768` / 都道府県 `XX000`）。金利は FRED CSV プロキシ `IRSTCB01JPM156N`。
+- **`src/analysis/macro_snapshot.ts`**, **`src/api-client/fred_policy_rate.ts`**（旧 `boj_rates.ts`）, **`src/tools/get_real_estate_macro_snapshot.ts`**, `EstatClient.fetchBuildingConstructionPrefectureSummary`
+- **`tests/macro_snapshot.test.ts`**, **`tests/fred_policy_rate.test.ts`**, `server.json` / `metadata.test.ts` 追記
+
+### Changed
+
+- Version bumped to `6.15.0` across package.json, src/server.ts, src/http.ts, ui/sw.js, ui/mcp-bridge.js, server.json
+- **`server.json` `tools`** — MCP Registry 掲載名を実行時と一致させ **33 本**に更新（`quick_visual_summary`, `review_purchase_recommendation`, `simulate_leveraged_cashflow` を含む）
+- **`tests/server_json_tools_sync.test.ts`** — `server.json` の `tools` に重複がないこと、および `createServer()` の `_registeredTools` キー集合と完全一致することを検証
+- **`tests/metadata.test.ts`** — 上記 3 ツールの掲載と `tools.length === 33` を検証
+- **`.gitignore`** — ローカル OAuth 用 `db/*.sqlite` / `*.sqlite-shm` / `*.sqlite-wal` を除外
+- **テスト（MCP SDK 互換）** — `_registeredTools` が `Map` でも `Record` でも注釈・登録アサートが走るよう [`tests/tool_annotations.test.ts`](tests/tool_annotations.test.ts)、[`tests/renovation.test.ts`](tests/renovation.test.ts)、[`tests/detect_arbitrage_signals.test.ts`](tests/detect_arbitrage_signals.test.ts)、[`tests/composite_ui.test.ts`](tests/composite_ui.test.ts) を更新
+- **ユーザー向け文言** — 「v2.x で対応予定」等をやめ、ローダー未提供時は「提供していません」「当該ローダーで未提供」に統一（[`src/tools/cross_analyze_real_estate_market.ts`](src/tools/cross_analyze_real_estate_market.ts)、[`src/analysis/local_drilldown.ts`](src/analysis/local_drilldown.ts)、[`src/analysis/comparison.ts`](src/analysis/comparison.ts)、[`src/tools/assess_family_friendly_score.ts`](src/tools/assess_family_friendly_score.ts)、[`src/tools/predict_corporate_demand.ts`](src/tools/predict_corporate_demand.ts)）
+- **ドキュメント** — [`README.md`](README.md)（履歴メモ・実データ手順・ツール一覧の現行への誘導）、[`data/data-README.md`](data/data-README.md)、[`data/tokyo/README.md`](data/tokyo/README.md)、[`docs/registry-submission.md`](docs/registry-submission.md)（`tools` 同期と `pnpm test` 後の publish を明記）
+
+### Registry / release（手作業）
+
+- **`server.json` を変更したリリース**では、Anthropic MCP Registry へ [`mcp-publisher publish --file server.json`](docs/registry-submission.md) を再実行すること（手元の認証・DNS は同ドキュメント参照）
+
+---
+
+## [6.14.0] - 2026-05-11
+
+### Added — UX Improvement Pack (v6.14.0)
+- **`output_mode` parameter** (`compact` | `detailed`, default `compact`) on 5 high-use tools:
+  `cross_analyze_real_estate_market`, `forecast_land_price_trend`, `discover_opportunities`,
+  `composite_value_score`, `get_chochou_profile`
+- **`outputModeField` + `withCompactOutput`** helpers exported from `src/schemas.ts`
+- **`applyOutputMode()` helper** in `src/server.ts` — prepends a `**[TL;DR]** …` line when
+  `output_mode = 'compact'` so the AI can present a concise headline before any JSON payload
+- **Fade-in reveal animation** (`@keyframes reiFadeIn`) in `ui/dashboard.html`:
+  - `rei-reveal` class with 0.38 s cubic-bezier transition applied to `#report-content` and
+    `#opportunity-content` whenever their overlay gains the `.visible` class (via `MutationObserver`)
+  - `#insight-panel` content re-triggers the animation on each update
+
+### Changed
+- **Info → Debug log level** for `withErrorHandling` start/ok events — reduces noise visible to
+  end-users in MCP log streams; only warnings and errors remain at visible levels
+- **Cursor rule** `.cursor/rules/response-style.mdc` (created in v6.14.0 pre-work): enforces
+  outputting only after the final answer is determined, no intermediate streaming
+- Version bump 6.13.0 → 6.14.0 across `package.json`, `src/server.ts`, `src/http.ts`,
+  `ui/sw.js`, `ui/mcp-bridge.js`, `ui/dashboard.html`, `server.json`
+
+## [6.13.0] - 2026-05-11
+
+### Added — Data Enrichment (Zoning / Vacancy / Population Projection)
+- **get_zoning_info tool**: Look up zoning type (用途地域), coverage ratio (建蔽率), floor area ratio (容積率), and height limits for any area across 10 prefectures
+- **get_vacancy_stats tool**: Vacancy rate statistics by municipality with breakdown (for-rent/for-sale/other) compared to national average (13.6%)
+- **get_population_outlook tool**: Population projection to 2050 with decline rate per municipality based on NIPSSR estimates
+- **3 new MCP prompts**: `zoning_check`, `vacancy_analysis`, `population_outlook_report` with area completion
+- **ZoningRecord, VacancyRecord, PopulationProjectionRecord** types added to data-loaders
+- **3 new LoaderCapabilities flags**: `zoning`, `vacancy`, `populationProjection` — all enabled for 10 prefectures
+- **Data generation scripts**: `gen-zoning-from-transactions.ts`, `fetch-vacancy-data.ts`, `fetch-population-projection.ts`
+- **Dashboard widgets**: Zoning badge display, vacancy donut chart, population projection line graph added to insight panel
+- **Capability badges**: Added `用途地域`, `空き家`, `人口推計` badges
+
+### Enhanced
+- **composite_value_score**: Risk axis now factors in vacancy rate (high vacancy = lower score); Future plan axis now incorporates 2050 population projection (population decline = lower score)
+- **discover_opportunities**: New `declining_area` signal type for areas with >20% vacancy rate and declining land prices; vacancy rate integrated into risk assessment
+
+### Changed
+- All 10 prefecture loaders + BaseLoader updated with 3 new data methods
+- StubLoader updated with vacancy/zoning/populationProjection empty defaults
+- `OpportunitySignalType` enum expanded with `declining_area`
+- Version bump to 6.13.0 across all files
+
+### Tests
+- `tests/zoning.test.ts`: 8 tests for zoning loader + tool
+- `tests/vacancy.test.ts`: 8 tests for vacancy loader + tool
+- `tests/population_projection.test.ts`: 8 tests for population projection loader + tool
+- `tests/metadata.test.ts`: Added v6.13.0 tool presence checks
+- `tests/tool_annotations.test.ts`: Updated version check to 6.13.0
+
+## [6.12.0] - 2026-05-11
+
+### Added — Composite Value Score
+- **composite_value_score tool**: 5-axis fusion engine (land price, education, transport, future plans, risk) that produces a 0-100 composite score with tier rating (S/A/B/C), peer comparison, and AI narrative
+- **composite_value_report prompt**: MCP prompt with completion-supported prefecture + area + horizon inputs
+- **Dashboard Composite Score panel**: SVG radar chart, tier badge, axis detail bars, peer comparison table, and AI narrative rendering in the insight panel
+- **Gemini composite narrative**: Executive summary + top 3 strengths + 2 cautions template; fallback template when Gemini is unavailable
+
+### Added — Brand Unification
+- **New SVG logo**: Japan archipelago silhouette + house icon + rising chart bars with gradient design
+- **PNG generation script** (`scripts/gen-logos.mjs`): Generates 192/512px icons, maskable icon, and 1200x630 OG image from SVG
+- **Unified icons**: All PNG icons (assets + ui/icons) now share the same design
+- **README logo**: Centered logo display at the top of README.md
+- **Maskable PWA icon**: Separate maskable entry in `manifest.webmanifest`
+
+### Fixed — UI Polish
+- **Chochou picker**: `loadChochouForWard` now fetches from `/data/aichi/chochou.json` and populates the select dynamically
+- **Contract mode Markdown**: Replaced `replace(/\n/g,'<br>')` with proper `markdownToHtml` (tables, lists, blockquotes)
+- **Capability badges**: Prefecture selector shows data availability pills (人流, 教育, 企業, etc.) with active/disabled states
+- **3D mode alignment**: `applyToolData` now syncs `window.__currentMode` when `mode: '3d'` is received
+- **postMessage origin**: Bridge resolves target origin from `document.referrer`; falls back to `'*'` only when unknown
+- **OG image**: Updated to 1200x630 branded image with cache-busting `?v=6.12.0`
+
+### Changed
+- Version bumped to 6.12.0 across package.json, server.ts, http.ts, mcp-bridge.js, sw.js, server.json
+- `server.json` tools array now includes `composite_value_score` (25 tools total)
+
+### Tests
+- `tests/composite_value.test.ts`: 9 tests for scoring range, axes, weights, tiers, peer comparison, fallback narrative
+- `tests/composite_ui.test.ts`: 5 tests for tool registration, prompt registration, schema validation
+- `tests/metadata.test.ts`: Added composite_value_score in server.json tools check
+
+### Dependencies
+- Added `sharp` (dev) for PNG generation from SVG
+
+## [6.11.0] - 2026-05-11
+
+### Added — Official Directory Readiness
+- **Anthropic MCP Registry**: `server.json` with namespace `jp.realestate-mcp/server`, npm + remote URL + tool listing
+- **OpenAI Apps Directory**: `_meta.ui.domain` on widget resources, CSP declarations, test prompts document
+- **Privacy Policy**: `/privacy-policy.html` with EN/JP toggle, GDPR + APPI coverage
+- **Terms of Service**: `/terms.html` with EN/JP toggle, investment disclaimer, governing law
+- **Bilingual tool descriptions**: All 24 tools now have `English | 日本語` format descriptions
+- **README English-first**: English overview, Quick Install (Claude/Cursor/npm), Key Features at top
+- **Prometheus metrics**: `/metrics` endpoint with `mcp_tool_calls_total`, `mcp_tool_duration_seconds`, `mcp_active_sessions`
+- **Sentry opt-in**: `SENTRY_DSN` environment variable enables error tracking (no-op when absent)
+- **X-Request-ID**: Every HTTP request gets a traceable UUID in request/response headers and logs
+- **CSP for static UI**: Path-based Content-Security-Policy via helmet (MCP JSON endpoint excluded)
+- **Docker GHCR workflow**: `.github/workflows/docker.yml` builds multi-arch images on tag push
+- **Community files**: `CODE_OF_CONDUCT.md`, `.github/ISSUE_TEMPLATE/`, PR template, `dependabot.yml`
+- **Logo & branding**: `assets/logo.svg`, OG meta tags, favicon in `dashboard.html`
+- **Registry submission guide**: `docs/registry-submission.md` (DNS TXT + mcp-publisher CLI)
+- **Listing checklist**: `docs/listing-checklist.md` (awesome-mcp-servers, Smithery, mcp.so, Glama)
+- **Screenshots directory**: `docs/screenshots/README.md` with capture guide
+
+### Changed
+- **Tool annotations**: All tools now explicitly declare `destructiveHint: false` and `openWorldHint: false`
+- **`package.json`**: Added `mcpName`, `repository`, `homepage`, `bugs` fields
+- **README badges**: npm version/downloads, CI, Docker, MCP Registry, License
+- **README roadmap**: Updated to v6.11.0 with current feature list
+- **`SECURITY.md`**: Version table updated from 2.x to 6.x, security measures updated
+
+### Tests
+- **`tests/server_json.test.ts`**: 8 tests validating `server.json` schema compliance
+- **`tests/metadata.test.ts`**: 9 tests ensuring version consistency across all files
+- **`tests/tool_annotations.test.ts`**: Expanded to 6 tests (added `destructiveHint`, `openWorldHint`, bilingual checks)
+- **`tests/tiers.test.ts`**: 10 tests (from v6.10.0)
+
+### Dependencies
+- Added `prom-client` (Prometheus metrics)
+- Added `@sentry/node` (error tracking opt-in)
+
+## [6.10.0] - 2026-05-11
+
+### Fixed
+- **階層チェックの重大バグ**: `withErrorHandling` の tier デフォルトが `'free'` にハードコードされており、`DEFAULT_TIER` 環境変数が無視されていた問題を修正。Pro/Enterprise ツールのゲーティングが正常に動作するように
+
+### Added
+- **PWA 配線**: `<link rel="manifest">`, `apple-touch-icon`, `theme-color`, ServiceWorker 登録を `dashboard.html` に追加。iPad / Android でホーム画面追加が可能に
+- **PWA インストール促進**: `beforeinstallprompt` によるフローティングボタン + iOS Safari 向け手動手順カード
+- **モバイル / タブレット対応 CSS**: `@media (max-width: 900px / 600px)` でパネル縦並び化、タップサイズ 44px+ 保証、renovation/contract フォームのレスポンシブ化
+- **統一 Toast コンポーネント**: `Toast.show(level, msg)` API で info/success/warning/error を表示。`alert()` を全廃
+- **ローディングオーバーレイ**: `ReiLoading.show(el, msg)` / `ReiLoading.hide(el)` でスピナー + メッセージを表示
+- **オフライン / オンライン通知**: `navigator.onLine` 状態変化をトーストで通知
+- **初回ツアー**: quickstart オーバーレイの自動表示 + 4 ステップスポットライトガイド（`?tour=1` で再表示可能）
+- **Progress Primitive 拡大**: `analyze_renovation_yield` と `generate_contract_support_package` にステップ型進行通知を追加
+- **不動産業者向けクイックスタートガイド**: `docs/agent-quickstart.md` を新規作成（3 分で始める + 4 体験動線 + FAQ）
+- **README.md**: トップに「不動産業者の方へ」セクションとガイドリンクを追加
+- **ティア回帰テスト**: `tests/tiers.test.ts` を新規作成（10 テスト）
+
+### Changed
+- `ui/sw.js`: CACHE_VERSION を `rei-v6.10.0` にバンプ、`mcp-bridge.js` を precache に追加
+- バージョン bump: 6.9.1 → 6.10.0
+
+## [6.9.1] - 2026-05-11
+
+### Added
+- **本番 HTTPS デプロイ** at `https://realestate-mcp.jp` (Caddy + Let's Encrypt)
+- **ドメイン変更手順**を `docs/deploy.md` に追記（`Caddyfile` 1 行 + `caddy reload` で無停止切り替え可能）
+
+### Changed
+- `Caddyfile`: ドメインを `realestate-mcp.jp, www.realestate-mcp.jp` に固定
+- `src/http.ts`: `app.set('trust proxy', 1)` を追加し、Caddy リバースプロキシ背後で `req.ip` とレートリミットが正常動作するよう修正
+- すべてのドキュメント（`docs/deploy.md`, `docs/deployment.md`, `docs/claude-desktop-setup.md`, `docs/chatgpt-integration.md`）のプレースホルダを `realestate-mcp.jp` に統一
+- バージョン bump: 6.9.0 → 6.9.1
+
+## [6.9.0] - 2026-05-11
+
+### Added
+- **売買契約支援スイート (Contract Intelligence)**: プロの不動産業者が商談中に契約リスク・特約・価格交渉を即時支援
+- **2 つの新規 MCP ツール**:
+  - `generate_contract_support_package`: リスクマトリックス・価格交渉アンカー・推奨特約を Markdown で生成
+  - `assess_contract_risk`: 融資特約・検査・将来価値条項などのリスクをスコアリングし、ディールブレーカーを検出
+- **契約専用ダッシュボード**: `?mode=contract` で区・町丁目・価格・築年数を入力し、2 つのツールを呼び出し可能
+- **Pro ティア対応**: 2 新ツールを Pro/Enterprise に追加
+- **ドキュメント**: `docs/contract-support-guide.md`（プロ業者向け体験シナリオ 2 本）
+- **テスト**: 6 件の新規テスト（スキーマ + ツール動作）
+
+### Changed
+- バージョン bump: 6.8.0 → 6.9.0
+
+## [6.8.0] - 2026-05-11
+
+### Added
+- **名古屋リノベ利回り意思決定スイート**: 愛知県・名古屋市の不動産業者向け、リノベ転売/賃貸利回り判断の専用機能群
+- **4 つの新規 MCP ツール**:
+  - `analyze_renovation_yield`: 町丁目×物件条件から取得価格・リノベ費用・想定賃料・表面/実質利回りを算出
+  - `get_future_timeline`: 2025-2050年の将来計画タイムライン（再開発・インフラ・人口推計）
+  - `get_chochou_profile`: 町丁目単位の現状プロファイル（地価・人口・進行中計画）
+  - `recommend_renovation_targets`: 名古屋市全16区の利回り上位町丁目をランキング
+- **リノベ利回りエンジン** (`src/analysis/renovation_yield.ts`): 地価データ×築年数×面積から賃料推定、リノベコスト3段階、表面/実質利回り、出口戦略を算出
+- **未来タイムラインエンジン** (`src/analysis/future_timeline.ts`): `future_infrastructure.json` + `nagoya-plans.json` + 人口推計を年次統合
+- **名古屋市API クライアント** (`src/api-client/nagoya.ts`): 再開発・都市計画データの読み込み + chochou.json からの町丁目セレクタ
+- **EstatClient 拡張**: `fetchHouseholdComposition`, `fetchVacancyStats`, `fetchEconomicCensus` の 3 メソッド追加
+- **MlitClient 拡張**: `fetchTransactionsByChochou` で町丁目レベルフィルタリング
+- **ダッシュボード `?mode=renovation`**: 4タブ（未来/現状/リスク/収益性）+ 町丁目セレクタ + `callServerTool` 配線
+- **データファイル新規**:
+  - `data/aichi/chochou.json`: 名古屋市16区 205町丁目 + 中心座標
+  - `data/aichi/nagoya-plans.json`: 19件の再開発・都市計画プロジェクト
+  - `data/aichi/future_infrastructure.json` に名古屋駅前再開発・栄再開発・金山再開発を追加
+- **ドキュメント**: `docs/renovation-mode-guide.md` — 不動産業者向け体験シナリオ 3 本
+- **テスト**: 21件の新規テスト (renovation.test.ts)
+
+### Fixed
+- `withErrorHandling` のティア名 mismatch 修正: `cross_analyze` → `cross_analyze_real_estate_market` 等、4ツールの短縮名を実 MCP tool name に統一
+
+### Changed
+- バージョン bump: 6.7.0 → 6.8.0
+- `tiers.ts`: 新規4ツールを Free/Pro ティアに追加
+
+## [6.7.0] - 2026-05-10
+
+### Added
+- **MCP Apps UI 双方向化**: Opportunity カードのアクションボタン (`data-tool`) が `callServerTool` で実際にサーバーツールを呼び出すように配線
+- **Leaflet ポップアップ深掘り**: 地図上のポップアップに「深掘り」「AIに質問」ボタンを自動注入。`drill_down_local_analysis` を呼び出し、結果をAIに送信
+- **sendMessage 配線**: Opportunity カードの「Claudeに質問」ボタン、質問チップ (`userQuestionSuggestions`) がクリックで AI チャットにメッセージを送信
+- **updateContext 自動発火**: 都道府県切替・市区町村選択・レイヤー変更・モード変更で `__mcpBridge.updateContext()` を自動発火。AIがユーザーの現在の表示状態を把握
+- **Progress トースト UI**: `mcp-bridge.js` に `notifications/progress` リスナーを追加。画面上部にプログレスバー + ステップラベルを表示。完了後2秒で自動消去
+- **Gemini 洞察セクション**: Opportunity カードに `creativeAngle`（AI洞察）と `userQuestionSuggestions`（質問チップ）セクションを追加
+- **Claude Desktop セットアップガイド**: `docs/claude-desktop-setup.md` を新設。HTTP接続設定サンプル、体験シナリオ3本（投資・出店・災害リスク）、トラブルシューティング
+
+### Changed
+- バージョン bump: 6.6.0 → 6.7.0 (`package.json`, `src/server.ts`, `src/http.ts`, `ui/mcp-bridge.js`, `tests/tool_annotations.test.ts`)
+
+## [6.6.0] - 2026-05-10
+
+### Added
+- **VPS デプロイ + CloudFlare Tunnel**: `docker-compose.yml` に `--profile tunnel` オプション追加。Caddy (Option A) と CloudFlare Tunnel (Option B) の2パターンをサポート。デプロイガイド `docs/deploy.md` 新設
+- **BigQuery + Cloud Run データ基盤**: `BigQueryProvider` (`src/analysis/bigquery_provider.ts`) を実装。`OpportunityDataProvider` の BigQuery 版。`infra/bigquery-schema.sql` / `infra/cloudrun-job.yaml` でスキーマとジョブ定義
+- **OAuth 2.1 + PKCE**: `src/auth/oauth-store.ts` (SQLite 永続化) + `src/auth/oauth-routes.ts` (Express ルート)。RFC 8414 メタデータ、認可コード + PKCE、リフレッシュトークン、自動クリーンアップ対応
+- **Gemini 構造化JSON連携**: `src/analysis/gemini_narrative.ts` で `@google/genai` SDK を使い、Opportunity Radar カードに `creativeAngle` (独創的洞察) と `userQuestionSuggestions` (質問候補) を生成。`useGeminiNarrative` フラグで opt-in
+- **Logging プリミティブ (MCP)**: `withErrorHandling` 内で `server.sendLoggingMessage()` を呼び出し、ツール実行の開始/成功/失敗をクライアントに通知
+- **Progress プリミティブ (MCP)**: `generate_area_report` でPDF生成時に `notifications/progress` を送信。6ステップの進捗通知（クロス分析→人口→Markdown→ブランディング→取引事例→PDF完了）
+- **ティアリング実行時チェック**: `withErrorHandling` で `isToolAllowed(tier, toolName)` を呼び出し、Free/Pro/Enterprise に応じたツールアクセス制御を実施。ブロック時は日本語エラーメッセージ + ログ通知
+- **`.env.production.example`**: 本番デプロイ用環境変数テンプレート
+
+### Changed
+- `OpportunityCard` スキーマに `creativeAngle` (nullable), `userQuestionSuggestions` (optional) を追加
+- `DiscoverOpportunitiesInput` に `useGeminiNarrative` フラグを追加
+- `docker-compose.yml` で profiles (`caddy`, `tunnel`) を使い分け可能に
+- Version bump: 6.5.1 → 6.6.0
+
+### Dependencies
+- `@google-cloud/bigquery` 8.3.0
+- `@google/genai` 2.0.1
+- `better-sqlite3` 12.9.0
+- `@types/better-sqlite3` 7.6.13
+
+## [6.5.1] - 2026-05-10
+
+### Added
+- **`OpportunityDataProvider` interface** (`src/analysis/opportunity_provider.ts`): Abstraction layer
+  for data sourcing with `getCities()`, `getCityMetrics()`, `getAllRawData()`, and optional
+  `getFreshTransactionSignal()`. `LocalCsvProvider` implements this using existing data loaders
+- **Tool layer separation** (`src/tools/discover_opportunities.ts`): Async `discoverOpportunitiesTool()`
+  with DI for `OpportunityDataProvider`, enabling MLIT freshness and future BigQuery providers
+- **MLIT freshness integration** (`src/analysis/external_freshness.ts`): `tryFetchMlitFreshness()`
+  fetches latest-quarter transactions via MLIT API when `includeExternalFreshness=true` and
+  `MLIT_API_KEY` is set. Graceful fallback to CSV-only on missing key or API failure
+- **Schema enhancements** (`src/schemas.ts`):
+  - `DiscoverOpportunitiesInput.includeExternalFreshness` (boolean, default false)
+  - `OpportunityCard.uiActions` (array of `{ label, tool, args }` for UI button rendering)
+  - `OpportunityCard.evidence.freshTransactionSignal` (MLIT live signal or null)
+  - `DiscoverOpportunitiesOutput.attribution` (promoted from ad-hoc `structuredContent` to Zod schema)
+  - `FreshTransactionSignal` and `OpportunityUiAction` Zod types
+- **Dashboard uiActions-driven rendering**: Opportunity Radar cards now render action buttons from
+  `uiActions` array. Fresh MLIT signals displayed as badge when available
+- **New tests**: uiActions validation (4 elements, valid tool names), attribution Zod parse,
+  `includeExternalFreshness=false` fetch spy, mock Provider injection, freshTransactionSignal null check
+
+### Changed
+- `server.ts` discover_opportunities handler now uses async `discoverOpportunitiesTool` with full
+  `structuredContent` (attribution included in schema, not as ad-hoc property)
+- `src/analysis/opportunity.ts` scoring helpers exported for reuse; `discoverOpportunities()` retained
+  as synchronous backward-compatible wrapper
+
+## [6.5.0] - 2026-05-10
+
+### Added
+- **Opportunity Radar** (`discover_opportunities` tool): Cross-scans all cities in a prefecture
+  and returns ranked "opportunity cards" tailored to the user's goal (investment, store, family,
+  office, development). Combines land price, population, human flow, education, corporate,
+  transport, commercial, medical, and disaster data per city
+- **Opportunity analysis engine** (`src/analysis/opportunity.ts`): Goal-weighted multi-metric
+  scoring with 7 signal types (undervalued_growth, high_flow_low_commercial,
+  education_medical_hub, corporate_momentum, low_risk_upside, transit_oriented, population_inflow).
+  Budget-level filtering and markdown report generation
+- **Opportunity schemas** (`src/schemas.ts`): `DiscoverOpportunitiesInput`,
+  `DiscoverOpportunitiesOutput`, `OpportunityCard`, `OpportunitySignalType` Zod schemas
+- **`opportunity_radar` prompt**: Completable prefecture/goal/horizon prompt that calls
+  `discover_opportunities` and instructs deep-dive analysis on top cards
+- **Dashboard Opportunity Radar UI**: Overlay panel with scored cards, signal reasons, risk
+  summary, and action buttons (deep-dive, What-if, report, map view). Available both via
+  MCP App bridge (`callServerTool`) and local heuristic fallback
+- **Opportunity test suite** (`tests/opportunity.test.ts`): 10 tests covering scoring, Zod schema
+  validation, ranking order, budget filtering, data coverage, goal-specific tools, markdown
+  toggle, tool/prompt registration, and UI button presence
+- **Search catalog entry**: `discover_opportunities` indexed for search/fetch discovery
+- **Tier configuration**: `discover_opportunities` added to free and pro tiers;
+  `opportunity_radar` prompt added to pro prompts
+
+### Data expansion roadmap (design only, no runtime changes)
+- Short-term: Connect existing MLIT/e-Stat API clients to opportunity engine for fresh signals
+- Mid-term: `data:refresh:opportunity` command with acquisition timestamps and coverage stats
+- Long-term: Cloud Run Jobs for periodic MLIT/e-Stat ingestion, BigQuery area×year×metric
+  history tables, Gemini structured JSON narrative generation, Firestore/Cloud SQL user
+  watch-lists and notification history
+- `OpportunityDataProvider` interface designed for future BigQuery backend swap
+
+## [6.4.0] - 2026-05-10
+
+### Added
+- **MCP Completion primitive**: Autocompletion for `prefecture` and `area` (city) prompt
+  arguments via the SDK `completable()` wrapper. The server now advertises `completions`
+  capability and responds to `completion/complete` requests with matching suggestions
+- **Area candidate search tool** (`search_area_candidates`): Tool-call friendly fallback for
+  hosts that do not support tool argument completion directly. Use before domain tools to find
+  valid `area` / `city` values from a prefecture and partial query
+- **Completion provider** (`src/completion/area-completion.ts`): Prefix-match filtering
+  over prefecture display names and per-prefecture city lists from data-loader geocode maps.
+  Supports comma-separated prefecture completion and common reading aliases such as
+  `なごやしなかむら` -> `名古屋市中村区`
+- **`getCities()` method** on `PrefectureLoader` interface and `BaseLoader`: Exposes
+  geocode map keys as a city name list for completion lookups
+- **Completion test suite** (`tests/completion.test.ts`): Tests covering prefecture
+  completion, area completion with context, unknown prefecture fallback, and SDK integration
+  (completable schema verification, capabilities registration, direct candidate tool fallback)
+
+### Changed
+- **Prompt argument schemas**: `prefecture`, `area`, `city`, and `prefectures` arguments
+  on 7 prompts (`investment_report`, `store_location_evaluation`, `prefecture_comparison`,
+  `land_price_forecast_report`, `scenario_what_if_analysis`, `portfolio_optimization`,
+  `aichi_future_value`) now wrapped with `completable()` for autocompletion support
+- Server version bumped to `6.4.0` in `package.json`, `src/server.ts`, and `src/http.ts`
+
+## [6.3.0] - 2026-05-10
+
+### Added
+- **MCP Apps UI integration**: Dashboard (2D/3D) now aligned with MCP Apps extension
+  (`@modelcontextprotocol/ext-apps` v1.7.1). Uses `registerAppTool` and `registerAppResource`
+  from the official SDK
+- **MCP App bridge** (`ui/mcp-bridge.js`): Lightweight inline postMessage bridge implementing
+  the MCP Apps protocol (v2026-01-26). Handles `ui/initialize` handshake, tool result reception,
+  and bidirectional `tools/call` from the dashboard iframe to the MCP server
+- **Interactive dashboard features**: Scenario What-If slider with live `scenario_what_if` calls,
+  AI cross-analysis button, report export button, prefecture comparison button, and land price
+  forecast button — all callable via `__mcpBridge.callServerTool()`
+- **Context updates**: Dashboard sends `ui/update-model-context` notifications to keep the AI
+  model aware of user navigation (prefecture changes, layer selections, viewed areas)
+- **Tiering configuration** (`src/tiers.ts`): Free/Pro/Enterprise tier configuration mapping MCP
+  primitives to paid features. Free tier: 7 tools + 50 calls/month. Pro: all 18 tools +
+  MCP Apps dashboards + branded export. Runtime enforcement is intentionally deferred until
+  account identity and usage metering are available
+- **CSP configuration**: Dashboard resources declare `resourceDomains` and `connectDomains`
+  for Leaflet, Carto tiles, jsDelivr, and OpenStreetMap tile server access
+- **Design documentation** (`docs/v6.3.0-design.md`): User personas, ideal end-to-end flow,
+  MCP primitive mapping, tiering design, and phased implementation roadmap
+- **MCP Apps test suite** (`tests/mcp_apps.test.ts`): 7 tests covering bridge injection,
+  protocol compliance, action buttons, and resource URI validation
+
+### Changed
+- **`open_dashboard` tool**: Migrated from `server.tool()` to `registerAppTool()` with
+  `_meta.ui.resourceUri` (was incorrectly using `uri`). Returns dynamic `resourceUri`
+  based on 2D/3D mode selection
+- **Dashboard resources**: Migrated from `server.resource()` to `registerAppResource()` with
+  `RESOURCE_MIME_TYPE` (`text/html;profile=mcp-app`) instead of `text/html`
+- **Dashboard HTML injection**: `getDashboardHtml()` and `getDashboard3dHtml()` now inject
+  the MCP bridge script inline before `</body>`, making each dashboard a self-contained MCP App
+- Server version bumped to `6.3.0` in `package.json`, `src/server.ts`, and `src/http.ts`
+
+### Dependencies
+- Added `@modelcontextprotocol/ext-apps` v1.7.1
+
+### Known Limitations
+- **2D/3D dashboard resourceUri**: `open_dashboard` tool declares a fixed `_meta.ui.resourceUri`
+  (2D) at registration time. At runtime it returns the correct 3D URI in the result `_meta`,
+  but hosts that cache the registration-time URI may not switch to 3D UI automatically.
+  Workaround: user can call `open_dashboard` again with `mode: "3d"`, or we may split into
+  two separate tools (`open_dashboard_2d` / `open_dashboard_3d`) in a future release.
+
 ## [6.2.0] - 2026-05-10
 
 ### Added
@@ -94,11 +530,6 @@
 - Mode toggle bar now includes a 'Field Mode' button
 - Aichi transactions.csv expanded to ~170 rows covering Nagoya districts, Toyoda, Okazaki, Tokoname, etc.
 
-
-All notable changes to `@sugukuru/japan-real-estate-intel-mcp` are documented here.
-
-Format: [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)  
-Versioning: [Semantic Versioning](https://semver.org/)
 
 ---
 
@@ -349,7 +780,7 @@ Versioning: [Semantic Versioning](https://semver.org/)
 
 ---
 
-## [2.4.0] – 2026-04-XX — Neighborhood Real Data + Osaka + Three.js 3D Viewer
+## [2.4.0] – 2026-04-15 — Neighborhood Real Data + Osaka + Three.js 3D Viewer
 
 ### Added
 - Neighborhood-level (町丁目) real data for Aichi (69 rows), Tokyo (15 rows), Osaka (27 rows)
@@ -364,7 +795,7 @@ Versioning: [Semantic Versioning](https://semver.org/)
 
 ---
 
-## [2.3.0] – 2026-03-XX — PLATEAU 3D Shadow Simulation
+## [2.3.0] – 2026-03-20 — PLATEAU 3D Shadow Simulation
 
 ### Added
 - `simulate_landscape_impact` tool — Sun position (SunCalc) + shadow polygon generation
@@ -373,7 +804,7 @@ Versioning: [Semantic Versioning](https://semver.org/)
 
 ---
 
-## [2.2.0] – 2026-02-XX — Store Location Evaluation + Transport/Commercial/Medical Data
+## [2.2.0] – 2026-02-25 — Store Location Evaluation + Transport/Commercial/Medical Data
 
 ### Added
 - `evaluate_store_location` tool with type-specific weighting (8 store types)
@@ -383,7 +814,7 @@ Versioning: [Semantic Versioning](https://semver.org/)
 
 ---
 
-## [2.1.0] – 2026-01-XX — Prefecture Comparison + Neighborhood Drill-Down
+## [2.1.0] – 2026-01-15 — Prefecture Comparison + Neighborhood Drill-Down
 
 ### Added
 - `compare_prefectures` tool — up to 5 prefectures, radar chart data, ranking, diff highlights
@@ -393,7 +824,7 @@ Versioning: [Semantic Versioning](https://semver.org/)
 
 ---
 
-## [2.0.0] – 2025-12-XX — National Prefecture Architecture
+## [2.0.0] – 2025-12-20 — National Prefecture Architecture
 
 ### Added
 - Pluggable prefecture loader architecture (`PrefectureLoader` interface)
@@ -406,7 +837,7 @@ Versioning: [Semantic Versioning](https://semver.org/)
 
 ---
 
-## [1.0.0] – 2025-11-XX — Initial Release (Aichi MVP)
+## [1.0.0] – 2025-11-10 — Initial Release (Aichi MVP)
 
 ### Added
 - `cross_analyze_real_estate_market`, `assess_property_risk`, `generate_area_report`, `open_dashboard`

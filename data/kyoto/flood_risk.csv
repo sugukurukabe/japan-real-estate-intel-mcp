@@ -1,0 +1,12 @@
+city,district,river_flood_risk,inland_flood_risk,storm_surge_risk,hazard_zone,notes
+京都市中京区,京都市中京区中心部,low,medium,medium,warning,内陸盆地のため高潮リスクなし
+京都市下京区,京都市下京区中心部,medium,low,low,warning,鴨川・桂川の水害リスク
+京都市上京区,京都市上京区中心部,low,medium,medium,warning,内陸盆地のため高潮リスクなし
+京都市東山区,京都市東山区中心部,low,low,low,caution,花折断層帯など活断層が複数
+京都市左京区,京都市左京区中心部,low,high,medium,warning,内陸盆地のため高潮リスクなし
+京都市右京区,京都市右京区中心部,low,low,low,caution,花折断層帯など活断層が複数
+京都市伏見区,京都市伏見区中心部,medium,high,low,warning,鴨川・桂川の水害リスク
+京都市南区,京都市南区中心部,low,low,low,caution,花折断層帯など活断層が複数
+宇治市,宇治市中心部,medium,high,low,warning,鴨川・桂川の水害リスク
+長岡京市,長岡京市中心部,low,low,low,caution,花折断層帯など活断層が複数
+京田辺市,京田辺市中心部,high,high,low,danger,鴨川・桂川の水害リスク

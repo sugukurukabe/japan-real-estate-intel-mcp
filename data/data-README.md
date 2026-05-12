@@ -1,17 +1,19 @@
-# Data Directory — Multi-Prefecture Real Estate Intelligence (v2.0)
+# Data Directory — Multi-Prefecture Real Estate Intelligence
 
 ## Overview
 
-This directory contains representative bundled data snapshots organized **per prefecture**.
-**This is sample data for demonstration and development purposes.**
+This directory contains **bundled CSV / JSON / GeoJSON / TopoJSON** snapshots organized **per prefecture** (`data/<prefecture-key>/`). Keys match `src/data-loaders/*-loader.ts` (現行は **10 都道府県** 分のディレクトリ。正確な一覧は `listAvailable()` または各ローダーを参照)。
+
+**This is sample or extracted data for demonstration and development purposes.**
 
 ```
 data/
-├── aichi/   ← フル機能 (全12データセット)
-└── tokyo/   ← 限定機能 (最小5データセット)
+├── aichi/   ← フル機能（名古屋市町丁目・計画データ等を含む）
+├── tokyo/   ← フル機能（23区ベースのスナップショット）
+├── osaka/, kanagawa/, …  ← 他県はローダーと同じキー名のディレクトリ
 ```
 
-新しい都道府県を追加するには、`data/<key>/` ディレクトリを作成し、必要なファイルを配置した上で `src/data-loaders/<key>-loader.ts` を作成してください。詳細は project ルート `README.md` の「都道府県の追加手順」を参照。
+新しい都道府県を追加するには、`data/<key>/` を作成し、必要なファイルを配置した上で `src/data-loaders/<key>-loader.ts` を追加してください。詳細は project ルート `README.md` の「都道府県の追加手順」を参照。
 
 ## Aichi Prefecture (`data/aichi/`)
 
@@ -34,15 +36,9 @@ data/
 
 ## Tokyo Prefecture (`data/tokyo/`)
 
-**Capabilities:** 地価 / 人口 / 災害（浸水・地震）のみ。人流・教育・企業・犯罪・PLATEAU は未対応（v2.x で追加予定）。
+**Capabilities:** `TokyoLoader` と整合するよう、地価・取引・人口・災害・人流・教育・企業・犯罪・PLATEAU・交通・商業・医療・町丁目に加え、用途地域・空き家率・人口推計・路線価・浸水/地震リスク CSV などを同梱します。
 
-| File | Description | Rows/Features |
-|------|-------------|---------------|
-| `land_price.csv` | 地価公示（23区+主要市） | ~80 rows |
-| `population.csv` | 人口・世帯統計（23区） | 23 rows |
-| `earthquake.json` | 首都直下地震想定震度・液状化 | 23 records |
-| `flood.geojson` | 主要河川浸水想定（荒川・隅田川等） | ~10 features |
-| `municipalities.topojson` | 23区ポリゴン | 23 features |
+ファイル一覧と概要は **`data/tokyo/README.md`** を参照してください。
 
 ## Data Sources
 
@@ -62,11 +58,11 @@ data/
 
 ## Retrieval & Processing
 
-- **Snapshot date**: 2025-12-01
-- **Processing**: Data has been simplified, sampled, and anonymized for MVP demonstration purposes.
-  - Land prices: sampled representative points per district
-  - Transactions: sampled and anonymized individual transactions
-  - Hazard zones: geometries simplified to rectangular approximations
+- **Acquisition date**: 2025-12-01 (Japan Real Estate Intel)
+- **Processing**: Data has been standardized and aggregated for analysis use.
+  - Land prices: representative points per district
+  - Transactions: aggregated by city/district
+  - Hazard zones: geometries simplified to district-level polygons
   - Population: aggregated at municipality level
 
 ## License Notes

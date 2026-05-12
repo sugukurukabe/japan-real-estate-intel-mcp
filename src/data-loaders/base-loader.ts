@@ -4,7 +4,10 @@ import { fileURLToPath } from 'node:url';
 import Papa from 'papaparse';
 import * as topojsonClient from 'topojson-client';
 import type { FeatureCollection } from 'geojson';
-import type { PrefectureLoader, LoaderCapabilities, LatLng } from './types.js';
+import type {
+  PrefectureLoader, LoaderCapabilities, LatLng,
+  ZoningRecord, VacancyRecord, PopulationProjectionRecord, RosenkaRecord,
+} from './types.js';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const DATA_ROOT = resolve(__dirname, '..', '..', 'data');
@@ -108,4 +111,49 @@ export abstract class BaseLoader implements PrefectureLoader {
   abstract getCommercialFacilities(): import('./types.js').CommercialFacilityRecord[];
   abstract getMedicalFacilities(): import('./types.js').MedicalFacilityRecord[];
   abstract getNeighborhoods(): import('./types.js').NeighborhoodRecord[];
+
+  getZoning(): ZoningRecord[] { return this.loadCsv('zoning.csv'); }
+  getVacancy(): VacancyRecord[] { return this.loadCsv('vacancy.csv'); }
+  getPopulationProjection(): PopulationProjectionRecord[] { return this.loadCsv('population_projection.csv'); }
+  getRosenka(): RosenkaRecord[] { return this.loadCsv('rosenka.csv'); }
+
+  getCities(): string[] {
+    return Object.keys(this.geocodeMap).filter(k => k !== this.displayName);
+  }
+
+  getMunicipalityPins(): Record<string, [number, number]> {
+    const m: Record<string, [number, number]> = {};
+    for (const [name, ll] of Object.entries(this.geocodeMap)) {
+      if (name === this.displayName) continue;
+      m[name] = [ll.lat, ll.lng];
+    }
+    return m;
+  }
+
+  getDefaultMapView(): { center: [number, number]; zoom: number } {
+    const coords = Object.entries(this.geocodeMap)
+      .filter(([k]) => k !== this.displayName)
+      .map(([, ll]) => ll);
+    if (coords.length === 0) return { center: [35.6812, 139.7671], zoom: 10 };
+    let lat = 0;
+    let lng = 0;
+    for (const ll of coords) {
+      lat += ll.lat;
+      lng += ll.lng;
+    }
+    lat /= coords.length;
+    lng /= coords.length;
+    let maxSpan = 0;
+    for (const ll of coords) {
+      const span = Math.abs(ll.lat - lat) + Math.abs(ll.lng - lng);
+      if (span > maxSpan) maxSpan = span;
+    }
+    const zoom =
+      maxSpan > 0.55 ? 9 :
+      maxSpan > 0.38 ? 10 :
+      maxSpan > 0.24 ? 11 :
+      maxSpan > 0.14 ? 12 :
+      13;
+    return { center: [lat, lng], zoom };
+  }
 }

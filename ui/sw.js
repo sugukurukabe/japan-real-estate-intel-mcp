@@ -3,22 +3,26 @@
  * Caches core assets for offline / poor-signal use (field mode)
  */
 
-const CACHE_VERSION = 'rei-v6.1';
+const CACHE_VERSION = 'rei-v6.15.0';
 const CACHE_STATIC = `${CACHE_VERSION}-static`;
 const CACHE_DATA = `${CACHE_VERSION}-data`;
 
 const STATIC_ASSETS = [
   '/dashboard.html',
+  '/mcp-bridge.js',
   '/manifest.webmanifest',
   '/icons/icon-192.png',
   '/icons/icon-512.png',
 ];
 
 const AICHI_DATA_ASSETS = [
-  '/data/aichi/land_prices.csv',
+  '/data/aichi/land_price.csv',
+  '/data/aichi/transactions.csv',
   '/data/aichi/human_flow.csv',
-  '/data/aichi/neighborhoods.json',
-  '/data/aichi/future_infrastructure.json',
+  '/data/aichi/population.csv',
+  '/data/aichi/zoning.csv',
+  '/data/aichi/vacancy.csv',
+  '/data/aichi/population_projection.csv',
 ];
 
 // ── Install: pre-cache static assets ──────────────────────────────────────

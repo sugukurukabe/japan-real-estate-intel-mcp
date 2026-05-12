@@ -71,7 +71,7 @@ function extractMetrics(prefKey: string, area: string): { raw: RawMetrics; notes
       humanFlowScore = Math.min(100, Math.round(avg / 2000));
     }
   } else {
-    notes.push(`${displayName}: 人流データ未対応（v2.2 以降で対応予定）`);
+    notes.push(`${displayName}: 人流データは当該ローダーで未提供です`);
   }
 
   // education
@@ -86,7 +86,7 @@ function extractMetrics(prefKey: string, area: string): { raw: RawMetrics; notes
       );
     }
   } else {
-    notes.push(`${displayName}: 教育データ未対応（v2.2 以降で対応予定）`);
+    notes.push(`${displayName}: 教育データは当該ローダーで未提供です`);
   }
 
   // corporate
@@ -100,7 +100,7 @@ function extractMetrics(prefKey: string, area: string): { raw: RawMetrics; notes
       corporateScore = Math.min(100, Math.round(totalEst / 200));
     }
   } else {
-    notes.push(`${displayName}: 企業立地データ未対応（v2.2 以降で対応予定）`);
+    notes.push(`${displayName}: 企業立地データは当該ローダーで未提供です`);
   }
 
   // transport
@@ -114,7 +114,7 @@ function extractMetrics(prefKey: string, area: string): { raw: RawMetrics; notes
       transportScore = Math.min(100, Math.round(totalPassengers / 10000));
     }
   } else {
-    notes.push(`${displayName}: 交通データ未対応（v2.2 以降で対応予定）`);
+    notes.push(`${displayName}: 交通データは当該ローダーで未提供です`);
   }
 
   // commercial
@@ -127,7 +127,7 @@ function extractMetrics(prefKey: string, area: string): { raw: RawMetrics; notes
       commercialScore = Math.min(100, Math.round(facilities.length / 5));
     }
   } else {
-    notes.push(`${displayName}: 商業施設データ未対応（v2.2 以降で対応予定）`);
+    notes.push(`${displayName}: 商業施設データは当該ローダーで未提供です`);
   }
 
   // medical
@@ -141,7 +141,7 @@ function extractMetrics(prefKey: string, area: string): { raw: RawMetrics; notes
       medicalScore = Math.min(100, Math.round((medicals.length + hospitalCount * 2) / 3));
     }
   } else {
-    notes.push(`${displayName}: 医療施設データ未対応（v2.2 以降で対応予定）`);
+    notes.push(`${displayName}: 医療施設データは当該ローダーで未提供です`);
   }
 
   // investment score

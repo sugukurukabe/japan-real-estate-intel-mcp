@@ -1,0 +1,12 @@
+city,district,river_flood_risk,inland_flood_risk,storm_surge_risk,hazard_zone,notes
+神戸市中央区,神戸市中央区中心部,low,medium,high,danger,大阪湾の高潮と南海トラフ津波
+神戸市東灘区,神戸市東灘区中心部,medium,low,low,warning,武庫川・夙川の土砂災害リスク
+神戸市灘区,神戸市灘区中心部,low,medium,high,danger,大阪湾の高潮と南海トラフ津波
+神戸市兵庫区,神戸市兵庫区中心部,low,low,low,caution,阪神淡路大震災(1995)の経験。六甲断層帯
+神戸市長田区,神戸市長田区中心部,low,high,high,danger,大阪湾の高潮と南海トラフ津波
+神戸市西区,神戸市西区中心部,low,low,low,caution,阪神淡路大震災(1995)の経験。六甲断層帯
+姫路市,姫路市中心部,medium,high,high,danger,大阪湾の高潮と南海トラフ津波
+西宮市,西宮市中心部,low,low,low,caution,阪神淡路大震災(1995)の経験。六甲断層帯
+尼崎市,尼崎市中心部,medium,high,medium,warning,大阪湾の高潮と南海トラフ津波
+明石市,明石市中心部,low,low,low,caution,阪神淡路大震災(1995)の経験。六甲断層帯
+宝塚市,宝塚市中心部,high,high,medium,danger,大阪湾の高潮と南海トラフ津波

@@ -1,8 +1,10 @@
 # ── Japan Real Estate Intel — Caddyfile ──────────────────────────────────────
-# Replace your-domain.com with your actual domain.
+# Domain: realestate-mcp.jp
 # Caddy automatically obtains and renews TLS certificates via Let's Encrypt.
+# To change the domain later: edit the first line, then run
+#   docker compose exec caddy caddy reload --config /etc/caddy/Caddyfile
 
-your-domain.com {
+realestate-mcp.jp, www.realestate-mcp.jp {
     # Reverse-proxy all traffic to the MCP server
     reverse_proxy mcp:3100
 
@@ -37,8 +39,3 @@ your-domain.com {
         format json
     }
 }
-
-# Redirect www to apex (optional)
-# www.your-domain.com {
-#     redir https://your-domain.com{uri} permanent
-# }
