@@ -103,24 +103,24 @@
     "@types/better-sqlite3": "^7.6.13",
     "@types/express": "^5.0.2",
     "@types/geojson": "^7946.0.16",
-    "@types/node": "^22.15.3",
+    "@types/node": "^25.7.0",
     "@types/papaparse": "^5.3.15",
     "@types/pdfkit": "^0.17.6",
     "@types/suncalc": "^1.9.2",
     "@types/supertest": "^7.2.0",
     "@types/topojson-client": "^3.1.5",
-    "@typescript-eslint/eslint-plugin": "^8.59.2",
-    "@typescript-eslint/parser": "^8.59.2",
-    "@vitest/coverage-v8": "^3.2.4",
-    "esbuild": "^0.25.4",
+    "@typescript-eslint/eslint-plugin": "^8.59.3",
+    "@typescript-eslint/parser": "^8.59.3",
+    "@vitest/coverage-v8": "^4.1.6",
+    "esbuild": "^0.28.0",
     "eslint": "^10.3.0",
     "eslint-config-prettier": "^10.1.8",
     "prettier": "^3.8.3",
     "sharp": "^0.34.5",
     "supertest": "^7.2.2",
     "tsx": "^4.21.0",
-    "typescript": "^5.8.3",
-    "vitest": "^3.2.4"
+    "typescript": "^6.0.3",
+    "vitest": "^4.1.6"
   }
 }
 
