@@ -517,7 +517,8 @@ export async function reviewPurchaseRecommendation(
   );
 
   const prefecture = resolvePrefecture(input.prefecture) || input.prefecture;
-  const dashboardUri = `https://real-estate-intel-mcp.example.com/dashboard?prefecture=${encodeURIComponent(
+  const publicBase = (process.env.MCP_PUBLIC_URL ?? 'https://realestate-mcp.jp').replace(/\/$/, '');
+  const dashboardUri = `${publicBase}/dashboard?prefecture=${encodeURIComponent(
     prefecture
   )}&area=${encodeURIComponent(input.city)}&mode=purchase&review=1`;
 

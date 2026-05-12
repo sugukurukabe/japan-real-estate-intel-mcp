@@ -215,14 +215,18 @@
     progressToast = document.createElement('div');
     progressToast.id = 'mcp-progress-toast';
     progressToast.style.cssText = 'position:fixed;top:0;left:0;right:0;z-index:9999;' +
-      'background:linear-gradient(135deg,#1a1f2e,#232a3b);border-bottom:1px solid #2d3548;' +
-      'padding:8px 16px;display:flex;align-items:center;gap:10px;font-size:12px;' +
+      'background:linear-gradient(180deg,#141922 0%,#1a2230 100%);border-bottom:1px solid #3d4a5c;' +
+      'box-shadow:0 6px 24px rgba(0,0,0,0.55);' +
+      'padding:10px 16px;display:flex;align-items:center;gap:12px;font-size:12px;' +
       'color:#e4e8f1;transform:translateY(-100%);transition:transform .3s ease';
     progressToast.innerHTML =
-      '<div id="mcp-progress-bar" style="flex:1;height:4px;background:#2d3548;border-radius:2px;overflow:hidden">' +
-        '<div id="mcp-progress-fill" style="height:100%;background:#4f8cff;border-radius:2px;width:0%;transition:width .3s"></div>' +
+      '<div id="mcp-progress-bar" style="flex:1;height:8px;border-radius:6px;overflow:hidden;' +
+        'background:rgba(0,0,0,0.45);border:1px solid rgba(255,255,255,0.14);' +
+        'box-shadow:inset 0 1px 3px rgba(0,0,0,0.65)">' +
+        '<div id="mcp-progress-fill" style="height:100%;width:0%;border-radius:5px;transition:width .3s;' +
+        'background:linear-gradient(90deg,#3b7dff,#6ba0ff);box-shadow:0 0 12px rgba(79,140,255,0.55)"></div>' +
       '</div>' +
-      '<span id="mcp-progress-label" style="white-space:nowrap;min-width:80px"></span>';
+      '<span id="mcp-progress-label" style="white-space:nowrap;min-width:80px;font-weight:500;color:#f0f4fa"></span>';
     document.body.appendChild(progressToast);
     return progressToast;
   }

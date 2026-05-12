@@ -2225,7 +2225,7 @@ function renderFieldToolbar(): void {
       <button id="field-btn-qr" class="btn-report" style="padding:8px 16px;font-size:13px">
         QR 共有
       </button>
-      <button id="field-btn-pdf" class="btn-report" style="padding:8px 16px;font-size:13px;background:var(--accent)">
+      <button id="field-btn-pdf" class="btn-report btn-report-solid-accent" style="padding:8px 16px;font-size:13px">
         PDF 作成
       </button>
       <button id="field-btn-exit" style="padding:8px 12px;font-size:12px;background:none;border:1px solid var(--border);color:var(--text-muted);border-radius:6px;cursor:pointer">

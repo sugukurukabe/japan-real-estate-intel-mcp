@@ -426,6 +426,21 @@ select:focus, input[type="text"]:focus {
   color: #fff;
 }
 
+/* Filled accent (e.g. field toolbar PDF) — base .btn-report uses accent text on surface */
+.btn-report.btn-report-solid-accent {
+  width: auto;
+  margin-top: 0;
+  background: var(--accent);
+  color: #fff;
+  border-color: var(--accent);
+}
+
+.btn-report.btn-report-solid-accent:hover {
+  background: var(--accent-hover);
+  border-color: var(--accent-hover);
+  color: #fff;
+}
+
 .btn-gateway {
   width: 100%;
   padding: 10px;
@@ -703,10 +718,11 @@ select:focus, input[type="text"]:focus {
   display: flex;
   gap: 6px;
   margin-left: auto;
-  padding: 4px 6px;
-  background: var(--surface-2);
+  padding: 5px 7px;
+  background: var(--surface);
   border-radius: 10px;
   border: 1px solid var(--border);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04);
 }
 
 .mode-toggle-btn {
@@ -716,7 +732,7 @@ select:focus, input[type="text"]:focus {
   padding: 5px 12px;
   border: 1px solid transparent;
   border-radius: 8px;
-  background: transparent;
+  background: rgba(255, 255, 255, 0.06);
   color: var(--text-muted);
   font-size: 12px;
   font-weight: 500;
@@ -726,20 +742,26 @@ select:focus, input[type="text"]:focus {
 }
 
 .mode-toggle-btn:hover {
-  background: var(--surface);
+  background: rgba(255, 255, 255, 0.1);
   color: var(--text);
 }
 
 .mode-toggle-btn.active[data-mode="investment"] {
-  background: rgba(79, 140, 255, 0.18);
+  background: rgba(79, 140, 255, 0.32);
   border-color: var(--accent);
-  color: var(--accent);
+  color: #cfe0ff;
 }
 
 .mode-toggle-btn.active[data-mode="store"] {
-  background: rgba(245, 158, 11, 0.18);
+  background: rgba(245, 158, 11, 0.28);
   border-color: #f59e0b;
-  color: #f59e0b;
+  color: #fde68a;
+}
+
+.mode-toggle-btn.active[data-mode="cashflow"] {
+  background: rgba(52, 211, 153, 0.28);
+  border-color: var(--success);
+  color: #d1fae5;
 }
 
 .mode-icon { font-size: 14px; }
