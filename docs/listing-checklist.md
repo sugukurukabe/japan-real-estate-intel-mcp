@@ -1,57 +1,57 @@
 # External Listing Submission Checklist
 
-After completing the v6.11.0 release, submit to these directories.
+Copy-paste text: [external-listing-copy.md](external-listing-copy.md)  
+Screenshots: [screenshots/](screenshots/) (run `pnpm run build:ui && pnpm run screenshots`)
 
 ## 1. Anthropic MCP Registry (Official)
 
-- [ ] Publish npm package: `npm publish`
-- [ ] DNS TXT verify: See [docs/registry-submission.md](registry-submission.md)
-- [ ] `mcp-publisher publish --file server.json`
-- Registry URL: https://github.com/modelcontextprotocol/registry
+- [x] Publish npm package: `@sugukuru/japan-real-estate-intel-mcp@6.15.0` on npm
+- [ ] DNS TXT verify: See [registry-submission.md](registry-submission.md) — add `_mcp-verify` on `realestate-mcp.jp`, then `mcp-publisher verify --namespace jp.realestate-mcp`
+- [ ] `mcp-publisher publish --file server.json` (or GitHub namespace below)
+- **Alternative (no DNS):** `mcp-publisher login --github` then `mcp-publisher publish --file server.json --namespace io.github.sugukurukabe/japan-real-estate-intel-mcp`
+- Registry URL (when live): https://registry.modelcontextprotocol.io/servers/jp.realestate-mcp/server
 
 ## 2. OpenAI Apps Directory
 
 - [ ] Organization verified on [OpenAI Platform Dashboard](https://platform.openai.com/settings/organization/general)
 - [ ] Submit via [Platform App Management](https://platform.openai.com/apps-manage)
-- [ ] Required info:
+- [x] Screenshots ready in `docs/screenshots/`
+- [ ] Required info (see [external-listing-copy.md](external-listing-copy.md#openai-apps-directory)):
   - App name: **Japan Real Estate Intel**
   - Logo: `assets/logo-512.png`
   - MCP URL: `https://realestate-mcp.jp/mcp`
   - Privacy Policy URL: `https://realestate-mcp.jp/privacy-policy.html`
   - Terms of Service URL: `https://realestate-mcp.jp/terms.html`
-  - Screenshots: from `docs/screenshots/`
-  - Test prompts: from [docs/test-prompts.md](test-prompts.md)
-  - CSP domains: `tile.openstreetmap.org`, `unpkg.com`, `cdnjs.cloudflare.com`, `basemaps.cartocdn.com`
+  - Test prompts: [test-prompts.md](test-prompts.md)
 
 ## 3. awesome-mcp-servers
 
-- [ ] Fork https://github.com/punkpeye/awesome-mcp-servers
-- [ ] Add entry under "Real Estate" or "Data Analysis":
-
-```markdown
-- [Japan Real Estate Intel](https://github.com/sugukuru/japan-real-estate-intel-mcp) - Cross-analyze land prices, disaster risk, population, foot traffic, and more across 10 Japanese prefectures. Renovation yield, contract support, and portfolio optimization.
-```
-
-- [ ] Submit PR
+- [x] Fork https://github.com/punkpeye/awesome-mcp-servers
+- [x] Add entry under "Real Estate" (text in [external-listing-copy.md](external-listing-copy.md#awesome-mcp-servers-pr-用))
+- [x] Submit PR — https://github.com/punkpeye/awesome-mcp-servers/pull/6630
 
 ## 4. Smithery (smithery.ai)
 
 - [ ] Visit https://smithery.ai and sign in with GitHub
-- [ ] Click "Add Server" and enter the npm package name or repository URL
-- [ ] Fill in description and tags: `real-estate`, `japan`, `land-price`, `investment`
+- [ ] Add Server → `@sugukuru/japan-real-estate-intel-mcp` or repo URL
+- [ ] Tags / description: [external-listing-copy.md](external-listing-copy.md#smithery-smitheryai)
 
 ## 5. mcp.so
 
 - [ ] Visit https://mcp.so/submit
-- [ ] Provide repository URL and description
+- [ ] Repository URL + description from [external-listing-copy.md](external-listing-copy.md#mcpso)
 
 ## 6. Glama.ai
 
 - [ ] Visit https://glama.ai/mcp/servers
-- [ ] Submit repository URL via their submission form
+- [ ] Submit repository URL (see [external-listing-copy.md](external-listing-copy.md#glamaai))
 
 ## 7. Cursor MCP Marketplace
 
-- [ ] Ensure `server.json` and `package.json` `mcpName` are consistent
-- [ ] The npm-published package should be auto-discoverable
-- [ ] Add `cursor://` deep link to README (done in v6.11.0)
+- [x] `server.json` and `package.json` version aligned at 6.15.0
+- [x] npm-published package discoverable via `npx @sugukuru/japan-real-estate-intel-mcp`
+- [x] `cursor://` deep link in README
+
+## GitHub repository metadata
+
+- [x] Add Topics: `mcp`, `model-context-protocol`, `real-estate`, `japan`, `aichi`, `nagoya`, `land-price`, `claude`, `chatgpt`, `typescript`

@@ -14,6 +14,17 @@ Place screenshots and demo GIFs here for README and directory submissions.
 
 ## How to Capture
 
+**Automated (recommended):**
+
+```bash
+pnpm run build:ui
+pnpm run screenshots
+```
+
+Uses Playwright at 1280×800 against the local `ui/` build (comparison mode, cashflow panel, 3D view).
+
+**Manual:**
+
 1. Open `https://realestate-mcp.jp/dashboard.html`
 2. Use browser DevTools to set viewport to 1280x800
 3. Capture with `Cmd+Shift+4` (macOS) or `Win+Shift+S` (Windows)

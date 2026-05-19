@@ -39,7 +39,27 @@ jobs:
           tar -czf japan-real-estate-intel-mcp-${{ github.ref_name }}.tar.gz \
             dist/ data/ ui/ package.json README.md LICENSE
 
-      - name: Create GitHub Release
+      - name: Resolve release notes path
+        id: notes
+        run: |
+          VERSION="${GITHUB_REF_NAME#v}"
+          NOTES_FILE="docs/releases/v${VERSION}.md"
+          if [ -f "$NOTES_FILE" ]; then
+            echo "found=true" >> "$GITHUB_OUTPUT"
+            echo "path=$NOTES_FILE" >> "$GITHUB_OUTPUT"
+          else
+            echo "found=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Create GitHub Release (from docs/releases)
+        if: steps.notes.outputs.found == 'true'
+        uses: softprops/action-gh-release@v2
+        with:
+          files: japan-real-estate-intel-mcp-${{ github.ref_name }}.tar.gz
+          body_path: ${{ steps.notes.outputs.path }}
+
+      - name: Create GitHub Release (auto-generated notes)
+        if: steps.notes.outputs.found != 'true'
         uses: softprops/action-gh-release@v2
         with:
           files: japan-real-estate-intel-mcp-${{ github.ref_name }}.tar.gz

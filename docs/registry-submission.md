@@ -8,9 +8,14 @@ This document describes how to publish Japan Real Estate Intel MCP to the offici
 2. **Domain ownership**: DNS access to `realestate-mcp.jp`
 3. **`mcp-publisher` CLI**: Install globally
 
-```bash
-npm install -g @anthropic-ai/mcp-publisher
-```
+Install the official CLI (see [MCP Registry quickstart](https://modelcontextprotocol.io/registry/quickstart)):
+
+- **Homebrew (macOS):** `brew install mcp-publisher`
+- **Binary:** download from [modelcontextprotocol/registry releases](https://github.com/modelcontextprotocol/registry/releases)
+
+The npm package `@anthropic-ai/mcp-publisher` is not published; use the binary above.
+
+**Windows:** There is no native `.exe` in registry releases (darwin/linux only). Use WSL, a macOS/Linux CI job, or GitHub Actions to run `mcp-publisher`. Interactive `mcp-publisher login --github` requires a browser on the machine running the CLI.
 
 ## Step 1: DNS TXT Verification
 

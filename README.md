@@ -1,5 +1,11 @@
 <p align="center">
-  <img src="assets/logo.svg" width="160" alt="RE Intel JP Logo">
+  <a href="https://realestate-mcp.jp/dashboard.html?prefecture=aichi">
+    <img src="docs/screenshots/dashboard-overview.png" width="900" alt="Japan Real Estate Intel dashboard — land price map and investment score for Aichi">
+  </a>
+</p>
+
+<p align="center">
+  <img src="assets/logo.svg" width="120" alt="RE Intel JP Logo">
 </p>
 
 # Japan Real Estate Intel MCP

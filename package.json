@@ -36,6 +36,7 @@
     "data:fetch:all": "tsx scripts/fetch-real-data.ts --all --year 2025",
     "ui:gen": "tsx scripts/generate-ui-prefecture-data.ts",
     "fonts:download": "node scripts/download-fonts.js",
+    "screenshots": "node scripts/capture-dashboard-screenshots.mjs",
     "prepublishOnly": "npm run build"
   },
   "keywords": [
@@ -115,6 +116,7 @@
     "esbuild": "^0.25.4",
     "eslint": "^10.3.0",
     "eslint-config-prettier": "^10.1.8",
+    "playwright": "1.52.0",
     "prettier": "^3.8.3",
     "sharp": "^0.34.5",
     "supertest": "^7.2.2",
@@ -123,4 +125,3 @@
     "vitest": "^3.2.4"
   }
 }
-
