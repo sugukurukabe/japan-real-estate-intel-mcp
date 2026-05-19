@@ -115,3 +115,7 @@ http://localhost:3000?mode=field&prefecture=aichi&area=名古屋市中区
 - [ ] タブレットを物件現地で開いて客と一緒に見られる
 - [ ] 週 3 回以上ツールを使う担当者が各事務所に 1 名以上いる
 - [ ] 口コミで他事務所 3 社以上が導入を検討する
+
+## 7. プレゼン・営業向けシナリオ集
+
+名古屋市・愛知県の **経営者向け5パターン／営業向け5パターン**（実務シチュエーション・コピペ用プロンプト例付き）は [nagoya-dealer-pitch-scenarios.md](./nagoya-dealer-pitch-scenarios.md) を参照。
