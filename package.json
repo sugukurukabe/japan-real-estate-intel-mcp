@@ -79,16 +79,16 @@
     ]
   },
   "dependencies": {
-    "@google-cloud/bigquery": "^8.3.0",
-    "@google/genai": "^2.0.1",
-    "@modelcontextprotocol/ext-apps": "^1.7.1",
+    "@google-cloud/bigquery": "^8.3.1",
+    "@google/genai": "^2.4.0",
+    "@modelcontextprotocol/ext-apps": "^1.7.2",
     "@modelcontextprotocol/sdk": "^1.12.1",
-    "@sentry/node": "^10.52.0",
+    "@sentry/node": "^10.53.1",
     "@turf/boolean-point-in-polygon": "^7.2.0",
     "@turf/helpers": "^7.2.0",
-    "better-sqlite3": "^12.9.0",
+    "better-sqlite3": "^12.10.0",
     "express": "^5.1.0",
-    "express-rate-limit": "^8.5.1",
+    "express-rate-limit": "^8.5.2",
     "helmet": "^8.1.0",
     "papaparse": "^5.5.2",
     "pdfkit": "^0.18.0",
@@ -97,7 +97,7 @@
     "suncalc": "^1.9.0",
     "topojson-client": "^3.1.0",
     "xlsx": "^0.18.5",
-    "zod": "^3.24.4"
+    "zod": "^4.4.3"
   },
   "devDependencies": {
     "@types/better-sqlite3": "^7.6.13",
