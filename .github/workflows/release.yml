@@ -66,6 +66,11 @@ jobs:
           generate_release_notes: true
 
       - name: Publish to npm
+        if: ${{ secrets.NPM_TOKEN != '' }}
         run: npm publish --access public
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: Skip npm publish (NPM_TOKEN not set)
+        if: ${{ secrets.NPM_TOKEN == '' }}
+        run: echo "::warning::NPM_TOKEN secret missing — GitHub Release created but npm not published. Run npm publish locally or add NPM_TOKEN."
