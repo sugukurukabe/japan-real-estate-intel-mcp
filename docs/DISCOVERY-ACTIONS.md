@@ -10,9 +10,10 @@
 
 | # | サイト | 作業 | コピー元 |
 |---|--------|------|----------|
-| 1 | [Smithery](https://smithery.ai) | Login → Publish | [external-listing-copy.md](./external-listing-copy.md#smithery-手順) |
-| 2 | [mcp.so/submit](https://mcp.so/submit) | フォーム送信 | 同上 |
-| 3 | [Glama](https://glama.ai/mcp/servers) | Submit repo | 同上 |
+| 1 | [Glama](https://glama.ai/mcp/servers) | Submit + **`Dockerfile.glama`** | [external-listing-copy.md](./external-listing-copy.md#glama-手順) |
+| 2 | [Smithery](https://smithery.ai) | Login → Publish | 同上 |
+| 3 | [mcp.so/submit](https://mcp.so/submit) | フォーム送信 | 同上 |
+| — | awesome-mcp #6630 | Glama 通過後バッジ追記 | 同上「推奨順序」 |
 
 完了したら [listing-checklist.md](./listing-checklist.md) の `[ ]` を `[x]` に。
 
@@ -46,5 +47,6 @@
 - MCP Registry 掲載（`io.github.sugukurukabe/japan-real-estate-intel-mcp`）
 - awesome-mcp PR [#6630](https://github.com/punkpeye/awesome-mcp-servers/pull/6630) + フォローコメント
 - README「Try in 60 seconds」+ Free デモガード + データ鮮度表
-- npm 6.15.1
+- npm 6.15.2（publish 後）
+- `Dockerfile.glama` + Glama-first 掲載手順
 - Free 月間ツール上限（`src/tier-usage.ts`、既定 50 回/月 UTC）

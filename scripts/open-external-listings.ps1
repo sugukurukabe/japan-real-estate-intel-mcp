@@ -10,11 +10,14 @@ Write-Host ""
 Write-Host "Registry (done): https://registry.modelcontextprotocol.io/v0.1/servers?search=japan-real-estate-intel"
 Write-Host "awesome-mcp PR:  https://github.com/punkpeye/awesome-mcp-servers/pull/6630"
 Write-Host ""
-Write-Host "Opening Smithery, mcp.so, Glama, OpenAI apps..."
+Write-Host "Order: 1) Glama (required for awesome-mcp PR)  2) Smithery  3) mcp.so"
+Write-Host "Glama Dockerfile: Dockerfile.glama (stdio) — NOT Dockerfile (HTTP)"
+Write-Host ""
+Write-Host "Opening Glama first, then Smithery, mcp.so, OpenAI apps..."
+Start-Process 'https://glama.ai/mcp/servers'
+Start-Sleep -Milliseconds 500
 Start-Process 'https://smithery.ai'
 Start-Sleep -Milliseconds 500
 Start-Process 'https://mcp.so/submit'
-Start-Sleep -Milliseconds 500
-Start-Process 'https://glama.ai/mcp/servers'
 Start-Sleep -Milliseconds 500
 Start-Process 'https://platform.openai.com/apps-manage'

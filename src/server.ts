@@ -138,7 +138,7 @@ function applyOutputMode(
 export function createServer(): McpServer {
   const server = new McpServer({
     name: 'japan-real-estate-intel-mcp',
-    version: '6.15.1',
+    version: '6.15.2',
   });
 
   function withErrorHandling(

@@ -97,6 +97,8 @@ npx @sugukuru/japan-real-estate-intel-mcp
 
 日本の不動産投資・仲介・開発・管理向けに、**地価・取引価格・路線価・人口統計・災害リスク・人流・教育環境・企業立地・交通・商業施設・医療福祉・3D 日照シミュレーション・町丁目実データ** をクロス分析する MCP サーバー。
 
+**v6.15.2** — Free プラン月間ツール上限（50回/月 UTC）、Glama 用 `Dockerfile.glama`、外部掲載手順更新。
+
 **v6.15.1** — 公式 MCP Registry 掲載（`io.github.sugukurukabe/japan-real-estate-intel-mcp`）。npm `mcpName` 整合。
 
 **v6.15.0** — 路線価（NTA）×公示地価×取引価格の三角測量で「割安物件・相続有利エリア・市場過熱」をスキャンする `detect_arbitrage_signals` を追加。総合価値スコアにアービトラージ補正を加味。あわせて県単位マクロを一枚にまとめる `get_real_estate_macro_snapshot`（地価YoY・取引件数・人口減、任意で e-Stat 建築着工・金利プロキシ）を追加。

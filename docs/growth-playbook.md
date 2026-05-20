@@ -3,7 +3,7 @@
 実行チェックリストとコピペ文面のハブ。計画の詳細は Cursor 計画「知名度・採用拡大計画」を参照。
 
 **Registry 名:** `io.github.sugukurukabe/japan-real-estate-intel-mcp`  
-**npm:** `@sugukuru/japan-real-estate-intel-mcp@6.15.1`  
+**npm:** `@sugukuru/japan-real-estate-intel-mcp@6.15.2`  
 **検索確認:** https://registry.modelcontextprotocol.io/v0.1/servers?search=japan-real-estate-intel  
 **デモ（Freeのみ）:** [free-demo-prompts.md](./free-demo-prompts.md)
 
@@ -13,9 +13,9 @@
 
 | # | タスク | ドキュメント / コマンド | 完了 |
 |---|--------|-------------------------|------|
-| 1 | Smithery 申請 | [external-listing-copy.md](./external-listing-copy.md#smithery-手順) → `.\scripts\open-external-listings.ps1` | [ ] |
-| 2 | mcp.so 申請 | 同上 [mcp.so 手順](./external-listing-copy.md#mcpso-手順) | [ ] |
-| 3 | Glama 申請 | 同上 [Glama 手順](./external-listing-copy.md#glama-手順) | [ ] |
+| 1 | **Glama** 申請（awesome PR 必須） | [Glama 手順](./external-listing-copy.md#glama-手順) · `Dockerfile.glama` | [ ] |
+| 2 | Smithery 申請 | [Smithery 手順](./external-listing-copy.md#smithery-手順) → `.\scripts\open-external-listings.ps1` | [ ] |
+| 3 | mcp.so 申請 | [mcp.so 手順](./external-listing-copy.md#mcpso-手順) | [ ] |
 | 4 | README / checklist 整合 | [listing-checklist.md](./listing-checklist.md) | [x] |
 | 5 | awesome-mcp PR フォロー | https://github.com/punkpeye/awesome-mcp-servers/pull/6630 | [ ] |
 
@@ -29,7 +29,7 @@
 | 7 | 技術記事（日） | [blog/registry-publish-story-ja.md](./blog/registry-publish-story-ja.md) |
 | 8 | 技術記事（英） / Show HN | [blog/registry-publish-story-en.md](./blog/registry-publish-story-en.md) |
 | 9 | GitHub Profile README | [github-profile-readme.md](./github-profile-readme.md) |
-| 10 | v6.15.1 告知 | [release-announcement-v6.15.1.md](./release-announcement-v6.15.1.md) |
+| 10 | v6.15.2 告知 | [release-announcement-v6.15.2.md](./release-announcement-v6.15.2.md) |
 
 ---
 

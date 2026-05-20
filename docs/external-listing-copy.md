@@ -1,5 +1,19 @@
 # 外部掲載用コピー（コピペ集）
 
+## 推奨順序（awesome-mcp PR 対策）
+
+1. **Glama** — PR [#6630](https://github.com/punkpeye/awesome-mcp-servers/pull/6630) の bot が Glama 掲載を要求。先に完了する。
+2. **Smithery** / **mcp.so** — 認知導線
+3. **awesome-mcp** — Glama 掲載後、PR 説明文にスコアバッジを追記（下記）
+
+掲載後の Glama バッジ（PR / README 用）:
+
+```markdown
+[![sugukurukabe/japan-real-estate-intel-mcp MCP server](https://glama.ai/mcp/servers/sugukurukabe/japan-real-estate-intel-mcp/badges/score.svg)](https://glama.ai/mcp/servers/sugukurukabe/japan-real-estate-intel-mcp)
+```
+
+---
+
 統一文言（100字以内推奨）:
 
 > Cross-analyze Japanese real estate across 10 prefectures: land price, risk, foot traffic, Nagoya workflows, renovation, PDF, contracts.
@@ -49,10 +63,22 @@
 
 ## Glama 手順
 
+**要ログイン** — awesome-mcp マージ条件のため最優先。
+
 1. https://glama.ai/mcp/servers → **Submit** / **Add**
 2. Repository: `https://github.com/sugukurukabe/japan-real-estate-intel-mcp`
 3. Category: **Real Estate** or **Data**
 4. Description: 統一文言（英）
+5. **Dockerfile:** リポジトリの `Dockerfile.glama` をアップロード（stdio / `node dist/index.js`）。本番 HTTP 用の `Dockerfile` とは別。
+6. チェック通過後、上記 **Glama バッジ** を awesome-mcp PR #6630 に追記
+
+| 画面 | 添付ファイル |
+|------|----------------|
+| Logo | `assets/logo-512.png` |
+| Screenshot | `docs/screenshots/dashboard-overview.png` |
+| 比較・3D | `docs/screenshots/comparison-mode.png`, `3d-view.png` |
+
+**よくある失敗:** HTTP の `Dockerfile` だけだと introspection 不合格 → `Dockerfile.glama` を使う。
 
 ---
 

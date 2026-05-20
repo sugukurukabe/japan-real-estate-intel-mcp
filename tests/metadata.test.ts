@@ -18,11 +18,11 @@ describe('cross-file version consistency', () => {
   });
 
   it('server.json version matches package.json', () => {
-    expect(serverJson.version_detail.version).toBe(version);
+    expect(serverJson.version).toBe(version);
   });
 
   it('server.json npm package version matches', () => {
-    const npmPkg = serverJson.packages.find((p: { registry_name: string }) => p.registry_name === 'npm');
+    const npmPkg = serverJson.packages.find((p: { registryType: string }) => p.registryType === 'npm');
     expect(npmPkg?.version).toBe(version);
   });
 

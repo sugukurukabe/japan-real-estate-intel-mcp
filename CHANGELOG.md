@@ -1,4 +1,12 @@
 # Changelog
+## [6.15.2] - 2026-05-20
+
+### Added
+
+- **Free tier monthly tool-call budget** (`src/tier-usage.ts`) — soft limit 50 calls/month (UTC) on self-hosted stdio; configurable via `TIER_MONTHLY_TOOL_CALLS` and `USAGE_CLIENT_ID`
+- **`Dockerfile.glama`** — stdio MCP image for Glama.ai listing introspection
+- **Docs** — [pro-demo-setup.md](docs/pro-demo-setup.md), [partner-outreach-template.md](docs/partner-outreach-template.md), external listing walkthrough (Glama-first for awesome-mcp PR)
+
 ## [6.15.1] - 2026-05-20
 
 ### Changed

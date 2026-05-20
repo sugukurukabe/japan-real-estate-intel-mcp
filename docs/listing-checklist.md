@@ -6,7 +6,7 @@
 
 ## 1. Anthropic MCP Registry (Official)
 
-- [x] npm `@sugukuru/japan-real-estate-intel-mcp@6.15.1` with `mcpName: io.github.sugukurukabe/japan-real-estate-intel-mcp`
+- [x] npm `@sugukuru/japan-real-estate-intel-mcp@6.15.2` with `mcpName: io.github.sugukurukabe/japan-real-estate-intel-mcp` (publish after tag)
 - [x] `mcp-publisher login github` + `publish --file server.json`
 - [x] Active on Registry — search: https://registry.modelcontextprotocol.io/v0.1/servers?search=japan-real-estate-intel
 - [ ] (Optional) DNS namespace `jp.realestate-mcp/server` — [registry-submission.md](registry-submission.md)
@@ -33,13 +33,14 @@
 
 - [ ] https://mcp.so/submit — [external-listing-copy.md#mcpso-手順](external-listing-copy.md#mcpso-手順)
 
-## 6. Glama.ai
+## 6. Glama.ai（awesome-mcp PR の前提）
 
-- [ ] https://glama.ai/mcp/servers — [external-listing-copy.md#glama-手順](external-listing-copy.md#glama-手順)
+- [ ] https://glama.ai/mcp/servers — upload **`Dockerfile.glama`** — [external-listing-copy.md#glama-手順](external-listing-copy.md#glama-手順)
+- [ ] Add Glama score badge to awesome-mcp PR #6630 after listing passes
 
 ## 7. Cursor / npm discoverability
 
-- [x] `server.json` / `package.json` at 6.15.1
+- [x] `server.json` / `package.json` at 6.15.2
 - [x] `npx @sugukuru/japan-real-estate-intel-mcp`
 - [x] GitHub Topics set
 

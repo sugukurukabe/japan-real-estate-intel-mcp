@@ -1,0 +1,20 @@
+# Glama.ai listing — stdio MCP for introspection checks (upload this file on submit).
+FROM node:22-alpine
+
+WORKDIR /app
+
+COPY package.json pnpm-lock.yaml ./
+RUN corepack enable && corepack prepare pnpm@latest --activate \
+  && pnpm install --frozen-lockfile --ignore-scripts
+
+COPY tsconfig.json ./
+COPY src ./src
+COPY data ./data
+COPY config ./config
+RUN pnpm run build:server
+
+RUN addgroup -S rei && adduser -S rei -G rei
+USER rei
+
+ENV NODE_ENV=production
+CMD ["node", "dist/index.js"]
