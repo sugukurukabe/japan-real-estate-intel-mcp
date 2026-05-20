@@ -49,4 +49,5 @@
 - README「Try in 60 seconds」+ Free デモガード + データ鮮度表
 - npm 6.15.2（publish 後）
 - `Dockerfile.glama` + Glama-first 掲載手順
+- タグ `v6.15.2` push 済み — **npm/Registry は Secrets 未設定ならスキップ** → [publish-secrets-setup.md](./publish-secrets-setup.md)
 - Free 月間ツール上限（`src/tier-usage.ts`、既定 50 回/月 UTC）
