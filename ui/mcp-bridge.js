@@ -12,7 +12,7 @@
 
   var PROTOCOL_VERSION = '2026-01-26';
   var APP_NAME = 'japan-real-estate-intel';
-  var APP_VERSION = '6.15.0';
+  var APP_VERSION = '6.15.1';
   var nextId = 1;
   var pendingRequests = {};
   var hostCapabilities = null;

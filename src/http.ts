@@ -223,7 +223,7 @@ app.get('/health', (_req, res) => {
   mcpActiveSessions.set(sessions.size);
   res.json({
     status: 'ok',
-    version: '6.15.0',
+    version: '6.15.1',
     sessions: sessions.size,
     uptime_s: Math.round(process.uptime()),
   });

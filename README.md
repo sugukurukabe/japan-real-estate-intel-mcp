@@ -10,9 +10,24 @@
 
 # Japan Real Estate Intel MCP
 
-[![npm version](https://img.shields.io/npm/v/@sugukuru/japan-real-estate-intel-mcp)](https://www.npmjs.com/package/@sugukuru/japan-real-estate-intel-mcp) [![npm downloads](https://img.shields.io/npm/dm/@sugukuru/japan-real-estate-intel-mcp)](https://www.npmjs.com/package/@sugukuru/japan-real-estate-intel-mcp) [![CI](https://github.com/sugukuru/japan-real-estate-intel-mcp/actions/workflows/ci.yml/badge.svg)](https://github.com/sugukuru/japan-real-estate-intel-mcp/actions/workflows/ci.yml) [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE) [![Node.js >= 20](https://img.shields.io/badge/node-%E2%89%A520-brightgreen)](https://nodejs.org) [![Docker](https://img.shields.io/badge/GHCR-available-blue)](https://github.com/sugukuru/japan-real-estate-intel-mcp/pkgs/container/japan-real-estate-intel-mcp) [![MCP Registry](https://img.shields.io/badge/MCP_Registry-jp.realestate--mcp-blueviolet)](https://registry.modelcontextprotocol.io)
+[![npm version](https://img.shields.io/npm/v/@sugukuru/japan-real-estate-intel-mcp)](https://www.npmjs.com/package/@sugukuru/japan-real-estate-intel-mcp) [![npm downloads](https://img.shields.io/npm/dm/@sugukuru/japan-real-estate-intel-mcp)](https://www.npmjs.com/package/@sugukuru/japan-real-estate-intel-mcp) [![CI](https://github.com/sugukurukabe/japan-real-estate-intel-mcp/actions/workflows/ci.yml/badge.svg)](https://github.com/sugukurukabe/japan-real-estate-intel-mcp/actions/workflows/ci.yml) [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE) [![Node.js >= 20](https://img.shields.io/badge/node-%E2%89%A520-brightgreen)](https://nodejs.org) [![Docker](https://img.shields.io/badge/GHCR-available-blue)](https://github.com/sugukurukabe/japan-real-estate-intel-mcp/pkgs/container/japan-real-estate-intel-mcp) [![MCP Registry](https://img.shields.io/badge/MCP_Registry-listed-blueviolet)](https://registry.modelcontextprotocol.io/v0.1/servers?search=japan-real-estate-intel) [![awesome-mcp PR](https://img.shields.io/badge/awesome--mcp-PR_%236630-green)](https://github.com/punkpeye/awesome-mcp-servers/pull/6630)
 
 **Cross-analyze Japanese real estate data across 10 prefectures via MCP.** Land prices, disaster risk, population, foot traffic, education, corporate presence, PLATEAU 3D buildings, renovation yield, and contract support — all accessible through Claude, ChatGPT, Cursor, or any MCP client.
+
+**Registry:** `io.github.sugukurukabe/japan-real-estate-intel-mcp` · **Growth / listings:** [docs/growth-playbook.md](docs/growth-playbook.md)
+
+## Try in 60 seconds (Free tier — safe for demos)
+
+Copy into Claude, Cursor, or ChatGPT after `npx @sugukuru/japan-real-estate-intel-mcp`:
+
+```
+discover_opportunities で愛知県の investment 向けエリアを探して。limit=5
+```
+
+More copy-paste prompts (3 demos, no Pro tools): **[docs/free-demo-prompts.md](docs/free-demo-prompts.md)**  
+Map only: [Dashboard (Aichi)](https://realestate-mcp.jp/dashboard.html?prefecture=aichi)
+
+> **Do not demo** PDF reports, Linear numeric sim, or contract tools on the default Free plan — they require Pro. See [tiers](src/tiers.ts).
 
 ## Quick Install
 
@@ -55,13 +70,25 @@ npx @sugukuru/japan-real-estate-intel-mcp
 - **MCP Apps UI** for Claude Desktop and Cursor
 - **Tiered access** (free / pro / enterprise)
 
-**Links:** [Dashboard](https://realestate-mcp.jp/dashboard.html) | [Privacy Policy](https://realestate-mcp.jp/privacy-policy.html) | [Terms](https://realestate-mcp.jp/terms.html) | [API Docs](docs/test-prompts.md)
+**Links:** [Dashboard](https://realestate-mcp.jp/dashboard.html) | [Privacy Policy](https://realestate-mcp.jp/privacy-policy.html) | [Terms](https://realestate-mcp.jp/terms.html) | [API Docs](docs/test-prompts.md) | [Demo script](docs/demo-video-script.md)
+
+## Author & community
+
+| | |
+|---|---|
+| **Maintainer** | [@sugukurukabe](https://github.com/sugukurukabe) · npm [`@sugukuru`](https://www.npmjs.com/~sugukuru) |
+| **Story** | [Implementation story (JA)](docs/implementation-story.md) · [Registry publish blog (EN)](docs/blog/registry-publish-story-en.md) |
+| **Industry (Nagoya)** | [Pitch scenarios](docs/nagoya-dealer-pitch-scenarios.md) · [Follow-up sheet](docs/nagoya-pitch-followup.md) |
+| **Customer stories** | [customer-stories.md](docs/customer-stories.md) _(seeking first published case)_ |
+| **Contribute** | [CONTRIBUTING.md](CONTRIBUTING.md) · [Good first issues](docs/contributing-first-issues.md) |
 
 ---
 
 ## 日本語セクション (Japanese)
 
 日本の不動産投資・仲介・開発・管理向けに、**地価・取引価格・路線価・人口統計・災害リスク・人流・教育環境・企業立地・交通・商業施設・医療福祉・3D 日照シミュレーション・町丁目実データ** をクロス分析する MCP サーバー。
+
+**v6.15.1** — 公式 MCP Registry 掲載（`io.github.sugukurukabe/japan-real-estate-intel-mcp`）。npm `mcpName` 整合。
 
 **v6.15.0** — 路線価（NTA）×公示地価×取引価格の三角測量で「割安物件・相続有利エリア・市場過熱」をスキャンする `detect_arbitrage_signals` を追加。総合価値スコアにアービトラージ補正を加味。あわせて県単位マクロを一枚にまとめる `get_real_estate_macro_snapshot`（地価YoY・取引件数・人口減、任意で e-Stat 建築着工・金利プロキシ）を追加。
 

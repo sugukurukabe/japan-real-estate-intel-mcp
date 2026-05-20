@@ -61,4 +61,6 @@
 ## 掲載・発見経路
 
 進捗チェックリスト: [listing-checklist.md](./listing-checklist.md)  
-Registry 手順: [registry-submission.md](./registry-submission.md)
+Registry 手順: [registry-submission.md](./registry-submission.md)  
+成長プレイブック: [growth-playbook.md](./growth-playbook.md)  
+事例: [customer-stories.md](./customer-stories.md)

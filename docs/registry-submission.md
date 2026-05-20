@@ -39,16 +39,31 @@ Wait for DNS propagation (usually < 5 minutes). The command will confirm when ve
 
 ## Step 2: Publish to Registry
 
+`server.json` must use the [2025-12-11 schema](https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json):
+
+- `description` — **100 characters max**
+- `version` — top-level string (not `version_detail`)
+- `packages[].registryType` + `identifier` (not `registry_name` / `name`)
+- `packages[].transport.type` — e.g. `"stdio"`
+- `remotes[].type` — e.g. `"streamable-http"` (not `transport_type`)
+
 ```bash
 mcp-publisher publish --file server.json
 ```
 
-This reads `server.json` from the repository root and uploads metadata to the registry.
+GitHub auth (no DNS):
+
+```bash
+mcp-publisher login github
+mcp-publisher publish --file server.json
+```
+
+`package.json` `mcpName` must match `server.json` `name`.
 
 ## Step 3: Verify Listing
 
 Check your server appears at:
-- https://registry.modelcontextprotocol.io/servers/jp.realestate-mcp/server
+- https://registry.modelcontextprotocol.io/servers/io.github.sugukurukabe/japan-real-estate-intel-mcp
 
 ## Backup Namespace (GitHub)
 

@@ -1,6 +1,6 @@
 {
   "name": "@sugukuru/japan-real-estate-intel-mcp",
-  "version": "6.15.0",
+  "version": "6.15.1",
   "description": "Japan real estate intelligence MCP - land price, transactions, population, zoning, vacancy, population projection, disaster risk, human flow, education, corporate location cross-analysis (10 prefectures: Aichi/Tokyo/Osaka/Fukuoka/Hokkaido/Kanagawa/Kyoto/Hyogo/Chiba/Saitama)",
   "type": "module",
   "main": "dist/index.js",
@@ -37,6 +37,7 @@
     "ui:gen": "tsx scripts/generate-ui-prefecture-data.ts",
     "fonts:download": "node scripts/download-fonts.js",
     "screenshots": "node scripts/capture-dashboard-screenshots.mjs",
+    "demo:record": "node scripts/record-demo-video.mjs",
     "prepublishOnly": "npm run build"
   },
   "keywords": [
@@ -56,7 +57,7 @@
   ],
   "author": "sugukuru",
   "license": "MIT",
-  "mcpName": "jp.realestate-mcp/server",
+  "mcpName": "io.github.sugukurukabe/japan-real-estate-intel-mcp",
   "repository": {
     "type": "git",
     "url": "https://github.com/sugukuru/japan-real-estate-intel-mcp.git"

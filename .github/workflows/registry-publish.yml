@@ -1,0 +1,47 @@
+# Publish server.json to the MCP Registry on release or manual dispatch.
+# Requires repository secret: MCP_REGISTRY_TOKEN
+# Generate: mcp-publisher login github (then export token per Registry docs)
+# See docs/registry-ci.md
+
+name: MCP Registry Publish
+
+on:
+  release:
+    types: [published]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    if: github.repository == 'sugukurukabe/japan-real-estate-intel-mcp'
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install mcp-publisher
+        run: |
+          ARCH=amd64
+          curl -fsSL "https://github.com/modelcontextprotocol/registry/releases/latest/download/mcp-publisher_linux_${ARCH}.tar.gz" \
+            | tar xz mcp-publisher
+          sudo mv mcp-publisher /usr/local/bin/
+          mcp-publisher --help
+
+      - name: Validate server.json version matches tag
+        if: github.event_name == 'release'
+        run: |
+          TAG="${GITHUB_REF_NAME#v}"
+          VER=$(node -p "require('./server.json').version")
+          test "$TAG" = "$VER" || { echo "Tag v$TAG != server.json version $VER"; exit 1; }
+
+      - name: Publish to MCP Registry
+        env:
+          MCP_REGISTRY_TOKEN: ${{ secrets.MCP_REGISTRY_TOKEN }}
+        run: |
+          if [ -z "$MCP_REGISTRY_TOKEN" ]; then
+            echo "::warning::MCP_REGISTRY_TOKEN not set — skip publish"
+            exit 0
+          fi
+          export MCP_REGISTRY_TOKEN
+          mcp-publisher publish --file server.json

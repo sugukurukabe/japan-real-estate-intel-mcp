@@ -1,57 +1,48 @@
 # External Listing Submission Checklist
 
-Copy-paste text: [external-listing-copy.md](external-listing-copy.md)  
-Screenshots: [screenshots/](screenshots/) (run `pnpm run build:ui && pnpm run screenshots`)
+**Hub:** [growth-playbook.md](growth-playbook.md)  
+**Copy-paste:** [external-listing-copy.md](external-listing-copy.md)  
+**Screenshots:** [screenshots/](screenshots/) — `pnpm run build:ui && pnpm run screenshots`
 
 ## 1. Anthropic MCP Registry (Official)
 
-- [x] Publish npm package: `@sugukuru/japan-real-estate-intel-mcp@6.15.0` on npm
-- [ ] DNS TXT verify: See [registry-submission.md](registry-submission.md) — add `_mcp-verify` on `realestate-mcp.jp`, then `mcp-publisher verify --namespace jp.realestate-mcp`
-- [ ] `mcp-publisher publish --file server.json` (or GitHub namespace below)
-- **Alternative (no DNS):** `mcp-publisher login --github` then `mcp-publisher publish --file server.json --namespace io.github.sugukurukabe/japan-real-estate-intel-mcp`
-- Registry URL (when live): https://registry.modelcontextprotocol.io/servers/jp.realestate-mcp/server
+- [x] npm `@sugukuru/japan-real-estate-intel-mcp@6.15.1` with `mcpName: io.github.sugukurukabe/japan-real-estate-intel-mcp`
+- [x] `mcp-publisher login github` + `publish --file server.json`
+- [x] Active on Registry — search: https://registry.modelcontextprotocol.io/v0.1/servers?search=japan-real-estate-intel
+- [ ] (Optional) DNS namespace `jp.realestate-mcp/server` — [registry-submission.md](registry-submission.md)
+- [x] CI workflow — [.github/workflows/registry-publish.yml](../.github/workflows/registry-publish.yml) (requires `MCP_REGISTRY_TOKEN` secret)
 
 ## 2. OpenAI Apps Directory
 
-- [ ] Organization verified on [OpenAI Platform Dashboard](https://platform.openai.com/settings/organization/general)
+- [ ] Organization verified — [openai-apps-submission.md](openai-apps-submission.md)
 - [ ] Submit via [Platform App Management](https://platform.openai.com/apps-manage)
-- [x] Screenshots ready in `docs/screenshots/`
-- [ ] Required info (see [external-listing-copy.md](external-listing-copy.md#openai-apps-directory)):
-  - App name: **Japan Real Estate Intel**
-  - Logo: `assets/logo-512.png`
-  - MCP URL: `https://realestate-mcp.jp/mcp`
-  - Privacy Policy URL: `https://realestate-mcp.jp/privacy-policy.html`
-  - Terms of Service URL: `https://realestate-mcp.jp/terms.html`
-  - Test prompts: [test-prompts.md](test-prompts.md)
+- [x] Screenshots in `docs/screenshots/`
 
 ## 3. awesome-mcp-servers
 
-- [x] Fork https://github.com/punkpeye/awesome-mcp-servers
-- [x] Add entry under "Real Estate" (text in [external-listing-copy.md](external-listing-copy.md#awesome-mcp-servers-pr-用))
-- [x] Submit PR — https://github.com/punkpeye/awesome-mcp-servers/pull/6630
+- [x] PR https://github.com/punkpeye/awesome-mcp-servers/pull/6630
+- [ ] Merged — then add badge to README (template in [external-listing-copy.md](external-listing-copy.md))
 
 ## 4. Smithery (smithery.ai)
 
-- [ ] Visit https://smithery.ai and sign in with GitHub
-- [ ] Add Server → `@sugukuru/japan-real-estate-intel-mcp` or repo URL
-- [ ] Tags / description: [external-listing-copy.md](external-listing-copy.md#smithery-smitheryai)
+- [ ] Sign in at https://smithery.ai
+- [ ] Submit — step-by-step in [external-listing-copy.md#smithery-手順](external-listing-copy.md#smithery-手順)
+- [ ] `.\scripts\open-external-listings.ps1`
 
 ## 5. mcp.so
 
-- [ ] Visit https://mcp.so/submit
-- [ ] Repository URL + description from [external-listing-copy.md](external-listing-copy.md#mcpso)
+- [ ] https://mcp.so/submit — [external-listing-copy.md#mcpso-手順](external-listing-copy.md#mcpso-手順)
 
 ## 6. Glama.ai
 
-- [ ] Visit https://glama.ai/mcp/servers
-- [ ] Submit repository URL (see [external-listing-copy.md](external-listing-copy.md#glamaai))
+- [ ] https://glama.ai/mcp/servers — [external-listing-copy.md#glama-手順](external-listing-copy.md#glama-手順)
 
-## 7. Cursor MCP Marketplace
+## 7. Cursor / npm discoverability
 
-- [x] `server.json` and `package.json` version aligned at 6.15.0
-- [x] npm-published package discoverable via `npx @sugukuru/japan-real-estate-intel-mcp`
-- [x] `cursor://` deep link in README
+- [x] `server.json` / `package.json` at 6.15.1
+- [x] `npx @sugukuru/japan-real-estate-intel-mcp`
+- [x] GitHub Topics set
 
 ## GitHub repository metadata
 
-- [x] Add Topics: `mcp`, `model-context-protocol`, `real-estate`, `japan`, `aichi`, `nagoya`, `land-price`, `claude`, `chatgpt`, `typescript`
+- [x] Topics: `mcp`, `model-context-protocol`, `real-estate`, `japan`, `aichi`, `nagoya`, `land-price`, `claude`, `chatgpt`, `typescript`

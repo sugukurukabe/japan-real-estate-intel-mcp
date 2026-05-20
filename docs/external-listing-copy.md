@@ -1,53 +1,81 @@
 # 外部掲載用コピー（コピペ集）
 
-統一文言:
+統一文言（100字以内推奨）:
+
+> Cross-analyze Japanese real estate across 10 prefectures: land price, risk, foot traffic, Nagoya workflows, renovation, PDF, contracts.
+
+日本語:
 
 > 10都道府県の地価・災害・人流・教育をクロス分析。名古屋町丁目・リノベ利回り・ブランドPDF・契約支援まで MCP 一連。
 
 ---
 
+## Smithery 手順
+
+**要ログイン（ブラウザ）** — リポジトリ側から自動申請は不可。
+
+1. https://smithery.ai → **Login** → GitHub (`sugukurukabe`)
+2. **Publish** メニュー → **Publish MCP Server**（または https://smithery.ai/docs に従い `npx -y @smithery/cli publish`）
+3. 入力:
+
+| 項目 | 値 |
+|------|-----|
+| Package | `@sugukuru/japan-real-estate-intel-mcp` |
+| Repository | `https://github.com/sugukurukabe/japan-real-estate-intel-mcp` |
+| Remote URL | `https://realestate-mcp.jp/mcp` |
+| Homepage | `https://realestate-mcp.jp/dashboard.html` |
+| Tags | `real-estate`, `japan`, `land-price`, `investment`, `mcp`, `nagoya`, `aichi` |
+| Description | 統一文言（英）+ Remote URL |
+
+4. Logo: upload `assets/logo-512.png` if requested  
+5. Screenshot: `docs/screenshots/dashboard-overview.png`
+
+---
+
+## mcp.so 手順
+
+1. https://mcp.so/submit
+2. 入力:
+
+| 項目 | 値 |
+|------|-----|
+| Repository URL | `https://github.com/sugukurukabe/japan-real-estate-intel-mcp` |
+| Name | `Japan Real Estate Intel` |
+| Description | Cross-analyze Japanese real estate across 10 prefectures via MCP — land price, risk, foot traffic, Nagoya workflows, PDF reports. |
+| Homepage | `https://realestate-mcp.jp/dashboard.html` |
+| npm | `@sugukuru/japan-real-estate-intel-mcp` |
+
+---
+
+## Glama 手順
+
+1. https://glama.ai/mcp/servers → **Submit** / **Add**
+2. Repository: `https://github.com/sugukurukabe/japan-real-estate-intel-mcp`
+3. Category: **Real Estate** or **Data**
+4. Description: 統一文言（英）
+
+---
+
 ## awesome-mcp-servers PR 用
 
-**PR submitted:** https://github.com/punkpeye/awesome-mcp-servers/pull/6630
-
-リポジトリ: https://github.com/punkpeye/awesome-mcp-servers  
-「Real Estate」または「Data Analysis」セクションに追加:
+**PR:** https://github.com/punkpeye/awesome-mcp-servers/pull/6630
 
 ```markdown
-- [Japan Real Estate Intel](https://github.com/sugukurukabe/japan-real-estate-intel-mcp) - Cross-analyze land prices, disaster risk, population, foot traffic, and education across 10 Japanese prefectures. Nagoya chocho profiles, renovation yield, branded PDF reports, contract support, and interactive dashboard. npm: `@sugukuru/japan-real-estate-intel-mcp`
+- [sugukurukabe/japan-real-estate-intel-mcp](https://github.com/sugukurukabe/japan-real-estate-intel-mcp) 📇 ☁️ 🏠 🍎 🪟 🐧 - Cross-analyze land prices, disaster risk, population, foot traffic, and education across 10 Japanese prefectures. Nagoya chocho profiles, renovation yield, branded PDF reports, contract support, and interactive dashboard. npm: `@sugukuru/japan-real-estate-intel-mcp`
+```
+
+**README バッジ（マージ後）:**
+
+```markdown
+[![MCP Registry](https://img.shields.io/badge/MCP_Registry-listed-blueviolet)](https://registry.modelcontextprotocol.io/v0.1/servers?search=japan-real-estate-intel)
+[![awesome-mcp-servers](https://img.shields.io/badge/listed-awesome--mcp--servers-green)](https://github.com/punkpeye/awesome-mcp-servers)
 ```
 
 ---
 
-## Smithery (smithery.ai)
-
-| 項目 | 値 |
-|------|-----|
-| Package / Repo | `@sugukuru/japan-real-estate-intel-mcp` または `https://github.com/sugukurukabe/japan-real-estate-intel-mcp` |
-| Tags | `real-estate`, `japan`, `land-price`, `investment`, `mcp`, `nagoya`, `aichi` |
-| Description | 上記統一文言 + Remote: `https://realestate-mcp.jp/mcp` |
-
----
-
-## mcp.so
-
-| 項目 | 値 |
-|------|-----|
-| URL | https://github.com/sugukurukabe/japan-real-estate-intel-mcp |
-| Description | 統一文言（英）: Cross-analyze Japanese real estate across 10 prefectures via MCP — land price, risk, foot traffic, Nagoya workflows, PDF reports. |
-
----
-
-## Glama.ai
-
-| 項目 | 値 |
-|------|-----|
-| Repository | https://github.com/sugukurukabe/japan-real-estate-intel-mcp |
-| Category | Real Estate / Data |
-
----
-
 ## OpenAI Apps Directory
+
+See [openai-apps-submission.md](./openai-apps-submission.md).
 
 | 項目 | 値 |
 |------|-----|
@@ -61,25 +89,18 @@
 
 ---
 
-## GitHub リポジトリ Topics（Settings → Topics）
+## Registry（掲載済み）
 
-```
-mcp
-model-context-protocol
-real-estate
-japan
-aichi
-nagoya
-land-price
-claude
-chatgpt
-typescript
-```
+| 項目 | 値 |
+|------|-----|
+| Name | `io.github.sugukurukabe/japan-real-estate-intel-mcp` |
+| Search | https://registry.modelcontextprotocol.io/v0.1/servers?search=japan-real-estate-intel |
+| Install | `npx @sugukuru/japan-real-estate-intel-mcp` |
 
 ---
 
-## 関連ドキュメント
+## 関連
 
 - [listing-checklist.md](./listing-checklist.md)
+- [growth-playbook.md](./growth-playbook.md)
 - [registry-submission.md](./registry-submission.md)
-- [competitive-positioning.md](./competitive-positioning.md)

@@ -1,43 +1,45 @@
 {
-  "$schema": "https://registry.modelcontextprotocol.io/schema/server.json",
-  "name": "jp.realestate-mcp/server",
-  "description": "Japan real estate intelligence MCP server: land price, rosenka, transactions, population, disaster risk, renovation yield, contract support for 10 prefectures. Cross-analysis of 17+ data sources including PLATEAU 3D, foot traffic, education, corporate presence, transport, and medical facilities.",
-  "version_detail": {
-    "version": "6.15.0"
-  },
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+  "name": "io.github.sugukurukabe/japan-real-estate-intel-mcp",
+  "title": "Japan Real Estate Intel",
+  "description": "Japan real estate MCP: land price, risk, foot traffic, renovation. 10 prefectures.",
+  "version": "6.15.1",
+  "websiteUrl": "https://realestate-mcp.jp/dashboard.html",
   "repository": {
-    "type": "git",
-    "url": "https://github.com/sugukuru/japan-real-estate-intel-mcp"
+    "url": "https://github.com/sugukurukabe/japan-real-estate-intel-mcp",
+    "source": "github"
   },
   "packages": [
     {
-      "registry_name": "npm",
-      "name": "@sugukuru/japan-real-estate-intel-mcp",
-      "version": "6.15.0",
-      "runtime": "node",
-      "runtime_arguments": ["--experimental-vm-modules"],
-      "environment_variables": [
+      "registryType": "npm",
+      "identifier": "@sugukuru/japan-real-estate-intel-mcp",
+      "version": "6.15.1",
+      "transport": {
+        "type": "stdio"
+      },
+      "runtimeHint": "npx",
+      "environmentVariables": [
         {
           "name": "API_KEY",
           "description": "API key for HTTP mode authentication (optional for stdio)",
-          "required": false
+          "isRequired": false
         },
         {
           "name": "MLIT_API_KEY",
           "description": "MLIT Real Estate Information Library API key for live transaction data",
-          "required": false
+          "isRequired": false
         },
         {
           "name": "ESTAT_APP_ID",
           "description": "e-Stat government statistics API application ID",
-          "required": false
+          "isRequired": false
         }
       ]
     }
   ],
   "remotes": [
     {
-      "transport_type": "streamable-http",
+      "type": "streamable-http",
       "url": "https://realestate-mcp.jp/mcp"
     }
   ],

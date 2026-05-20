@@ -1,4 +1,11 @@
 # Changelog
+## [6.15.1] - 2026-05-20
+
+### Changed
+
+- **`mcpName`** aligned with MCP Registry GitHub namespace: `io.github.sugukurukabe/japan-real-estate-intel-mcp`
+- **`server.json`** updated to MCP Registry 2025-12-11 schema (`registryType`, `identifier`, `version`, `description` ≤100 chars)
+
 ## [6.15.0] - 2026-05-11
 
 ### Added — v6.15.0 価格トライアングル武器化パック
