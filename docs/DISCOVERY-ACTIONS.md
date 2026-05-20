@@ -32,9 +32,19 @@
 | 8 | **Free 3本だけ**デモ | [free-demo-prompts.md](./free-demo-prompts.md) |
 | 9 | フォローPDF配布 | [nagoya-pitch-followup.md](./nagoya-pitch-followup.md) |
 
+## Phase 2（信頼・Proデモ）
+
+| # | 作業 | ファイル |
+|---|------|----------|
+| 10 | 匿名事例の許可メール | [customer-stories.md](./customer-stories.md) |
+| 11 | Pro 社内デモ | [pro-demo-setup.md](./pro-demo-setup.md) |
+| 12 | MLIT 系 MCP 作者へ共演メール | [partner-outreach-template.md](./partner-outreach-template.md) |
+| 13 | OpenAI Apps（組織認証後） | [openai-apps-submission.md](./openai-apps-submission.md) |
+
 ## 済み（リポジトリ側）
 
 - MCP Registry 掲載（`io.github.sugukurukabe/japan-real-estate-intel-mcp`）
 - awesome-mcp PR [#6630](https://github.com/punkpeye/awesome-mcp-servers/pull/6630) + フォローコメント
-- README「Try in 60 seconds」+ Free デモガード
+- README「Try in 60 seconds」+ Free デモガード + データ鮮度表
 - npm 6.15.1
+- Free 月間ツール上限（`src/tier-usage.ts`、既定 50 回/月 UTC）

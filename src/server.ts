@@ -85,6 +85,7 @@ import { getDashboard3dHtml } from './resources/ui_dashboard_3d.js';
 import { ATTRIBUTION } from './data/attribution.js';
 import { formatErrorMessage, isClientError } from './errors.js';
 import { toolLogger } from './logger.js';
+import { checkToolCallBudget, recordToolCall } from './tier-usage.js';
 import { isToolAllowed, type Tier } from './tiers.js';
 import './data-loaders/index.js';
 
@@ -154,6 +155,15 @@ export function createServer(): McpServer {
         isError: true,
       });
     }
+    const budgetMsg = checkToolCallBudget(tier);
+    if (budgetMsg) {
+      server.sendLoggingMessage({ level: 'warning', data: { tool: toolName, tier, event: 'quota_exceeded' } }).catch(() => {});
+      return Promise.resolve({
+        content: [{ type: 'text' as const, text: budgetMsg }],
+        isError: true,
+      });
+    }
+    recordToolCall(tier);
     const start = Date.now();
     server.sendLoggingMessage({ level: 'debug', data: { tool: toolName, prefecture, event: 'start' } }).catch(() => {});
     return fn().then(

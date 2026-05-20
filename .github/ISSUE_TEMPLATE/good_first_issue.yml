@@ -1,0 +1,21 @@
+name: Good first issue
+description: Small docs or data task for new contributors
+title: "[good first issue] "
+labels: ["good first issue", "documentation"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        See [docs/contributing-first-issues.md](../../docs/contributing-first-issues.md) for ideas.
+  - type: textarea
+    id: task
+    attributes:
+      label: Task
+      description: What should be done?
+    validations:
+      required: true
+  - type: textarea
+    id: refs
+    attributes:
+      label: References
+      description: Links to files or docs

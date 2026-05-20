@@ -35,11 +35,14 @@
 
 ## Phase 2 — 1〜2ヶ月
 
-| # | タスク | ドキュメント |
-|---|--------|--------------|
-| 11 | 名古屋フォロー配布 | [nagoya-pitch-followup.md](./nagoya-pitch-followup.md) |
-| 12 | 匿名事例 | [customer-stories.md](./customer-stories.md) |
-| 13 | OpenAI Apps | [openai-apps-submission.md](./openai-apps-submission.md) |
+| # | タスク | ドキュメント | 状態 |
+|---|--------|--------------|------|
+| 11 | 名古屋フォロー配布 | [nagoya-pitch-followup.md](./nagoya-pitch-followup.md) | [ ] |
+| 12 | 匿名事例 | [customer-stories.md](./customer-stories.md) | [ ] |
+| 13 | OpenAI Apps | [openai-apps-submission.md](./openai-apps-submission.md) | [ ] |
+| 14 | Pro 社内デモ | [pro-demo-setup.md](./pro-demo-setup.md) | [x] 手順 |
+| 15 | Free 月間上限 | `src/tier-usage.ts` | [x] 実装 |
+| 16 | 共演アウトリーチ | [partner-outreach-template.md](./partner-outreach-template.md) | [ ] |
 
 ---
 

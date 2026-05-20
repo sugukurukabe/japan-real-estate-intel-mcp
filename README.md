@@ -27,7 +27,16 @@ discover_opportunities で愛知県の investment 向けエリアを探して。
 More copy-paste prompts (3 demos, no Pro tools): **[docs/free-demo-prompts.md](docs/free-demo-prompts.md)**  
 Map only: [Dashboard (Aichi)](https://realestate-mcp.jp/dashboard.html?prefecture=aichi)
 
-> **Do not demo** PDF reports, Linear numeric sim, or contract tools on the default Free plan — they require Pro. See [tiers](src/tiers.ts).
+> **Do not demo** PDF reports, Linear numeric sim, or contract tools on the default Free plan — they require Pro. See [tiers](src/tiers.ts) and [pro-demo-setup.md](docs/pro-demo-setup.md).
+
+## Data freshness & trust
+
+| Item | Detail |
+|------|--------|
+| **Coverage** | 10 prefectures (bundled CSV); not all 47 prefectures |
+| **Update** | Run `npm run data:fetch` (requires `MLIT_API_KEY` / `ESTAT_APP_ID` for live sources) — recommend **quarterly** refresh for production |
+| **Free tier** | ~50 tool calls / month (UTC) on self-hosted stdio — see `TIER_MONTHLY_TOOL_CALLS` |
+| **Live MLIT** | Optional `MLIT_API_KEY` for fresher transactions in tools like `detect_arbitrage_signals` |
 
 ## Quick Install
 
