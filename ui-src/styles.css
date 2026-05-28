@@ -1260,5 +1260,12 @@ body.mode-store .layer-btn-primary {
   }
 }
 
+#sidebar-premium-promo:hover {
+  background: linear-gradient(135deg, rgba(245, 158, 11, 0.14), rgba(251, 191, 36, 0.08)) !important;
+  border-color: rgba(245, 158, 11, 0.6) !important;
+  box-shadow: 0 4px 12px rgba(245, 158, 11, 0.15);
+  transform: translateY(-1px);
+}
+
 
 

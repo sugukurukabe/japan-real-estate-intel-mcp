@@ -2097,6 +2097,20 @@ function initSearchPanel() {
 
     <button class="btn-primary" id="btn-analyze">クロス分析</button>
 
+    ${activeTier === 'free' ? `
+      <!-- Elegant Sidebar Promo Card -->
+      <div id="sidebar-premium-promo" style="margin-top: 16px; padding: 14px; border-radius: var(--radius); background: linear-gradient(135deg, rgba(245, 158, 11, 0.08), rgba(251, 191, 36, 0.04)); border: 1px dashed rgba(245, 158, 11, 0.3); cursor: pointer; transition: all 0.25s ease;" onclick="document.getElementById('btn-upgrade-gateway')?.click()">
+        <div style="display: flex; align-items: center; gap: 6px; margin-bottom: 4px;">
+          <span style="font-size: 13px; font-weight: 700; color: #fbbf24;">⚡ Proプランで解放される機能</span>
+        </div>
+        <p style="font-size: 11px; color: var(--text-muted); line-height: 1.45; margin: 0;">
+          ・3D Plateau都市建物高さ & 影シミュレーション<br>
+          ・リノベ利回り予測 & 売買契約自動評価<br>
+          ・無制限の高度分析 & ロゴ無しPDFレポート
+        </p>
+      </div>
+    ` : ''}
+
     <div class="panel-section" style="border-top: 1px solid var(--border); padding-top: 16px; margin-top: 16px;">
       <h3>プラン情報</h3>
       <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
