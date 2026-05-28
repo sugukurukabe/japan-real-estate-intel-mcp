@@ -6,8 +6,8 @@ const log = moduleLogger('license');
 
 // Hardcoded ECDSA prime256v1 Public Key of Sugukuru Real Estate Intel
 const PUBLIC_KEY_PEM = `-----BEGIN PUBLIC KEY-----
-MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEUSLZPMnfFmYExfdQaNqsg5N3TdLm
-HDIYBepbSZhw7+xzQ1swxYbuoW3Hj8t0qi4tz42JqsbVSxGb3G5ksYMfAA==
+MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEMpO3Qd4qTfWX8ehpOFXBV30jmkpK
+DGA2vlPr+AVHs9o4+lPKsXF2IfqZlJP5sAqrxHrNnzEhMiMaH9QFahavLw==
 -----END PUBLIC KEY-----`;
 
 export interface LicenseVerificationResult {
