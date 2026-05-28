@@ -1,22 +1,38 @@
-/**
- * In-process monthly tool-call budget for Free tier (single-host / demo).
- * Resets each calendar month (UTC). Not durable across restarts — use for
- * soft limits until account-backed metering exists.
- */
 import type { Tier } from './tiers.js';
 import { TIER_CONFIG } from './tiers.js';
+import Database from 'better-sqlite3';
+import { resolve, dirname } from 'node:path';
+import { mkdirSync } from 'node:fs';
+import { moduleLogger } from './logger.js';
 
-type UsageState = { month: string; count: number };
+const log = moduleLogger('quota_store');
+const DB_PATH = process.env.QUOTA_DB_PATH ?? resolve(process.cwd(), 'db', 'quota.sqlite');
 
-const usageByClient = new Map<string, UsageState>();
+let _db: Database.Database | null = null;
+
+function getDb(): Database.Database {
+  if (_db) return _db;
+  mkdirSync(dirname(DB_PATH), { recursive: true });
+  _db = new Database(DB_PATH);
+  _db.pragma('journal_mode = WAL');
+  _db.exec(`
+    CREATE TABLE IF NOT EXISTS ip_quotas (
+      client_key TEXT NOT NULL,
+      month TEXT NOT NULL,
+      call_count INTEGER NOT NULL DEFAULT 0,
+      PRIMARY KEY (client_key, month)
+    );
+  `);
+  return _db;
+}
 
 function currentMonthUtc(): string {
   const d = new Date();
   return `${d.getUTCFullYear()}-${String(d.getUTCMonth() + 1).padStart(2, '0')}`;
 }
 
-function clientKey(): string {
-  return process.env.USAGE_CLIENT_ID?.trim() || 'default';
+export function clientKey(): string {
+  return process.env.USAGE_CLIENT_ID?.trim() || 'default-ip-client';
 }
 
 function monthlyLimit(tier: Tier): number {
@@ -31,10 +47,17 @@ function monthlyLimit(tier: Tier): number {
 export function getToolCallUsage(tier: Tier): { count: number; limit: number; month: string } {
   const month = currentMonthUtc();
   const key = clientKey();
-  const state = usageByClient.get(key);
-  const count = state?.month === month ? state.count : 0;
   const limit = monthlyLimit(tier);
-  return { count, limit, month };
+
+  try {
+    const row = getDb()
+      .prepare('SELECT call_count FROM ip_quotas WHERE client_key = ? AND month = ?')
+      .get(key, month) as { call_count: number } | undefined;
+    return { count: row?.call_count ?? 0, limit, month };
+  } catch (err) {
+    log.error({ err }, 'Error reading quota usage from DB');
+    return { count: 0, limit, month };
+  }
 }
 
 /** Returns error message when Free monthly budget is exhausted. */
@@ -53,15 +76,26 @@ export function recordToolCall(tier: Tier): void {
   if (!Number.isFinite(limit)) return;
   const month = currentMonthUtc();
   const key = clientKey();
-  const state = usageByClient.get(key);
-  if (!state || state.month !== month) {
-    usageByClient.set(key, { month, count: 1 });
-    return;
+
+  try {
+    getDb()
+      .prepare(`
+        INSERT INTO ip_quotas (client_key, month, call_count)
+        VALUES (?, ?, 1)
+        ON CONFLICT(client_key, month) DO UPDATE SET call_count = call_count + 1
+      `)
+      .run(key, month);
+  } catch (err) {
+    log.error({ err }, 'Error recording quota usage in DB');
   }
-  state.count += 1;
 }
 
 /** Test-only reset */
 export function resetToolCallUsageForTests(): void {
-  usageByClient.clear();
+  try {
+    getDb().prepare('DELETE FROM ip_quotas').run();
+  } catch (err) {
+    // ignore
+  }
 }
+

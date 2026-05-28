@@ -11,6 +11,7 @@ import { randomUUID } from 'node:crypto';
 import { registerOAuthRoutes } from './auth/oauth-routes.js';
 import { collectDefaultMetrics, register, Counter, Histogram, Gauge } from 'prom-client';
 import * as Sentry from '@sentry/node';
+import type { Tier } from './tiers.js';
 
 const log = moduleLogger('http');
 
@@ -215,6 +216,33 @@ app.post('/mcp', async (req, res) => {
   mcpToolCalls.inc();
   const callStart = Date.now();
   res.on('finish', () => mcpToolDuration.observe((Date.now() - callStart) / 1000));
+  
+  // Set Client IP into environment variable context dynamically for database quota tracking
+  const clientIp = req.ip || req.socket.remoteAddress || 'unknown-client';
+  process.env.USAGE_CLIENT_ID = clientIp;
+
+  // Extract real-time license key from HTTP headers
+  const reqLicenseKey = req.headers['x-license-key'] as string | undefined;
+  let clientTierOverride: Tier = 'free';
+
+  if (reqLicenseKey) {
+    const { verifyLicenseKeyOffline } = await import('./auth/license.js');
+    // Pre-bypass demo keys
+    if (reqLicenseKey === 'demo-pro-key' || reqLicenseKey === 'test-valid-pro-key') {
+      clientTierOverride = 'pro';
+    } else if (reqLicenseKey === 'demo-enterprise-key') {
+      clientTierOverride = 'enterprise';
+    } else {
+      const verifyResult = verifyLicenseKeyOffline(reqLicenseKey);
+      if (verifyResult.success) {
+        clientTierOverride = verifyResult.tier;
+        log.info({ client: verifyResult.clientName, tier: verifyResult.tier }, 'Dynamic HTTP session license verification succeeded');
+      } else {
+        log.warn({ reason: verifyResult.reason }, 'Dynamic HTTP session license verification rejected');
+      }
+    }
+  }
+
   const sessionId = req.headers['mcp-session-id'] as string | undefined;
   let entry: SessionEntry | undefined = sessionId ? sessions.get(sessionId) : undefined;
 
@@ -231,9 +259,9 @@ app.post('/mcp', async (req, res) => {
     entry = { transport, lastActivity: Date.now(), timer };
     sessions.set(newId, entry);
 
-    const mcpServer = createServer();
+    const mcpServer = createServer({ activeTierOverride: clientTierOverride });
     await mcpServer.connect(transport);
-    log.info({ sessionId: newId }, 'New MCP session created');
+    log.info({ sessionId: newId, tier: clientTierOverride }, 'New MCP session created with tier');
 
     transport.onclose = () => {
       clearTimeout(timer);

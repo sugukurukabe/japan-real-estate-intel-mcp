@@ -52,7 +52,14 @@
 
   /** Call a server-side MCP tool from the dashboard UI. */
   function callServerTool(name, args) {
-    return sendRequest('tools/call', { name: name, arguments: args || {} });
+    var payloadArgs = args || {};
+    try {
+      var activeKey = localStorage.getItem('rei-active-key');
+      if (activeKey) {
+        payloadArgs._licenseKey = activeKey;
+      }
+    } catch (_) {}
+    return sendRequest('tools/call', { name: name, arguments: payloadArgs });
   }
 
   /** Update the AI model's context about what the user is viewing. */
@@ -60,9 +67,16 @@
     if (!hostCapabilities || hostCapabilities.updateModelContext === false) {
       return Promise.resolve({ ok: false, reason: 'host does not support updateModelContext' });
     }
+    var contextData = data || {};
+    try {
+      var activeKey = localStorage.getItem('rei-active-key');
+      if (activeKey) {
+        contextData._licenseKey = activeKey;
+      }
+    } catch (_) {}
     return sendRequest('ui/update-model-context', {
-      content: [{ type: 'text', text: JSON.stringify(data) }],
-      structuredContent: data || {}
+      content: [{ type: 'text', text: JSON.stringify(contextData) }],
+      structuredContent: contextData
     }).catch(function () {
       return { ok: false, reason: 'update-model-context rejected' };
     });

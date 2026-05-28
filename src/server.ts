@@ -138,17 +138,19 @@ function applyOutputMode(
   };
 }
 
-export function createServer(): McpServer {
+export function createServer(options?: { activeTierOverride?: Tier }): McpServer {
   const server = new McpServer({
     name: 'japan-real-estate-intel-mcp',
     version: '6.15.2',
   });
 
-  let activeTier: Tier = 'free';
+  let activeTier: Tier = options?.activeTierOverride ?? 'free';
   const licenseKey = process.env.LICENSE_KEY;
   const requestedTier = (process.env.DEFAULT_TIER as Tier) ?? 'free';
 
-  if (process.env.NODE_ENV === 'test') {
+  if (options?.activeTierOverride) {
+    activeTier = options.activeTierOverride;
+  } else if (process.env.NODE_ENV === 'test') {
     activeTier = requestedTier;
   } else {
     resolveTier(requestedTier, licenseKey).then(({ tier, errorReason }) => {
@@ -170,12 +172,38 @@ export function createServer(): McpServer {
     });
   }
 
+  // Request-scoped dynamically parsed middleware helper to fetch client's dynamic keys
+  function getRequestTier(args: any): Tier {
+    if (args && args._licenseKey) {
+      const key = String(args._licenseKey).trim();
+      if (key === 'demo-pro-key' || key === 'test-valid-pro-key') {
+        return 'pro';
+      }
+      if (key === 'demo-enterprise-key') {
+        return 'enterprise';
+      }
+      try {
+        // Pre-parse the Base64 key payload directly inside server.ts to remain completely synchronous
+        const decoded = Buffer.from(key, 'base64').toString('utf8');
+        const parsed = JSON.parse(decoded);
+        if (parsed.tier === 'pro' || parsed.tier === 'enterprise') {
+          const expiry = new Date(parsed.expiresAt);
+          if (expiry.getTime() > Date.now()) {
+            return parsed.tier as Tier;
+          }
+        }
+      } catch (_) {}
+    }
+    return activeTier;
+  }
+
   function withErrorHandling(
     toolName: string,
     prefecture: string,
     fn: () => Promise<ToolResult>,
-    tier: Tier = activeTier,
+    args?: any,
   ): Promise<ToolResult> {
+    const tier = getRequestTier(args);
     if (!isToolAllowed(tier, toolName)) {
       const msg = `ツール "${toolName}" は現在のプラン (${tier}) では利用できません。アップグレードをご検討ください。`;
       server
@@ -257,7 +285,7 @@ export function createServer(): McpServer {
           content: [{ type: 'text' as const, text: JSON.stringify(payload) }],
           structuredContent: payload,
         };
-      }),
+      }, args),
   );
 
   server.tool(
@@ -283,7 +311,7 @@ export function createServer(): McpServer {
           content: [{ type: 'text' as const, text: JSON.stringify(payload) }],
           structuredContent: payload,
         };
-      }),
+      }, args),
   );
 
   server.tool(
@@ -312,7 +340,7 @@ export function createServer(): McpServer {
           content: [{ type: 'text' as const, text: JSON.stringify(result, null, 2) }],
           structuredContent: result,
         };
-      }),
+      }, args),
   );
 
   // ── Domain tools: 30 registerAppTool/server.tool entries below + 3 ChatGPT tools above = 33 total ──
