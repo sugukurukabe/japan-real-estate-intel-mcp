@@ -19,8 +19,10 @@ FROM node:22-alpine AS runner
 WORKDIR /app
 
 # Install production deps only
-COPY package.json pnpm-lock.yaml ./
-RUN corepack enable && corepack prepare pnpm@latest --activate && pnpm install --frozen-lockfile --prod --ignore-scripts
+COPY package.json pnpm-lock.yaml .npmrc ./
+RUN corepack enable && corepack prepare pnpm@latest --activate \
+    && pnpm config set minimum-release-age 0 --location project \
+    && pnpm install --frozen-lockfile --prod --ignore-scripts
 
 # Copy built artifacts and runtime assets
 COPY --from=builder /app/dist ./dist
