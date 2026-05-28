@@ -139,7 +139,6 @@ app.get('/', (_req, res) => res.redirect('/dashboard.html'));
 function isPublicPath(p: string): boolean {
   if (
     p === '/health' ||
-    p === '/metrics' ||
     p === '/' ||
     p === '/sw.js' ||
     p === '/manifest.webmanifest'
@@ -227,12 +226,15 @@ app.post('/mcp', async (req, res) => {
 
   if (reqLicenseKey) {
     const { verifyLicenseKeyOffline } = await import('./auth/license.js');
-    // Pre-bypass demo keys
-    if (reqLicenseKey === 'demo-pro-key' || reqLicenseKey === 'test-valid-pro-key') {
-      clientTierOverride = 'pro';
-    } else if (reqLicenseKey === 'demo-enterprise-key') {
-      clientTierOverride = 'enterprise';
-    } else {
+    // Pre-bypass demo keys — only in non-production environments
+    if (process.env.NODE_ENV !== 'production') {
+      if (reqLicenseKey === 'demo-pro-key' || reqLicenseKey === 'test-valid-pro-key') {
+        clientTierOverride = 'pro';
+      } else if (reqLicenseKey === 'demo-enterprise-key') {
+        clientTierOverride = 'enterprise';
+      }
+    }
+    if (clientTierOverride === 'free') {
       const verifyResult = verifyLicenseKeyOffline(reqLicenseKey);
       if (verifyResult.success) {
         clientTierOverride = verifyResult.tier;

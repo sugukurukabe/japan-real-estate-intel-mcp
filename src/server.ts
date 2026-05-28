@@ -167,7 +167,6 @@ export function createServer(options?: { activeTierOverride?: Tier }): McpServer
         server
           .sendLoggingMessage({ level: 'info', data: { event: 'license_success', activeTier } })
           .catch(() => {});
-        console.log(`[License Success] Plan "${tier.toUpperCase()}" activated successfully.`);
       }
     });
   }
@@ -176,11 +175,14 @@ export function createServer(options?: { activeTierOverride?: Tier }): McpServer
   function getRequestTier(args: any): Tier {
     if (args && args._licenseKey) {
       const key = String(args._licenseKey).trim();
-      if (key === 'demo-pro-key' || key === 'test-valid-pro-key') {
-        return 'pro';
-      }
-      if (key === 'demo-enterprise-key') {
-        return 'enterprise';
+      // Demo/test keys — only available in non-production environments
+      if (process.env.NODE_ENV !== 'production') {
+        if (key === 'demo-pro-key' || key === 'test-valid-pro-key') {
+          return 'pro';
+        }
+        if (key === 'demo-enterprise-key') {
+          return 'enterprise';
+        }
       }
       try {
         // Pre-parse the Base64 key payload directly inside server.ts to remain completely synchronous

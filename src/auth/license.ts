@@ -112,9 +112,9 @@ export async function verifyLicenseKey(
     }
   }
 
-  // Pro demo key for developer testing
-  if (licenseKey === 'demo-pro-key') {
-    log.info('Demo-Pro bypass key used (Internal evaluation only)');
+  // Pro demo key — restricted to development/test environments only
+  if (process.env.NODE_ENV !== 'production' && licenseKey === 'demo-pro-key') {
+    log.info('Demo-Pro bypass key used (non-production environment only)');
     return {
       success: true,
       tier: 'pro',

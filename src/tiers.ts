@@ -74,6 +74,7 @@ export const TIER_CONFIG: Record<Tier, TierConfig> = {
       'detect_arbitrage_signals',
       'quick_visual_summary',
       'simulate_leveraged_cashflow',
+      'review_purchase_recommendation',
     ],
     resources: [
       'realestate://land-price/{prefecture}/{area}',

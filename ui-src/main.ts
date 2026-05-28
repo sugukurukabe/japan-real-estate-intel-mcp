@@ -2790,7 +2790,7 @@ function showUpgradeGateway(): void {
       <strong style="font-size:13px; display:block; margin-bottom:4px;">🔑 ライセンスキーの有効化</strong>
       <span style="font-size:11px; color:var(--text-muted)">購入済みのサイン付きライセンスキーを入力してPro機能を開放します。</span>
       <div class="license-input-wrapper">
-        <input type="text" id="license-key-input" class="neighborhood-input" placeholder="ここにキーをペースト... (デモ用: demo-pro-key)" style="margin: 0; flex:1;" value="${localStorage.getItem('rei-active-key') || ''}"/>
+        <input type="text" id="license-key-input" class="neighborhood-input" placeholder="ライセンスキーをここにペースト..." style="margin: 0; flex:1;" value="${localStorage.getItem('rei-active-key') || ''}"/>
         <button id="btn-activate-license" class="btn-report btn-report-solid-accent" style="margin: 0; padding: 0 20px; background:#34d399; border-color:#34d399;">有効化</button>
       </div>
       <div id="license-status-msg" style="font-size:11px; margin-top:8px; display:none;"></div>
@@ -2851,7 +2851,7 @@ function showUpgradeGateway(): void {
             if (expiry.getTime() > Date.now()) {
               isValidKey = true;
               activatedTier = parsed.tier;
-              console.log('Cryptographic offline verification matches schema structure for: ' + parsed.clientName);
+              // Cryptographic offline verification matches schema structure
             }
           }
         }
@@ -2875,7 +2875,7 @@ function showUpgradeGateway(): void {
 
       setTimeout(() => {
         close();
-        alert(`アクティベーション成功！\n無制限の極上AI分析とすべての高度な機能（3D Plateua、災害クロス分析、詳細レポーティング）がローカル環境でも完全に解放されました。`);
+        alert(`アクティベーション成功！\n無制限の極上AI分析とすべての高度な機能（3D Plateau、災害クロス分析、詳細レポーティング）がローカル環境でも完全に解放されました。`);
         location.reload(); // Reload to refresh map capabilities and local client tiers
       }, 1500);
     } else {

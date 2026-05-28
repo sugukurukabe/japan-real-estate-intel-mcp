@@ -20,15 +20,36 @@ You can run the script below using `node` to generate a new valid signed license
 
 ```javascript
 import crypto from 'node:crypto';
+import fs from 'node:fs';
 
-// The private key must match the hardcoded public key in `src/auth/license.ts`
-// For production setup, generate a secure prime256v1 private key PEM.
-// Here is the pre-configured private key that matches our built-in public key:
-const PRIVATE_KEY_PEM = `-----BEGIN PRIVATE KEY-----
-MIGHAgEAMBMGByqGSM49AgEGCCqGSM49AwEHBG0wawIBAQQgfXm75P3zX8x0f3+B
-a3z4l5Vw/2L2qN33iS6Jv8w/9v+hRANCAARRItk8yd8WZgTF91Bo2qyDk3dN0uYc
-MhgF6ltJmHDv7HNDWzDFhu6hbcePy3SqLi3PjYmqxtVLEZvcbmSxgx8A
------END PRIVATE KEY-----`;
+// ⚠️ SECURITY: NEVER commit the private key to version control.
+// Load it from a secure environment variable or a file outside the repository.
+//
+// To generate a new key pair:
+//   openssl ecparam -genkey -name prime256v1 -noout -out private.pem
+//   openssl ec -in private.pem -pubout -out public.pem
+//
+// Then update `src/auth/license.ts` PUBLIC_KEY_PEM with the contents of public.pem.
+//
+// Set the environment variable:
+//   export LICENSE_PRIVATE_KEY_PATH=/secure/path/to/private.pem
+// Or:
+//   export LICENSE_PRIVATE_KEY_PEM="-----BEGIN PRIVATE KEY-----\n...\n-----END PRIVATE KEY-----"
+
+function loadPrivateKey() {
+  if (process.env.LICENSE_PRIVATE_KEY_PEM) {
+    return process.env.LICENSE_PRIVATE_KEY_PEM;
+  }
+  const keyPath = process.env.LICENSE_PRIVATE_KEY_PATH;
+  if (!keyPath) {
+    console.error('❌ LICENSE_PRIVATE_KEY_PATH or LICENSE_PRIVATE_KEY_PEM must be set.');
+    console.error('   See docs/licensing-and-stripe-integration.md for key generation instructions.');
+    process.exit(1);
+  }
+  return fs.readFileSync(keyPath, 'utf8');
+}
+
+const PRIVATE_KEY_PEM = loadPrivateKey();
 
 /**
  * Generates a signed, Base64-encoded license key
