@@ -1,4 +1,14 @@
 # Changelog
+## [6.15.4] - 2026-05-28
+
+### Added
+- **Dependency Hardening**: Downgrade and pin Zod library to stable `^3.23.8` to fix type compilation failures in schema definitions.
+
+## [6.15.3] - 2026-05-28
+
+### Added
+- **Premium Upgrades Integration**: Add elegant, non-intrusive dotted gold promotional card in sidebar for Free users to easily upgrade to Pro.
+
 ## [6.15.2] - 2026-05-20
 
 ### Added

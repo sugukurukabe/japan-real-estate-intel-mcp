@@ -3,7 +3,7 @@
   "name": "io.github.sugukurukabe/japan-real-estate-intel-mcp",
   "title": "Japan Real Estate Intel",
   "description": "Japan real estate MCP: land price, risk, foot traffic, renovation. 10 prefectures.",
-  "version": "6.15.2",
+  "version": "6.15.4",
   "websiteUrl": "https://realestate-mcp.jp/dashboard.html",
   "repository": {
     "url": "https://github.com/sugukurukabe/japan-real-estate-intel-mcp",
@@ -13,7 +13,7 @@
     {
       "registryType": "npm",
       "identifier": "@sugukuru/japan-real-estate-intel-mcp",
-      "version": "6.15.2",
+      "version": "6.15.4",
       "transport": {
         "type": "stdio"
       },

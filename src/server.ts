@@ -141,7 +141,7 @@ function applyOutputMode(
 export function createServer(options?: { activeTierOverride?: Tier }): McpServer {
   const server = new McpServer({
     name: 'japan-real-estate-intel-mcp',
-    version: '6.15.2',
+    version: '6.15.4',
   });
 
   let activeTier: Tier = options?.activeTierOverride ?? 'free';
