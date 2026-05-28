@@ -9,6 +9,8 @@ import { createServer } from './server.js';
 import { moduleLogger } from './logger.js';
 import { randomUUID } from 'node:crypto';
 import { registerOAuthRoutes } from './auth/oauth-routes.js';
+import { registerStripeWebhookRoutes } from './billing/stripe-webhook.js';
+import { getLicenseByEmail } from './billing/license-store.js';
 import { collectDefaultMetrics, register, Counter, Histogram, Gauge } from 'prom-client';
 import * as Sentry from '@sentry/node';
 import type { Tier } from './tiers.js';
@@ -121,7 +123,12 @@ if (RATE_LIMIT_ENABLED) {
   log.info({ windowMs: RATE_LIMIT_WINDOW_MS, max: RATE_LIMIT_MAX }, 'Rate limiting enabled');
 }
 
-// Body size limit
+// ── Stripe Webhook (raw body — must come BEFORE express.json()) ────────────
+// Stripe signature verification requires the raw request body as a Buffer.
+app.use('/stripe/webhook', express.raw({ type: 'application/json' }));
+registerStripeWebhookRoutes(app);
+
+// Body size limit (all other routes use JSON)
 app.use(express.json({ limit: '10mb' }));
 
 // ── Static UI assets (no auth required) ────────────────────────────────────
@@ -152,6 +159,8 @@ function isPublicPath(p: string): boolean {
   )
     return true;
   if (p === '/privacy-policy.html' || p === '/terms.html') return true;
+  // Stripe webhook is protected by its own signature verification
+  if (p === '/stripe/webhook') return true;
   return false;
 }
 
@@ -178,6 +187,29 @@ app.use((req, res, next) => {
 
 // ── OAuth 2.1 + PKCE endpoints ────────────────────────────────────────────
 registerOAuthRoutes(app);
+
+// ── License Lookup API ────────────────────────────────────────────────────
+app.get('/api/license', (req: Request, res: Response) => {
+  const email = req.query.email as string | undefined;
+  if (!email) {
+    res.status(400).json({ error: 'email query parameter is required' });
+    return;
+  }
+  const license = getLicenseByEmail(email);
+  if (!license) {
+    res.status(404).json({ error: 'No active license found for this email' });
+    return;
+  }
+  // Return license info (key included so customer can copy it)
+  res.json({
+    clientName: license.client_name,
+    email: license.email,
+    tier: license.tier,
+    licenseKey: license.license_key,
+    expiresAt: license.expires_at,
+    createdAt: license.created_at,
+  });
+});
 
 // ── Session management ─────────────────────────────────────────────────────
 
