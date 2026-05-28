@@ -1,6 +1,10 @@
 import { describe, it, expect } from 'vitest';
 import { getLoader, listAvailable } from '../src/data-loaders/index.js';
-import { resolvePrefecture, getPrefectureDisplayName, isKnownPrefecture } from '../src/prefecture/resolver.js';
+import {
+  resolvePrefecture,
+  getPrefectureDisplayName,
+  isKnownPrefecture,
+} from '../src/prefecture/resolver.js';
 import { crossAnalyze } from '../src/tools/cross_analyze_real_estate_market.js';
 import { assessPropertyRisk } from '../src/tools/assess_property_risk.js';
 

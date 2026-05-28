@@ -32,7 +32,10 @@ function getAreaSqm(input: PurchaseReviewInput): number {
   return input.exclusiveAreaSqm ?? input.buildingAreaSqm ?? input.landAreaSqm ?? 0;
 }
 
-function calculatePriceAxis(input: PurchaseReviewInput, areaSqm: number): { axis: PurchaseReviewAxis; keyNumbers: Partial<KeyNumbers> } {
+function calculatePriceAxis(
+  input: PurchaseReviewInput,
+  areaSqm: number,
+): { axis: PurchaseReviewAxis; keyNumbers: Partial<KeyNumbers> } {
   const price = input.askingPrice;
   const pricePerSqm = areaSqm > 0 ? Math.round(price / areaSqm) : null;
   const pricePerTsubo = pricePerSqm != null ? Math.round(pricePerSqm * 3.305785) : null;
@@ -101,16 +104,20 @@ function calculatePriceAxis(input: PurchaseReviewInput, areaSqm: number): { axis
       axis: 'price',
       label: '価格評価',
       score: Math.max(0, Math.min(100, Math.round(score))),
-      summary: pricePerSqm != null
-        ? `㎡単価¥${pricePerSqm.toLocaleString()}（公示比${keyNumbers.askingToKojiRatio ?? 'N/A'}倍）`
-        : '面積データ未入力',
+      summary:
+        pricePerSqm != null
+          ? `㎡単価¥${pricePerSqm.toLocaleString()}（公示比${keyNumbers.askingToKojiRatio ?? 'N/A'}倍）`
+          : '面積データ未入力',
       evidence,
     },
     keyNumbers,
   };
 }
 
-function calculateYieldAxis(input: PurchaseReviewInput): { axis: PurchaseReviewAxis; keyNumbers: Partial<KeyNumbers> } {
+function calculateYieldAxis(input: PurchaseReviewInput): {
+  axis: PurchaseReviewAxis;
+  keyNumbers: Partial<KeyNumbers>;
+} {
   const price = input.askingPrice;
   const annualRent = input.expectedAnnualRent ?? input.currentAnnualRent ?? null;
   const operatingExpense = input.operatingExpenseAnnual ?? 0;
@@ -181,9 +188,10 @@ function calculateYieldAxis(input: PurchaseReviewInput): { axis: PurchaseReviewA
       axis: 'yield',
       label: '利回り評価',
       score: Math.max(0, Math.min(100, Math.round(score))),
-      summary: keyNumbers.grossYield != null
-        ? `表面利回り${keyNumbers.grossYield}% / 回収${keyNumbers.paybackYears}年`
-        : '賃貸データ未入力',
+      summary:
+        keyNumbers.grossYield != null
+          ? `表面利回り${keyNumbers.grossYield}% / 回収${keyNumbers.paybackYears}年`
+          : '賃貸データ未入力',
       evidence,
     },
     keyNumbers,
@@ -248,7 +256,7 @@ function calculateFutureAxis(input: PurchaseReviewInput): PurchaseReviewAxis {
 
   if (input.structure != null) {
     const durableStructures = ['RC', 'SRC', '鉄骨'];
-    if (durableStructures.some(s => input.structure!.includes(s))) {
+    if (durableStructures.some((s) => input.structure!.includes(s))) {
       score += 10;
       evidence.push(`構造: ${input.structure}（耐久性高）`);
     }
@@ -347,25 +355,23 @@ function generateMarkdownReport(
   missingInfo: string[],
   recommendedClauses: ClauseItem[],
 ): string {
-  const axisTable = axes
-    .map(a => `| ${a.label} | ${a.score} | ${a.summary} |`)
-    .join('\n');
+  const axisTable = axes.map((a) => `| ${a.label} | ${a.score} | ${a.summary} |`).join('\n');
 
-  const redFlagSection = redFlags.length > 0
-    ? redFlags.map(f => `- ⚠️ ${f}`).join('\n')
-    : '- 重大なレッドフラグなし';
+  const redFlagSection =
+    redFlags.length > 0 ? redFlags.map((f) => `- ⚠️ ${f}`).join('\n') : '- 重大なレッドフラグなし';
 
-  const negotiationSection = negotiationPoints.length > 0
-    ? negotiationPoints.map(p => `- ${p}`).join('\n')
-    : '- 特に交渉ポイントなし';
+  const negotiationSection =
+    negotiationPoints.length > 0
+      ? negotiationPoints.map((p) => `- ${p}`).join('\n')
+      : '- 特に交渉ポイントなし';
 
-  const missingSection = missingInfo.length > 0
-    ? missingInfo.map(m => `- ${m}`).join('\n')
-    : '- 特になし';
+  const missingSection =
+    missingInfo.length > 0 ? missingInfo.map((m) => `- ${m}`).join('\n') : '- 特になし';
 
-  const clauseSection = recommendedClauses.length > 0
-    ? recommendedClauses.map(c => `- 【${c.priority}】${c.clause}（${c.rationale}）`).join('\n')
-    : '- 標準条項で十分';
+  const clauseSection =
+    recommendedClauses.length > 0
+      ? recommendedClauses.map((c) => `- 【${c.priority}】${c.clause}（${c.rationale}）`).join('\n')
+      : '- 標準条項で十分';
 
   const areaSqm = getAreaSqm(input);
   const areaTsubo = Math.round(areaSqm * 3.305785);
@@ -431,21 +437,25 @@ export async function reviewPurchaseRecommendation(
     contractAxis,
   ];
 
-  const overallScore = Math.round(
-    axes.reduce((sum, a) => sum + a.score, 0) / axes.length
-  );
+  const overallScore = Math.round(axes.reduce((sum, a) => sum + a.score, 0) / axes.length);
 
   const redFlags: string[] = [];
   const negotiationPoints: string[] = [];
   const missingInfo: string[] = [];
   const recommendedClauses: ClauseItem[] = [];
 
-  axes.forEach(axis => {
+  axes.forEach((axis) => {
     if (axis.score < 40) {
       redFlags.push(`${axis.label}が低スコア（${axis.score}点）`);
     }
-    axis.evidence.forEach(ev => {
-      if (ev.includes('割高') || ev.includes('低水準') || ev.includes('赤字') || ev.includes('高リスク') || ev.includes('老朽化')) {
+    axis.evidence.forEach((ev) => {
+      if (
+        ev.includes('割高') ||
+        ev.includes('低水準') ||
+        ev.includes('赤字') ||
+        ev.includes('高リスク') ||
+        ev.includes('老朽化')
+      ) {
         redFlags.push(ev);
       }
       if (ev.includes('注意') || ev.includes('要確認') || ev.includes('短め')) {
@@ -464,7 +474,10 @@ export async function reviewPurchaseRecommendation(
     missingInfo.push('建物検査の有無が不明');
   }
 
-  if (input.proposedTerms?.defectLiabilityMonths != null && input.proposedTerms.defectLiabilityMonths < 24) {
+  if (
+    input.proposedTerms?.defectLiabilityMonths != null &&
+    input.proposedTerms.defectLiabilityMonths < 24
+  ) {
     recommendedClauses.push({
       clause: '瑕疵担保責任期間を24ヶ月以上に延長',
       rationale: '現行の瑕疵担保期間が短いため',
@@ -487,7 +500,14 @@ export async function reviewPurchaseRecommendation(
   }
 
   const decision = determineDecision(overallScore, redFlags);
-  const decisionLabel = decision === 'buy' ? '購入推奨' : decision === 'negotiate' ? '価格交渉推奨' : decision === 'hold' ? '保留' : '非推奨';
+  const decisionLabel =
+    decision === 'buy'
+      ? '購入推奨'
+      : decision === 'negotiate'
+        ? '価格交渉推奨'
+        : decision === 'hold'
+          ? '保留'
+          : '非推奨';
 
   const keyNumbers: KeyNumbers = {
     askingPrice: input.askingPrice,
@@ -519,7 +539,7 @@ export async function reviewPurchaseRecommendation(
   const prefecture = resolvePrefecture(input.prefecture) || input.prefecture;
   const publicBase = (process.env.MCP_PUBLIC_URL ?? 'https://realestate-mcp.jp').replace(/\/$/, '');
   const dashboardUri = `${publicBase}/dashboard?prefecture=${encodeURIComponent(
-    prefecture
+    prefecture,
   )}&area=${encodeURIComponent(input.city)}&mode=purchase&review=1`;
 
   return {
@@ -537,7 +557,12 @@ export async function reviewPurchaseRecommendation(
     negotiationPoints,
     missingInformation: missingInfo,
     recommendedClauses,
-    dataSources: ['公示地価（国土交通省）', '路線価（国税庁）', '取引価格情報（国土交通省）', '人口推計（総務省）'],
+    dataSources: [
+      '公示地価（国土交通省）',
+      '路線価（国税庁）',
+      '取引価格情報（国土交通省）',
+      '人口推計（総務省）',
+    ],
     markdownReport,
     dashboardUri,
     attribution: ATTRIBUTION,

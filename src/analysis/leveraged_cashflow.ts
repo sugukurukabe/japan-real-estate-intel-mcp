@@ -36,7 +36,9 @@ function nullableRoundPct(value: number | null): number | null {
 }
 
 function depreciationYears(input: LeveragedCashflowInput): number {
-  return input.assumptions.depreciationYears ?? STRUCTURE_DEPRECIATION_YEARS[input.propertyType] ?? 39;
+  return (
+    input.assumptions.depreciationYears ?? STRUCTURE_DEPRECIATION_YEARS[input.propertyType] ?? 39
+  );
 }
 
 function loanAmount(input: LeveragedCashflowInput): number {
@@ -48,7 +50,11 @@ function initialEquity(input: LeveragedCashflowInput, amount: number): number {
 }
 
 /** 年次・元利均等: 返済開始時点残高 B、残返済年数 n のときの年間返済総額（元利合計） */
-function annualPaymentEqualPayment(openingBalance: number, annualRate: number, amortYearsLeft: number): number {
+function annualPaymentEqualPayment(
+  openingBalance: number,
+  annualRate: number,
+  amortYearsLeft: number,
+): number {
   if (amortYearsLeft <= 0 || openingBalance <= 0) return 0;
   if (annualRate === 0) return openingBalance / amortYearsLeft;
   const f = Math.pow(1 + annualRate, amortYearsLeft);
@@ -61,7 +67,7 @@ function publicDashboardDeepLink(searchParams: string): string {
 }
 
 function computeIrr(cashflows: number[]): number | null {
-  if (!cashflows.some(v => v > 0) || !cashflows.some(v => v < 0)) return null;
+  if (!cashflows.some((v) => v > 0) || !cashflows.some((v) => v < 0)) return null;
 
   let rate = 0.08;
   for (let i = 0; i < 100; i += 1) {
@@ -84,7 +90,11 @@ function computeIrr(cashflows: number[]): number | null {
   return null;
 }
 
-function terminalSaleProceeds(input: LeveragedCashflowInput, finalNoi: number, loanBalance: number): number | null {
+function terminalSaleProceeds(
+  input: LeveragedCashflowInput,
+  finalNoi: number,
+  loanBalance: number,
+): number | null {
   const exitCap = input.assumptions.exitCapRatePct;
   if (exitCap == null || exitCap <= 0 || finalNoi <= 0) return null;
   const grossSale = finalNoi / (exitCap / 100);
@@ -109,14 +119,8 @@ function applyLoanYear(params: {
   equalPaymentFixed: number | null;
   equalPrincipalFixed: number | null;
 } {
-  const {
-    yearIndex,
-    openingBalance,
-    interestOnlyYears,
-    amortYears,
-    annualRate,
-    paymentType,
-  } = params;
+  const { yearIndex, openingBalance, interestOnlyYears, amortYears, annualRate, paymentType } =
+    params;
 
   if (openingBalance <= 0) {
     return {
@@ -160,7 +164,9 @@ function applyLoanYear(params: {
     principalPayment = Math.min(openingBalance, pr);
     debtService = interestPayment + principalPayment;
   } else {
-    const targetTotal = equalPaymentFixed ?? roundYen(annualPaymentEqualPayment(openingBalance, annualRate, amortYears));
+    const targetTotal =
+      equalPaymentFixed ??
+      roundYen(annualPaymentEqualPayment(openingBalance, annualRate, amortYears));
     principalPayment = Math.min(openingBalance, Math.max(0, targetTotal - interestPayment));
     debtService = interestPayment + principalPayment;
   }
@@ -202,15 +208,21 @@ function projectRows(params: ProjectionParams): {
 
   for (let year = 1; year <= input.assumptions.simulationYears; year += 1) {
     const growthPower = year - 1;
-    const grossRent = roundYen(input.annualRent * Math.pow(1 + input.assumptions.rentGrowthPct / 100, growthPower));
-    const otherIncome = roundYen(input.otherIncomeAnnual * Math.pow(1 + input.assumptions.rentGrowthPct / 100, growthPower));
+    const grossRent = roundYen(
+      input.annualRent * Math.pow(1 + input.assumptions.rentGrowthPct / 100, growthPower),
+    );
+    const otherIncome = roundYen(
+      input.otherIncomeAnnual * Math.pow(1 + input.assumptions.rentGrowthPct / 100, growthPower),
+    );
     const vacancyLoss = roundYen(grossRent * vacancyRate);
     const effectiveIncome = roundYen(grossRent + otherIncome - vacancyLoss);
     const operatingExpense = roundYen(
       (input.operatingExpenseAnnual + input.annualCapex) *
-      Math.pow(1 + input.assumptions.expenseGrowthPct / 100, growthPower),
+        Math.pow(1 + input.assumptions.expenseGrowthPct / 100, growthPower),
     );
-    const propertyTax = roundYen(input.propertyTaxAnnual * Math.pow(1 + input.assumptions.expenseGrowthPct / 100, growthPower));
+    const propertyTax = roundYen(
+      input.propertyTaxAnnual * Math.pow(1 + input.assumptions.expenseGrowthPct / 100, growthPower),
+    );
     const noi = roundYen(effectiveIncome - operatingExpense - propertyTax);
 
     const loanStep = applyLoanYear({
@@ -255,14 +267,15 @@ function projectRows(params: ProjectionParams): {
   }
 
   const terminalSale = terminalSaleProceeds(input, rows[rows.length - 1]?.noi ?? 0, balance);
-  const cashflows = [-equity, ...rows.map(row => row.afterTaxCashflow)];
+  const cashflows = [-equity, ...rows.map((row) => row.afterTaxCashflow)];
   if (terminalSale != null && cashflows.length > 1) {
     cashflows[cashflows.length - 1] += terminalSale;
   }
 
   const sumOperatingCf = rows.reduce((s, row) => s + row.afterTaxCashflow, 0);
   const totalEquityDistributions = sumOperatingCf + (terminalSale ?? 0);
-  const equityMultiple = equity > 0 ? Math.round((totalEquityDistributions / equity) * 100) / 100 : null;
+  const equityMultiple =
+    equity > 0 ? Math.round((totalEquityDistributions / equity) * 100) / 100 : null;
 
   return {
     rows,
@@ -282,27 +295,34 @@ function buildSensitivity(input: LeveragedCashflowInput): LeveragedCashflowOutpu
     { label: '金利+1.0% / 空室率+5pt', rateDelta: 1.0, vacancyDelta: 0.05 },
   ];
 
-  return scenarios.map(scenario => {
+  return scenarios.map((scenario) => {
     const interestRatePct = Math.max(0, input.loan.interestRatePct + scenario.rateDelta);
     const vacancyRate = Math.min(0.95, Math.max(0, input.vacancyRate + scenario.vacancyDelta));
     const projection = projectRows({ input, interestRatePct, vacancyRate });
-    const dscrs = projection.rows.map(row => row.dscr).filter((v): v is number => v != null);
+    const dscrs = projection.rows.map((row) => row.dscr).filter((v): v is number => v != null);
     return {
       label: scenario.label,
       interestRatePct: roundPct(interestRatePct),
       vacancyRate: roundPct(vacancyRate * 100),
       tenYearIrrPct: projection.irr,
-      totalAfterTaxCashflow: projection.rows[projection.rows.length - 1]?.cumulativeAfterTaxCashflow ?? 0,
+      totalAfterTaxCashflow:
+        projection.rows[projection.rows.length - 1]?.cumulativeAfterTaxCashflow ?? 0,
       minDscr: dscrs.length > 0 ? Math.min(...dscrs) : null,
     };
   });
 }
 
-function buildRedFlags(rows: LeveragedCashflowYear[], minDscr: number | null, year1CashOnCashPct: number | null): string[] {
+function buildRedFlags(
+  rows: LeveragedCashflowYear[],
+  minDscr: number | null,
+  year1CashOnCashPct: number | null,
+): string[] {
   const flags: string[] = [];
   if (minDscr != null && minDscr < 1.1) flags.push(`最低DSCRが${minDscr}倍で返済余力が薄い`);
-  if (rows.some(row => row.afterTaxCashflow < 0)) flags.push('税引後キャッシュフローが赤字の年がある');
-  if (year1CashOnCashPct != null && year1CashOnCashPct < 2) flags.push(`初年度CCRが${year1CashOnCashPct}%で低い`);
+  if (rows.some((row) => row.afterTaxCashflow < 0))
+    flags.push('税引後キャッシュフローが赤字の年がある');
+  if (year1CashOnCashPct != null && year1CashOnCashPct < 2)
+    flags.push(`初年度CCRが${year1CashOnCashPct}%で低い`);
   const y1 = rows[0];
   if (y1 && y1.estimatedTax > y1.beforeTaxCashflow) {
     flags.push('税額が税前キャッシュフローを上回る年があり、手元資金に注意');
@@ -312,10 +332,10 @@ function buildRedFlags(rows: LeveragedCashflowYear[], minDscr: number | null, ye
 
 function buildRecommendations(redFlags: string[], input: LeveragedCashflowInput): string[] {
   const recommendations: string[] = [];
-  if (redFlags.some(flag => flag.includes('DSCR'))) {
+  if (redFlags.some((flag) => flag.includes('DSCR'))) {
     recommendations.push('LTVを下げる、返済期間を延ばす、または金利条件を再交渉する');
   }
-  if (redFlags.some(flag => flag.includes('赤字'))) {
+  if (redFlags.some((flag) => flag.includes('赤字'))) {
     recommendations.push('賃料査定・空室率・修繕費の前提を保守的に見直す');
   }
   if (input.assumptions.exitCapRatePct == null) {
@@ -338,15 +358,22 @@ function buildMarkdownReport(
 ): string {
   const yr = input.assumptions.simulationYears;
   const yearly = output.yearlyRows
-    .map(row => `| ${row.year} | ${formatYen(row.noi)} | ${formatYen(row.debtService)} | ${formatYen(row.afterTaxCashflow)} | ${formatYen(row.loanBalance)} | ${row.dscr ?? 'N/A'} |`)
+    .map(
+      (row) =>
+        `| ${row.year} | ${formatYen(row.noi)} | ${formatYen(row.debtService)} | ${formatYen(row.afterTaxCashflow)} | ${formatYen(row.loanBalance)} | ${row.dscr ?? 'N/A'} |`,
+    )
     .join('\n');
   const sensitivity = output.sensitivity
-    .map(row => `| ${row.label} | ${row.interestRatePct}% | ${row.vacancyRate}% | ${row.tenYearIrrPct ?? 'N/A'}% | ${row.minDscr ?? 'N/A'} |`)
+    .map(
+      (row) =>
+        `| ${row.label} | ${row.interestRatePct}% | ${row.vacancyRate}% | ${row.tenYearIrrPct ?? 'N/A'}% | ${row.minDscr ?? 'N/A'} |`,
+    )
     .join('\n');
-  const flags = output.redFlags.length > 0
-    ? output.redFlags.map(flag => `- ${flag}`).join('\n')
-    : '- 重大なレッドフラグなし';
-  const recommendations = output.recommendations.map(rec => `- ${rec}`).join('\n');
+  const flags =
+    output.redFlags.length > 0
+      ? output.redFlags.map((flag) => `- ${flag}`).join('\n')
+      : '- 重大なレッドフラグなし';
+  const recommendations = output.recommendations.map((rec) => `- ${rec}`).join('\n');
 
   return `# レバレッジ${yr}年キャッシュフロー試算
 
@@ -403,13 +430,14 @@ export async function simulateLeveragedCashflow(
     vacancyRate: input.vacancyRate,
   });
   const rows = projection.rows;
-  const dscrs = rows.map(row => row.dscr).filter((v): v is number => v != null);
+  const dscrs = rows.map((row) => row.dscr).filter((v): v is number => v != null);
   const minDscr = dscrs.length > 0 ? Math.min(...dscrs) : null;
   const year1 = rows[0];
   const totalAfterTaxCashflow = rows[rows.length - 1]?.cumulativeAfterTaxCashflow ?? 0;
-  const year1CashOnCashPct = projection.initialEquity > 0 && year1
-    ? roundPct((year1.afterTaxCashflow / projection.initialEquity) * 100)
-    : null;
+  const year1CashOnCashPct =
+    projection.initialEquity > 0 && year1
+      ? roundPct((year1.afterTaxCashflow / projection.initialEquity) * 100)
+      : null;
   const redFlags = buildRedFlags(rows, minDscr, year1CashOnCashPct);
   const recommendations = buildRecommendations(redFlags, input);
   const ltvPct = roundPct((projection.loanAmount / input.askingPrice) * 100);

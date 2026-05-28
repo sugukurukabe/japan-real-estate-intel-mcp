@@ -5,9 +5,11 @@ import { CompositeValueScoreInput } from '../src/schemas.js';
 describe('composite_value_score UI integration', () => {
   it('tool composite_value_score is registered', () => {
     const server = createServer();
-    const tools = (server as unknown as {
-      _registeredTools: Map<string, unknown> | Record<string, unknown>;
-    })._registeredTools;
+    const tools = (
+      server as unknown as {
+        _registeredTools: Map<string, unknown> | Record<string, unknown>;
+      }
+    )._registeredTools;
 
     const keys = tools instanceof Map ? [...tools.keys()] : Object.keys(tools);
     expect(keys).toContain('composite_value_score');
@@ -15,9 +17,11 @@ describe('composite_value_score UI integration', () => {
 
   it('prompt composite_value_report is registered', () => {
     const server = createServer();
-    const prompts = (server as unknown as {
-      _registeredPrompts: Map<string, unknown> | Record<string, unknown>;
-    })._registeredPrompts;
+    const prompts = (
+      server as unknown as {
+        _registeredPrompts: Map<string, unknown> | Record<string, unknown>;
+      }
+    )._registeredPrompts;
 
     const keys = prompts instanceof Map ? [...prompts.keys()] : Object.keys(prompts ?? {});
     expect(keys).toContain('composite_value_report');
@@ -55,7 +59,7 @@ describe('composite_value_score UI integration', () => {
   it('computeCompositeValueScore includes rosenka citation in axes (v6.15.0)', async () => {
     const { computeCompositeValueScore } = await import('../src/analysis/composite_value.js');
     const result = computeCompositeValueScore('aichi', '名古屋市中区');
-    const landAxis = result.axes.find(a => a.axis === 'landPrice');
+    const landAxis = result.axes.find((a) => a.axis === 'landPrice');
     if (landAxis) {
       expect(landAxis.evidence).toContain('路線価');
     }

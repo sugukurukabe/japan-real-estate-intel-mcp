@@ -14,16 +14,71 @@ import { ATTRIBUTION } from '../data/attribution.js';
 export type { CityMetrics };
 
 const GOAL_WEIGHTS: Record<string, Record<string, number>> = {
-  investment:   { price: 20, growth: 25, risk: 15, flow: 10, transport: 10, population: 10, corporate: 5, education: 0, commercial: 5, medical: 0 },
-  store:        { price: 10, growth: 10, risk: 10, flow: 25, transport: 15, population: 10, corporate: 5, education: 0, commercial: 15, medical: 0 },
-  family:       { price: 15, growth: 10, risk: 15, flow: 5,  transport: 10, population: 10, corporate: 0, education: 20, commercial: 5, medical: 10 },
-  office:       { price: 15, growth: 15, risk: 10, flow: 10, transport: 15, population: 5, corporate: 20, education: 0, commercial: 5, medical: 5 },
-  development:  { price: 25, growth: 20, risk: 15, flow: 10, transport: 10, population: 10, corporate: 5, education: 0, commercial: 5, medical: 0 },
+  investment: {
+    price: 20,
+    growth: 25,
+    risk: 15,
+    flow: 10,
+    transport: 10,
+    population: 10,
+    corporate: 5,
+    education: 0,
+    commercial: 5,
+    medical: 0,
+  },
+  store: {
+    price: 10,
+    growth: 10,
+    risk: 10,
+    flow: 25,
+    transport: 15,
+    population: 10,
+    corporate: 5,
+    education: 0,
+    commercial: 15,
+    medical: 0,
+  },
+  family: {
+    price: 15,
+    growth: 10,
+    risk: 15,
+    flow: 5,
+    transport: 10,
+    population: 10,
+    corporate: 0,
+    education: 20,
+    commercial: 5,
+    medical: 10,
+  },
+  office: {
+    price: 15,
+    growth: 15,
+    risk: 10,
+    flow: 10,
+    transport: 15,
+    population: 5,
+    corporate: 20,
+    education: 0,
+    commercial: 5,
+    medical: 5,
+  },
+  development: {
+    price: 25,
+    growth: 20,
+    risk: 15,
+    flow: 10,
+    transport: 10,
+    population: 10,
+    corporate: 5,
+    education: 0,
+    commercial: 5,
+    medical: 0,
+  },
 };
 
 function computePriceComponent(m: CityMetrics, allMetrics: CityMetrics[]): number {
   if (m.avgPricePerSqm == null) return 50;
-  const prices = allMetrics.filter(x => x.avgPricePerSqm != null).map(x => x.avgPricePerSqm!);
+  const prices = allMetrics.filter((x) => x.avgPricePerSqm != null).map((x) => x.avgPricePerSqm!);
   if (prices.length < 2) return 50;
   const median = prices.sort((a, b) => a - b)[Math.floor(prices.length / 2)];
   const ratio = m.avgPricePerSqm / median;
@@ -36,7 +91,10 @@ function computeGrowthComponent(m: CityMetrics): number {
     score = Math.max(0, Math.min(100, 50 + m.avgChangeRate * 10));
   }
   if (m.population) {
-    const popGrowth = ((m.population.population_2025 - m.population.population_2020) / Math.max(1, m.population.population_2020)) * 100;
+    const popGrowth =
+      ((m.population.population_2025 - m.population.population_2020) /
+        Math.max(1, m.population.population_2020)) *
+      100;
     score = Math.max(0, Math.min(100, score * 0.6 + (50 + popGrowth * 10) * 0.4));
   }
   return score;
@@ -45,7 +103,14 @@ function computeGrowthComponent(m: CityMetrics): number {
 export function computeRiskComponent(m: CityMetrics): number {
   let score = 60;
   if (m.earthquake) {
-    const intensityPenalty: Record<string, number> = { '7': 50, '6強': 40, '6弱': 30, '5強': 20, '5弱': 10, '4': 5 };
+    const intensityPenalty: Record<string, number> = {
+      '7': 50,
+      '6強': 40,
+      '6弱': 30,
+      '5強': 20,
+      '5弱': 10,
+      '4': 5,
+    };
     score -= intensityPenalty[m.earthquake.max_intensity] ?? 0;
     if (m.earthquake.liquefaction_risk === 'high') score -= 15;
     else if (m.earthquake.liquefaction_risk === 'medium') score -= 5;
@@ -58,8 +123,12 @@ export function computeRiskComponent(m: CityMetrics): number {
 
 function computeFlowComponent(m: CityMetrics): number {
   if (!m.humanFlow) return 50;
-  const trendBonus = m.humanFlow.trend === 'increasing' ? 15 : m.humanFlow.trend === 'decreasing' ? -10 : 0;
-  return Math.max(0, Math.min(100, 50 + Math.log10(Math.max(1, m.humanFlow.weekdayAvg)) * 5 + trendBonus));
+  const trendBonus =
+    m.humanFlow.trend === 'increasing' ? 15 : m.humanFlow.trend === 'decreasing' ? -10 : 0;
+  return Math.max(
+    0,
+    Math.min(100, 50 + Math.log10(Math.max(1, m.humanFlow.weekdayAvg)) * 5 + trendBonus),
+  );
 }
 
 export function computeTransportComponent(m: CityMetrics): number {
@@ -71,7 +140,10 @@ export function computeTransportComponent(m: CityMetrics): number {
 
 function computePopulationComponent(m: CityMetrics): number {
   if (!m.population) return 50;
-  const growth = ((m.population.population_2025 - m.population.population_2020) / Math.max(1, m.population.population_2020)) * 100;
+  const growth =
+    ((m.population.population_2025 - m.population.population_2020) /
+      Math.max(1, m.population.population_2020)) *
+    100;
   const densityScore = Math.min(40, Math.log10(Math.max(1, m.population.density_per_sqkm)) * 10);
   return Math.max(0, Math.min(100, 40 + growth * 8 + densityScore));
 }
@@ -123,7 +195,11 @@ export function scoreCity(m: CityMetrics, allMetrics: CityMetrics[], goal: strin
   return weightSum > 0 ? Math.round(total / weightSum) : 50;
 }
 
-export function detectSignal(m: CityMetrics, allMetrics: CityMetrics[], goal: string): OpportunitySignalType {
+export function detectSignal(
+  m: CityMetrics,
+  allMetrics: CityMetrics[],
+  goal: string,
+): OpportunitySignalType {
   const priceComp = computePriceComponent(m, allMetrics);
   const growthComp = computeGrowthComponent(m);
   const flowComp = computeFlowComponent(m);
@@ -147,16 +223,30 @@ export function detectSignal(m: CityMetrics, allMetrics: CityMetrics[], goal: st
 
 export function buildWhyReasons(m: CityMetrics, signal: OpportunitySignalType): string[] {
   const reasons: string[] = [];
-  if (m.avgPricePerSqm != null) reasons.push(`平均㎡単価 ¥${Math.round(m.avgPricePerSqm).toLocaleString()}`);
-  if (m.avgChangeRate != null) reasons.push(`地価変動率 ${m.avgChangeRate > 0 ? '+' : ''}${m.avgChangeRate.toFixed(1)}%`);
+  if (m.avgPricePerSqm != null)
+    reasons.push(`平均㎡単価 ¥${Math.round(m.avgPricePerSqm).toLocaleString()}`);
+  if (m.avgChangeRate != null)
+    reasons.push(`地価変動率 ${m.avgChangeRate > 0 ? '+' : ''}${m.avgChangeRate.toFixed(1)}%`);
   if (m.population) {
-    const growth = ((m.population.population_2025 - m.population.population_2020) / Math.max(1, m.population.population_2020) * 100);
-    reasons.push(`人口推移 ${growth > 0 ? '+' : ''}${growth.toFixed(1)}% (${m.population.population_2025.toLocaleString()}人)`);
+    const growth =
+      ((m.population.population_2025 - m.population.population_2020) /
+        Math.max(1, m.population.population_2020)) *
+      100;
+    reasons.push(
+      `人口推移 ${growth > 0 ? '+' : ''}${growth.toFixed(1)}% (${m.population.population_2025.toLocaleString()}人)`,
+    );
   }
-  if (m.humanFlow) reasons.push(`平日人流 ${Math.round(m.humanFlow.weekdayAvg).toLocaleString()} (${m.humanFlow.trend})`);
-  if (m.transport) reasons.push(`駅数 ${m.transport.stationCount}, 平均乗降客 ${Math.round(m.transport.avgPassengers).toLocaleString()}`);
+  if (m.humanFlow)
+    reasons.push(
+      `平日人流 ${Math.round(m.humanFlow.weekdayAvg).toLocaleString()} (${m.humanFlow.trend})`,
+    );
+  if (m.transport)
+    reasons.push(
+      `駅数 ${m.transport.stationCount}, 平均乗降客 ${Math.round(m.transport.avgPassengers).toLocaleString()}`,
+    );
   if (m.education) reasons.push(`教育スコア ${m.education.avgScore.toFixed(0)}`);
-  if (m.corporate) reasons.push(`事業所 ${m.corporate.totalEstablishments}, 大企業 ${m.corporate.majorCompanies}`);
+  if (m.corporate)
+    reasons.push(`事業所 ${m.corporate.totalEstablishments}, 大企業 ${m.corporate.majorCompanies}`);
   if (m.commercial) reasons.push(`商業施設 ${m.commercial.count}件`);
   if (m.medical) reasons.push(`医療施設 ${m.medical.count}件`);
   return reasons.slice(0, 5);
@@ -165,13 +255,18 @@ export function buildWhyReasons(m: CityMetrics, signal: OpportunitySignalType): 
 export function buildRisks(m: CityMetrics, vacancy?: VacancyRecord | null): string[] {
   const risks: string[] = [];
   if (m.earthquake) {
-    if (['7', '6強', '6弱'].includes(m.earthquake.max_intensity)) risks.push(`地震想定震度 ${m.earthquake.max_intensity}`);
+    if (['7', '6強', '6弱'].includes(m.earthquake.max_intensity))
+      risks.push(`地震想定震度 ${m.earthquake.max_intensity}`);
     if (m.earthquake.liquefaction_risk === 'high') risks.push('液状化リスク高');
   }
-  if (m.crime && m.crime.safety_score < 50) risks.push(`治安スコア ${m.crime.safety_score}（低め）`);
-  if (m.population && m.population.aging_rate > 30) risks.push(`高齢化率 ${m.population.aging_rate}%`);
-  if (m.avgChangeRate != null && m.avgChangeRate < -2) risks.push(`地価下落傾向 ${m.avgChangeRate.toFixed(1)}%`);
-  if (vacancy && vacancy.vacancy_rate > 15) risks.push(`空き家率 ${vacancy.vacancy_rate.toFixed(1)}%（高め）`);
+  if (m.crime && m.crime.safety_score < 50)
+    risks.push(`治安スコア ${m.crime.safety_score}（低め）`);
+  if (m.population && m.population.aging_rate > 30)
+    risks.push(`高齢化率 ${m.population.aging_rate}%`);
+  if (m.avgChangeRate != null && m.avgChangeRate < -2)
+    risks.push(`地価下落傾向 ${m.avgChangeRate.toFixed(1)}%`);
+  if (vacancy && vacancy.vacancy_rate > 15)
+    risks.push(`空き家率 ${vacancy.vacancy_rate.toFixed(1)}%（高め）`);
   if (risks.length === 0) risks.push('特筆すべきリスクなし');
   return risks;
 }
@@ -179,22 +274,32 @@ export function buildRisks(m: CityMetrics, vacancy?: VacancyRecord | null): stri
 export function recommendedToolsForGoal(goal: string): string[] {
   const base = ['cross_analyze_real_estate_market', 'assess_property_risk'];
   switch (goal) {
-    case 'investment': return [...base, 'forecast_land_price_trend', 'scenario_what_if', 'portfolio_optimizer'];
-    case 'store': return [...base, 'evaluate_store_location', 'drill_down_local'];
-    case 'family': return [...base, 'assess_family_friendly_score', 'drill_down_local'];
-    case 'office': return [...base, 'predict_corporate_demand', 'drill_down_local'];
-    case 'development': return [...base, 'forecast_land_price_trend', 'simulate_landscape_impact'];
-    default: return base;
+    case 'investment':
+      return [...base, 'forecast_land_price_trend', 'scenario_what_if', 'portfolio_optimizer'];
+    case 'store':
+      return [...base, 'evaluate_store_location', 'drill_down_local'];
+    case 'family':
+      return [...base, 'assess_family_friendly_score', 'drill_down_local'];
+    case 'office':
+      return [...base, 'predict_corporate_demand', 'drill_down_local'];
+    case 'development':
+      return [...base, 'forecast_land_price_trend', 'simulate_landscape_impact'];
+    default:
+      return base;
   }
 }
 
 export function budgetFilter(m: CityMetrics, budgetLevel: string): boolean {
   if (budgetLevel === 'any' || m.avgPricePerSqm == null) return true;
   switch (budgetLevel) {
-    case 'low': return m.avgPricePerSqm < 150000;
-    case 'middle': return m.avgPricePerSqm >= 150000 && m.avgPricePerSqm <= 500000;
-    case 'high': return m.avgPricePerSqm > 500000;
-    default: return true;
+    case 'low':
+      return m.avgPricePerSqm < 150000;
+    case 'middle':
+      return m.avgPricePerSqm >= 150000 && m.avgPricePerSqm <= 500000;
+    case 'high':
+      return m.avgPricePerSqm > 500000;
+    default:
+      return true;
   }
 }
 
@@ -228,19 +333,21 @@ function buildUiActions(city: string, _goal: string) {
  * For the full async version with MLIT freshness support, use
  * `discoverOpportunitiesTool` from `src/tools/discover_opportunities.ts`.
  */
-export function discoverOpportunities(input: DiscoverOpportunitiesInput): DiscoverOpportunitiesOutput {
+export function discoverOpportunities(
+  input: DiscoverOpportunitiesInput,
+): DiscoverOpportunitiesOutput {
   const provider = new LocalCsvProvider();
   const prefKey = resolvePrefecture(input.prefecture);
   const prefDisplay = getPrefectureDisplayName(prefKey);
 
   const cities = provider.getCities(prefKey);
   const rawData = provider.getAllRawData(prefKey);
-  const allMetrics = cities.map(city => provider.getCityMetrics(prefKey, city));
+  const allMetrics = cities.map((city) => provider.getCityMetrics(prefKey, city));
 
   const loader = getLoader(prefKey);
   const allVacancy = loader.getVacancy();
   const matchVacancy = (city: string): VacancyRecord | null =>
-    allVacancy.find(v => v.city.includes(city) || city.includes(v.city)) ?? null;
+    allVacancy.find((v) => v.city.includes(city) || city.includes(v.city)) ?? null;
 
   const available: string[] = [];
   const missing: string[] = [];
@@ -255,8 +362,8 @@ export function discoverOpportunities(input: DiscoverOpportunitiesInput): Discov
     if (tri?.signal === 'discount') discountCities.add(m.city);
   }
 
-  const filtered = allMetrics.filter(m => budgetFilter(m, input.budgetLevel));
-  const scored = filtered.map(m => ({
+  const filtered = allMetrics.filter((m) => budgetFilter(m, input.budgetLevel));
+  const scored = filtered.map((m) => ({
     metrics: m,
     score: scoreCity(m, allMetrics, input.goal),
     signal: detectSignal(m, allMetrics, input.goal),
@@ -267,12 +374,14 @@ export function discoverOpportunities(input: DiscoverOpportunitiesInput): Discov
 
   const cards = topN.map(({ metrics: m, score, signal }) => {
     const cityVacancy = matchVacancy(m.city);
-    const effectiveSignal: OpportunitySignalType =
-      discountCities.has(m.city)
-        ? 'discount_arbitrage'
-        : (cityVacancy && cityVacancy.vacancy_rate > 20 && m.avgChangeRate != null && m.avgChangeRate < 0)
-          ? 'declining_area'
-          : signal;
+    const effectiveSignal: OpportunitySignalType = discountCities.has(m.city)
+      ? 'discount_arbitrage'
+      : cityVacancy &&
+          cityVacancy.vacancy_rate > 20 &&
+          m.avgChangeRate != null &&
+          m.avgChangeRate < 0
+        ? 'declining_area'
+        : signal;
     return {
       title: `${SIGNAL_TITLES[effectiveSignal]}：${m.city}`,
       city: m.city,
@@ -301,7 +410,11 @@ export function discoverOpportunities(input: DiscoverOpportunitiesInput): Discov
   });
 
   const goalLabel: Record<string, string> = {
-    investment: '投資', store: '出店', family: '居住', office: 'オフィス', development: '開発',
+    investment: '投資',
+    store: '出店',
+    family: '居住',
+    office: 'オフィス',
+    development: '開発',
   };
 
   const summary = `${prefDisplay}の${cities.length}市区町村を${goalLabel[input.goal] ?? input.goal}目的でスキャンし、上位${cards.length}件の機会を検出しました。`;
@@ -314,7 +427,13 @@ export function discoverOpportunities(input: DiscoverOpportunitiesInput): Discov
 
   let markdownReport: string | undefined;
   if (input.includeMarkdown) {
-    const lines = [`# Opportunity Radar: ${prefDisplay}`, '', `**目的**: ${goalLabel[input.goal] ?? input.goal}`, `**対象**: ${cities.length}市区町村`, ''];
+    const lines = [
+      `# Opportunity Radar: ${prefDisplay}`,
+      '',
+      `**目的**: ${goalLabel[input.goal] ?? input.goal}`,
+      `**対象**: ${cities.length}市区町村`,
+      '',
+    ];
 
     if (cards.length > 0) {
       lines.push('## スコアランキング', '', '```');

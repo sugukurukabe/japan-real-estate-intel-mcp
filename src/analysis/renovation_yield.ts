@@ -61,13 +61,15 @@ const RENO_COST_PER_SQM: Record<string, { low: number; mid: number; high: number
 const AGE_DISCOUNT: Record<number, number> = {
   10: 0.95,
   20: 0.85,
-  30: 0.70,
+  30: 0.7,
   40: 0.55,
-  50: 0.40,
+  50: 0.4,
 };
 
 function getAgeDiscount(age: number): number {
-  const keys = Object.keys(AGE_DISCOUNT).map(Number).sort((a, b) => a - b);
+  const keys = Object.keys(AGE_DISCOUNT)
+    .map(Number)
+    .sort((a, b) => a - b);
   for (let i = keys.length - 1; i >= 0; i--) {
     if (age >= keys[i]) return AGE_DISCOUNT[keys[i]];
   }
@@ -96,14 +98,15 @@ export function calculateRenovationYield(input: RenovationInput): RenovationYiel
 
   const cityKey = `名古屋市${ward}`;
   const cityPrices = getLandPricesForCity(cityKey, 'aichi');
-  const avgPrice = cityPrices.length > 0
-    ? Math.round(cityPrices.reduce((s, r) => s + r.price_per_sqm, 0) / cityPrices.length)
-    : 250_000;
+  const avgPrice =
+    cityPrices.length > 0
+      ? Math.round(cityPrices.reduce((s, r) => s + r.price_per_sqm, 0) / cityPrices.length)
+      : 250_000;
   const landPricePerSqm = avgPrice;
 
   const ageDiscount = getAgeDiscount(buildingAge);
-  const estimatedAcquisition = input.acquisitionPrice ??
-    Math.round(landPricePerSqm * ageDiscount * floorArea * 0.8);
+  const estimatedAcquisition =
+    input.acquisitionPrice ?? Math.round(landPricePerSqm * ageDiscount * floorArea * 0.8);
 
   const renoCosts = RENO_COST_PER_SQM[propertyType] ?? RENO_COST_PER_SQM.mansion;
   const ageFactor = buildingAge > 30 ? 1.2 : buildingAge > 20 ? 1.0 : 0.8;
@@ -129,9 +132,8 @@ export function calculateRenovationYield(input: RenovationInput): RenovationYiel
   const deductionPct = managementFeePct + vacancyRatePct + taxRatePct;
 
   const grossYieldPct = Math.round((annualRent / totalInvestment.mid) * 1000) / 10;
-  const netYieldPct = Math.round(
-    ((annualRent * (1 - deductionPct / 100)) / totalInvestment.mid) * 1000,
-  ) / 10;
+  const netYieldPct =
+    Math.round(((annualRent * (1 - deductionPct / 100)) / totalInvestment.mid) * 1000) / 10;
 
   const exitStrategy: 'rent' | 'sell' = netYieldPct >= 6 ? 'rent' : 'sell';
 
@@ -152,7 +154,7 @@ export function calculateRenovationYield(input: RenovationInput): RenovationYiel
     netYieldPct,
     exitStrategy,
     whatIfBoost: {
-      withFutureProject: Math.round((grossYieldPct * (1 + futureBoost / 100)) * 10) / 10,
+      withFutureProject: Math.round(grossYieldPct * (1 + futureBoost / 100) * 10) / 10,
       futureProjectName: topPlan?.project ?? null,
     },
     breakdown: { managementFeePct, vacancyRatePct, taxRatePct },

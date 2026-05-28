@@ -16,7 +16,8 @@ const RESPONSE_SCHEMA = {
   properties: {
     creativeAngle: {
       type: Type.STRING,
-      description: 'A creative, insightful narrative (2-3 sentences) explaining why this area is interesting for the given goal, in Japanese.',
+      description:
+        'A creative, insightful narrative (2-3 sentences) explaining why this area is interesting for the given goal, in Japanese.',
     },
     userQuestionSuggestions: {
       type: Type.ARRAY,
@@ -60,13 +61,17 @@ export async function generateNarrative(
       `- シグナル: ${card.signalType}`,
       `- 根拠: ${card.why.join('; ')}`,
       `- リスク: ${card.risks.join('; ')}`,
-      card.evidence.pricePerSqm ? `- 平均㎡単価: ¥${card.evidence.pricePerSqm.toLocaleString()}` : '',
+      card.evidence.pricePerSqm
+        ? `- 平均㎡単価: ¥${card.evidence.pricePerSqm.toLocaleString()}`
+        : '',
       card.evidence.population ? `- 人口: ${card.evidence.population.toLocaleString()}人` : '',
       '',
       `creativeAngle: データからは読み取りにくい「なぜこのエリアが面白いか」を`,
       `ストーリーとして2-3文で。数値の羅列ではなく洞察を。`,
       `userQuestionSuggestions: ユーザーが次に聞きたくなる質問3つ。`,
-    ].filter(Boolean).join('\n');
+    ]
+      .filter(Boolean)
+      .join('\n');
 
     const response = await ai.models.generateContent({
       model: 'gemini-2.0-flash',
@@ -167,7 +172,9 @@ export async function generateCompositeNarrative(
 
   try {
     const ai = new GoogleGenAI({ apiKey: GEMINI_API_KEY });
-    const axisDetail = input.axes.map(a => `- ${a.label}: ${a.score}/100 (${a.rawValue})`).join('\n');
+    const axisDetail = input.axes
+      .map((a) => `- ${a.label}: ${a.score}/100 (${a.rawValue})`)
+      .join('\n');
 
     const prompt = [
       '日本の不動産投資アナリストとして、以下の総合価値スコア分析結果に基づき、',
@@ -205,10 +212,10 @@ export async function generateCompositeNarrative(
       parsed.executiveSummary,
       '',
       '**強み:**',
-      ...parsed.strengths.map(s => `- ${s}`),
+      ...parsed.strengths.map((s) => `- ${s}`),
       '',
       '**注意点:**',
-      ...parsed.cautions.map(c => `- ${c}`),
+      ...parsed.cautions.map((c) => `- ${c}`),
     ];
     return lines.join('\n');
   } catch (err) {
@@ -222,14 +229,19 @@ export function generateCompositeFallbackNarrative(input: CompositeNarrativeInpu
   const top2 = sorted.slice(0, 2);
   const bottom = sorted[sorted.length - 1];
 
-  const tierLabel: Record<string, string> = { S: '非常に高い', A: '高い', B: '標準的な', C: '改善余地のある' };
+  const tierLabel: Record<string, string> = {
+    S: '非常に高い',
+    A: '高い',
+    B: '標準的な',
+    C: '改善余地のある',
+  };
   const label = tierLabel[input.tier] ?? '標準的な';
 
   return [
     `${input.prefecture}${input.area}の総合価値スコアは${input.compositeScore}/100（Tier ${input.tier}）で、${label}投資価値を示しています。`,
     '',
     '**強み:**',
-    ...top2.map(a => `- ${a.label}（${a.score}点）: ${a.rawValue}`),
+    ...top2.map((a) => `- ${a.label}（${a.score}点）: ${a.rawValue}`),
     `- 総合Tier ${input.tier}評価`,
     '',
     '**注意点:**',

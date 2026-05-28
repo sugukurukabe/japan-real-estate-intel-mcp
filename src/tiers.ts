@@ -135,7 +135,7 @@ export function isToolAllowed(tier: Tier, toolName: string): boolean {
 export function isResourceAllowed(tier: Tier, resourceUri: string): boolean {
   if (tier === 'enterprise') return true;
   const config = TIER_CONFIG[tier];
-  return config.resources.some(pattern => {
+  return config.resources.some((pattern) => {
     const regex = new RegExp('^' + pattern.replace(/\{[^}]+\}/g, '[^/]+') + '$');
     return regex.test(resourceUri);
   });
@@ -164,7 +164,7 @@ import { verifyLicenseKey } from './auth/license.js';
  */
 export async function resolveTier(
   requestedTier: Tier,
-  licenseKey: string | undefined
+  licenseKey: string | undefined,
 ): Promise<{ tier: Tier; errorReason?: string }> {
   if (requestedTier === 'free') {
     return { tier: 'free' };
@@ -186,4 +186,3 @@ export async function resolveTier(
 
   return { tier: 'free', errorReason: result.reason ?? '有効なライセンスキーがありません' };
 }
-

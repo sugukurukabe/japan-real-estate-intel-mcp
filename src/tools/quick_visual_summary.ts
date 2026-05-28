@@ -1,4 +1,8 @@
-import type { QuickVisualSummaryInput, QuickVisualSummaryOutput, VisualNextAction } from '../schemas.js';
+import type {
+  QuickVisualSummaryInput,
+  QuickVisualSummaryOutput,
+  VisualNextAction,
+} from '../schemas.js';
 import { resolvePrefecture, getPrefectureDisplayName } from '../prefecture/resolver.js';
 import { ATTRIBUTION } from '../data/attribution.js';
 
@@ -40,7 +44,11 @@ function buildDashboardUrl(input: QuickVisualSummaryInput, prefKey: string, laye
   return `dashboard.html?${params.toString()}`;
 }
 
-function buildNextActions(area: string, prefDisplay: string, intent: QuickVisualSummaryInput['intent']): VisualNextAction[] {
+function buildNextActions(
+  area: string,
+  prefDisplay: string,
+  intent: QuickVisualSummaryInput['intent'],
+): VisualNextAction[] {
   const base = [
     {
       label: 'このエリアを深掘り',
@@ -96,8 +104,7 @@ function buildNextActions(area: string, prefDisplay: string, intent: QuickVisual
     return [
       {
         label: 'レバレッジCFを試算',
-        prompt:
-          `${prefDisplay} ${area}の投資物件想定で simulate_leveraged_cashflow を実行して。購入価格・取得費用・年利・LTV・年間賃料・空室率・経費・固定資産税・出口キャップを仮置きし、年次表・DSCR・税引後CF・期間IRR・Equity Multiple・感応度を表で出して`,
+        prompt: `${prefDisplay} ${area}の投資物件想定で simulate_leveraged_cashflow を実行して。購入価格・取得費用・年利・LTV・年間賃料・空室率・経費・固定資産税・出口キャップを仮置きし、年次表・DSCR・税引後CF・期間IRR・Equity Multiple・感応度を表で出して`,
         tool: 'simulate_leveraged_cashflow',
       },
       ...base,
@@ -108,8 +115,7 @@ function buildNextActions(area: string, prefDisplay: string, intent: QuickVisual
     return [
       {
         label: '銀行借入付きCF試算',
-        prompt:
-          `${prefDisplay} ${area}エリアの投資想定で simulate_leveraged_cashflow を回して。代表的な購入価格帯と金利・LTV・賃料・空室を置き、返済方式は元利均等でDSCRと税引後キャッシュの年次推移を出して`,
+        prompt: `${prefDisplay} ${area}エリアの投資想定で simulate_leveraged_cashflow を回して。代表的な購入価格帯と金利・LTV・賃料・空室を置き、返済方式は元利均等でDSCRと税引後キャッシュの年次推移を出して`,
         tool: 'simulate_leveraged_cashflow',
       },
       ...base,

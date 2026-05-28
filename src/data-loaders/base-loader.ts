@@ -5,8 +5,13 @@ import Papa from 'papaparse';
 import * as topojsonClient from 'topojson-client';
 import type { FeatureCollection } from 'geojson';
 import type {
-  PrefectureLoader, LoaderCapabilities, LatLng,
-  ZoningRecord, VacancyRecord, PopulationProjectionRecord, RosenkaRecord,
+  PrefectureLoader,
+  LoaderCapabilities,
+  LatLng,
+  ZoningRecord,
+  VacancyRecord,
+  PopulationProjectionRecord,
+  RosenkaRecord,
 } from './types.js';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
@@ -46,7 +51,11 @@ export abstract class BaseLoader implements PrefectureLoader {
       const path = this.dataPath(filename);
       if (!existsSync(path)) return [];
       const raw = readFileSync(path, 'utf-8').replace(/^\uFEFF/, '');
-      const result = Papa.parse<T>(raw, { header: true, dynamicTyping: true, skipEmptyLines: true });
+      const result = Papa.parse<T>(raw, {
+        header: true,
+        dynamicTyping: true,
+        skipEmptyLines: true,
+      });
       return result.data;
     });
   }
@@ -112,13 +121,21 @@ export abstract class BaseLoader implements PrefectureLoader {
   abstract getMedicalFacilities(): import('./types.js').MedicalFacilityRecord[];
   abstract getNeighborhoods(): import('./types.js').NeighborhoodRecord[];
 
-  getZoning(): ZoningRecord[] { return this.loadCsv('zoning.csv'); }
-  getVacancy(): VacancyRecord[] { return this.loadCsv('vacancy.csv'); }
-  getPopulationProjection(): PopulationProjectionRecord[] { return this.loadCsv('population_projection.csv'); }
-  getRosenka(): RosenkaRecord[] { return this.loadCsv('rosenka.csv'); }
+  getZoning(): ZoningRecord[] {
+    return this.loadCsv('zoning.csv');
+  }
+  getVacancy(): VacancyRecord[] {
+    return this.loadCsv('vacancy.csv');
+  }
+  getPopulationProjection(): PopulationProjectionRecord[] {
+    return this.loadCsv('population_projection.csv');
+  }
+  getRosenka(): RosenkaRecord[] {
+    return this.loadCsv('rosenka.csv');
+  }
 
   getCities(): string[] {
-    return Object.keys(this.geocodeMap).filter(k => k !== this.displayName);
+    return Object.keys(this.geocodeMap).filter((k) => k !== this.displayName);
   }
 
   getMunicipalityPins(): Record<string, [number, number]> {
@@ -149,11 +166,7 @@ export abstract class BaseLoader implements PrefectureLoader {
       if (span > maxSpan) maxSpan = span;
     }
     const zoom =
-      maxSpan > 0.55 ? 9 :
-      maxSpan > 0.38 ? 10 :
-      maxSpan > 0.24 ? 11 :
-      maxSpan > 0.14 ? 12 :
-      13;
+      maxSpan > 0.55 ? 9 : maxSpan > 0.38 ? 10 : maxSpan > 0.24 ? 11 : maxSpan > 0.14 ? 12 : 13;
     return { center: [lat, lng], zoom };
   }
 }

@@ -69,34 +69,40 @@ describe('simulateLeveragedCashflow', () => {
   });
 
   it('supports equal principal payments and reduces loan balance every year', async () => {
-    const output = await simulateLeveragedCashflow(sampleInput({
-      loan: {
-        ltvPct: 65,
-        interestRatePct: 2.5,
-        termYears: 20,
-        paymentType: 'equal_principal',
-        interestOnlyYears: 0,
-      },
-    }));
+    const output = await simulateLeveragedCashflow(
+      sampleInput({
+        loan: {
+          ltvPct: 65,
+          interestRatePct: 2.5,
+          termYears: 20,
+          paymentType: 'equal_principal',
+          interestOnlyYears: 0,
+        },
+      }),
+    );
 
     expect(output.yearlyRows[1].loanBalance).toBeLessThan(output.yearlyRows[0].loanBalance);
     expect(output.yearlyRows[0].principalPayment).toBeGreaterThan(0);
   });
 
   it('flags weak debt-service coverage', async () => {
-    const output = await simulateLeveragedCashflow(sampleInput({
-      annualRent: 1_600_000,
-      vacancyRate: 0.18,
-      loan: {
-        ltvPct: 85,
-        interestRatePct: 4.5,
-        termYears: 20,
-        paymentType: 'equal_payment',
-        interestOnlyYears: 0,
-      },
-    }));
+    const output = await simulateLeveragedCashflow(
+      sampleInput({
+        annualRent: 1_600_000,
+        vacancyRate: 0.18,
+        loan: {
+          ltvPct: 85,
+          interestRatePct: 4.5,
+          termYears: 20,
+          paymentType: 'equal_payment',
+          interestOnlyYears: 0,
+        },
+      }),
+    );
 
-    expect(output.redFlags.some(flag => flag.includes('DSCR') || flag.includes('赤字'))).toBe(true);
+    expect(output.redFlags.some((flag) => flag.includes('DSCR') || flag.includes('赤字'))).toBe(
+      true,
+    );
   });
 
   it('is registered as an MCP App tool with output schema', () => {

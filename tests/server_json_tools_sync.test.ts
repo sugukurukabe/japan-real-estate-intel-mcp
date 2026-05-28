@@ -10,18 +10,23 @@ describe('server.json tools vs MCP runtime', () => {
     expect(new Set(tools).size).toBe(tools.length);
   });
 
-  it('matches createServer() registered tool names (set equality)', { timeout: 15000 }, async () => {
-    const root = resolve(import.meta.dirname, '..');
-    const raw = readFileSync(resolve(root, 'server.json'), 'utf-8');
-    const { tools: listed } = JSON.parse(raw) as { tools: string[] };
+  it(
+    'matches createServer() registered tool names (set equality)',
+    { timeout: 15000 },
+    async () => {
+      const root = resolve(import.meta.dirname, '..');
+      const raw = readFileSync(resolve(root, 'server.json'), 'utf-8');
+      const { tools: listed } = JSON.parse(raw) as { tools: string[] };
 
-    const { createServer } = await import('../src/server.js');
-    const server = createServer();
-    const reg = (server as unknown as { _registeredTools?: Record<string, unknown> })._registeredTools;
-    expect(reg).toBeDefined();
-    expect(typeof reg).toBe('object');
-    const registered = Object.keys(reg!).sort((a, b) => a.localeCompare(b));
-    const fromJson = [...listed].sort((a, b) => a.localeCompare(b));
-    expect(registered).toEqual(fromJson);
-  });
+      const { createServer } = await import('../src/server.js');
+      const server = createServer();
+      const reg = (server as unknown as { _registeredTools?: Record<string, unknown> })
+        ._registeredTools;
+      expect(reg).toBeDefined();
+      expect(typeof reg).toBe('object');
+      const registered = Object.keys(reg!).sort((a, b) => a.localeCompare(b));
+      const fromJson = [...listed].sort((a, b) => a.localeCompare(b));
+      expect(registered).toEqual(fromJson);
+    },
+  );
 });

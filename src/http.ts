@@ -22,15 +22,28 @@ if (process.env.SENTRY_DSN) {
 
 // ── Prometheus metrics ────────────────────────────────────────────────────
 collectDefaultMetrics();
-const mcpToolCalls = new Counter({ name: 'mcp_tool_calls_total', help: 'Total MCP tool call requests' });
-const mcpToolDuration = new Histogram({ name: 'mcp_tool_duration_seconds', help: 'MCP tool call latency', buckets: [0.1, 0.5, 1, 2, 5, 10] });
-const mcpActiveSessions = new Gauge({ name: 'mcp_active_sessions', help: 'Currently active MCP sessions' });
+const mcpToolCalls = new Counter({
+  name: 'mcp_tool_calls_total',
+  help: 'Total MCP tool call requests',
+});
+const mcpToolDuration = new Histogram({
+  name: 'mcp_tool_duration_seconds',
+  help: 'MCP tool call latency',
+  buckets: [0.1, 0.5, 1, 2, 5, 10],
+});
+const mcpActiveSessions = new Gauge({
+  name: 'mcp_active_sessions',
+  help: 'Currently active MCP sessions',
+});
 const PORT = parseInt(process.env.PORT ?? '3100', 10);
 const HOST = process.env.HOST ?? '0.0.0.0';
 const API_KEY = process.env.API_KEY; // optional; if set, require X-Api-Key header
 const SESSION_TIMEOUT_MS = parseInt(process.env.SESSION_TIMEOUT_MS ?? String(30 * 60 * 1000), 10);
 const RATE_LIMIT_ENABLED = process.env.RATE_LIMIT_ENABLED !== 'false';
-const RATE_LIMIT_WINDOW_MS = parseInt(process.env.RATE_LIMIT_WINDOW_MS ?? String(15 * 60 * 1000), 10);
+const RATE_LIMIT_WINDOW_MS = parseInt(
+  process.env.RATE_LIMIT_WINDOW_MS ?? String(15 * 60 * 1000),
+  10,
+);
 const RATE_LIMIT_MAX = parseInt(process.env.RATE_LIMIT_MAX ?? '100', 10);
 
 // ── Express setup ──────────────────────────────────────────────────────────
@@ -57,10 +70,31 @@ app.use((req: Request, res: Response, next: NextFunction) => {
       contentSecurityPolicy: {
         directives: {
           defaultSrc: ["'self'"],
-          scriptSrc: ["'self'", "'unsafe-inline'", 'https://unpkg.com', 'https://cdnjs.cloudflare.com', 'https://cdn.jsdelivr.net'],
-          styleSrc: ["'self'", "'unsafe-inline'", 'https://unpkg.com', 'https://cdnjs.cloudflare.com', 'https://cdn.jsdelivr.net'],
-          imgSrc: ["'self'", 'data:', 'https://*.tile.openstreetmap.org', 'https://*.basemaps.cartocdn.com'],
-          connectSrc: ["'self'", 'https://*.tile.openstreetmap.org', 'https://*.basemaps.cartocdn.com'],
+          scriptSrc: [
+            "'self'",
+            "'unsafe-inline'",
+            'https://unpkg.com',
+            'https://cdnjs.cloudflare.com',
+            'https://cdn.jsdelivr.net',
+          ],
+          styleSrc: [
+            "'self'",
+            "'unsafe-inline'",
+            'https://unpkg.com',
+            'https://cdnjs.cloudflare.com',
+            'https://cdn.jsdelivr.net',
+          ],
+          imgSrc: [
+            "'self'",
+            'data:',
+            'https://*.tile.openstreetmap.org',
+            'https://*.basemaps.cartocdn.com',
+          ],
+          connectSrc: [
+            "'self'",
+            'https://*.tile.openstreetmap.org',
+            'https://*.basemaps.cartocdn.com',
+          ],
           fontSrc: ["'self'", 'https://cdnjs.cloudflare.com'],
         },
       },
@@ -102,15 +136,34 @@ app.get('/', (_req, res) => res.redirect('/dashboard.html'));
 
 // Optional API key authentication (applied AFTER static files so dashboard is public)
 function isPublicPath(p: string): boolean {
-  if (p === '/health' || p === '/metrics' || p === '/' || p === '/sw.js' || p === '/manifest.webmanifest') return true;
-  if (p.startsWith('/dashboard') || p.startsWith('/icons/') || p.startsWith('/data/') || p.startsWith('/assets/')) return true;
+  if (
+    p === '/health' ||
+    p === '/metrics' ||
+    p === '/' ||
+    p === '/sw.js' ||
+    p === '/manifest.webmanifest'
+  )
+    return true;
+  if (
+    p.startsWith('/dashboard') ||
+    p.startsWith('/icons/') ||
+    p.startsWith('/data/') ||
+    p.startsWith('/assets/')
+  )
+    return true;
   if (p === '/privacy-policy.html' || p === '/terms.html') return true;
   return false;
 }
 
 app.use((req, res, next) => {
-  if (!API_KEY) { next(); return; }
-  if (isPublicPath(req.path)) { next(); return; }
+  if (!API_KEY) {
+    next();
+    return;
+  }
+  if (isPublicPath(req.path)) {
+    next();
+    return;
+  }
   // Accept either x-api-key or Authorization: Bearer <key>
   const xApi = req.headers['x-api-key'];
   const auth = req.headers['authorization'];

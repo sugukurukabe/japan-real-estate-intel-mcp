@@ -76,6 +76,8 @@ describe('get_population_outlook tool', () => {
 
   it('PopulationOutlookInput schema validates correct input', () => {
     expect(() => PopulationOutlookInput.parse({ prefecture: '東京都' })).not.toThrow();
-    expect(() => PopulationOutlookInput.parse({ prefecture: '東京都', area: '世田谷区' })).not.toThrow();
+    expect(() =>
+      PopulationOutlookInput.parse({ prefecture: '東京都', area: '世田谷区' }),
+    ).not.toThrow();
   });
 });

@@ -24,18 +24,16 @@ export function computeHumanFlowMetrics(records: HumanFlowRecord[]): HumanFlowMe
 
   const trendCounts = { increasing: 0, stable: 0, decreasing: 0 };
   for (const r of records) trendCounts[r.flow_trend]++;
-  const flowTrend = (Object.entries(trendCounts) as [typeof records[0]['flow_trend'], number][])
-    .sort((a, b) => b[1] - a[1])[0][0];
+  const flowTrend = (
+    Object.entries(trendCounts) as [(typeof records)[0]['flow_trend'], number][]
+  ).sort((a, b) => b[1] - a[1])[0][0];
 
   const peakHour = records[0]?.peak_hour ?? '12:00-13:00';
 
   return { weekdayAvgFlow, weekendAvgFlow, avgStayMinutes, flowTrend, peakHour };
 }
 
-export function computeRealDemandScore(
-  flow: HumanFlowMetrics,
-  propertyType: string,
-): number {
+export function computeRealDemandScore(flow: HumanFlowMetrics, propertyType: string): number {
   let base = 0;
 
   if (propertyType === 'commercial' || propertyType === 'office') {
@@ -59,10 +57,7 @@ export function computeRealDemandScore(
   return Math.round(Math.max(0, Math.min(100, base)));
 }
 
-export function computeVacancyRiskScore(
-  flow: HumanFlowMetrics,
-  propertyType: string,
-): number {
+export function computeVacancyRiskScore(flow: HumanFlowMetrics, propertyType: string): number {
   if (propertyType === 'residential') {
     if (flow.weekendAvgFlow > 30000) return 15;
     if (flow.weekendAvgFlow > 10000) return 30;

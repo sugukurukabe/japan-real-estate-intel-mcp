@@ -33,9 +33,10 @@ export function assessFamilyFriendlyScore(input: FamilyFriendlyInput): FamilyFri
   const crime = loader.capabilities.crime ? getCrimeStatsForCity(area, prefKey) : undefined;
   const population = getPopulationForCity(area, prefKey);
   const landPrices = getLandPricesForCity(area, prefKey);
-  const avgPrice = landPrices.length > 0
-    ? Math.round(landPrices.reduce((s, r) => s + r.price_per_sqm, 0) / landPrices.length)
-    : 0;
+  const avgPrice =
+    landPrices.length > 0
+      ? Math.round(landPrices.reduce((s, r) => s + r.price_per_sqm, 0) / landPrices.length)
+      : 0;
 
   let riskScore = 0;
   if (lat !== undefined && lng !== undefined) {
@@ -45,7 +46,9 @@ export function assessFamilyFriendlyScore(input: FamilyFriendlyInput): FamilyFri
   const result = computeFamilyFriendlyScore(schools, crime, population, riskScore, avgPrice, area);
 
   if (!loader.capabilities.education) {
-    result.insights.unshift(`${loader.displayName}では教育データを提供していません。汎用スコアで算出しています。`);
+    result.insights.unshift(
+      `${loader.displayName}では教育データを提供していません。汎用スコアで算出しています。`,
+    );
   }
   if (!loader.capabilities.crime) {
     result.insights.unshift(`${loader.displayName}では犯罪統計を提供していません。`);

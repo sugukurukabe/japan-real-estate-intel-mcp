@@ -41,7 +41,7 @@ export async function tryFetchMlitFreshness(
     const items = await client.fetchTransactions(prefKey, year, quarter);
 
     if (items.length === 0) {
-      const prevQ = quarter === 1 ? 4 : (quarter - 1) as 1 | 2 | 3 | 4;
+      const prevQ = quarter === 1 ? 4 : ((quarter - 1) as 1 | 2 | 3 | 4);
       const prevYear = quarter === 1 ? year - 1 : year;
       const fallbackItems = await client.fetchTransactions(prefKey, prevYear, prevQ);
       if (fallbackItems.length === 0) {
@@ -78,9 +78,8 @@ function aggregateByCitySignal(
   for (const [city, prices] of cityPrices) {
     const med = median(prices);
     const historical = historicalPrices.get(city);
-    const delta = historical && historical > 0
-      ? Math.round(((med - historical) / historical) * 1000) / 10
-      : 0;
+    const delta =
+      historical && historical > 0 ? Math.round(((med - historical) / historical) * 1000) / 10 : 0;
 
     result[city] = {
       sampleCount: prices.length,

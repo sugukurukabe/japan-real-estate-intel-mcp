@@ -19,7 +19,12 @@ export function recommendRenovationTargetsTool(rawArgs: Record<string, unknown>)
   const data = loadChochouData();
   if (!data) {
     return {
-      content: [{ type: 'text' as const, text: '町丁目データが読み込めません。data/aichi/chochou.json を確認してください。' }],
+      content: [
+        {
+          type: 'text' as const,
+          text: '町丁目データが読み込めません。data/aichi/chochou.json を確認してください。',
+        },
+      ],
     };
   }
 
@@ -71,7 +76,10 @@ export function recommendRenovationTargetsTool(rawArgs: Record<string, unknown>)
   }
 
   if (top.length > 0 && top[0].futureBoostProject) {
-    md.push('', `> **注目**: ${top[0].ward}${top[0].chochou} は **${top[0].futureBoostProject}** の恩恵が期待されます`);
+    md.push(
+      '',
+      `> **注目**: ${top[0].ward}${top[0].chochou} は **${top[0].futureBoostProject}** の恩恵が期待されます`,
+    );
   }
 
   return {

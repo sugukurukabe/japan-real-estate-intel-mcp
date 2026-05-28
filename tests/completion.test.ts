@@ -68,11 +68,16 @@ describe('Completion primitive', () => {
   describe('server prompt integration', () => {
     it('prompt argument schemas are completable', () => {
       const server = createServer();
-      const prompts = (server as unknown as {
-        _registeredPrompts: Record<string, {
-          argsSchema?: { shape?: Record<string, unknown> };
-        }>;
-      })._registeredPrompts;
+      const prompts = (
+        server as unknown as {
+          _registeredPrompts: Record<
+            string,
+            {
+              argsSchema?: { shape?: Record<string, unknown> };
+            }
+          >;
+        }
+      )._registeredPrompts;
 
       const investmentReport = prompts['investment_report'];
       expect(investmentReport).toBeDefined();
@@ -87,7 +92,9 @@ describe('Completion primitive', () => {
 
     it('completions capability is registered', () => {
       const server = createServer();
-      const lowLevel = (server as unknown as { server: { getCapabilities?: () => Record<string, unknown> } }).server;
+      const lowLevel = (
+        server as unknown as { server: { getCapabilities?: () => Record<string, unknown> } }
+      ).server;
       if (typeof lowLevel?.getCapabilities === 'function') {
         const caps = lowLevel.getCapabilities();
         expect(caps).toHaveProperty('completions');
@@ -96,13 +103,16 @@ describe('Completion primitive', () => {
 
     it('search_area_candidates tool is registered for direct tool-call discovery', () => {
       const server = createServer();
-      const tools = (server as unknown as {
-        _registeredTools: Map<string, unknown> | Record<string, unknown>;
-      })._registeredTools;
+      const tools = (
+        server as unknown as {
+          _registeredTools: Map<string, unknown> | Record<string, unknown>;
+        }
+      )._registeredTools;
 
-      const hasTool = tools instanceof Map
-        ? tools.has('search_area_candidates')
-        : Object.prototype.hasOwnProperty.call(tools, 'search_area_candidates');
+      const hasTool =
+        tools instanceof Map
+          ? tools.has('search_area_candidates')
+          : Object.prototype.hasOwnProperty.call(tools, 'search_area_candidates');
       expect(hasTool).toBe(true);
     });
   });

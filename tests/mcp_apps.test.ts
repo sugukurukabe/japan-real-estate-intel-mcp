@@ -28,7 +28,10 @@ type RegisteredResource = {
       };
     };
   };
-  readCallback?: (uri: URL, extra: unknown) => Promise<{
+  readCallback?: (
+    uri: URL,
+    extra: unknown,
+  ) => Promise<{
     contents: Array<{
       uri: string;
       mimeType?: string;
@@ -60,9 +63,13 @@ describe('MCP Apps integration', () => {
 
     expect(dashboard).toBeDefined();
     expect(dashboard.annotations?.readOnlyHint).toBe(true);
-    expect((dashboard._meta?.ui as { resourceUri?: string })?.resourceUri).toBe('ui://japan-real-estate-intel/dashboard');
+    expect((dashboard._meta?.ui as { resourceUri?: string })?.resourceUri).toBe(
+      'ui://japan-real-estate-intel/dashboard',
+    );
     expect(dashboard._meta?.['ui/resourceUri']).toBe('ui://japan-real-estate-intel/dashboard');
-    expect(dashboard._meta?.['openai/outputTemplate']).toBe('ui://japan-real-estate-intel/dashboard');
+    expect(dashboard._meta?.['openai/outputTemplate']).toBe(
+      'ui://japan-real-estate-intel/dashboard',
+    );
     expect(dashboard.outputSchema).toBeDefined();
   });
 
@@ -72,7 +79,9 @@ describe('MCP Apps integration', () => {
 
     expect(summary).toBeDefined();
     expect(summary.annotations?.readOnlyHint).toBe(true);
-    expect((summary._meta?.ui as { resourceUri?: string })?.resourceUri).toBe('ui://japan-real-estate-intel/dashboard');
+    expect((summary._meta?.ui as { resourceUri?: string })?.resourceUri).toBe(
+      'ui://japan-real-estate-intel/dashboard',
+    );
     expect(summary._meta?.['openai/outputTemplate']).toBe('ui://japan-real-estate-intel/dashboard');
     expect(summary._meta?.['openai/toolInvocation/invoking']).toContain('ビジュアル要約');
     expect(summary.outputSchema).toBeDefined();
@@ -141,16 +150,30 @@ describe('MCP Apps integration', () => {
 
     expect(dashboard.metadata?.mimeType).toBe(RESOURCE_MIME_TYPE);
     expect(dashboard3d.metadata?.mimeType).toBe(RESOURCE_MIME_TYPE);
-    expect(dashboard.metadata?._meta?.ui?.csp?.resourceDomains).toContain('https://*.basemaps.cartocdn.com');
-    expect(dashboard3d.metadata?._meta?.ui?.csp?.resourceDomains).toContain('https://cdn.jsdelivr.net');
+    expect(dashboard.metadata?._meta?.ui?.csp?.resourceDomains).toContain(
+      'https://*.basemaps.cartocdn.com',
+    );
+    expect(dashboard3d.metadata?._meta?.ui?.csp?.resourceDomains).toContain(
+      'https://cdn.jsdelivr.net',
+    );
 
-    const read2d = await dashboard.readCallback?.(new URL('ui://japan-real-estate-intel/dashboard'), {});
-    const read3d = await dashboard3d.readCallback?.(new URL('ui://japan-real-estate-intel/dashboard-3d'), {});
+    const read2d = await dashboard.readCallback?.(
+      new URL('ui://japan-real-estate-intel/dashboard'),
+      {},
+    );
+    const read3d = await dashboard3d.readCallback?.(
+      new URL('ui://japan-real-estate-intel/dashboard-3d'),
+      {},
+    );
 
     expect(read2d?.contents[0].mimeType).toBe(RESOURCE_MIME_TYPE);
-    expect(read2d?.contents[0]._meta?.ui?.csp?.resourceDomains).toContain('https://*.basemaps.cartocdn.com');
+    expect(read2d?.contents[0]._meta?.ui?.csp?.resourceDomains).toContain(
+      'https://*.basemaps.cartocdn.com',
+    );
     expect(read3d?.contents[0].mimeType).toBe(RESOURCE_MIME_TYPE);
-    expect(read3d?.contents[0]._meta?.ui?.csp?.resourceDomains).toContain('https://cdn.jsdelivr.net');
+    expect(read3d?.contents[0]._meta?.ui?.csp?.resourceDomains).toContain(
+      'https://cdn.jsdelivr.net',
+    );
   });
 
   it('dashboard action payloads are valid tool inputs', () => {

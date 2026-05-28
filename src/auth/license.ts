@@ -56,7 +56,7 @@ export function verifyLicenseKeyOffline(licenseKey: string): LicenseVerification
     const validationString = `${clientName}:${tier}:${expiresAt}`;
     const verifier = crypto.createVerify('SHA256');
     verifier.update(validationString);
-    
+
     const isValid = verifier.verify(PUBLIC_KEY_PEM, signature, 'hex');
 
     if (!isValid) {
@@ -82,7 +82,9 @@ export function verifyLicenseKeyOffline(licenseKey: string): LicenseVerification
  * Validates the license key online against the official activation server.
  * Fallbacks to offline check if the server is unreachable or times out.
  */
-export async function verifyLicenseKey(licenseKey: string | undefined): Promise<LicenseVerificationResult> {
+export async function verifyLicenseKey(
+  licenseKey: string | undefined,
+): Promise<LicenseVerificationResult> {
   if (!licenseKey || licenseKey.trim() === '') {
     return { success: false, tier: 'free', reason: 'ライセンスキーが空です' };
   }
@@ -90,10 +92,20 @@ export async function verifyLicenseKey(licenseKey: string | undefined): Promise<
   // Development & Test special bypasses
   if (process.env.NODE_ENV === 'test') {
     if (licenseKey === 'test-valid-pro-key') {
-      return { success: true, tier: 'pro', clientName: 'Test Client', expiresAt: '2028-12-31T23:59:59Z' };
+      return {
+        success: true,
+        tier: 'pro',
+        clientName: 'Test Client',
+        expiresAt: '2028-12-31T23:59:59Z',
+      };
     }
     if (licenseKey === 'test-valid-enterprise-key') {
-      return { success: true, tier: 'enterprise', clientName: 'Test Enterprise', expiresAt: '2028-12-31T23:59:59Z' };
+      return {
+        success: true,
+        tier: 'enterprise',
+        clientName: 'Test Enterprise',
+        expiresAt: '2028-12-31T23:59:59Z',
+      };
     }
     if (licenseKey === 'test-expired-key') {
       return { success: false, tier: 'free', reason: 'ライセンスの有効期限が切れています' };
@@ -103,10 +115,16 @@ export async function verifyLicenseKey(licenseKey: string | undefined): Promise<
   // Pro demo key for developer testing
   if (licenseKey === 'demo-pro-key') {
     log.info('Demo-Pro bypass key used (Internal evaluation only)');
-    return { success: true, tier: 'pro', clientName: 'Demo Evaluation', expiresAt: '2029-12-31T23:59:59Z' };
+    return {
+      success: true,
+      tier: 'pro',
+      clientName: 'Demo Evaluation',
+      expiresAt: '2029-12-31T23:59:59Z',
+    };
   }
 
-  const endpoint = process.env.LICENSE_SERVER_URL ?? 'https://api.realestate-mcp.jp/licenses/validate';
+  const endpoint =
+    process.env.LICENSE_SERVER_URL ?? 'https://api.realestate-mcp.jp/licenses/validate';
 
   // Online verification with 2 seconds timeout
   try {
@@ -123,14 +141,20 @@ export async function verifyLicenseKey(licenseKey: string | undefined): Promise<
     clearTimeout(id);
 
     if (response.ok) {
-      const data = await response.json() as LicenseVerificationResult;
-      log.info({ tier: data.tier, client: data.clientName }, 'Online license verification succeeded');
+      const data = (await response.json()) as LicenseVerificationResult;
+      log.info(
+        { tier: data.tier, client: data.clientName },
+        'Online license verification succeeded',
+      );
       return data;
     }
-    
+
     // Server responded with non-200 (e.g. explicitly rejected / invalid license key)
     const errBody = (await response.json().catch(() => ({}))) as any;
-    log.warn({ status: response.status, error: errBody }, 'Online license verification explicitly rejected');
+    log.warn(
+      { status: response.status, error: errBody },
+      'Online license verification explicitly rejected',
+    );
     return {
       success: false,
       tier: 'free',
@@ -143,7 +167,7 @@ export async function verifyLicenseKey(licenseKey: string | undefined): Promise<
       { reason: isAbort ? 'timeout' : 'network_error' },
       'License server unreachable, falling back to local cryptographic check',
     );
-    
+
     return verifyLicenseKeyOffline(licenseKey);
   }
 }

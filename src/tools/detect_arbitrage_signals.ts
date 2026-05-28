@@ -32,13 +32,14 @@ export async function detectArbitrageSignals(
         const transactionKojiRatio = Math.round((liveMedian / koji) * 1000) / 1000;
         const assessmentGap = liveMedian - result.rosenka;
         // Re-classify with fresh data
-        const newSignal = transactionKojiRatio < 0.95
-          ? 'discount' as const
-          : result.rosenkaKojiRatio < 0.75
-            ? 'inheritance_edge' as const
-            : transactionKojiRatio > 1.30
-              ? 'overheated' as const
-              : 'fair' as const;
+        const newSignal =
+          transactionKojiRatio < 0.95
+            ? ('discount' as const)
+            : result.rosenkaKojiRatio < 0.75
+              ? ('inheritance_edge' as const)
+              : transactionKojiRatio > 1.3
+                ? ('overheated' as const)
+                : ('fair' as const);
         result = {
           ...result,
           transactionMedian: liveMedian,
@@ -70,7 +71,10 @@ export async function detectArbitrageSignals(
 
   // Sort: discount first, then inheritance_edge, then overheated, then fair
   const signalOrder: Record<string, number> = {
-    discount: 0, inheritance_edge: 1, overheated: 2, fair: 3,
+    discount: 0,
+    inheritance_edge: 1,
+    overheated: 2,
+    fair: 3,
   };
   items.sort((a, b) => {
     const orderDiff = (signalOrder[a.signal] ?? 99) - (signalOrder[b.signal] ?? 99);

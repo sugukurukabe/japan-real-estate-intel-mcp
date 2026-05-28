@@ -66,8 +66,7 @@ function infraToEvents(projects: InfraProject[], ward: string): FutureEvent[] {
   const events: FutureEvent[] = [];
   const wardCity = `名古屋市${ward}`;
   for (const p of projects) {
-    const relevant =
-      p.primary_cities.includes(wardCity) || p.impact_cities.includes(wardCity);
+    const relevant = p.primary_cities.includes(wardCity) || p.impact_cities.includes(wardCity);
     if (!relevant) continue;
     const isPrimary = p.primary_cities.includes(wardCity);
     const impactMult = isPrimary ? 1.0 : 0.5;
@@ -93,7 +92,9 @@ function nagoyaPlanToEvents(plans: NagoyaPlan[], ward: string, chochou: string):
   for (const p of plans) {
     const relevant =
       p.ward === ward ||
-      p.affectedChochou.some((c) => c === chochou || chochou.startsWith(c.replace(/[一二三四五六七八九十]丁目$/, '')));
+      p.affectedChochou.some(
+        (c) => c === chochou || chochou.startsWith(c.replace(/[一二三四五六七八九十]丁目$/, '')),
+      );
     if (!relevant) continue;
     events.push({
       year: p.completionYear,
@@ -145,9 +146,7 @@ export function getFutureTimeline(ward: string, chochou: string): FutureTimeline
   const planEvents = nagoyaPlanToEvents(plans, ward, chochou);
   const popEvents = populationEvents();
 
-  const allEvents = [...infraEvents, ...planEvents, ...popEvents].sort(
-    (a, b) => a.year - b.year,
-  );
+  const allEvents = [...infraEvents, ...planEvents, ...popEvents].sort((a, b) => a.year - b.year);
 
   const byYear = new Map<number, number>();
   for (const e of allEvents) {

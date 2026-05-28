@@ -32,7 +32,9 @@ export function registerOAuthRoutes(app: Express): void {
     }
 
     if (!code_challenge) {
-      res.status(400).json({ error: 'invalid_request', description: 'PKCE code_challenge required' });
+      res
+        .status(400)
+        .json({ error: 'invalid_request', description: 'PKCE code_challenge required' });
       return;
     }
 

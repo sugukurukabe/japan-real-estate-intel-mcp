@@ -32,9 +32,9 @@ describe('forecastLandPriceTrend', () => {
       method: 'linear',
       includeMarkdown: false,
     });
-    const forecastPoints = result.series.filter(p => p.isForecast);
+    const forecastPoints = result.series.filter((p) => p.isForecast);
     expect(forecastPoints.length).toBe(3);
-    const historical = result.series.filter(p => !p.isForecast);
+    const historical = result.series.filter((p) => !p.isForecast);
     expect(historical.length).toBeGreaterThan(0);
   });
 
@@ -47,7 +47,7 @@ describe('forecastLandPriceTrend', () => {
       method: 'moving_avg',
       includeMarkdown: false,
     });
-    const forecastPoints = result.series.filter(p => p.isForecast);
+    const forecastPoints = result.series.filter((p) => p.isForecast);
     expect(forecastPoints.length).toBe(5);
   });
 
@@ -75,7 +75,7 @@ describe('forecastLandPriceTrend', () => {
     });
     expect(result.series.length).toBeGreaterThan(0);
     // With no matching data, forecast series are still produced
-    const forecasted = result.series.filter(p => p.isForecast);
+    const forecasted = result.series.filter((p) => p.isForecast);
     expect(forecasted.length).toBe(3);
   });
 

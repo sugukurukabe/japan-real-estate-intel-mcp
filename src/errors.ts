@@ -32,10 +32,7 @@ export class DataNotFoundError extends McpBaseError {
   readonly query: string;
 
   constructor(dataType: string, prefecture: string, query: string) {
-    super(
-      `${dataType} データが見つかりません: prefecture=${prefecture}, query=${query}`,
-      404,
-    );
+    super(`${dataType} データが見つかりません: prefecture=${prefecture}, query=${query}`, 404);
     this.dataType = dataType;
     this.prefecture = prefecture;
     this.query = query;
@@ -71,10 +68,7 @@ export class CapabilityNotAvailableError extends McpBaseError {
   readonly prefecture: string;
 
   constructor(capability: string, prefecture: string) {
-    super(
-      `${prefecture} は "${capability}" 機能に対応していません`,
-      422,
-    );
+    super(`${prefecture} は "${capability}" 機能に対応していません`, 422);
     this.capability = capability;
     this.prefecture = prefecture;
   }
@@ -91,9 +85,7 @@ export class ValidationError extends McpBaseError {
   readonly issues: unknown[];
 
   constructor(schema: string, issues: { message: string; path: (string | number)[] }[]) {
-    const summary = issues
-      .map((i) => `${i.path.join('.')}: ${i.message}`)
-      .join('; ');
+    const summary = issues.map((i) => `${i.path.join('.')}: ${i.message}`).join('; ');
     super(`入力検証エラー (${schema}): ${summary}`, 400);
     this.schema = schema;
     this.issues = issues;
@@ -108,9 +100,7 @@ export class ValidationError extends McpBaseError {
 export function formatErrorMessage(err: unknown): string {
   if (err instanceof McpBaseError) return err.message;
   if (err instanceof ZodError) {
-    const summary = err.issues
-      .map((i) => `${i.path.join('.')}: ${i.message}`)
-      .join('; ');
+    const summary = err.issues.map((i) => `${i.path.join('.')}: ${i.message}`).join('; ');
     return `入力検証エラー: ${summary}`;
   }
   if (err instanceof Error) return `内部エラー: ${err.message}`;

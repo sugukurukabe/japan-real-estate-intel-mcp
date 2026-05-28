@@ -23,9 +23,10 @@ export function computeCorporateDemand(
   const totalEstablishments = corporate.reduce((s, r) => s + r.total_establishments, 0);
   const majorCompanyCount = corporate.reduce((s, r) => s + r.major_company_count, 0);
   const employeeTotal = corporate.reduce((s, r) => s + r.employee_total, 0);
-  const avgCommuteMinutes = corporate.length > 0
-    ? Math.round(corporate.reduce((s, r) => s + r.avg_commute_minutes, 0) / corporate.length)
-    : 35;
+  const avgCommuteMinutes =
+    corporate.length > 0
+      ? Math.round(corporate.reduce((s, r) => s + r.avg_commute_minutes, 0) / corporate.length)
+      : 35;
 
   const industryMap = new Map<string, number>();
   for (const r of corporate) {
@@ -59,22 +60,24 @@ export function computeCorporateDemand(
     demandScore += Math.min(15, majorCompanyCount * 1.5);
   }
 
-  const avgVacancy = corporate.length > 0
-    ? corporate.reduce((s, r) => s + r.office_vacancy_rate, 0) / corporate.length
-    : 10;
-  const rentabilityScore = Math.round(Math.max(0, Math.min(100,
-    demandScore * 0.6 + (100 - avgVacancy * 8) * 0.4,
-  )));
+  const avgVacancy =
+    corporate.length > 0
+      ? corporate.reduce((s, r) => s + r.office_vacancy_rate, 0) / corporate.length
+      : 10;
+  const rentabilityScore = Math.round(
+    Math.max(0, Math.min(100, demandScore * 0.6 + (100 - avgVacancy * 8) * 0.4)),
+  );
 
   const growthPotential: 'high' | 'medium' | 'low' =
     demandScore >= 65 ? 'high' : demandScore >= 35 ? 'medium' : 'low';
 
-  const avgWeekdayFlow = humanFlow.length > 0
-    ? humanFlow.reduce((s, r) => s + r.weekday_avg_flow, 0) / humanFlow.length
-    : 0;
-  const humanFlowAlignment = Math.round(Math.min(100,
-    (avgWeekdayFlow / 1500) * (demandScore / 100) * 100,
-  ));
+  const avgWeekdayFlow =
+    humanFlow.length > 0
+      ? humanFlow.reduce((s, r) => s + r.weekday_avg_flow, 0) / humanFlow.length
+      : 0;
+  const humanFlowAlignment = Math.round(
+    Math.min(100, (avgWeekdayFlow / 1500) * (demandScore / 100) * 100),
+  );
 
   const insights: string[] = [];
   insights.push(

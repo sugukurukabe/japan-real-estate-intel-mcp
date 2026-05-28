@@ -7,11 +7,56 @@ import { computeRisk } from './risk_score.js';
 import { ATTRIBUTION } from '../data/attribution.js';
 
 const STORE_WEIGHTS: Record<string, Record<string, number>> = {
-  convenience:       { humanFlow: 35, population: 25, risk: 15, competition: 20, transport: 5,  education: 0, commercial: 0, medical: 0 },
-  family_restaurant: { humanFlow: 20, population: 30, risk: 20, competition: 15, transport: 10, education: 5, commercial: 0, medical: 0 },
-  cafe:              { humanFlow: 40, population: 20, risk: 10, competition: 20, transport: 10, education: 0, commercial: 0, medical: 0 },
-  drugstore:         { humanFlow: 25, population: 35, risk: 15, competition: 15, transport: 10, education: 0, commercial: 0, medical: 0 },
-  supermarket:       { humanFlow: 25, population: 35, risk: 20, competition: 10, transport: 10, education: 0, commercial: 0, medical: 0 },
+  convenience: {
+    humanFlow: 35,
+    population: 25,
+    risk: 15,
+    competition: 20,
+    transport: 5,
+    education: 0,
+    commercial: 0,
+    medical: 0,
+  },
+  family_restaurant: {
+    humanFlow: 20,
+    population: 30,
+    risk: 20,
+    competition: 15,
+    transport: 10,
+    education: 5,
+    commercial: 0,
+    medical: 0,
+  },
+  cafe: {
+    humanFlow: 40,
+    population: 20,
+    risk: 10,
+    competition: 20,
+    transport: 10,
+    education: 0,
+    commercial: 0,
+    medical: 0,
+  },
+  drugstore: {
+    humanFlow: 25,
+    population: 35,
+    risk: 15,
+    competition: 15,
+    transport: 10,
+    education: 0,
+    commercial: 0,
+    medical: 0,
+  },
+  supermarket: {
+    humanFlow: 25,
+    population: 35,
+    risk: 20,
+    competition: 10,
+    transport: 10,
+    education: 0,
+    commercial: 0,
+    medical: 0,
+  },
 };
 
 const STORE_TYPE_TO_FACILITY: Record<string, string> = {
@@ -64,20 +109,25 @@ export function evaluateStoreLocationAnalysis(input: StoreLocationInput): StoreL
   if (neighborhoodMatch) {
     populationScore = Math.min(100, Math.round(neighborhoodMatch.pop_density_sqkm / 100));
   } else {
-    const popDensity = popRecords.length > 0
-      ? popRecords.reduce((s, r) => s + r.density_per_sqkm, 0) / popRecords.length
-      : 0;
+    const popDensity =
+      popRecords.length > 0
+        ? popRecords.reduce((s, r) => s + r.density_per_sqkm, 0) / popRecords.length
+        : 0;
     populationScore = Math.min(100, Math.round(popDensity / 100));
   }
 
   // ── Dimension: humanFlow ──
   const flowRecords = loader.getHumanFlow().filter((r) => matchCity(r.city, city));
-  const avgWeekdayFlow = flowRecords.length > 0
-    ? flowRecords.reduce((s, r) => s + r.weekday_avg_flow, 0) / flowRecords.length
-    : 0;
+  const avgWeekdayFlow =
+    flowRecords.length > 0
+      ? flowRecords.reduce((s, r) => s + r.weekday_avg_flow, 0) / flowRecords.length
+      : 0;
   let humanFlowScore = Math.min(100, Math.round(avgWeekdayFlow / 2000));
   if (neighborhoodMatch && neighborhoodMatch.daytime_pop_ratio > 1.0) {
-    humanFlowScore = Math.min(100, Math.round(humanFlowScore * neighborhoodMatch.daytime_pop_ratio));
+    humanFlowScore = Math.min(
+      100,
+      Math.round(humanFlowScore * neighborhoodMatch.daytime_pop_ratio),
+    );
   }
 
   // ── Dimension: risk ──
@@ -92,15 +142,17 @@ export function evaluateStoreLocationAnalysis(input: StoreLocationInput): StoreL
   const transportRecords = loader.getTransport().filter((r) => matchCity(r.city, city));
   const totalPassengers = transportRecords.reduce((s, r) => s + r.daily_passengers, 0);
   const stationCount = transportRecords.length;
-  const transportScore = Math.min(100, Math.round(
-    (totalPassengers / 50_000) * 50 + stationCount * 10,
-  ));
+  const transportScore = Math.min(
+    100,
+    Math.round((totalPassengers / 50_000) * 50 + stationCount * 10),
+  );
 
   // ── Dimension: education ──
   const schoolRecords = loader.getSchoolDistricts().filter((r) => matchCity(r.city, city));
-  const educationScore = schoolRecords.length > 0
-    ? Math.round(schoolRecords.reduce((s, r) => s + r.education_score, 0) / schoolRecords.length)
-    : 0;
+  const educationScore =
+    schoolRecords.length > 0
+      ? Math.round(schoolRecords.reduce((s, r) => s + r.education_score, 0) / schoolRecords.length)
+      : 0;
 
   // ── Dimension: commercial ──
   const commercialRecords = loader.getCommercialFacilities().filter((r) => matchCity(r.city, city));
@@ -109,9 +161,7 @@ export function evaluateStoreLocationAnalysis(input: StoreLocationInput): StoreL
   // ── Dimension: medical ──
   const medicalRecords = loader.getMedicalFacilities().filter((r) => matchCity(r.city, city));
   const hospitalCount = medicalRecords.filter((r) => r.type === 'hospital').length;
-  const medicalScore = Math.min(100, Math.round(
-    medicalRecords.length * 5 + hospitalCount * 15,
-  ));
+  const medicalScore = Math.min(100, Math.round(medicalRecords.length * 5 + hospitalCount * 15));
 
   // ── Dimension: competition (inverse) ──
   const facilityType = STORE_TYPE_TO_FACILITY[storeType] ?? storeType;
@@ -137,7 +187,7 @@ export function evaluateStoreLocationAnalysis(input: StoreLocationInput): StoreL
   let totalWeight = 0;
   let weightedSum = 0;
   for (const dim of dims) {
-    const w = (weights[dim] ?? 0);
+    const w = weights[dim] ?? 0;
     totalWeight += w;
     weightedSum += breakdown[dim] * w;
   }
@@ -145,20 +195,31 @@ export function evaluateStoreLocationAnalysis(input: StoreLocationInput): StoreL
 
   // ── Key competitors ──
   const KNOWN_CHAINS: Record<string, number> = {
-    'セブン-イレブン': 90, 'ファミリーマート': 85, 'ローソン': 85,
-    'マクドナルド': 90, 'ガスト': 80, 'すき家': 80,
-    'スターバックス': 90, 'ドトール': 75, 'コメダ珈琲': 80,
-    'マツモトキヨシ': 85, 'ウエルシア': 80, 'スギ薬局': 80,
-    'イオン': 90, 'ヨークベニマル': 75, 'バロー': 70,
+    'セブン-イレブン': 90,
+    ファミリーマート: 85,
+    ローソン: 85,
+    マクドナルド: 90,
+    ガスト: 80,
+    すき家: 80,
+    スターバックス: 90,
+    ドトール: 75,
+    コメダ珈琲: 80,
+    マツモトキヨシ: 85,
+    ウエルシア: 80,
+    スギ薬局: 80,
+    イオン: 90,
+    ヨークベニマル: 75,
+    バロー: 70,
   };
 
   const keyCompetitors: KeyCompetitor[] = nearbyCompetitors
     .map((r) => {
       const dist = Math.round(haversineM(centerLat, centerLng, r.lat, r.lng));
       const strength = KNOWN_CHAINS[r.chain_brand] ?? 50;
-      const weakness = strength >= 80
-        ? '大手チェーンのため価格・品揃えでは差別化が難しいが、接客・ローカル特化で勝機あり'
-        : '知名度が低めのため、ブランド力では脅威は小さい';
+      const weakness =
+        strength >= 80
+          ? '大手チェーンのため価格・品揃えでは差別化が難しいが、接客・ローカル特化で勝機あり'
+          : '知名度が低めのため、ブランド力では脅威は小さい';
       return {
         name: r.facility_name,
         chainBrand: r.chain_brand,
@@ -174,7 +235,10 @@ export function evaluateStoreLocationAnalysis(input: StoreLocationInput): StoreL
   // ── Differentiation suggestions ──
   const differentiationSuggestions: string[] = [];
   const has24hCompetitor = nearbyCompetitors.some(
-    (r) => r.chain_brand.includes('セブン') || r.chain_brand.includes('ローソン') || r.chain_brand.includes('ファミリーマート'),
+    (r) =>
+      r.chain_brand.includes('セブン') ||
+      r.chain_brand.includes('ローソン') ||
+      r.chain_brand.includes('ファミリーマート'),
   );
   if (!has24hCompetitor && storeType === 'convenience') {
     differentiationSuggestions.push('24時間営業で差別化');
@@ -204,17 +268,23 @@ export function evaluateStoreLocationAnalysis(input: StoreLocationInput): StoreL
   // ── Key insights ──
   const keyInsights: string[] = [];
   if (neighborhoodMatch) {
-    keyInsights.push(`町丁目実データ使用: 人口${neighborhoodMatch.population.toLocaleString()}人、昼夜間人口比${neighborhoodMatch.daytime_pop_ratio}`);
+    keyInsights.push(
+      `町丁目実データ使用: 人口${neighborhoodMatch.population.toLocaleString()}人、昼夜間人口比${neighborhoodMatch.daytime_pop_ratio}`,
+    );
   }
   if (overallScore >= 75) {
     keyInsights.push(`総合スコア${overallScore}/100。${storeType}の出店に非常に適した立地です。`);
   } else if (overallScore >= 50) {
     keyInsights.push(`総合スコア${overallScore}/100。条件付きで出店を検討できる立地です。`);
   } else {
-    keyInsights.push(`総合スコア${overallScore}/100。出店リスクが高い立地です。慎重な検討が必要です。`);
+    keyInsights.push(
+      `総合スコア${overallScore}/100。出店リスクが高い立地です。慎重な検討が必要です。`,
+    );
   }
   if (nearbyCompetitors.length >= 3) {
-    keyInsights.push(`半径${radiusM}m内に同業態${nearbyCompetitors.length}店舗。競合が激しいエリアです。`);
+    keyInsights.push(
+      `半径${radiusM}m内に同業態${nearbyCompetitors.length}店舗。競合が激しいエリアです。`,
+    );
   } else if (nearbyCompetitors.length === 0) {
     keyInsights.push(`半径${radiusM}m内に同業態の競合なし。ブルーオーシャンの可能性があります。`);
   }
@@ -222,10 +292,14 @@ export function evaluateStoreLocationAnalysis(input: StoreLocationInput): StoreL
     keyInsights.push(`平日平均人流が多く（スコア${humanFlowScore}/100）、集客力の高いエリアです。`);
   }
   if (riskScore <= 40) {
-    keyInsights.push(`災害リスクがやや高め（安全スコア${riskScore}/100）。店舗保険の加入を推奨します。`);
+    keyInsights.push(
+      `災害リスクがやや高め（安全スコア${riskScore}/100）。店舗保険の加入を推奨します。`,
+    );
   }
   if (transportScore >= 60) {
-    keyInsights.push(`交通利便性が高く（スコア${transportScore}/100）、通勤・通学客の取り込みが期待できます。`);
+    keyInsights.push(
+      `交通利便性が高く（スコア${transportScore}/100）、通勤・通学客の取り込みが期待できます。`,
+    );
   }
   if (keyInsights.length > 5) keyInsights.length = 5;
 
@@ -261,7 +335,9 @@ export function evaluateStoreLocationAnalysis(input: StoreLocationInput): StoreL
         ? [
             `| 店名 | ブランド | 距離 | 強度 |`,
             `|---|---|---|---|`,
-            ...keyCompetitors.map((c) => `| ${c.name} | ${c.chainBrand} | ${c.distance}m | ${c.strength}/100 |`),
+            ...keyCompetitors.map(
+              (c) => `| ${c.name} | ${c.chainBrand} | ${c.distance}m | ${c.strength}/100 |`,
+            ),
           ].join('\n')
         : `半径${radiusM}m内に同業態の競合店舗は見つかりませんでした。`,
       ``,

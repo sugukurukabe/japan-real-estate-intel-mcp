@@ -75,18 +75,14 @@ describe('GET /mcp without session', () => {
   });
 
   it('returns 400 for unknown session ID', async () => {
-    const res = await request(app)
-      .get('/mcp')
-      .set('mcp-session-id', 'nonexistent-session-id');
+    const res = await request(app).get('/mcp').set('mcp-session-id', 'nonexistent-session-id');
     expect(res.status).toBe(400);
   });
 });
 
 describe('DELETE /mcp without session', () => {
   it('returns 404 when session does not exist', async () => {
-    const res = await request(app)
-      .delete('/mcp')
-      .set('mcp-session-id', 'nonexistent-id');
+    const res = await request(app).delete('/mcp').set('mcp-session-id', 'nonexistent-id');
     expect(res.status).toBe(404);
   });
 });
@@ -143,7 +139,16 @@ describe('Rate limiting', () => {
       .post('/mcp')
       .set('Content-Type', 'application/json')
       .set('Accept', 'application/json, text/event-stream')
-      .send({ jsonrpc: '2.0', method: 'initialize', id: 1, params: { protocolVersion: '2024-11-05', clientInfo: { name: 'test', version: '1.0' }, capabilities: {} } });
+      .send({
+        jsonrpc: '2.0',
+        method: 'initialize',
+        id: 1,
+        params: {
+          protocolVersion: '2024-11-05',
+          clientInfo: { name: 'test', version: '1.0' },
+          capabilities: {},
+        },
+      });
     // express-rate-limit sets RateLimit-* standard headers
     expect(res.headers['ratelimit-limit'] ?? res.headers['x-ratelimit-limit']).toBeDefined();
   });

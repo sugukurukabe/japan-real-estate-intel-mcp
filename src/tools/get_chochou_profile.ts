@@ -13,19 +13,20 @@ export function getChochouProfileTool(rawArgs: Record<string, unknown>) {
   const chochouList = getWardChochouList(ward);
   const plans = getPlansForChochou(ward, chochou);
 
-  const avgPrice = cityPrices.length > 0
-    ? Math.round(cityPrices.reduce((s, r) => s + r.price_per_sqm, 0) / cityPrices.length)
-    : null;
-  const avgChange = cityPrices.length > 0
-    ? Math.round(cityPrices.reduce((s, r) => s + r.change_rate, 0) / cityPrices.length * 10) / 10
-    : 0;
+  const avgPrice =
+    cityPrices.length > 0
+      ? Math.round(cityPrices.reduce((s, r) => s + r.price_per_sqm, 0) / cityPrices.length)
+      : null;
+  const avgChange =
+    cityPrices.length > 0
+      ? Math.round((cityPrices.reduce((s, r) => s + r.change_rate, 0) / cityPrices.length) * 10) /
+        10
+      : 0;
 
   const profile = {
     ward,
     chochou: chochou || null,
-    landPrice: avgPrice != null
-      ? { pricePerSqm: avgPrice, changeRate: avgChange }
-      : null,
+    landPrice: avgPrice != null ? { pricePerSqm: avgPrice, changeRate: avgChange } : null,
     population: pop
       ? {
           population2020: pop.population_2020,
@@ -54,9 +55,7 @@ export function getChochouProfileTool(rawArgs: Record<string, unknown>) {
     `## エリア情報`,
     `- 登録町丁目数: ${chochouList.length}`,
     `- 進行中計画: ${plans.length} 件`,
-    ...(plans.length > 0
-      ? [`  - ${plans.map((p) => p.project).join('\n  - ')}`]
-      : []),
+    ...(plans.length > 0 ? [`  - ${plans.map((p) => p.project).join('\n  - ')}`] : []),
   ];
 
   return {

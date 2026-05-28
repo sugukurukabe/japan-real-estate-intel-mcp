@@ -57,8 +57,8 @@ export function computeShadowPolygon(
   const py = -Math.sin(shadowDir);
 
   const corners: [number, number][] = [
-    [building.lat + (-px * halfSide) * dLatPerM, building.lng + (-py * halfSide) * dLngPerM],
-    [building.lat + (px * halfSide) * dLatPerM, building.lng + (py * halfSide) * dLngPerM],
+    [building.lat + -px * halfSide * dLatPerM, building.lng + -py * halfSide * dLngPerM],
+    [building.lat + px * halfSide * dLatPerM, building.lng + py * halfSide * dLngPerM],
   ];
 
   const shadowCorners: [number, number][] = corners.map(([lat, lng]) => [
@@ -93,9 +93,7 @@ export function simulateLandscapeImpact(input: LandscapeInput): LandscapeOutput 
   const { lat, lng, radiusM, includeMarkdown } = input;
   const dt = resolveDateTime(input.dateTime, input.timePreset);
 
-  const nearbyBuildings = buildings.filter(
-    (b) => haversineM(lat, lng, b.lat, b.lng) <= radiusM,
-  );
+  const nearbyBuildings = buildings.filter((b) => haversineM(lat, lng, b.lat, b.lng) <= radiusM);
 
   const sun = getSunPosition(dt, lat, lng);
   const azimuthDeg = sun.azimuth * RAD_TO_DEG;
@@ -125,9 +123,10 @@ export function simulateLandscapeImpact(input: LandscapeInput): LandscapeOutput 
 
   const heights = nearbyBuildings.map((b) => b.height_m);
   const maxHeight = heights.length > 0 ? Math.max(...heights) : 0;
-  const avgHeight = heights.length > 0
-    ? Math.round((heights.reduce((s, h) => s + h, 0) / heights.length) * 10) / 10
-    : 0;
+  const avgHeight =
+    heights.length > 0
+      ? Math.round((heights.reduce((s, h) => s + h, 0) / heights.length) * 10) / 10
+      : 0;
 
   // Sunlight hours estimate: check 8, 10, 12, 14, 16 o'clock
   const checkHours = [8, 10, 12, 14, 16];
@@ -274,9 +273,11 @@ export function simulateLandscapeImpact(input: LandscapeInput): LandscapeOutput 
 function pointInPolygon(lat: number, lng: number, polygon: [number, number][]): boolean {
   let inside = false;
   for (let i = 0, j = polygon.length - 1; i < polygon.length; j = i++) {
-    const yi = polygon[i][0], xi = polygon[i][1];
-    const yj = polygon[j][0], xj = polygon[j][1];
-    if ((yi > lat) !== (yj > lat) && lng < ((xj - xi) * (lat - yi)) / (yj - yi) + xi) {
+    const yi = polygon[i][0],
+      xi = polygon[i][1];
+    const yj = polygon[j][0],
+      xj = polygon[j][1];
+    if (yi > lat !== yj > lat && lng < ((xj - xi) * (lat - yi)) / (yj - yi) + xi) {
       inside = !inside;
     }
   }

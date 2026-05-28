@@ -49,7 +49,7 @@ export async function discoverOpportunitiesTool(
   const cities = provider.getCities(prefKey);
   const rawData = provider.getAllRawData(prefKey);
 
-  const allMetrics = cities.map(city => provider.getCityMetrics(prefKey, city));
+  const allMetrics = cities.map((city) => provider.getCityMetrics(prefKey, city));
 
   const available: string[] = [];
   const missing: string[] = [];
@@ -74,8 +74,8 @@ export async function discoverOpportunitiesTool(
     }
   }
 
-  const filtered = allMetrics.filter(m => budgetFilter(m, input.budgetLevel));
-  const scored = filtered.map(m => ({
+  const filtered = allMetrics.filter((m) => budgetFilter(m, input.budgetLevel));
+  const scored = filtered.map((m) => ({
     metrics: m,
     score: scoreCity(m, allMetrics, input.goal),
     signal: detectSignal(m, allMetrics, input.goal),
@@ -128,7 +128,11 @@ export async function discoverOpportunitiesTool(
   }
 
   const goalLabel: Record<string, string> = {
-    investment: '投資', store: '出店', family: '居住', office: 'オフィス', development: '開発',
+    investment: '投資',
+    store: '出店',
+    family: '居住',
+    office: 'オフィス',
+    development: '開発',
   };
 
   const summary = `${prefDisplay}の${cities.length}市区町村を${goalLabel[input.goal] ?? input.goal}目的でスキャンし、上位${cards.length}件の機会を検出しました。`;
@@ -157,7 +161,9 @@ export async function discoverOpportunitiesTool(
       for (const w of card.why) lines.push(`- ${w}`);
       if (card.evidence.freshTransactionSignal) {
         const f = card.evidence.freshTransactionSignal;
-        lines.push(`- 最新MLIT取引: ㎡${f.medianPricePerSqm.toLocaleString()}円 (履歴比 ${f.deltaVsHistorical > 0 ? '+' : ''}${f.deltaVsHistorical}%)`);
+        lines.push(
+          `- 最新MLIT取引: ㎡${f.medianPricePerSqm.toLocaleString()}円 (履歴比 ${f.deltaVsHistorical > 0 ? '+' : ''}${f.deltaVsHistorical}%)`,
+        );
       }
       if (card.creativeAngle) {
         lines.push(`> ${card.creativeAngle}`);

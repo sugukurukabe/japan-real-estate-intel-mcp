@@ -38,7 +38,18 @@ describe('VacancyRecord loader', () => {
   });
 
   it('all 10 prefectures have vacancy data', () => {
-    const prefs = ['aichi', 'tokyo', 'osaka', 'fukuoka', 'hokkaido', 'kanagawa', 'kyoto', 'hyogo', 'chiba', 'saitama'];
+    const prefs = [
+      'aichi',
+      'tokyo',
+      'osaka',
+      'fukuoka',
+      'hokkaido',
+      'kanagawa',
+      'kyoto',
+      'hyogo',
+      'chiba',
+      'saitama',
+    ];
     for (const pref of prefs) {
       const loader = getLoader(pref);
       expect(loader.getVacancy().length).toBeGreaterThan(0);

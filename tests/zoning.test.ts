@@ -25,7 +25,15 @@ describe('ZoningRecord loader', () => {
   it('zone_type contains known values', () => {
     const loader = getLoader('tokyo');
     const records = loader.getZoning();
-    const knownZones = ['商業地域', '近隣商業地域', '第1種住居地域', '第2種住居地域', '第1種低層住居専用地域', '第1種中高層住居専用地域', '準住居地域'];
+    const knownZones = [
+      '商業地域',
+      '近隣商業地域',
+      '第1種住居地域',
+      '第2種住居地域',
+      '第1種低層住居専用地域',
+      '第1種中高層住居専用地域',
+      '準住居地域',
+    ];
     for (const r of records) {
       expect(knownZones).toContain(r.zone_type);
     }
@@ -37,7 +45,18 @@ describe('ZoningRecord loader', () => {
   });
 
   it('all 10 prefectures have zoning data', () => {
-    const prefs = ['aichi', 'tokyo', 'osaka', 'fukuoka', 'hokkaido', 'kanagawa', 'kyoto', 'hyogo', 'chiba', 'saitama'];
+    const prefs = [
+      'aichi',
+      'tokyo',
+      'osaka',
+      'fukuoka',
+      'hokkaido',
+      'kanagawa',
+      'kyoto',
+      'hyogo',
+      'chiba',
+      'saitama',
+    ];
     for (const pref of prefs) {
       const loader = getLoader(pref);
       expect(loader.getZoning().length).toBeGreaterThan(0);
@@ -56,7 +75,11 @@ describe('get_zoning_info tool', () => {
   });
 
   it('filters by district', async () => {
-    const result = await getZoningInfoTool({ prefecture: '愛知県', area: '名古屋市中区', district: '栄' });
+    const result = await getZoningInfoTool({
+      prefecture: '愛知県',
+      area: '名古屋市中区',
+      district: '栄',
+    });
     const records = result.structuredContent.records as unknown[];
     for (const r of records as Array<{ district: string }>) {
       expect(r.district).toContain('栄');

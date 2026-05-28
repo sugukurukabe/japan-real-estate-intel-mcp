@@ -30,7 +30,11 @@ beforeAll(async () => {
 
 afterAll(() => {
   closeDb();
-  try { rmSync(tmpDir, { recursive: true, force: true }); } catch { /* ignore */ }
+  try {
+    rmSync(tmpDir, { recursive: true, force: true });
+  } catch {
+    /* ignore */
+  }
 });
 
 function pkce(): { verifier: string; challenge: string } {

@@ -1,9 +1,9 @@
-import {
-  CompositeValueScoreInput,
-  type CompositeValueScoreOutput,
-} from '../schemas.js';
+import { CompositeValueScoreInput, type CompositeValueScoreOutput } from '../schemas.js';
 import { resolvePrefecture, getPrefectureDisplayName } from '../prefecture/resolver.js';
-import { computeCompositeValueScore, generateCompositeMarkdown } from '../analysis/composite_value.js';
+import {
+  computeCompositeValueScore,
+  generateCompositeMarkdown,
+} from '../analysis/composite_value.js';
 import { generateCompositeNarrative } from '../analysis/gemini_narrative.js';
 
 export async function compositeValueScoreTool(rawArgs: Record<string, unknown>): Promise<{
@@ -22,7 +22,7 @@ export async function compositeValueScoreTool(rawArgs: Record<string, unknown>):
       prefecture: prefDisplay,
       compositeScore: result.compositeScore,
       tier: result.tier,
-      axes: result.axes.map(a => ({ label: a.label, score: a.score, rawValue: a.rawValue })),
+      axes: result.axes.map((a) => ({ label: a.label, score: a.score, rawValue: a.rawValue })),
     });
     if (narrative) {
       result.narrative = narrative;
@@ -33,7 +33,9 @@ export async function compositeValueScoreTool(rawArgs: Record<string, unknown>):
     result.markdownReport = generateCompositeMarkdown(input.area, prefDisplay, result);
   }
 
-  const textOutput = result.markdownReport ?? `${prefDisplay} ${input.area}: Composite ${result.compositeScore}/100 (${result.tier})`;
+  const textOutput =
+    result.markdownReport ??
+    `${prefDisplay} ${input.area}: Composite ${result.compositeScore}/100 (${result.tier})`;
 
   return {
     content: [{ type: 'text' as const, text: textOutput }],

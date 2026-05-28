@@ -46,7 +46,11 @@ describe('Tiering', () => {
     it('returns correct names and prices', () => {
       expect(getTierDisplayInfo('free')).toEqual({ name: 'Free', nameJa: '無料', priceJpy: 0 });
       expect(getTierDisplayInfo('pro')).toEqual({ name: 'Pro', nameJa: 'プロ', priceJpy: 5000 });
-      expect(getTierDisplayInfo('enterprise')).toEqual({ name: 'Enterprise', nameJa: 'エンタープライズ', priceJpy: null });
+      expect(getTierDisplayInfo('enterprise')).toEqual({
+        name: 'Enterprise',
+        nameJa: 'エンタープライズ',
+        priceJpy: null,
+      });
     });
   });
 

@@ -1,4 +1,8 @@
-import type { SchoolDistrictRecord, CrimeStatsRecord, PopulationRecord } from '../data-loaders/types.js';
+import type {
+  SchoolDistrictRecord,
+  CrimeStatsRecord,
+  PopulationRecord,
+} from '../data-loaders/types.js';
 
 interface FamilyFriendlyResult {
   overallScore: number;
@@ -23,9 +27,10 @@ export function computeFamilyFriendlyScore(
   pricePerSqm: number,
   area: string,
 ): FamilyFriendlyResult {
-  const bestSchool = schools.length > 0
-    ? schools.reduce((a, b) => (a.education_score > b.education_score ? a : b))
-    : null;
+  const bestSchool =
+    schools.length > 0
+      ? schools.reduce((a, b) => (a.education_score > b.education_score ? a : b))
+      : null;
 
   const educationScore = bestSchool?.education_score ?? 50;
   const safetyScore = crime?.safety_score ?? 60;
@@ -33,25 +38,34 @@ export function computeFamilyFriendlyScore(
 
   const overallScore = Math.round(
     educationScore * 0.35 +
-    safetyScore * 0.25 +
-    disasterFactor * 100 * 0.2 +
-    (population && population.aging_rate < 25 ? 15 : population && population.aging_rate < 30 ? 10 : 5) +
-    (pricePerSqm > 0 && pricePerSqm < 300000 ? 5 : 0),
+      safetyScore * 0.25 +
+      disasterFactor * 100 * 0.2 +
+      (population && population.aging_rate < 25
+        ? 15
+        : population && population.aging_rate < 30
+          ? 10
+          : 5) +
+      (pricePerSqm > 0 && pricePerSqm < 300000 ? 5 : 0),
   );
 
-  const assetValueFactor = educationScore >= 75
-    ? 8 + (educationScore - 75) * 0.4
-    : educationScore >= 60
-      ? 2 + (educationScore - 60) * 0.2
-      : -(60 - educationScore) * 0.15;
+  const assetValueFactor =
+    educationScore >= 75
+      ? 8 + (educationScore - 75) * 0.4
+      : educationScore >= 60
+        ? 2 + (educationScore - 60) * 0.2
+        : -(60 - educationScore) * 0.15;
 
   const insights: string[] = [];
   if (educationScore >= 75) {
-    insights.push(`${area}は教育環境が優れた地域（スコア${educationScore}/100）。ファミリー物件の資産価値にプレミアムが期待できます。`);
+    insights.push(
+      `${area}は教育環境が優れた地域（スコア${educationScore}/100）。ファミリー物件の資産価値にプレミアムが期待できます。`,
+    );
   } else if (educationScore >= 55) {
     insights.push(`${area}の教育環境は標準的（スコア${educationScore}/100）。`);
   } else {
-    insights.push(`${area}の教育環境スコアは低め（${educationScore}/100）。ファミリー層の需要は限定的。`);
+    insights.push(
+      `${area}の教育環境スコアは低め（${educationScore}/100）。ファミリー層の需要は限定的。`,
+    );
   }
 
   if (safetyScore >= 75) {
@@ -61,7 +75,9 @@ export function computeFamilyFriendlyScore(
   }
 
   if (crime && crime.crime_rate_per_1000 > 10) {
-    insights.push(`犯罪率${crime.crime_rate_per_1000}件/千人。主要類型: ${crime.dominant_crime_type}。`);
+    insights.push(
+      `犯罪率${crime.crime_rate_per_1000}件/千人。主要類型: ${crime.dominant_crime_type}。`,
+    );
   }
 
   const recommendations: string[] = [];
@@ -71,7 +87,9 @@ export function computeFamilyFriendlyScore(
   } else if (overallScore >= 50) {
     recommendations.push('ファミリー層向けとしては平均的。価格メリットをアピールポイントに。');
   } else {
-    recommendations.push('ファミリー層向けとしてはハンディキャップあり。単身・DINKS向けなど別ターゲットを検討。');
+    recommendations.push(
+      'ファミリー層向けとしてはハンディキャップあり。単身・DINKS向けなど別ターゲットを検討。',
+    );
   }
 
   if (riskScore >= 50) {

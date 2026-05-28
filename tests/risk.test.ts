@@ -62,9 +62,39 @@ describe('computeInvestmentScore', () => {
 describe('computePriceTrend', () => {
   it('computes trend from land prices', () => {
     const prices = [
-      { year: 2022, city: 'test', district: '', address: '', land_use: '', price_per_sqm: 100000, change_rate: 0, lat: 0, lng: 0 },
-      { year: 2023, city: 'test', district: '', address: '', land_use: '', price_per_sqm: 110000, change_rate: 0, lat: 0, lng: 0 },
-      { year: 2024, city: 'test', district: '', address: '', land_use: '', price_per_sqm: 120000, change_rate: 0, lat: 0, lng: 0 },
+      {
+        year: 2022,
+        city: 'test',
+        district: '',
+        address: '',
+        land_use: '',
+        price_per_sqm: 100000,
+        change_rate: 0,
+        lat: 0,
+        lng: 0,
+      },
+      {
+        year: 2023,
+        city: 'test',
+        district: '',
+        address: '',
+        land_use: '',
+        price_per_sqm: 110000,
+        change_rate: 0,
+        lat: 0,
+        lng: 0,
+      },
+      {
+        year: 2024,
+        city: 'test',
+        district: '',
+        address: '',
+        land_use: '',
+        price_per_sqm: 120000,
+        change_rate: 0,
+        lat: 0,
+        lng: 0,
+      },
     ];
     const trend = computePriceTrend(prices, []);
     expect(trend.current).toBe(120000);

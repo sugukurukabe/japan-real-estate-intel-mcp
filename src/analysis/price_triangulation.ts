@@ -22,29 +22,24 @@ import { moduleLogger } from '../logger.js';
 const log = moduleLogger('price_triangulation');
 
 export const BENCHMARK = {
-  nationalRosenkaKojiRatio: 0.80,
+  nationalRosenkaKojiRatio: 0.8,
   nationalTxKojiRatio: 1.05,
 };
 
 const SIGNAL_THRESHOLDS = {
-  discountMaxTxKojiRatio: 0.95,   // 取引/公示 < 0.95 (路線価を下回る目安)
+  discountMaxTxKojiRatio: 0.95, // 取引/公示 < 0.95 (路線価を下回る目安)
   inheritanceEdgeMaxRosenkaKoji: 0.75,
-  overheatMinTxKojiRatio: 1.30,
+  overheatMinTxKojiRatio: 1.3,
 };
 
 function median(arr: number[]): number {
   if (arr.length === 0) return 0;
   const sorted = [...arr].sort((a, b) => a - b);
   const mid = Math.floor(sorted.length / 2);
-  return sorted.length % 2 === 0
-    ? Math.round((sorted[mid - 1]! + sorted[mid]!) / 2)
-    : sorted[mid]!;
+  return sorted.length % 2 === 0 ? Math.round((sorted[mid - 1]! + sorted[mid]!) / 2) : sorted[mid]!;
 }
 
-function classifySignal(
-  rosenkaKojiRatio: number,
-  txKojiRatio: number,
-): ArbitrageSignalType {
+function classifySignal(rosenkaKojiRatio: number, txKojiRatio: number): ArbitrageSignalType {
   if (txKojiRatio < SIGNAL_THRESHOLDS.discountMaxTxKojiRatio) return 'discount';
   if (rosenkaKojiRatio < SIGNAL_THRESHOLDS.inheritanceEdgeMaxRosenkaKoji) return 'inheritance_edge';
   if (txKojiRatio > SIGNAL_THRESHOLDS.overheatMinTxKojiRatio) return 'overheated';
@@ -58,7 +53,10 @@ function buildInterpretation(
   txKojiRatio: number,
   assessmentGap: number,
 ): string {
-  const gapStr = assessmentGap >= 0 ? `+${Math.round(assessmentGap / 1000)}千円/㎡` : `${Math.round(assessmentGap / 1000)}千円/㎡`;
+  const gapStr =
+    assessmentGap >= 0
+      ? `+${Math.round(assessmentGap / 1000)}千円/㎡`
+      : `${Math.round(assessmentGap / 1000)}千円/㎡`;
   switch (signal) {
     case 'discount':
       return `【割安シグナル】${city}: 取引実勢が路線価を下回る（路線/公示比 ${(rosenkaKojiRatio * 100).toFixed(0)}%、取引/公示比 ${(txKojiRatio * 100).toFixed(0)}%）。売り急ぎや需要低下が背景に可能性。差額 ${gapStr}。`;
@@ -88,28 +86,29 @@ export function computeTriangulationForCity(
   loader: PrefectureLoader,
   city: string,
 ): TriangulationResult | null {
-  const rosenkaRows = loader.getRosenka().filter(r => r.city === city);
-  const landPriceRows = loader.getLandPrices().filter(r => r.city === city);
-  const txRows = loader.getTransactions().filter(r => r.city === city && r.price_per_sqm > 0);
+  const rosenkaRows = loader.getRosenka().filter((r) => r.city === city);
+  const landPriceRows = loader.getLandPrices().filter((r) => r.city === city);
+  const txRows = loader.getTransactions().filter((r) => r.city === city && r.price_per_sqm > 0);
 
   if (rosenkaRows.length === 0 || landPriceRows.length === 0) return null;
 
   // Most recent year of each
-  const latestRosenkaYear = Math.max(...rosenkaRows.map(r => r.year));
-  const latestKojiYear = Math.max(...landPriceRows.map(r => r.year));
+  const latestRosenkaYear = Math.max(...rosenkaRows.map((r) => r.year));
+  const latestKojiYear = Math.max(...landPriceRows.map((r) => r.year));
   const dataYear = Math.max(latestRosenkaYear, latestKojiYear);
 
   const rosenka = median(
-    rosenkaRows.filter(r => r.year === latestRosenkaYear).map(r => r.median_per_sqm),
+    rosenkaRows.filter((r) => r.year === latestRosenkaYear).map((r) => r.median_per_sqm),
   );
   const koji = median(
-    landPriceRows.filter(r => r.year === latestKojiYear).map(r => r.price_per_sqm),
+    landPriceRows.filter((r) => r.year === latestKojiYear).map((r) => r.price_per_sqm),
   );
 
-  const latestTxYear = txRows.length > 0 ? Math.max(...txRows.map(r => r.year)) : 0;
-  const txMedian = txRows.length > 0
-    ? median(txRows.filter(r => r.year === latestTxYear).map(r => r.price_per_sqm))
-    : koji; // fallback to koji when no tx data
+  const latestTxYear = txRows.length > 0 ? Math.max(...txRows.map((r) => r.year)) : 0;
+  const txMedian =
+    txRows.length > 0
+      ? median(txRows.filter((r) => r.year === latestTxYear).map((r) => r.price_per_sqm))
+      : koji; // fallback to koji when no tx data
 
   if (rosenka === 0 || koji === 0) return null;
 
@@ -117,7 +116,13 @@ export function computeTriangulationForCity(
   const transactionKojiRatio = txMedian / koji;
   const assessmentGap = txMedian - rosenka;
   const signal = classifySignal(rosenkaKojiRatio, transactionKojiRatio);
-  const interpretation = buildInterpretation(signal, city, rosenkaKojiRatio, transactionKojiRatio, assessmentGap);
+  const interpretation = buildInterpretation(
+    signal,
+    city,
+    rosenkaKojiRatio,
+    transactionKojiRatio,
+    assessmentGap,
+  );
 
   return {
     city,
@@ -145,9 +150,11 @@ export async function tryFetchLiveTransactionMedian(
     const year = now.getFullYear();
     const quarter = (Math.ceil((now.getMonth() + 1) / 3) - 1 || 4) as 1 | 2 | 3 | 4;
     const txs = await client.fetchTransactions(prefKey, year, quarter);
-    const cityTxs = txs.filter(t => t.Municipality?.includes(city) && Number(t.UnitPrice ?? 0) > 0);
+    const cityTxs = txs.filter(
+      (t) => t.Municipality?.includes(city) && Number(t.UnitPrice ?? 0) > 0,
+    );
     if (cityTxs.length === 0) return null;
-    const prices = cityTxs.map(t => Number(t.UnitPrice ?? 0)).filter(p => p > 0);
+    const prices = cityTxs.map((t) => Number(t.UnitPrice ?? 0)).filter((p) => p > 0);
     return prices.length > 0 ? median(prices) : null;
   } catch (err: unknown) {
     log.warn({ err, prefKey, city }, 'live MLIT fetch failed, falling back to CSV');
@@ -163,10 +170,10 @@ export function buildMarkdownReport(
   liveDataUsed: boolean,
 ): string {
   const signalCounts = {
-    discount: items.filter(i => i.signal === 'discount').length,
-    inheritance_edge: items.filter(i => i.signal === 'inheritance_edge').length,
-    overheated: items.filter(i => i.signal === 'overheated').length,
-    fair: items.filter(i => i.signal === 'fair').length,
+    discount: items.filter((i) => i.signal === 'discount').length,
+    inheritance_edge: items.filter((i) => i.signal === 'inheritance_edge').length,
+    overheated: items.filter((i) => i.signal === 'overheated').length,
+    fair: items.filter((i) => i.signal === 'fair').length,
   };
 
   const lines: string[] = [
@@ -190,9 +197,13 @@ export function buildMarkdownReport(
   ];
 
   for (const item of items) {
-    const signalEmoji = {
-      discount: '🟢', inheritance_edge: '🔵', overheated: '🔴', fair: '⚪',
-    }[item.signal] ?? '';
+    const signalEmoji =
+      {
+        discount: '🟢',
+        inheritance_edge: '🔵',
+        overheated: '🔴',
+        fair: '⚪',
+      }[item.signal] ?? '';
     lines.push(
       `| ${item.city} | ${item.rosenka.toLocaleString()} | ${item.koji.toLocaleString()} | ${item.transactionMedian.toLocaleString()} | ${(item.rosenkaKojiRatio * 100).toFixed(0)}% | ${(item.transactionKojiRatio * 100).toFixed(0)}% | ${signalEmoji} ${item.signal} |`,
     );
@@ -200,13 +211,16 @@ export function buildMarkdownReport(
 
   if (items.length > 0) {
     lines.push('', '## 価格比較チャート（取引/公示比）', '');
-    const maxRatio = Math.max(...items.map(i => i.transactionKojiRatio));
+    const maxRatio = Math.max(...items.map((i) => i.transactionKojiRatio));
     const barScale = Math.max(maxRatio, 1.5);
     for (const item of items) {
       const barLen = Math.round((item.transactionKojiRatio / barScale) * 20);
       const bar = '█'.repeat(Math.max(1, barLen)) + '░'.repeat(Math.max(0, 20 - barLen));
-      const signalMark = { discount: '🟢', inheritance_edge: '🔵', overheated: '🔴', fair: '⚪' }[item.signal] ?? '';
-      lines.push(`${signalMark} ${item.city.padEnd(12)} ${bar} ${(item.transactionKojiRatio * 100).toFixed(0)}%`);
+      const signalMark =
+        { discount: '🟢', inheritance_edge: '🔵', overheated: '🔴', fair: '⚪' }[item.signal] ?? '';
+      lines.push(
+        `${signalMark} ${item.city.padEnd(12)} ${bar} ${(item.transactionKojiRatio * 100).toFixed(0)}%`,
+      );
     }
     lines.push('', `\`${'─'.repeat(20)} 130% 過熱ライン ─\``);
   }

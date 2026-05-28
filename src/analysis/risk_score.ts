@@ -39,7 +39,11 @@ export function computeRisk(
   const includeAll = riskTypes.includes('all');
 
   let floodScore = 0;
-  let floodRisk: FloodRisk = { level: 'low', probability: 0.05, description: '浸水リスクは低い地域です。' };
+  let floodRisk: FloodRisk = {
+    level: 'low',
+    probability: 0.05,
+    description: '浸水リスクは低い地域です。',
+  };
 
   if (includeAll || riskTypes.includes('flood')) {
     const floodFeature = getFloodFeatureAtPoint(lat, lng, prefecture);
@@ -72,7 +76,10 @@ export function computeRisk(
   }
 
   let landslideScore = 0;
-  let landslideResult: { level: 'low' | 'medium' | 'high'; type: string } = { level: 'low', type: 'なし' };
+  let landslideResult: { level: 'low' | 'medium' | 'high'; type: string } = {
+    level: 'low',
+    type: 'なし',
+  };
 
   if (includeAll || riskTypes.includes('landslide')) {
     const lsFeature = getLandslideFeatureAtPoint(lat, lng, prefecture);
@@ -116,10 +123,14 @@ export function computeRisk(
     recommendations.push('水害保険の検討を推奨。ハザードマップで避難経路を確認してください。');
   }
   if (landslideScore >= 35) {
-    recommendations.push('土砂災害警戒区域内です。擁壁や排水設備の状態を専門家に確認してください。');
+    recommendations.push(
+      '土砂災害警戒区域内です。擁壁や排水設備の状態を専門家に確認してください。',
+    );
   }
   if (eqScore >= 60) {
-    recommendations.push('大規模地震の想定震度が高い地域です。耐震性能の確認と地震保険加入を推奨。');
+    recommendations.push(
+      '大規模地震の想定震度が高い地域です。耐震性能の確認と地震保険加入を推奨。',
+    );
   }
   if (eqResult.liquefaction === 'high') {
     recommendations.push('液状化リスクが高い地域です。地盤調査を実施してください。');

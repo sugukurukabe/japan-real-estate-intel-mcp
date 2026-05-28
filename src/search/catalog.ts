@@ -66,12 +66,34 @@ const TOOL_META: Record<string, { title: string; desc: string; keywords: string[
   quick_visual_summary: {
     title: 'ChatGPTビジュアル要約',
     desc: 'ChatGPT内で地図・グラフ・次アクションをまとめて表示するレンダーツール',
-    keywords: ['ChatGPT', 'ビジュアル', '要約', '地図', 'グラフ', '次アクション', 'visual', 'summary', 'render'],
+    keywords: [
+      'ChatGPT',
+      'ビジュアル',
+      '要約',
+      '地図',
+      'グラフ',
+      '次アクション',
+      'visual',
+      'summary',
+      'render',
+    ],
   },
   simulate_leveraged_cashflow: {
     title: 'レバレッジ10年キャッシュフロー試算',
     desc: '銀行借入の利率・賃料・経費・税務前提から10年の年次収支、DSCR、IRR、感応度を試算',
-    keywords: ['レバレッジ', '融資', '借入', '金利', '賃料', 'キャッシュフロー', 'DSCR', 'IRR', '10年', 'loan', 'cashflow'],
+    keywords: [
+      'レバレッジ',
+      '融資',
+      '借入',
+      '金利',
+      '賃料',
+      'キャッシュフロー',
+      'DSCR',
+      'IRR',
+      '10年',
+      'loan',
+      'cashflow',
+    ],
   },
   compare_prefectures: {
     title: '都道府県比較',
@@ -111,17 +133,52 @@ const TOOL_META: Record<string, { title: string; desc: string; keywords: string[
   simulate_aichi_future: {
     title: '愛知県将来価値シミュレーター',
     desc: 'リニア中央新幹線・セントレア・トヨタ・万博の地価影響を試算',
-    keywords: ['愛知', 'リニア', '新幹線', 'セントレア', 'トヨタ', '万博', '将来', 'aichi', 'future'],
+    keywords: [
+      '愛知',
+      'リニア',
+      '新幹線',
+      'セントレア',
+      'トヨタ',
+      '万博',
+      '将来',
+      'aichi',
+      'future',
+    ],
   },
   discover_opportunities: {
     title: 'Opportunity Radar（エリア発見）',
     desc: '都道府県内を横断スキャンし投資/出店/居住/オフィス/開発に適したエリア仮説カードを返す',
-    keywords: ['発見', '機会', 'opportunity', 'radar', '投資', '出店', '居住', 'オフィス', '開発', 'エリア', '提案', 'スキャン'],
+    keywords: [
+      '発見',
+      '機会',
+      'opportunity',
+      'radar',
+      '投資',
+      '出店',
+      '居住',
+      'オフィス',
+      '開発',
+      'エリア',
+      '提案',
+      'スキャン',
+    ],
   },
   get_real_estate_macro_snapshot: {
     title: '不動産マクロスナップショット',
     desc: '地価YoY・取引件数・人口減＋e-Stat建築着工・金利プロキシを一枚で',
-    keywords: ['マクロ', '景気', '地価', '取引', '人口', '着工', '金利', 'e-Stat', 'FRED', 'macro', 'snapshot'],
+    keywords: [
+      'マクロ',
+      '景気',
+      '地価',
+      '取引',
+      '人口',
+      '着工',
+      '金利',
+      'e-Stat',
+      'FRED',
+      'macro',
+      'snapshot',
+    ],
   },
 };
 
@@ -202,7 +259,10 @@ export function buildCatalog(): CatalogEntry[] {
     const nhPath = resolve(ROOT, 'data', 'aichi', 'neighborhoods.json');
     if (existsSync(nhPath)) {
       const nhData = JSON.parse(readFileSync(nhPath, 'utf-8')) as Array<{
-        cho_me?: string; city?: string; tags?: string[]; notes?: string;
+        cho_me?: string;
+        city?: string;
+        tags?: string[];
+        notes?: string;
       }>;
       for (const nh of nhData) {
         if (!nh.cho_me) continue;
@@ -217,14 +277,19 @@ export function buildCatalog(): CatalogEntry[] {
         });
       }
     }
-  } catch { /* non-fatal */ }
+  } catch {
+    /* non-fatal */
+  }
 
   // -- Future infrastructure (Aichi) --
   try {
     const fiPath = resolve(ROOT, 'data', 'aichi', 'future_infrastructure.json');
     if (existsSync(fiPath)) {
       const fiData = JSON.parse(readFileSync(fiPath, 'utf-8')) as Array<{
-        project?: string; scenario?: string; primary_cities?: string[]; impact_summary?: string;
+        project?: string;
+        scenario?: string;
+        primary_cities?: string[];
+        impact_summary?: string;
       }>;
       for (const fi of fiData) {
         const scenario = fi.scenario ?? fi.project ?? 'unknown';
@@ -234,14 +299,21 @@ export function buildCatalog(): CatalogEntry[] {
           title: `愛知県 ${fi.project ?? scenario} 将来インフラ`,
           description: fi.impact_summary ?? `${fi.project ?? scenario}の地価影響予測`,
           keywords: [
-            '愛知県', fi.project ?? '', scenario, '将来', 'インフラ', '開発',
+            '愛知県',
+            fi.project ?? '',
+            scenario,
+            '将来',
+            'インフラ',
+            '開発',
             ...(fi.primary_cities ?? []),
           ].filter(Boolean),
           url: entryUrl(id),
         });
       }
     }
-  } catch { /* non-fatal */ }
+  } catch {
+    /* non-fatal */
+  }
 
   return entries;
 }

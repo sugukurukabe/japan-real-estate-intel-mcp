@@ -24,9 +24,39 @@ const SAMPLE_BRANDING: PdfBrandingOptions = {
 };
 
 const SAMPLE_COMPARABLES: TransactionComparable[] = [
-  { year: '2024', quarter: 'Q1', city: '名古屋市中区', district: '栄', propertyType: 'office', areaSqm: 120, pricePerSqm: 2100000, buildingYear: '2020', structure: 'SRC' },
-  { year: '2024', quarter: 'Q2', city: '名古屋市中区', district: '伏見', propertyType: 'commercial', areaSqm: 80, pricePerSqm: 1800000, buildingYear: '2018', structure: 'RC' },
-  { year: '2023', quarter: 'Q3', city: '名古屋市中区', district: '栄', propertyType: 'residential', areaSqm: 95, pricePerSqm: 600000, buildingYear: '2022', structure: 'RC' },
+  {
+    year: '2024',
+    quarter: 'Q1',
+    city: '名古屋市中区',
+    district: '栄',
+    propertyType: 'office',
+    areaSqm: 120,
+    pricePerSqm: 2100000,
+    buildingYear: '2020',
+    structure: 'SRC',
+  },
+  {
+    year: '2024',
+    quarter: 'Q2',
+    city: '名古屋市中区',
+    district: '伏見',
+    propertyType: 'commercial',
+    areaSqm: 80,
+    pricePerSqm: 1800000,
+    buildingYear: '2018',
+    structure: 'RC',
+  },
+  {
+    year: '2023',
+    quarter: 'Q3',
+    city: '名古屋市中区',
+    district: '栄',
+    propertyType: 'residential',
+    areaSqm: 95,
+    pricePerSqm: 600000,
+    buildingYear: '2022',
+    structure: 'RC',
+  },
 ];
 
 describe('markdownToPdfBase64 — basic', () => {
@@ -80,7 +110,12 @@ describe('markdownToPdfBase64 — branding', () => {
 
 describe('markdownToPdfBase64 — transaction comparables', () => {
   it('generates valid PDF with comparables (adds a second page)', async () => {
-    const b64 = await markdownToPdfBase64(SAMPLE_MARKDOWN, 'テスト', SAMPLE_BRANDING, SAMPLE_COMPARABLES);
+    const b64 = await markdownToPdfBase64(
+      SAMPLE_MARKDOWN,
+      'テスト',
+      SAMPLE_BRANDING,
+      SAMPLE_COMPARABLES,
+    );
     const buf = Buffer.from(b64, 'base64');
     expect(buf.slice(0, 5).toString('ascii')).toBe('%PDF-');
     // With comparables the PDF should be larger than without
@@ -118,7 +153,10 @@ describe('markdownToPdfBase64 — markdown rendering', () => {
   });
 
   it('handles long report (100+ lines) without crashing', async () => {
-    const lines = Array.from({ length: 120 }, (_, i) => `行 ${i + 1}: 愛知県名古屋市のデータ分析レポートの内容です。`);
+    const lines = Array.from(
+      { length: 120 },
+      (_, i) => `行 ${i + 1}: 愛知県名古屋市のデータ分析レポートの内容です。`,
+    );
     const b64 = await markdownToPdfBase64(lines.join('\n'), '長いレポート');
     const buf = Buffer.from(b64, 'base64');
     expect(buf.slice(0, 5).toString('ascii')).toBe('%PDF-');

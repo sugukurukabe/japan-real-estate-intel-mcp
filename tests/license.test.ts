@@ -51,12 +51,12 @@ describe('License Verification System', () => {
     it('should reject a license with an invalid signature', () => {
       const expiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString();
       const licenseKey = generateTestLicenseKey('Tampered Client', 'pro', expiresAt);
-      
+
       // Decode, modify the JSON payload, and encode back
       const decodedStr = Buffer.from(licenseKey, 'base64').toString('utf8');
       const payload = JSON.parse(decodedStr);
       payload.signature = payload.signature.replace(/./, '0'); // change first character of signature
-      
+
       const tamperedKey = Buffer.from(JSON.stringify(payload)).toString('base64');
 
       const result = verifyLicenseKeyOffline(tamperedKey);

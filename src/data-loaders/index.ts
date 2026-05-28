@@ -1,11 +1,21 @@
 export type { PrefectureLoader, LoaderCapabilities, LatLng } from './types.js';
 export type {
-  LandPriceRecord, TransactionRecord, PopulationRecord, EarthquakeRecord,
-  HumanFlowRecord, SchoolDistrictRecord, CorporateLocationRecord,
-  CrimeStatsRecord, PlateauBuildingRecord,
-  TransportRecord, CommercialFacilityRecord, MedicalFacilityRecord,
+  LandPriceRecord,
+  TransactionRecord,
+  PopulationRecord,
+  EarthquakeRecord,
+  HumanFlowRecord,
+  SchoolDistrictRecord,
+  CorporateLocationRecord,
+  CrimeStatsRecord,
+  PlateauBuildingRecord,
+  TransportRecord,
+  CommercialFacilityRecord,
+  MedicalFacilityRecord,
   NeighborhoodRecord,
-  ZoningRecord, VacancyRecord, PopulationProjectionRecord,
+  ZoningRecord,
+  VacancyRecord,
+  PopulationProjectionRecord,
 } from './types.js';
 export { registerLoader, getLoader, listAvailable } from './registry.js';
 export { StubLoader } from './stub-loader.js';

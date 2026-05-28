@@ -92,9 +92,9 @@ export class EstatClient {
     const params = new URLSearchParams({
       appId: this.appId,
       statsDataId: POPULATION_STATS_ID,
-      cdAreaFrom: `${prefCode}100`,  // skip prefecture total (xx000)
+      cdAreaFrom: `${prefCode}100`, // skip prefecture total (xx000)
       cdAreaTo: `${prefCode}999`,
-      cdCat01: '0',                  // 総数 only (skip 男/女 breakdown)
+      cdCat01: '0', // 総数 only (skip 男/女 breakdown)
       metaGetFlg: 'Y',
       cntGetFlg: 'N',
       explanationGetFlg: 'N',
@@ -112,7 +112,9 @@ export class EstatClient {
 
     const json = (await res.json()) as EstatApiResponse;
     // e-Stat wraps error info in RESULT which is absent from success response types
-    const root = json as unknown as { GET_STATS_DATA?: { RESULT?: { STATUS?: number; ERROR_MSG?: string } } };
+    const root = json as unknown as {
+      GET_STATS_DATA?: { RESULT?: { STATUS?: number; ERROR_MSG?: string } };
+    };
     const apiStatus = root.GET_STATS_DATA?.RESULT?.STATUS;
     if (apiStatus !== undefined && apiStatus !== 0) {
       const msg = root.GET_STATS_DATA?.RESULT?.ERROR_MSG;
@@ -149,16 +151,16 @@ export class EstatClient {
         city: name,
         population_2020: pop,
         population_2025: Math.round(pop * 0.995),
-        households_2020: Math.round(pop * 0.42),  // estimated from national avg
+        households_2020: Math.round(pop * 0.42), // estimated from national avg
         households_2025: Math.round(pop * 0.42 * 0.998),
         density_per_sqkm: 0,
         aging_rate: 0,
       });
     }
 
-    return rows.filter((r) => r.city && r.population_2020 > 0).sort((a, b) =>
-      a.city.localeCompare(b.city, 'ja'),
-    );
+    return rows
+      .filter((r) => r.city && r.population_2020 > 0)
+      .sort((a, b) => a.city.localeCompare(b.city, 'ja'));
   }
 
   private async fetchTable(
@@ -190,10 +192,14 @@ export class EstatClient {
       throw new Error(`e-Stat API HTTP ${res.status}: ${body.slice(0, 200)}`);
     }
     const json = (await res.json()) as EstatApiResponse;
-    const root = json as unknown as { GET_STATS_DATA?: { RESULT?: { STATUS?: number; ERROR_MSG?: string } } };
+    const root = json as unknown as {
+      GET_STATS_DATA?: { RESULT?: { STATUS?: number; ERROR_MSG?: string } };
+    };
     const apiStatus = root.GET_STATS_DATA?.RESULT?.STATUS;
     if (apiStatus !== undefined && apiStatus !== 0) {
-      throw new Error(`e-Stat API error (status ${apiStatus}): ${root.GET_STATS_DATA?.RESULT?.ERROR_MSG}`);
+      throw new Error(
+        `e-Stat API error (status ${apiStatus}): ${root.GET_STATS_DATA?.RESULT?.ERROR_MSG}`,
+      );
     }
     return json;
   }
@@ -242,8 +248,7 @@ export class EstatClient {
     if (priorTime !== null && priorTotal !== null && priorTotal > 0) {
       yoyPct = Math.round(((latestTotal - priorTotal) / priorTotal) * 1000) / 10;
     }
-    const attribution =
-      `建築物着工: 政府統計 e-Stat getStatsData (statsDataId=${BUILDING_CONSTRUCTION_STATS_ID}, 地域=${prefCode}000) — 内訳系列を時点ごとに合算した参考値です。`;
+    const attribution = `建築物着工: 政府統計 e-Stat getStatsData (statsDataId=${BUILDING_CONSTRUCTION_STATS_ID}, 地域=${prefCode}000) — 内訳系列を時点ごとに合算した参考値です。`;
     return {
       latestTime,
       latestTotal,

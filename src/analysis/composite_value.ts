@@ -1,10 +1,11 @@
-import type { CompositeValueScoreInput, CompositeAxisScore, CompositeValueScoreOutput } from '../schemas.js';
+import type {
+  CompositeValueScoreInput,
+  CompositeAxisScore,
+  CompositeValueScoreOutput,
+} from '../schemas.js';
 import type { CityMetrics } from './opportunity_provider.js';
 import { LocalCsvProvider } from './opportunity_provider.js';
-import {
-  computeRiskComponent,
-  computeTransportComponent,
-} from './opportunity.js';
+import { computeRiskComponent, computeTransportComponent } from './opportunity.js';
 import { computeTriangulationForCity } from './price_triangulation.js';
 import { resolvePrefecture, getPrefectureDisplayName } from '../prefecture/resolver.js';
 import { getLoader } from '../data-loaders/index.js';
@@ -22,9 +23,9 @@ interface AxisWeights {
 
 const DEFAULT_WEIGHTS: AxisWeights = {
   landPrice: 0.25,
-  education: 0.20,
-  transport: 0.20,
-  futurePlan: 0.20,
+  education: 0.2,
+  transport: 0.2,
+  futurePlan: 0.2,
   riskSafety: 0.15,
 };
 
@@ -41,7 +42,7 @@ function computeLandPriceAxis(
   loader: ReturnType<typeof getLoader>,
 ): { score: number; rawValue: string } {
   if (m.avgPricePerSqm == null) return { score: 50, rawValue: 'N/A' };
-  const prices = allMetrics.filter(x => x.avgPricePerSqm != null).map(x => x.avgPricePerSqm!);
+  const prices = allMetrics.filter((x) => x.avgPricePerSqm != null).map((x) => x.avgPricePerSqm!);
   if (prices.length < 2) return { score: 50, rawValue: `¥${m.avgPricePerSqm.toLocaleString()}/㎡` };
 
   const sorted = [...prices].sort((a, b) => a - b);
@@ -62,7 +63,7 @@ function computeLandPriceAxis(
       valueUpside = Math.min(10, Math.max(0, (1 - tri.transactionKojiRatio) * 30));
     } else if (tri.signal === 'overheated') {
       // Penalise overheated markets slightly
-      valueUpside = -Math.min(10, Math.max(0, (tri.transactionKojiRatio - 1.30) * 20));
+      valueUpside = -Math.min(10, Math.max(0, (tri.transactionKojiRatio - 1.3) * 20));
     }
   }
 
@@ -75,13 +76,19 @@ function computeLandPriceAxis(
 function computeEducationAxis(m: CityMetrics): { score: number; rawValue: string } {
   if (!m.education) return { score: 50, rawValue: 'データなし' };
   const score = Math.max(0, Math.min(100, m.education.avgScore));
-  return { score: Math.round(score), rawValue: `教育スコア ${m.education.avgScore.toFixed(0)}/100` };
+  return {
+    score: Math.round(score),
+    rawValue: `教育スコア ${m.education.avgScore.toFixed(0)}/100`,
+  };
 }
 
 function computeTransportAxis(m: CityMetrics): { score: number; rawValue: string } {
   const score = computeTransportComponent(m);
   if (!m.transport) return { score, rawValue: 'データなし' };
-  return { score, rawValue: `${m.transport.stationCount}駅, 平均${m.transport.avgPassengers.toLocaleString()}人/日` };
+  return {
+    score,
+    rawValue: `${m.transport.stationCount}駅, 平均${m.transport.avgPassengers.toLocaleString()}人/日`,
+  };
 }
 
 function computeFuturePlanAxis(
@@ -109,7 +116,10 @@ function computeFuturePlanAxis(
     }
     rawValue += `, 2050年人口${decline >= 0 ? '-' : '+'}${Math.abs(decline).toFixed(1)}%`;
   } else if (m.population) {
-    const popGrowth = ((m.population.population_2025 - m.population.population_2020) / Math.max(1, m.population.population_2020)) * 100;
+    const popGrowth =
+      ((m.population.population_2025 - m.population.population_2020) /
+        Math.max(1, m.population.population_2020)) *
+      100;
     if (popGrowth > 0) {
       score += Math.min(15, popGrowth * 5);
       rawValue += `, 人口${popGrowth >= 0 ? '+' : ''}${popGrowth.toFixed(1)}%`;
@@ -169,8 +179,10 @@ export function computeCompositeValueScore(
   const totalWeight = w.landPrice + w.education + w.transport + w.futurePlan + w.riskSafety;
 
   const cities = provider.getCities(prefKey);
-  const allMetrics = cities.map(c => provider.getCityMetrics(prefKey, c));
-  const targetMetrics = allMetrics.find(m => m.city === area || m.city.includes(area) || area.includes(m.city));
+  const allMetrics = cities.map((c) => provider.getCityMetrics(prefKey, c));
+  const targetMetrics = allMetrics.find(
+    (m) => m.city === area || m.city.includes(area) || area.includes(m.city),
+  );
 
   if (!targetMetrics) {
     return {
@@ -189,9 +201,9 @@ export function computeCompositeValueScore(
   const allPopProj = loader.getPopulationProjection();
 
   const matchVacancy = (city: string): VacancyRecord | null =>
-    allVacancy.find(v => v.city.includes(city) || city.includes(v.city)) ?? null;
+    allVacancy.find((v) => v.city.includes(city) || city.includes(v.city)) ?? null;
   const matchPopProj = (city: string): PopulationProjectionRecord | null =>
-    allPopProj.find(p => p.city.includes(city) || city.includes(p.city)) ?? null;
+    allPopProj.find((p) => p.city.includes(city) || city.includes(p.city)) ?? null;
 
   const targetVacancy = matchVacancy(area);
   const targetPopProj = matchPopProj(area);
@@ -203,23 +215,54 @@ export function computeCompositeValueScore(
   const riskSafetyResult = computeRiskSafetyAxis(targetMetrics, targetVacancy);
 
   const axes: CompositeAxisScore[] = [
-    { axis: 'landPrice', label: '地価・成長性', score: landPriceResult.score, rawValue: landPriceResult.rawValue, evidence: '国土交通省 地価公示・路線価' },
-    { axis: 'education', label: '教育・子育て', score: educationResult.score, rawValue: educationResult.rawValue, evidence: '教育委員会・e-Stat' },
-    { axis: 'transport', label: '交通利便性', score: transportResult.score, rawValue: transportResult.rawValue, evidence: '交通データ (JR/私鉄/市営)' },
-    { axis: 'futurePlan', label: '将来計画・成長力', score: futurePlanResult.score, rawValue: futurePlanResult.rawValue, evidence: '地価推移・人口動態・企業立地' },
-    { axis: 'riskSafety', label: 'リスク・安全性', score: riskSafetyResult.score, rawValue: riskSafetyResult.rawValue, evidence: '内閣府地震想定・警察庁犯罪統計' },
+    {
+      axis: 'landPrice',
+      label: '地価・成長性',
+      score: landPriceResult.score,
+      rawValue: landPriceResult.rawValue,
+      evidence: '国土交通省 地価公示・路線価',
+    },
+    {
+      axis: 'education',
+      label: '教育・子育て',
+      score: educationResult.score,
+      rawValue: educationResult.rawValue,
+      evidence: '教育委員会・e-Stat',
+    },
+    {
+      axis: 'transport',
+      label: '交通利便性',
+      score: transportResult.score,
+      rawValue: transportResult.rawValue,
+      evidence: '交通データ (JR/私鉄/市営)',
+    },
+    {
+      axis: 'futurePlan',
+      label: '将来計画・成長力',
+      score: futurePlanResult.score,
+      rawValue: futurePlanResult.rawValue,
+      evidence: '地価推移・人口動態・企業立地',
+    },
+    {
+      axis: 'riskSafety',
+      label: 'リスク・安全性',
+      score: riskSafetyResult.score,
+      rawValue: riskSafetyResult.rawValue,
+      evidence: '内閣府地震想定・警察庁犯罪統計',
+    },
   ];
 
   const compositeScore = Math.round(
     (landPriceResult.score * w.landPrice +
-     educationResult.score * w.education +
-     transportResult.score * w.transport +
-     futurePlanResult.score * w.futurePlan +
-     riskSafetyResult.score * w.riskSafety) / totalWeight
+      educationResult.score * w.education +
+      transportResult.score * w.transport +
+      futurePlanResult.score * w.futurePlan +
+      riskSafetyResult.score * w.riskSafety) /
+      totalWeight,
   );
   const tier = determineTier(compositeScore);
 
-  const allScores = allMetrics.map(m => {
+  const allScores = allMetrics.map((m) => {
     const lp = computeLandPriceAxis(m, allMetrics, loader).score;
     const ed = computeEducationAxis(m).score;
     const tr = computeTransportAxis(m).score;
@@ -228,18 +271,25 @@ export function computeCompositeValueScore(
     return {
       city: m.city,
       compositeScore: Math.round(
-        (lp * w.landPrice + ed * w.education + tr * w.transport + fp * w.futurePlan + rs * w.riskSafety) / totalWeight
+        (lp * w.landPrice +
+          ed * w.education +
+          tr * w.transport +
+          fp * w.futurePlan +
+          rs * w.riskSafety) /
+          totalWeight,
       ),
     };
   });
 
   const mean = allScores.reduce((s, x) => s + x.compositeScore, 0) / Math.max(1, allScores.length);
-  const variance = allScores.reduce((s, x) => s + (x.compositeScore - mean) ** 2, 0) / Math.max(1, allScores.length);
+  const variance =
+    allScores.reduce((s, x) => s + (x.compositeScore - mean) ** 2, 0) /
+    Math.max(1, allScores.length);
   const stdDev = Math.sqrt(variance);
 
   const peersWithZ = allScores
-    .filter(x => x.city !== targetMetrics.city)
-    .map(x => ({
+    .filter((x) => x.city !== targetMetrics.city)
+    .map((x) => ({
       city: x.city,
       compositeScore: x.compositeScore,
       tier: determineTier(x.compositeScore),
@@ -311,7 +361,9 @@ export function generateCompositeMarkdown(
     lines.push('| City | Score | Tier | z-score |');
     lines.push('|------|-------|------|---------|');
     for (const p of result.peerComparison) {
-      lines.push(`| ${p.city} | ${p.compositeScore} | ${p.tier} | ${p.zScore >= 0 ? '+' : ''}${p.zScore.toFixed(2)} |`);
+      lines.push(
+        `| ${p.city} | ${p.compositeScore} | ${p.tier} | ${p.zScore >= 0 ? '+' : ''}${p.zScore.toFixed(2)} |`,
+      );
     }
     lines.push('');
   }
