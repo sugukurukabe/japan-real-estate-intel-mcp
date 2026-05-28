@@ -9,28 +9,23 @@ const CACHE_DATA = `${CACHE_VERSION}-data`;
 
 const STATIC_ASSETS = [
   '/dashboard.html',
+  '/dashboard-3d.html',
+  '/dashboard.css',
+  '/dashboard.js',
   '/mcp-bridge.js',
   '/manifest.webmanifest',
   '/icons/icon-192.png',
   '/icons/icon-512.png',
-];
-
-const AICHI_DATA_ASSETS = [
-  '/data/aichi/land_price.csv',
-  '/data/aichi/transactions.csv',
-  '/data/aichi/human_flow.csv',
-  '/data/aichi/population.csv',
-  '/data/aichi/zoning.csv',
-  '/data/aichi/vacancy.csv',
-  '/data/aichi/population_projection.csv',
+  '/assets/fonts/ipaexg.ttf',
+  '/assets/logo.svg',
 ];
 
 // ── Install: pre-cache static assets ──────────────────────────────────────
 self.addEventListener('install', (event) => {
   event.waitUntil(
     caches.open(CACHE_STATIC).then((cache) =>
-      cache.addAll(STATIC_ASSETS).catch(() => {
-        // Ignore individual failures (assets may not exist yet)
+      cache.addAll(STATIC_ASSETS).catch((err) => {
+        console.warn('Some static assets failed to pre-cache during install:', err);
       })
     )
   );
@@ -60,7 +55,7 @@ self.addEventListener('fetch', (event) => {
   if (url.origin !== self.location.origin) return;
 
   // Data files: cache-first with network fallback
-  if (url.pathname.startsWith('/data/aichi/') || url.pathname.startsWith('/data/')) {
+  if (url.pathname.startsWith('/data/')) {
     event.respondWith(
       caches.open(CACHE_DATA).then(async (cache) => {
         const cached = await cache.match(event.request);
@@ -97,11 +92,34 @@ self.addEventListener('fetch', (event) => {
   );
 });
 
-// ── Background sync: pre-cache Aichi data when online ─────────────────────
+// ── Background sync: dynamic caching of selected prefecture data ──────────
 self.addEventListener('message', (event) => {
-  if (event.data?.type === 'CACHE_AICHI_DATA') {
-    caches.open(CACHE_DATA).then((cache) =>
-      cache.addAll(AICHI_DATA_ASSETS).catch(() => {})
-    );
+  if (event.data?.type === 'CACHE_PREFECTURE_DATA') {
+    const pref = event.data.prefecture;
+    if (!pref) return;
+    const assets = [
+      `/data/${pref}/land_price.csv`,
+      `/data/${pref}/transactions.csv`,
+      `/data/${pref}/human_flow.csv`,
+      `/data/${pref}/population.csv`,
+      `/data/${pref}/zoning.csv`,
+      `/data/${pref}/vacancy.csv`,
+      `/data/${pref}/population_projection.csv`,
+    ];
+    caches.open(CACHE_DATA).then((cache) => {
+      Promise.all(
+        assets.map((asset) =>
+          cache.add(asset).catch((err) => {
+            console.warn(`Failed to cache ${asset}:`, err);
+          })
+        )
+      ).then(() => {
+        self.clients.matchAll().then((clients) => {
+          clients.forEach((client) => {
+            client.postMessage({ type: 'PREFECTURE_SYNC_COMPLETE', prefecture: pref });
+          });
+        });
+      });
+    });
   }
 });

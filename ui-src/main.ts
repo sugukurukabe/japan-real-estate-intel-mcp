@@ -930,6 +930,22 @@ function switchPrefecture(key: string) {
   renderLayerControl();
   rebuildAreaSelect();
   updateInsightPanel('');
+
+  // Update sync button state dynamically
+  const btn = document.getElementById('btn-offline-sync') as HTMLButtonElement | null;
+  const statusDiv = document.getElementById('sync-status');
+  if (btn) {
+    const syncedPrefs = JSON.parse(localStorage.getItem('rei-synced-prefs') || '[]');
+    const isCurrentSynced = syncedPrefs.includes(key);
+    btn.textContent = isCurrentSynced ? '✓ 同期済み' : '💾 データをスマホに同期';
+    btn.style.background = isCurrentSynced ? 'rgba(52, 211, 153, 0.15)' : '';
+    btn.style.borderColor = isCurrentSynced ? 'var(--success)' : '';
+    btn.disabled = false;
+  }
+  if (statusDiv) {
+    statusDiv.style.display = 'none';
+    statusDiv.innerHTML = '';
+  }
 }
 
 function syncModelContext(reason: string, area = selectedArea): void {
@@ -1988,6 +2004,12 @@ function rebuildAreaSelect() {
 function initSearchPanel() {
   const panel = document.getElementById('search-panel')!;
 
+  // Read synced status from localStorage
+  const syncedPrefs = JSON.parse(localStorage.getItem('rei-synced-prefs') || '[]');
+  const isCurrentSynced = syncedPrefs.includes(currentPrefecture);
+  const syncBtnText = isCurrentSynced ? '✓ 同期済み' : '💾 データをスマホに同期';
+  const syncBtnBg = isCurrentSynced ? 'background: rgba(52, 211, 153, 0.15); border-color: var(--success);' : '';
+
   panel.innerHTML = `
     <div class="panel-section">
       <h3>都道府県</h3>
@@ -1996,6 +2018,14 @@ function initSearchPanel() {
           ${Object.entries(PREFECTURES).map(([k, v]) => `<option value="${k}" ${k === currentPrefecture ? 'selected' : ''}>${v.displayName}</option>`).join('')}
         </select>
       </div>
+    </div>
+
+    <div class="panel-section">
+      <h3>現地オフライン同期</h3>
+      <button class="btn-report" id="btn-offline-sync" style="width: 100%; font-size: 12px; padding: 6px 12px; margin-top: 4px; ${syncBtnBg}">
+        ${syncBtnText}
+      </button>
+      <div id="sync-status" style="font-size: 11px; color: var(--text-muted); margin-top: 6px; text-align: center; display: none;"></div>
     </div>
 
     <div class="panel-section">
@@ -2044,6 +2074,27 @@ function initSearchPanel() {
 
   document.getElementById('pref-select')?.addEventListener('change', (e) => {
     switchPrefecture((e.target as HTMLSelectElement).value);
+  });
+
+  document.getElementById('btn-offline-sync')?.addEventListener('click', () => {
+    const btn = document.getElementById('btn-offline-sync') as HTMLButtonElement | null;
+    const statusDiv = document.getElementById('sync-status');
+    if (!btn) return;
+
+    if (navigator.serviceWorker?.controller) {
+      btn.disabled = true;
+      btn.textContent = '⌛ 同期中...';
+      if (statusDiv) {
+        statusDiv.style.display = 'block';
+        statusDiv.innerHTML = '<span style="color: var(--warning)">データをダウンロード中...</span>';
+      }
+      navigator.serviceWorker.controller.postMessage({
+        type: 'CACHE_PREFECTURE_DATA',
+        prefecture: currentPrefecture
+      });
+    } else {
+      alert('オフライン機能が有効化されていません。数秒後に再試行するか、ブラウザをリロードしてください。');
+    }
   });
 
   document.getElementById('area-select')?.addEventListener('change', (e) => {
@@ -2109,6 +2160,55 @@ function init() {
   renderModeToggle();
   renderModeBanner();
   updateInsightPanel('');
+
+  // ── PWA Service Worker & Offline Sync Logic (v6.15.3) ──
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('/sw.js').then((registration) => {
+      console.log('ServiceWorker registered with scope:', registration.scope);
+    }).catch((err) => {
+      console.error('ServiceWorker registration failed:', err);
+    });
+
+    navigator.serviceWorker.addEventListener('message', (event) => {
+      if (event.data?.type === 'PREFECTURE_SYNC_COMPLETE') {
+        const prefKey = event.data.prefecture;
+        const displayName = PREFECTURES[prefKey]?.displayName || prefKey;
+
+        // Update localStorage
+        const syncedPrefs = JSON.parse(localStorage.getItem('rei-synced-prefs') || '[]');
+        if (!syncedPrefs.includes(prefKey)) {
+          syncedPrefs.push(prefKey);
+          localStorage.setItem('rei-synced-prefs', JSON.stringify(syncedPrefs));
+        }
+
+        const btn = document.getElementById('btn-offline-sync') as HTMLButtonElement | null;
+        const statusDiv = document.getElementById('sync-status');
+        if (btn) {
+          btn.disabled = false;
+          btn.textContent = '✓ 同期済み';
+          btn.style.background = 'rgba(52, 211, 153, 0.15)';
+          btn.style.borderColor = 'var(--success)';
+          btn.classList.add('sync-complete-animation');
+          setTimeout(() => {
+            btn.classList.remove('sync-complete-animation');
+          }, 1000);
+        }
+        if (statusDiv) {
+          statusDiv.innerHTML = `<span style="color: var(--success)">✓ ${displayName}の同期が完了しました！</span>`;
+        }
+      }
+    });
+  }
+
+  function updateOnlineStatus() {
+    const indicator = document.getElementById('offline-indicator');
+    if (indicator) {
+      indicator.style.display = navigator.onLine ? 'none' : 'inline-flex';
+    }
+  }
+  window.addEventListener('online', updateOnlineStatus);
+  window.addEventListener('offline', updateOnlineStatus);
+  updateOnlineStatus();
 
   // Respect ?mode= URL parameter for initialMode
   const urlMode = new URLSearchParams(window.location.search).get('mode');
