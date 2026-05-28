@@ -2759,7 +2759,7 @@ function showUpgradeGateway(): void {
       <!-- Pro Card -->
       <div class="pricing-card pro-card" style="${activeTier === 'pro' ? 'box-shadow: 0 0 24px rgba(245,158,11,0.3);' : ''}">
         <div class="plan-name" style="color: #f59e0b">Pro (プロ)</div>
-        <div class="plan-price">¥5,000<span>/月</span></div>
+        <div class="plan-price">¥550<span>/月</span></div>
         <ul class="plan-features">
           <li style="font-weight:700">ツール利用制限なし</li>
           <li style="font-weight:700">3D Plateau建物高さ表示</li>

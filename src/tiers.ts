@@ -138,7 +138,7 @@ export function getTierDisplayInfo(tier: Tier): {
     case 'free':
       return { name: 'Free', nameJa: '無料', priceJpy: 0 };
     case 'pro':
-      return { name: 'Pro', nameJa: 'プロ', priceJpy: 5000 };
+      return { name: 'Pro', nameJa: 'プロ', priceJpy: 550 };
     case 'enterprise':
       return { name: 'Enterprise', nameJa: 'エンタープライズ', priceJpy: null };
   }
