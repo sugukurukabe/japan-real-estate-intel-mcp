@@ -155,3 +155,35 @@ export function getTierDisplayInfo(tier: Tier): {
       return { name: 'Enterprise', nameJa: 'エンタープライズ', priceJpy: null };
   }
 }
+
+import { verifyLicenseKey } from './auth/license.js';
+
+/**
+ * Dynamically resolves the active tier by validating the requested tier
+ * against the provided license key.
+ */
+export async function resolveTier(
+  requestedTier: Tier,
+  licenseKey: string | undefined
+): Promise<{ tier: Tier; errorReason?: string }> {
+  if (requestedTier === 'free') {
+    return { tier: 'free' };
+  }
+
+  const result = await verifyLicenseKey(licenseKey);
+  if (result.success) {
+    if (result.tier === 'enterprise') {
+      return { tier: requestedTier };
+    }
+    if (result.tier === 'pro' && requestedTier === 'pro') {
+      return { tier: 'pro' };
+    }
+    return {
+      tier: 'free',
+      errorReason: `ライセンスプラン (${result.tier}) は要求されたプラン (${requestedTier}) と一致しません`,
+    };
+  }
+
+  return { tier: 'free', errorReason: result.reason ?? '有効なライセンスキーがありません' };
+}
+

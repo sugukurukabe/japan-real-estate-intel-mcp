@@ -86,7 +86,7 @@ import { ATTRIBUTION } from './data/attribution.js';
 import { formatErrorMessage, isClientError } from './errors.js';
 import { toolLogger } from './logger.js';
 import { checkToolCallBudget, recordToolCall } from './tier-usage.js';
-import { isToolAllowed, type Tier } from './tiers.js';
+import { isToolAllowed, resolveTier, type Tier } from './tiers.js';
 import './data-loaders/index.js';
 
 const DASHBOARD_URI = 'ui://japan-real-estate-intel/dashboard';
@@ -113,7 +113,6 @@ type ToolResult = {
 
 const RO = { readOnlyHint: true, destructiveHint: false, openWorldHint: false } as const;
 const WIDGET_DOMAIN = 'https://realestate-mcp.jp';
-const DEFAULT_TIER: Tier = (process.env.DEFAULT_TIER as Tier) ?? 'free';
 
 /**
  * compact モード時、最初のテキストコンテンツの先頭に TL;DR 行を追加する。
@@ -141,11 +140,30 @@ export function createServer(): McpServer {
     version: '6.15.2',
   });
 
+  let activeTier: Tier = 'free';
+  const licenseKey = process.env.LICENSE_KEY;
+  const requestedTier = (process.env.DEFAULT_TIER as Tier) ?? 'free';
+
+  if (process.env.NODE_ENV === 'test') {
+    activeTier = requestedTier;
+  } else {
+    resolveTier(requestedTier, licenseKey).then(({ tier, errorReason }) => {
+      activeTier = tier;
+      if (errorReason) {
+        server.sendLoggingMessage({ level: 'warning', data: { event: 'license_fallback', requestedTier, activeTier, reason: errorReason } }).catch(() => {});
+        console.warn(`[License Warning] ${errorReason}. Free プランにフォールバックします。`);
+      } else if (tier !== 'free') {
+        server.sendLoggingMessage({ level: 'info', data: { event: 'license_success', activeTier } }).catch(() => {});
+        console.log(`[License Success] Plan "${tier.toUpperCase()}" activated successfully.`);
+      }
+    });
+  }
+
   function withErrorHandling(
     toolName: string,
     prefecture: string,
     fn: () => Promise<ToolResult>,
-    tier: Tier = DEFAULT_TIER,
+    tier: Tier = activeTier,
   ): Promise<ToolResult> {
     if (!isToolAllowed(tier, toolName)) {
       const msg = `ツール "${toolName}" は現在のプラン (${tier}) では利用できません。アップグレードをご検討ください。`;
