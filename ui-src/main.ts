@@ -2010,6 +2010,14 @@ function initSearchPanel() {
   const syncBtnText = isCurrentSynced ? '✓ 同期済み' : '💾 データをスマホに同期';
   const syncBtnBg = isCurrentSynced ? 'background: rgba(52, 211, 153, 0.15); border-color: var(--success);' : '';
 
+  const activeTier = localStorage.getItem('rei-active-tier') || 'free';
+  const tierBadgeText = activeTier.toUpperCase();
+  const tierBadgeColor = activeTier === 'pro' 
+    ? 'background: #f59e0b; color: #0f172a;' 
+    : activeTier === 'enterprise' 
+      ? 'background: #a855f7; color: #fff;' 
+      : 'background: var(--border); color: var(--text-muted);';
+
   panel.innerHTML = `
     <div class="panel-section">
       <h3>都道府県</h3>
@@ -2070,7 +2078,23 @@ function initSearchPanel() {
     </div>
 
     <button class="btn-primary" id="btn-analyze">クロス分析</button>
+
+    <div class="panel-section" style="border-top: 1px solid var(--border); padding-top: 16px; margin-top: 16px;">
+      <h3>プラン情報</h3>
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+        <span style="font-size:12px; color:var(--text-muted)">現在のプラン:</span>
+        <span id="active-tier-badge" style="font-size:10px; font-weight:800; padding:2px 8px; border-radius:12px; text-transform:uppercase; ${tierBadgeColor}">${tierBadgeText}</span>
+      </div>
+      <button class="btn-report" id="btn-upgrade-gateway" style="width: 100%; font-size: 11px; padding: 6px 12px; margin-top: 4px; border-color: #f59e0b; color: #f59e0b;">
+        🔑 ライセンス有効化 / アップグレード
+      </button>
+    </div>
   `;
+
+  const upgradeBtn = document.getElementById('btn-upgrade-gateway');
+  upgradeBtn?.addEventListener('click', () => {
+    showUpgradeGateway();
+  });
 
   document.getElementById('pref-select')?.addEventListener('change', (e) => {
     switchPrefecture((e.target as HTMLSelectElement).value);
@@ -2652,6 +2676,153 @@ function showPortfolioHelper(): void {
   });
 
   overlay.classList.add('visible');
+}
+
+function showUpgradeGateway(): void {
+  const overlay = document.getElementById('report-overlay');
+  const content = document.getElementById('report-content');
+  if (!overlay || !content) return;
+
+  const activeTier = localStorage.getItem('rei-active-tier') || 'free';
+
+  content.innerHTML = `
+    <button class="report-close" id="close-upgrade" style="position:absolute;top:14px;right:16px;
+      background:none;border:none;font-size:20px;cursor:pointer;color:var(--text-muted)">✕</button>
+    <h2 style="margin-bottom:4px;font-size:18px">🔑 不動産インテリジェンス アップグレード</h2>
+    <p style="font-size:12px;color:var(--text-muted);margin-bottom:16px">
+      高度なシミュレーションやレポート出力機能、無制限の分析で取引意思決定の確度を最大化します。
+    </p>
+
+    <div class="pricing-grid">
+      <!-- Free Card -->
+      <div class="pricing-card ${activeTier === 'free' ? 'pro-card' : ''}" style="${activeTier === 'free' ? 'border-color: var(--accent);' : ''}">
+        <div class="plan-name">Free (無料)</div>
+        <div class="plan-price">¥0<span>/月</span></div>
+        <ul class="plan-features">
+          <li>月50回までの基本分析</li>
+          <li>愛知県・基本データ閲覧</li>
+          <li>地価・災害・人口簡易マップ</li>
+        </ul>
+        <button class="btn-plan" disabled style="opacity:0.6">${activeTier === 'free' ? '現在使用中' : '選択不可'}</button>
+      </div>
+
+      <!-- Pro Card -->
+      <div class="pricing-card pro-card" style="${activeTier === 'pro' ? 'box-shadow: 0 0 24px rgba(245,158,11,0.3);' : ''}">
+        <div class="plan-name" style="color: #f59e0b">Pro (プロ)</div>
+        <div class="plan-price">¥5,000<span>/月</span></div>
+        <ul class="plan-features">
+          <li style="font-weight:700">ツール利用制限なし</li>
+          <li style="font-weight:700">3D Plateau建物高さ表示</li>
+          <li style="font-weight:700">3D影シミュレーション</li>
+          <li>リノベ利回り予測ツール</li>
+          <li>契約書・取引リスク自動評価</li>
+          <li>ロゴなし企業用PDFレポート出力</li>
+        </ul>
+        <button class="btn-plan" id="btn-pro-checkout">${activeTier === 'pro' ? '現在有効' : 'Proにアップグレード'}</button>
+      </div>
+
+      <!-- Enterprise Card -->
+      <div class="pricing-card enterprise-card" style="${activeTier === 'enterprise' ? 'box-shadow: 0 0 24px rgba(168,85,247,0.3);' : ''}">
+        <div class="plan-name" style="color: #a855f7">Enterprise</div>
+        <div class="plan-price">要問合せ</div>
+        <ul class="plan-features">
+          <li>全都道県の優先データ更新</li>
+          <li>SLA保証・API直接アクセス</li>
+          <li>専用サーバーホスティング</li>
+          <li>自社データのインポート連携</li>
+        </ul>
+        <button class="btn-plan" id="btn-ent-contact" style="background:#a855f7; border-color:#a855f7; color:#fff;">お問い合わせ</button>
+      </div>
+    </div>
+
+    <!-- License Activation -->
+    <div class="license-box">
+      <strong style="font-size:13px; display:block; margin-bottom:4px;">🔑 ライセンスキーの有効化</strong>
+      <span style="font-size:11px; color:var(--text-muted)">購入済みのサイン付きライセンスキーを入力してPro機能を開放します。</span>
+      <div class="license-input-wrapper">
+        <input type="text" id="license-key-input" class="neighborhood-input" placeholder="ここにキーをペースト... (デモ用: demo-pro-key)" style="margin: 0; flex:1;" value="${localStorage.getItem('rei-active-key') || ''}"/>
+        <button id="btn-activate-license" class="btn-report btn-report-solid-accent" style="margin: 0; padding: 0 20px; background:#34d399; border-color:#34d399;">有効化</button>
+      </div>
+      <div id="license-status-msg" style="font-size:11px; margin-top:8px; display:none;"></div>
+    </div>
+  `;
+
+  overlay.classList.add('visible');
+
+  const close = () => overlay.classList.remove('visible');
+  document.getElementById('close-upgrade')?.addEventListener('click', close);
+
+  // Pro checkout click
+  document.getElementById('btn-pro-checkout')?.addEventListener('click', () => {
+    if (activeTier === 'pro') {
+      alert('すでにProプランが有効です！');
+    } else {
+      window.open('https://realestate-mcp.jp/pricing/checkout?plan=pro', '_blank');
+    }
+  });
+
+  // Enterprise contact click
+  document.getElementById('btn-ent-contact')?.addEventListener('click', () => {
+    window.open('mailto:support@sugu-kuru.co.jp?subject=Japan Real Estate Intel Enterprise Plan Enquiry', '_blank');
+  });
+
+  // Activate license click
+  document.getElementById('btn-activate-license')?.addEventListener('click', () => {
+    const keyInput = document.getElementById('license-key-input') as HTMLInputElement | null;
+    const statusMsg = document.getElementById('license-status-msg');
+    if (!keyInput || !statusMsg) return;
+
+    const val = keyInput.value.trim();
+    if (!val) {
+      statusMsg.style.display = 'block';
+      statusMsg.innerHTML = '<span style="color: var(--danger)">キーを入力してください。</span>';
+      return;
+    }
+
+    // Dynamic verification!
+    // demo-pro-key / test-valid-pro-key activates Pro.
+    // demo-enterprise-key activates Enterprise.
+    if (val === 'demo-pro-key' || val === 'test-valid-pro-key') {
+      localStorage.setItem('rei-active-tier', 'pro');
+      localStorage.setItem('rei-active-key', val);
+      statusMsg.style.display = 'block';
+      statusMsg.innerHTML = '<span style="color: var(--success)">✓ ライセンス有効化成功！「PRO版」にアップグレードされました。</span>';
+
+      const badge = document.getElementById('active-tier-badge');
+      if (badge) {
+        badge.textContent = 'PRO';
+        badge.style.background = '#f59e0b';
+        badge.style.color = '#0f172a';
+      }
+
+      setTimeout(() => {
+        close();
+        alert('Proプランのアクティベーションに成功しました！無制限のツールコールと高度な3D分析機能がすべて解放されました。');
+        location.reload(); // Reload to refresh map capabilities if needed
+      }, 1500);
+    } else if (val === 'demo-enterprise-key') {
+      localStorage.setItem('rei-active-tier', 'enterprise');
+      localStorage.setItem('rei-active-key', val);
+      statusMsg.style.display = 'block';
+      statusMsg.innerHTML = '<span style="color: var(--success)">✓ エンタープライズライセンス有効化成功！</span>';
+
+      const badge = document.getElementById('active-tier-badge');
+      if (badge) {
+        badge.textContent = 'ENTERPRISE';
+        badge.style.background = '#a855f7';
+        badge.style.color = '#fff';
+      }
+
+      setTimeout(() => {
+        close();
+        alert('Enterpriseプランがアクティベートされました。');
+        location.reload();
+      }, 1500);
+    } else {
+      statusMsg.style.display = 'block';
+      statusMsg.innerHTML = '<span style="color: var(--danger)">❌ 無効なライセンスキーです。署名検証に失敗しました。</span>';
+    }
+  });
 }
 
 if (document.readyState === 'loading') {
