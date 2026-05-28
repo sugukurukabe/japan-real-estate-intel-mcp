@@ -647,7 +647,7 @@ export function createServer(options?: { activeTierOverride?: Tier }): McpServer
           content: [{ type: 'text' as const, text: JSON.stringify(result, null, 2) }],
           structuredContent: { ...result, attribution: ATTRIBUTION },
         };
-      }),
+      }, args),
   );
 
   server.tool(
@@ -1088,6 +1088,7 @@ export function createServer(options?: { activeTierOverride?: Tier }): McpServer
             input.output_mode,
           );
         },
+        args,
       ),
   );
 
