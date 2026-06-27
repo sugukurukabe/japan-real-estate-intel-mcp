@@ -19,3 +19,6 @@ docs/screenshots/*.webm
 db/*.sqlite
 db/*.sqlite-shm
 db/*.sqlite-wal
+
+# cookbook-scout local candidates
+.cookbook-candidates/

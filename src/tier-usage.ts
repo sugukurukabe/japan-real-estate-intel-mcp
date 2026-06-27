@@ -1,10 +1,10 @@
 /**
  * In-process monthly tool-call budget for Free tier (single-host / demo).
- * Resets each calendar month (UTC). Not durable across restarts — use for
- * soft limits until account-backed metering exists.
+ * Resets each calendar month (UTC). Persisted to SQLite DB with in-memory fallback.
  */
 import type { Tier } from './tiers.js';
 import { TIER_CONFIG } from './tiers.js';
+import { getClientUsage, incrementClientUsage, resetClientUsageForTests } from './auth/oauth-store.js';
 
 type UsageState = { month: string; count: number };
 
@@ -28,40 +28,61 @@ function monthlyLimit(tier: Tier): number {
   return TIER_CONFIG[tier].monthlyToolCalls;
 }
 
-export function getToolCallUsage(tier: Tier): { count: number; limit: number; month: string } {
+export function getToolCallUsage(tier: Tier, clientId?: string): { count: number; limit: number; month: string } {
   const month = currentMonthUtc();
-  const key = clientKey();
-  const state = usageByClient.get(key);
-  const count = state?.month === month ? state.count : 0;
+  const key = clientId || clientKey();
+  let count = 0;
+  try {
+    count = getClientUsage(key, month);
+  } catch (err) {
+    // Graceful fallback to in-memory for testing or if DB is offline
+    const state = usageByClient.get(key);
+    count = state?.month === month ? state.count : 0;
+  }
   const limit = monthlyLimit(tier);
   return { count, limit, month };
 }
 
 /** Returns error message when Free monthly budget is exhausted. */
-export function checkToolCallBudget(tier: Tier): string | null {
+export function checkToolCallBudget(tier: Tier, clientId?: string): string | null {
   const limit = monthlyLimit(tier);
   if (!Number.isFinite(limit)) return null;
-  const { count } = getToolCallUsage(tier);
+  const { count } = getToolCallUsage(tier, clientId);
   if (count >= limit) {
     return `Free プランの月間ツール呼び出し上限（${limit} 回）に達しました。翌月（UTC）までお待ちいただくか、Pro プランをご検討ください。`;
   }
   return null;
 }
 
-export function recordToolCall(tier: Tier): void {
+export function recordToolCall(tier: Tier, clientId?: string): void {
   const limit = monthlyLimit(tier);
   if (!Number.isFinite(limit)) return;
   const month = currentMonthUtc();
-  const key = clientKey();
+  const key = clientId || clientKey();
+  
+  // 1. Update in-memory for tests / fallback
   const state = usageByClient.get(key);
   if (!state || state.month !== month) {
     usageByClient.set(key, { month, count: 1 });
-    return;
+  } else {
+    state.count += 1;
   }
-  state.count += 1;
+
+  // 2. Persist to SQLite DB
+  try {
+    incrementClientUsage(key, month);
+  } catch (err) {
+    // Ignore db-write failure under pure-stdio local contexts
+  }
 }
 
 /** Test-only reset */
 export function resetToolCallUsageForTests(): void {
   usageByClient.clear();
+  try {
+    resetClientUsageForTests();
+  } catch (err) {
+    // Ignore if DB not ready
+  }
 }
+

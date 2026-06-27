@@ -6,14 +6,17 @@ import { moduleLogger } from '../logger.js';
 
 const log = moduleLogger('oauth_store');
 
-const DB_PATH = process.env.OAUTH_DB_PATH ?? resolve(process.cwd(), 'db', 'oauth.sqlite');
+function getDbPath(): string {
+  return process.env.OAUTH_DB_PATH ?? resolve(process.cwd(), 'db', 'oauth.sqlite');
+}
 
 let _db: Database.Database | null = null;
 
 function getDb(): Database.Database {
   if (_db) return _db;
-  mkdirSync(dirname(DB_PATH), { recursive: true });
-  _db = new Database(DB_PATH);
+  const dbPath = getDbPath();
+  mkdirSync(dirname(dbPath), { recursive: true });
+  _db = new Database(dbPath);
   _db.pragma('journal_mode = WAL');
   _db.pragma('foreign_keys = ON');
   _db.exec(`
@@ -49,11 +52,17 @@ function getDb(): Database.Database {
       expires_at TEXT NOT NULL,
       created_at TEXT NOT NULL DEFAULT (datetime('now'))
     );
+    CREATE TABLE IF NOT EXISTS client_usage (
+      client_id TEXT NOT NULL,
+      usage_month TEXT NOT NULL,
+      tool_call_count INTEGER NOT NULL DEFAULT 0,
+      PRIMARY KEY (client_id, usage_month)
+    );
     CREATE INDEX IF NOT EXISTS idx_auth_codes_expires ON auth_codes(expires_at);
     CREATE INDEX IF NOT EXISTS idx_access_tokens_expires ON access_tokens(expires_at);
     CREATE INDEX IF NOT EXISTS idx_refresh_tokens_expires ON refresh_tokens(expires_at);
   `);
-  log.info({ path: DB_PATH }, 'OAuth SQLite store initialized');
+  log.info({ path: dbPath }, 'OAuth SQLite store initialized');
   return _db;
 }
 
@@ -180,6 +189,25 @@ export function cleanupExpired(): number {
   return total;
 }
 
+export function getClientUsage(clientId: string, month: string): number {
+  const row = getDb().prepare(
+    'SELECT tool_call_count FROM client_usage WHERE client_id = ? AND usage_month = ?'
+  ).get(clientId, month) as { tool_call_count: number } | undefined;
+  return row ? row.tool_call_count : 0;
+}
+
+export function incrementClientUsage(clientId: string, month: string): void {
+  getDb().prepare(`
+    INSERT INTO client_usage (client_id, usage_month, tool_call_count)
+    VALUES (?, ?, 1)
+    ON CONFLICT(client_id, usage_month) DO UPDATE SET tool_call_count = tool_call_count + 1
+  `).run(clientId, month);
+}
+
 export function closeDb(): void {
   if (_db) { _db.close(); _db = null; }
+}
+
+export function resetClientUsageForTests(): void {
+  getDb().prepare('DELETE FROM client_usage').run();
 }

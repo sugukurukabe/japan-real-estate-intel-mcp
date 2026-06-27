@@ -46,7 +46,7 @@ type RegisteredResource = {
 };
 
 function getPrivateRegistries() {
-  const server = createServer();
+  const server = createServer('pro');
   return server as unknown as {
     _registeredTools: Record<string, RegisteredTool>;
     _registeredResources: Record<string, RegisteredResource>;

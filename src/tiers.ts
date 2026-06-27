@@ -141,6 +141,11 @@ export function isResourceAllowed(tier: Tier, resourceUri: string): boolean {
   });
 }
 
+export function isPromptAllowed(tier: Tier, promptName: string): boolean {
+  if (tier === 'enterprise') return true;
+  return TIER_CONFIG[tier].prompts.includes(promptName);
+}
+
 export function getTierDisplayInfo(tier: Tier): {
   name: string;
   nameJa: string;

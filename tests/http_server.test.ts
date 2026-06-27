@@ -14,8 +14,10 @@ beforeAll(async () => {
   // Ensure clean environment for each test run
   delete process.env.API_KEY;
   const mod = await import('../src/http.js');
-  // Close the real listener (started on import) to free the port
-  mod.httpServer.close();
+  // Close the real listener (started on import) if it was started
+  if (mod.httpServer) {
+    mod.httpServer.close();
+  }
   app = mod.app;
 }, 30000);
 
