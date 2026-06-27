@@ -114,8 +114,8 @@ export function registerOAuthRoutes(app: Express): void {
   });
 
   // ── OAuth metadata (RFC 8414) ───────────────────────────────────────────
-  app.get('/.well-known/oauth-authorization-server', (_req: Request, res: Response) => {
-    const baseUrl = process.env.BASE_URL ?? `http://localhost:${process.env.PORT ?? '3100'}`;
+  app.get('/.well-known/oauth-authorization-server', (req: Request, res: Response) => {
+    const baseUrl = process.env.BASE_URL ?? `${req.protocol}://${req.get('host')}`;
     res.json({
       issuer: baseUrl,
       authorization_endpoint: `${baseUrl}/oauth/authorize`,

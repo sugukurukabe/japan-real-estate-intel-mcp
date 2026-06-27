@@ -96,7 +96,6 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.resolve(__dirname, '..');
 
 app.use(express.static(path.join(ROOT, 'ui'), { extensions: ['html'] }));
-app.use('/data', express.static(path.join(ROOT, 'data')));
 app.use('/assets', express.static(path.join(ROOT, 'assets')));
 
 // Redirect root to dashboard for convenience
@@ -124,6 +123,8 @@ app.use((req, res, next) => {
   }
   next();
 });
+
+app.use('/data', express.static(path.join(ROOT, 'data')));
 
 // ── OAuth 2.1 + PKCE endpoints ────────────────────────────────────────────
 registerOAuthRoutes(app);
@@ -253,7 +254,7 @@ app.get('/health', (_req, res) => {
   mcpActiveSessions.set(sessions.size);
   res.json({
     status: 'ok',
-    version: '6.15.2',
+    version: '6.16.0',
     sessions: sessions.size,
     uptime_s: Math.round(process.uptime()),
   });
@@ -284,7 +285,7 @@ process.on('SIGINT', () => gracefulShutdown('SIGINT'));
 
 // ── Start server ───────────────────────────────────────────────────────────
 
-let httpServer: any = null;
+let httpServer: ReturnType<typeof app.listen> | null = null;
 if (process.env.NODE_ENV !== 'test') {
   httpServer = app.listen(PORT, HOST, () => {
     log.info(

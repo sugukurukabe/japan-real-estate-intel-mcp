@@ -44,6 +44,14 @@ import {
   PurchaseReviewOutput,
   LeveragedCashflowInput,
   LeveragedCashflowOutput,
+  AssessExteriorVisualsInput,
+  AnalyzeCommuteAccessibilityInput,
+  OptimizePortfolioInput,
+  OptimizePortfolioOutput,
+  AuditZoningComplianceInput,
+  AuditZoningComplianceOutput,
+  ForecastDemographicShiftInput,
+  ForecastDemographicShiftOutput,
 } from './schemas.js';
 import { crossAnalyze } from './tools/cross_analyze_real_estate_market.js';
 import { assessPropertyRisk } from './tools/assess_property_risk.js';
@@ -58,6 +66,9 @@ import { evaluateStoreLocation } from './tools/evaluate_store_location.js';
 import { simulateLandscape } from './tools/simulate_landscape_impact.js';
 import { forecastLandPriceTrend } from './tools/forecast_land_price_trend.js';
 import { portfolioOptimizer } from './tools/portfolio_optimizer.js';
+import { optimizePortfolioTool } from './tools/optimize_portfolio.js';
+import { auditZoningComplianceTool } from './tools/audit_zoning_compliance.js';
+import { forecastDemographicShiftTool } from './tools/forecast_demographic_shift.js';
 import { simulateAichiFuture, AichiFutureInput } from './tools/simulate_aichi_future.js';
 import { scenarioWhatIf } from './tools/scenario_what_if.js';
 import { discoverOpportunitiesTool } from './tools/discover_opportunities.js';
@@ -73,6 +84,8 @@ import { getVacancyStatsTool } from './tools/get_vacancy_stats.js';
 import { getPopulationOutlookTool } from './tools/get_population_outlook.js';
 import { getRealEstateMacroSnapshotTool } from './tools/get_real_estate_macro_snapshot.js';
 import { detectArbitrageSignals } from './tools/detect_arbitrage_signals.js';
+import { assessExteriorVisuals } from './tools/assess_exterior_visuals.js';
+import { analyzeCommuteAccessibilityTool } from './tools/analyze_commute_accessibility.js';
 import { reviewPurchaseRecommendation } from './analysis/purchase_review.js';
 import { simulateLeveragedCashflow } from './analysis/leveraged_cashflow.js';
 import { mcpSearch } from './tools/search.js';
@@ -138,7 +151,7 @@ function applyOutputMode(
 export function createServer(defaultTier: Tier = DEFAULT_TIER, clientId?: string): McpServer {
   const server = new McpServer({
     name: 'japan-real-estate-intel-mcp',
-    version: '6.15.2',
+    version: '6.16.0',
   });
 
   function withErrorHandling(
@@ -461,6 +474,36 @@ export function createServer(defaultTier: Tier = DEFAULT_TIER, clientId?: string
       const result = simulateLandscape(input);
       return {
         content: [{ type: 'text' as const, text: JSON.stringify(result, null, 2) }],
+        structuredContent: { ...result, attribution: ATTRIBUTION },
+      };
+    }),
+  );
+
+  server.tool(
+    'assess_exterior_visuals',
+    'AI visual exterior audit of a property based on Google Street View static imagery + Gemini Vision AI. Falls back to simulated audit if API keys are missing. | AI街頭外観監査。ストリートビュー画像とGemini Vision AIを用いて建物の外観・道路幅・環境を自動評価。',
+    AssessExteriorVisualsInput.shape,
+    RO,
+    (args) => withErrorHandling('assess_exterior_visuals', String(args.prefecture ?? 'aichi'), async () => {
+      const input = AssessExteriorVisualsInput.parse(args);
+      const result = await assessExteriorVisuals(input);
+      return {
+        content: [{ type: 'text' as const, text: result.markdownReport }],
+        structuredContent: { ...result, attribution: ATTRIBUTION },
+      };
+    }),
+  );
+
+  server.tool(
+    'analyze_commute_accessibility',
+    'Transit commute accessibility analyzer to regional station hubs. Calculates travel times, routes, and overall score. | 交通通勤アクセシビリティ評価。主要ターミナル駅への所要時間、経路、利便性スコアを算出。',
+    AnalyzeCommuteAccessibilityInput.shape,
+    RO,
+    (args) => withErrorHandling('analyze_commute_accessibility', String(args.prefecture ?? 'aichi'), async () => {
+      const input = AnalyzeCommuteAccessibilityInput.parse(args);
+      const result = await analyzeCommuteAccessibilityTool(input);
+      return {
+        content: [{ type: 'text' as const, text: result.markdownReport }],
         structuredContent: { ...result, attribution: ATTRIBUTION },
       };
     }),
@@ -851,6 +894,84 @@ export function createServer(defaultTier: Tier = DEFAULT_TIER, clientId?: string
         tldr,
         input.output_mode,
       );
+    }),
+  );
+
+  registerAppTool(
+    server,
+    'optimize_portfolio_allocation',
+    {
+      title: 'ポートフォリオ統合リスク・リターン最適化',
+      description: 'Optimize real estate portfolio risk & return: aggregates hazards, land price trends, and generates allocation strategies. | 複数物件のポートフォリオ災害リスク・地価動向を横断分析し、最適配分をシミュレートする。',
+      inputSchema: OptimizePortfolioInput.shape,
+      outputSchema: OptimizePortfolioOutput.shape,
+      annotations: RO,
+      _meta: {
+        ui: { resourceUri: DASHBOARD_URI },
+        'openai/outputTemplate': DASHBOARD_URI,
+        'openai/toolInvocation/invoking': 'ポートフォリオ最適化を実行中…',
+        'openai/toolInvocation/invoked': 'ポートフォリオ最適化が完了しました。',
+      },
+    },
+    (args) => withErrorHandling('optimize_portfolio_allocation', 'multi', async () => {
+      const input = OptimizePortfolioInput.parse(args);
+      const output = await optimizePortfolioTool(input);
+      return {
+        content: [{ type: 'text' as const, text: output.markdownReport }],
+        structuredContent: output as unknown as Record<string, unknown>,
+      };
+    }),
+  );
+
+  registerAppTool(
+    server,
+    'audit_zoning_compliance',
+    {
+      title: '3D用途地域・法的斜線制限自動監査',
+      description: 'Audit proposed building metrics (FAR, coverage, slant line, height limit) against local zoning rules. | 敷地での計画建物スペック（建蔽率・容積率・斜線制限など）の適合性を自動監査する。',
+      inputSchema: AuditZoningComplianceInput.shape,
+      outputSchema: AuditZoningComplianceOutput.shape,
+      annotations: RO,
+      _meta: {
+        ui: { resourceUri: DASHBOARD_3D_URI },
+        'openai/outputTemplate': DASHBOARD_3D_URI,
+        'openai/toolInvocation/invoking': '用途制限・斜線制限を監査中…',
+        'openai/toolInvocation/invoked': '法的監査が完了しました。',
+      },
+    },
+    (args) => withErrorHandling('audit_zoning_compliance', String((args as unknown as Record<string, string>).prefecture ?? 'aichi'), async () => {
+      const input = AuditZoningComplianceInput.parse(args);
+      const output = await auditZoningComplianceTool(input);
+      return {
+        content: [{ type: 'text' as const, text: output.markdownReport }],
+        structuredContent: output as unknown as Record<string, unknown>,
+      };
+    }),
+  );
+
+  registerAppTool(
+    server,
+    'forecast_demographic_shift',
+    {
+      title: '町丁目レベル10年後人流・人口動態予測',
+      description: 'Predict demographic, aging and human flow trends for a specific neighborhood or city. | 国勢調査・人流統計から、指定エリア（町丁目単位）の10年後の人口・世帯・高齢化率を予測する。',
+      inputSchema: ForecastDemographicShiftInput.shape,
+      outputSchema: ForecastDemographicShiftOutput.shape,
+      annotations: RO,
+      _meta: {
+        ui: { resourceUri: DASHBOARD_URI },
+        'openai/outputTemplate': DASHBOARD_URI,
+        'openai/toolInvocation/invoking': '人流・人口予測を実行中…',
+        'openai/toolInvocation/invoked': '人流・人口動態予測が完了しました。',
+      },
+    },
+    (args) => withErrorHandling('forecast_demographic_shift', String((args as unknown as Record<string, string>).prefecture ?? 'aichi'), async () => {
+      const input = ForecastDemographicShiftInput.parse(args);
+      const output = await forecastDemographicShiftTool(input);
+      return {
+        content: [{ type: 'text' as const, text: output.markdownReport }],
+        structuredContent: output as unknown as Record<string, unknown>,
+      };
     }),
   );
 

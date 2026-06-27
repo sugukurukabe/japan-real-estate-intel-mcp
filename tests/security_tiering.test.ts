@@ -45,13 +45,13 @@ afterAll(async () => {
 
 describe('MCP Server Level Tiering', () => {
   describe('Resource Tiering', () => {
-    it('free tier blocks dashboard resources', async () => {
+    it('free tier allows dashboard resources (MCP Apps enabled)', async () => {
       const server = createServer('free');
       const resources = (server as any)._registeredResources;
       const dashboard = resources['ui://japan-real-estate-intel/dashboard'];
       const response = await dashboard.readCallback(new URL('ui://japan-real-estate-intel/dashboard'), {});
-      expect(response.contents[0].text).toContain('プラン制限');
-      expect(response.contents[0].text).toContain('free');
+      expect(response.contents[0].text).not.toContain('プラン制限');
+      expect(response.contents[0].text).toContain('<!DOCTYPE html>');
     });
 
     it('pro tier allows dashboard resources', async () => {

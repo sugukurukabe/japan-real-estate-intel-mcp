@@ -33,8 +33,8 @@ describe('Tiering', () => {
       expect(isResourceAllowed('free', 'realestate://land-price/aichi/名古屋市中区')).toBe(true);
     });
 
-    it('free tier blocks UI resources', () => {
-      expect(isResourceAllowed('free', 'ui://japan-real-estate-intel/dashboard')).toBe(false);
+    it('free tier allows UI resources (MCP Apps enabled)', () => {
+      expect(isResourceAllowed('free', 'ui://japan-real-estate-intel/dashboard')).toBe(true);
     });
 
     it('pro tier allows UI resources', () => {

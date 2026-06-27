@@ -1089,3 +1089,22 @@ body.mode-store .layer-btn-primary {
   border-color: var(--accent);
   transform: translateY(-1px);
 }
+
+/* Commute & Visual Audit CSS Styles */
+.streetview-container {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.streetview-container:hover {
+  transform: scale(1.01);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.streetview-container img {
+  filter: brightness(0.95);
+  transition: filter 0.3s ease;
+}
+
+.streetview-container:hover img {
+  filter: brightness(1.05);
+}

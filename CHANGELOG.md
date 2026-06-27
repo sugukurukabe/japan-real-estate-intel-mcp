@@ -1,4 +1,29 @@
 # Changelog
+## [6.16.0] - 2026-06-28
+
+### Added
+
+- **Premium Pro/Enterprise tools** — 3 new tiered MCP tools:
+  - `optimize_portfolio_allocation` (Pro) — Multi-property portfolio risk/return optimization
+  - `forecast_demographic_shift` (Pro) — 10-year population/household/aging/pedestrian-flow forecaster
+  - `audit_zoning_compliance` (Enterprise) — Building Standards Law compliance auditor (建蔽率/容積率/斜線制限/高度地区制限)
+- **Analysis engines**: `src/analysis/portfolio_optimization.ts`, `zoning_compliance.ts`, `demographic_forecast.ts`
+- **UI premium widgets**: Dashboard insight panel with Pro/Enterprise tool buttons, MCP bridge integration
+- **23 new unit tests** in `tests/premium_features.test.ts`
+
+### Changed
+
+- Tool count: 33 → **38 tools** (README, server.json, metadata test updated)
+- Free tier now includes MCP Apps UI dashboard resources
+- Zod schemas: added `PortfolioAnalysisItem`, `DemographicForecastYear` type exports
+
+### Fixed
+
+- `tiers.test.ts`: Updated free tier UI resource assertion to match current config
+- `security_tiering.test.ts`: Updated free tier dashboard resource test
+- `new_features.test.ts`: Fixed mock text assertion
+- `metadata.test.ts`: Updated tool count from 33 to 38
+
 ## [6.15.2] - 2026-05-20
 
 ### Added
@@ -860,11 +885,11 @@
 - Aichi prefecture data: land price, population, flood/earthquake hazard, municipalities
 - MCP Apps dashboard with Leaflet map
 
-[2.7.0]: https://github.com/sugukuru/japan-real-estate-intel-mcp/compare/v2.5.0...v2.7.0
-[2.5.0]: https://github.com/sugukuru/japan-real-estate-intel-mcp/compare/v2.4.0...v2.5.0
-[2.4.0]: https://github.com/sugukuru/japan-real-estate-intel-mcp/compare/v2.3.0...v2.4.0
-[2.3.0]: https://github.com/sugukuru/japan-real-estate-intel-mcp/compare/v2.2.0...v2.3.0
-[2.2.0]: https://github.com/sugukuru/japan-real-estate-intel-mcp/compare/v2.1.0...v2.2.0
-[2.1.0]: https://github.com/sugukuru/japan-real-estate-intel-mcp/compare/v2.0.0...v2.1.0
-[2.0.0]: https://github.com/sugukuru/japan-real-estate-intel-mcp/compare/v1.0.0...v2.0.0
-[1.0.0]: https://github.com/sugukuru/japan-real-estate-intel-mcp/releases/tag/v1.0.0
+[2.7.0]: https://github.com/sugukurukabe/japan-real-estate-intel-mcp/compare/v2.5.0...v2.7.0
+[2.5.0]: https://github.com/sugukurukabe/japan-real-estate-intel-mcp/compare/v2.4.0...v2.5.0
+[2.4.0]: https://github.com/sugukurukabe/japan-real-estate-intel-mcp/compare/v2.3.0...v2.4.0
+[2.3.0]: https://github.com/sugukurukabe/japan-real-estate-intel-mcp/compare/v2.2.0...v2.3.0
+[2.2.0]: https://github.com/sugukurukabe/japan-real-estate-intel-mcp/compare/v2.1.0...v2.2.0
+[2.1.0]: https://github.com/sugukurukabe/japan-real-estate-intel-mcp/compare/v2.0.0...v2.1.0
+[2.0.0]: https://github.com/sugukurukabe/japan-real-estate-intel-mcp/compare/v1.0.0...v2.0.0
+[1.0.0]: https://github.com/sugukurukabe/japan-real-estate-intel-mcp/releases/tag/v1.0.0

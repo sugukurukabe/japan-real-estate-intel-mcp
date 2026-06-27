@@ -68,11 +68,14 @@ describe('cross-file version consistency', () => {
     expect(serverJson.tools).toContain('get_real_estate_macro_snapshot');
   });
 
-  it('server.json tools array matches runtime-exposed App / domain tools (33)', () => {
+  it('server.json tools array matches runtime-exposed App / domain tools (38)', () => {
     expect(Array.isArray(serverJson.tools)).toBe(true);
     expect(serverJson.tools).toContain('quick_visual_summary');
     expect(serverJson.tools).toContain('review_purchase_recommendation');
     expect(serverJson.tools).toContain('simulate_leveraged_cashflow');
-    expect(serverJson.tools.length).toBe(33);
+    expect(serverJson.tools).toContain('optimize_portfolio_allocation');
+    expect(serverJson.tools).toContain('audit_zoning_compliance');
+    expect(serverJson.tools).toContain('forecast_demographic_shift');
+    expect(serverJson.tools.length).toBe(38);
   });
 });
