@@ -10,9 +10,11 @@ import { moduleLogger } from './logger.js';
 import { randomUUID } from 'node:crypto';
 import { registerOAuthRoutes } from './auth/oauth-routes.js';
 import { validateAccessToken } from './auth/oauth-store.js';
-import type { Tier } from './tiers.js';
+import { registerStripeWebhookRoutes } from './billing/stripe-webhook.js';
+import { getLicenseByEmail } from './billing/license-store.js';
 import { collectDefaultMetrics, register, Counter, Histogram, Gauge } from 'prom-client';
 import * as Sentry from '@sentry/node';
+import type { Tier } from './tiers.js';
 
 const log = moduleLogger('http');
 
@@ -24,15 +26,28 @@ if (process.env.SENTRY_DSN) {
 
 // ── Prometheus metrics ────────────────────────────────────────────────────
 collectDefaultMetrics();
-const mcpToolCalls = new Counter({ name: 'mcp_tool_calls_total', help: 'Total MCP tool call requests' });
-const mcpToolDuration = new Histogram({ name: 'mcp_tool_duration_seconds', help: 'MCP tool call latency', buckets: [0.1, 0.5, 1, 2, 5, 10] });
-const mcpActiveSessions = new Gauge({ name: 'mcp_active_sessions', help: 'Currently active MCP sessions' });
+const mcpToolCalls = new Counter({
+  name: 'mcp_tool_calls_total',
+  help: 'Total MCP tool call requests',
+});
+const mcpToolDuration = new Histogram({
+  name: 'mcp_tool_duration_seconds',
+  help: 'MCP tool call latency',
+  buckets: [0.1, 0.5, 1, 2, 5, 10],
+});
+const mcpActiveSessions = new Gauge({
+  name: 'mcp_active_sessions',
+  help: 'Currently active MCP sessions',
+});
 const PORT = parseInt(process.env.PORT ?? '3100', 10);
 const HOST = process.env.HOST ?? '0.0.0.0';
 const API_KEY = process.env.API_KEY; // optional; if set, require X-Api-Key header
 const SESSION_TIMEOUT_MS = parseInt(process.env.SESSION_TIMEOUT_MS ?? String(30 * 60 * 1000), 10);
 const RATE_LIMIT_ENABLED = process.env.RATE_LIMIT_ENABLED !== 'false';
-const RATE_LIMIT_WINDOW_MS = parseInt(process.env.RATE_LIMIT_WINDOW_MS ?? String(15 * 60 * 1000), 10);
+const RATE_LIMIT_WINDOW_MS = parseInt(
+  process.env.RATE_LIMIT_WINDOW_MS ?? String(15 * 60 * 1000),
+  10,
+);
 const RATE_LIMIT_MAX = parseInt(process.env.RATE_LIMIT_MAX ?? '100', 10);
 
 // ── Express setup ──────────────────────────────────────────────────────────
@@ -59,10 +74,32 @@ app.use((req: Request, res: Response, next: NextFunction) => {
       contentSecurityPolicy: {
         directives: {
           defaultSrc: ["'self'"],
-          scriptSrc: ["'self'", "'unsafe-inline'", 'https://unpkg.com', 'https://cdnjs.cloudflare.com', 'https://cdn.jsdelivr.net'],
-          styleSrc: ["'self'", "'unsafe-inline'", 'https://unpkg.com', 'https://cdnjs.cloudflare.com', 'https://cdn.jsdelivr.net'],
-          imgSrc: ["'self'", 'data:', 'https://*.tile.openstreetmap.org', 'https://*.basemaps.cartocdn.com', 'https://api.qrserver.com'],
-          connectSrc: ["'self'", 'https://*.tile.openstreetmap.org', 'https://*.basemaps.cartocdn.com'],
+          scriptSrc: [
+            "'self'",
+            "'unsafe-inline'",
+            'https://unpkg.com',
+            'https://cdnjs.cloudflare.com',
+            'https://cdn.jsdelivr.net',
+          ],
+          styleSrc: [
+            "'self'",
+            "'unsafe-inline'",
+            'https://unpkg.com',
+            'https://cdnjs.cloudflare.com',
+            'https://cdn.jsdelivr.net',
+          ],
+          imgSrc: [
+            "'self'",
+            'data:',
+            'https://*.tile.openstreetmap.org',
+            'https://*.basemaps.cartocdn.com',
+            'https://api.qrserver.com',
+          ],
+          connectSrc: [
+            "'self'",
+            'https://*.tile.openstreetmap.org',
+            'https://*.basemaps.cartocdn.com',
+          ],
           fontSrc: ["'self'", 'https://cdnjs.cloudflare.com'],
         },
       },
@@ -88,7 +125,12 @@ if (RATE_LIMIT_ENABLED) {
   log.info({ windowMs: RATE_LIMIT_WINDOW_MS, max: RATE_LIMIT_MAX }, 'Rate limiting enabled on API and OAuth endpoints');
 }
 
-// Body size limit
+// ── Stripe Webhook (raw body — must come BEFORE express.json()) ────────────
+// Stripe signature verification requires the raw request body as a Buffer.
+app.use('/stripe/webhook', express.raw({ type: 'application/json' }));
+registerStripeWebhookRoutes(app);
+
+// Body size limit (all other routes use JSON)
 app.use(express.json({ limit: '10mb' }));
 
 // ── Static UI assets (no auth required) ────────────────────────────────────
@@ -103,15 +145,36 @@ app.get('/', (_req, res) => res.redirect('/dashboard.html'));
 
 // Optional API key authentication (applied AFTER static files so dashboard is public)
 function isPublicPath(p: string): boolean {
-  if (p === '/health' || p === '/metrics' || p === '/' || p === '/sw.js' || p === '/manifest.webmanifest') return true;
-  if (p.startsWith('/dashboard') || p.startsWith('/icons/') || p.startsWith('/assets/')) return true;
+  if (
+    p === '/health' ||
+    p === '/metrics' ||
+    p === '/' ||
+    p === '/sw.js' ||
+    p === '/manifest.webmanifest'
+  )
+    return true;
+  if (
+    p.startsWith('/dashboard') ||
+    p.startsWith('/icons/') ||
+    p.startsWith('/data/') ||
+    p.startsWith('/assets/')
+  )
+    return true;
   if (p === '/privacy-policy.html' || p === '/terms.html') return true;
+  // Stripe webhook is protected by its own signature verification
+  if (p === '/stripe/webhook') return true;
   return false;
 }
 
 app.use((req, res, next) => {
-  if (!API_KEY) { next(); return; }
-  if (isPublicPath(req.path)) { next(); return; }
+  if (!API_KEY) {
+    next();
+    return;
+  }
+  if (isPublicPath(req.path)) {
+    next();
+    return;
+  }
   // Accept either x-api-key or Authorization: Bearer <key>
   const xApi = req.headers['x-api-key'];
   const auth = req.headers['authorization'];
@@ -128,6 +191,29 @@ app.use('/data', express.static(path.join(ROOT, 'data')));
 
 // ── OAuth 2.1 + PKCE endpoints ────────────────────────────────────────────
 registerOAuthRoutes(app);
+
+// ── License Lookup API ────────────────────────────────────────────────────
+app.get('/api/license', (req: Request, res: Response) => {
+  const email = req.query.email as string | undefined;
+  if (!email) {
+    res.status(400).json({ error: 'email query parameter is required' });
+    return;
+  }
+  const license = getLicenseByEmail(email);
+  if (!license) {
+    res.status(404).json({ error: 'No active license found for this email' });
+    return;
+  }
+  // Return license info (key included so customer can copy it)
+  res.json({
+    clientName: license.client_name,
+    email: license.email,
+    tier: license.tier,
+    licenseKey: license.license_key,
+    expiresAt: license.expires_at,
+    createdAt: license.created_at,
+  });
+});
 
 // ── Session management ─────────────────────────────────────────────────────
 
@@ -165,6 +251,36 @@ app.post('/mcp', async (req, res) => {
   mcpToolCalls.inc();
   const callStart = Date.now();
   res.on('finish', () => mcpToolDuration.observe((Date.now() - callStart) / 1000));
+  
+  // Set Client IP into environment variable context dynamically for database quota tracking
+  const clientIp = req.ip || req.socket.remoteAddress || 'unknown-client';
+  process.env.USAGE_CLIENT_ID = clientIp;
+
+  // Extract real-time license key from HTTP headers
+  const reqLicenseKey = req.headers['x-license-key'] as string | undefined;
+  let clientTierOverride: Tier = 'free';
+
+  if (reqLicenseKey) {
+    const { verifyLicenseKeyOffline } = await import('./auth/license.js');
+    // Pre-bypass demo keys — only in non-production environments
+    if (process.env.NODE_ENV !== 'production') {
+      if (reqLicenseKey === 'demo-pro-key' || reqLicenseKey === 'test-valid-pro-key') {
+        clientTierOverride = 'pro';
+      } else if (reqLicenseKey === 'demo-enterprise-key') {
+        clientTierOverride = 'enterprise';
+      }
+    }
+    if (clientTierOverride === 'free') {
+      const verifyResult = verifyLicenseKeyOffline(reqLicenseKey);
+      if (verifyResult.success) {
+        clientTierOverride = verifyResult.tier;
+        log.info({ client: verifyResult.clientName, tier: verifyResult.tier }, 'Dynamic HTTP session license verification succeeded');
+      } else {
+        log.warn({ reason: verifyResult.reason }, 'Dynamic HTTP session license verification rejected');
+      }
+    }
+  }
+
   const sessionId = req.headers['mcp-session-id'] as string | undefined;
   let entry: SessionEntry | undefined = sessionId ? sessions.get(sessionId) : undefined;
 
@@ -202,9 +318,10 @@ app.post('/mcp', async (req, res) => {
     entry = { transport, lastActivity: Date.now(), timer };
     sessions.set(newId, entry);
 
-    const mcpServer = createServer(tier, clientId);
+    const activeTier = reqLicenseKey ? clientTierOverride : (tier ?? 'free');
+    const mcpServer = createServer({ activeTierOverride: activeTier, clientId });
     await mcpServer.connect(transport);
-    log.info({ sessionId: newId, tier: tier ?? 'default', clientId }, 'New MCP session created');
+    log.info({ sessionId: newId, tier: activeTier, clientId }, 'New MCP session created');
 
     transport.onclose = () => {
       clearTimeout(timer);

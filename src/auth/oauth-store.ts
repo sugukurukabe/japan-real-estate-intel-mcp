@@ -76,18 +76,28 @@ function base64url(buf: Buffer): string {
 
 export function registerClient(name: string, redirectUris: string[]): { clientId: string } {
   const clientId = base64url(randomBytes(24));
-  getDb().prepare(
-    'INSERT INTO oauth_clients (client_id, client_name, redirect_uris) VALUES (?, ?, ?)',
-  ).run(clientId, name, JSON.stringify(redirectUris));
+  getDb()
+    .prepare('INSERT INTO oauth_clients (client_id, client_name, redirect_uris) VALUES (?, ?, ?)')
+    .run(clientId, name, JSON.stringify(redirectUris));
   return { clientId };
 }
 
-export function getClient(clientId: string): { clientId: string; clientName: string; redirectUris: string[] } | null {
-  const row = getDb().prepare('SELECT * FROM oauth_clients WHERE client_id = ?').get(clientId) as {
-    client_id: string; client_name: string; redirect_uris: string;
-  } | undefined;
+export function getClient(
+  clientId: string,
+): { clientId: string; clientName: string; redirectUris: string[] } | null {
+  const row = getDb().prepare('SELECT * FROM oauth_clients WHERE client_id = ?').get(clientId) as
+    | {
+        client_id: string;
+        client_name: string;
+        redirect_uris: string;
+      }
+    | undefined;
   if (!row) return null;
-  return { clientId: row.client_id, clientName: row.client_name, redirectUris: JSON.parse(row.redirect_uris) };
+  return {
+    clientId: row.client_id,
+    clientName: row.client_name,
+    redirectUris: JSON.parse(row.redirect_uris),
+  };
 }
 
 export function createAuthCode(params: {
@@ -99,14 +109,28 @@ export function createAuthCode(params: {
 }): string {
   const code = base64url(randomBytes(32));
   const expiresAt = new Date(Date.now() + 10 * 60 * 1000).toISOString(); // 10 min
-  getDb().prepare(
-    `INSERT INTO auth_codes (code, client_id, code_challenge, code_challenge_method, scope, redirect_uri, expires_at)
+  getDb()
+    .prepare(
+      `INSERT INTO auth_codes (code, client_id, code_challenge, code_challenge_method, scope, redirect_uri, expires_at)
      VALUES (?, ?, ?, ?, ?, ?, ?)`,
-  ).run(code, params.clientId, params.codeChallenge, params.codeChallengeMethod ?? 'S256', params.scope ?? '', params.redirectUri, expiresAt);
+    )
+    .run(
+      code,
+      params.clientId,
+      params.codeChallenge,
+      params.codeChallengeMethod ?? 'S256',
+      params.scope ?? '',
+      params.redirectUri,
+      expiresAt,
+    );
   return code;
 }
 
-export function exchangeCode(code: string, codeVerifier: string, redirectUri: string): {
+export function exchangeCode(
+  code: string,
+  codeVerifier: string,
+  redirectUri: string,
+): {
   accessToken: string;
   refreshToken: string;
   expiresIn: number;
@@ -114,12 +138,20 @@ export function exchangeCode(code: string, codeVerifier: string, redirectUri: st
   tier: string;
 } | null {
   const db = getDb();
-  const row = db.prepare(
-    'SELECT * FROM auth_codes WHERE code = ? AND used = 0 AND expires_at > datetime(\'now\')',
-  ).get(code) as {
-    code: string; client_id: string; code_challenge: string;
-    code_challenge_method: string; scope: string; redirect_uri: string;
-  } | undefined;
+  const row = db
+    .prepare(
+      "SELECT * FROM auth_codes WHERE code = ? AND used = 0 AND expires_at > datetime('now')",
+    )
+    .get(code) as
+    | {
+        code: string;
+        client_id: string;
+        code_challenge: string;
+        code_challenge_method: string;
+        scope: string;
+        redirect_uri: string;
+      }
+    | undefined;
 
   if (!row) return null;
   if (row.redirect_uri !== redirectUri) return null;
@@ -147,11 +179,13 @@ export function exchangeCode(code: string, codeVerifier: string, redirectUri: st
   return { accessToken, refreshToken, expiresIn, scope: row.scope, tier };
 }
 
-export function validateAccessToken(token: string): { clientId: string; scope: string; tier: string } | null {
+export function validateAccessToken(
+  token: string,
+): { clientId: string; scope: string; tier: string } | null {
   const hash = sha256(token);
-  const row = getDb().prepare(
-    "SELECT * FROM access_tokens WHERE token_hash = ? AND expires_at > datetime('now')",
-  ).get(hash) as { client_id: string; scope: string; tier: string } | undefined;
+  const row = getDb()
+    .prepare("SELECT * FROM access_tokens WHERE token_hash = ? AND expires_at > datetime('now')")
+    .get(hash) as { client_id: string; scope: string; tier: string } | undefined;
   if (!row) return null;
   return { clientId: row.client_id, scope: row.scope, tier: row.tier };
 }
@@ -162,9 +196,9 @@ export function refreshAccessToken(refreshToken: string): {
 } | null {
   const db = getDb();
   const hash = sha256(refreshToken);
-  const row = db.prepare(
-    "SELECT * FROM refresh_tokens WHERE token_hash = ? AND expires_at > datetime('now')",
-  ).get(hash) as { client_id: string; scope: string; tier: string } | undefined;
+  const row = db
+    .prepare("SELECT * FROM refresh_tokens WHERE token_hash = ? AND expires_at > datetime('now')")
+    .get(hash) as { client_id: string; scope: string; tier: string } | undefined;
 
   if (!row) return null;
 
@@ -205,7 +239,10 @@ export function incrementClientUsage(clientId: string, month: string): void {
 }
 
 export function closeDb(): void {
-  if (_db) { _db.close(); _db = null; }
+  if (_db) {
+    _db.close();
+    _db = null;
+  }
 }
 
 export function resetClientUsageForTests(): void {

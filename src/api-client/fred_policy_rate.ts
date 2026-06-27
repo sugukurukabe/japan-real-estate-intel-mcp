@@ -7,8 +7,7 @@
  * Not the BOJ Time-Series Search API; avoids API keys. See attribution string returned with data.
  */
 
-const FRED_GRAPH_CSV =
-  'https://fred.stlouisfed.org/graph/fredgraph.csv?id=IRSTCB01JPM156N';
+const FRED_GRAPH_CSV = 'https://fred.stlouisfed.org/graph/fredgraph.csv?id=IRSTCB01JPM156N';
 
 export interface PolicyRateSnapshot {
   seriesId: string;
@@ -35,7 +34,10 @@ function parseFredCsv(text: string): { date: string; value: number }[] {
   return out;
 }
 
-function findObservationNearOrBefore(rows: { date: string; value: number }[], targetMs: number): { date: string; value: number } | null {
+function findObservationNearOrBefore(
+  rows: { date: string; value: number }[],
+  targetMs: number,
+): { date: string; value: number } | null {
   let best: { date: string; value: number } | null = null;
   for (const r of rows) {
     const t = Date.parse(r.date);

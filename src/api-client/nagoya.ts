@@ -11,7 +11,13 @@ import { fileURLToPath } from 'node:url';
 
 export interface NagoyaPlan {
   project: string;
-  type: 'redevelopment' | 'transport' | 'commercial' | 'preservation' | 'infrastructure' | 'mixed_use';
+  type:
+    | 'redevelopment'
+    | 'transport'
+    | 'commercial'
+    | 'preservation'
+    | 'infrastructure'
+    | 'mixed_use';
   status: 'planning' | 'approved' | 'under_construction' | 'completed' | 'partial_open';
   ward: string;
   affectedChochou: string[];
@@ -67,7 +73,9 @@ export function getPlansForChochou(ward: string, chochou: string): NagoyaPlan[] 
   return plans.filter(
     (p) =>
       p.ward === ward ||
-      p.affectedChochou.some((c) => c === chochou || chochou.startsWith(c.replace(/[一二三四五六七八九十]丁目$/, ''))),
+      p.affectedChochou.some(
+        (c) => c === chochou || chochou.startsWith(c.replace(/[一二三四五六七八九十]丁目$/, '')),
+      ),
   );
 }
 

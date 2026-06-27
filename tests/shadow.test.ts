@@ -46,11 +46,19 @@ describe('LandscapeInput schema validation', () => {
       totalShadowAreaSqm: 12000,
       sunlightHoursEstimate: 6.5,
       shadowPolygons: [
-        { buildingName: 'テストビル', height: 200, shadowLengthM: 50, polygon: [[0, 0], [1, 0], [1, 1], [0, 1]] },
+        {
+          buildingName: 'テストビル',
+          height: 200,
+          shadowLengthM: 50,
+          polygon: [
+            [0, 0],
+            [1, 0],
+            [1, 1],
+            [0, 1],
+          ],
+        },
       ],
-      highImpactBuildings: [
-        { name: 'テストビル', height: 200, distance: 100 },
-      ],
+      highImpactBuildings: [{ name: 'テストビル', height: 200, distance: 100 }],
       keyInsights: ['高層ビルの影響あり'],
     };
     expect(() => LandscapeOutput.parse(sampleOutput)).not.toThrow();

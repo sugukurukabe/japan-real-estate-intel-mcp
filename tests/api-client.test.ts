@@ -75,7 +75,7 @@ const MLIT_FIXTURE: MlitApiResponse = {
       PricePerUnit: '',
       FloorPlan: '',
       Area: '200',
-      UnitPrice: '',  // empty → filtered
+      UnitPrice: '', // empty → filtered
       LandShape: '不整形',
       BuildingYear: '',
       Structure: '',
@@ -130,27 +130,35 @@ const ESTAT_FIXTURE: EstatApiResponse = {
 // ── Mock helpers ──────────────────────────────────────────────────────────────
 
 function mockFetchSuccess(body: unknown): void {
-  vi.stubGlobal('fetch', vi.fn().mockResolvedValue({
-    ok: true,
-    status: 200,
-    json: () => Promise.resolve(body),
-    text: () => Promise.resolve(JSON.stringify(body)),
-  }));
+  vi.stubGlobal(
+    'fetch',
+    vi.fn().mockResolvedValue({
+      ok: true,
+      status: 200,
+      json: () => Promise.resolve(body),
+      text: () => Promise.resolve(JSON.stringify(body)),
+    }),
+  );
 }
 
 function mockFetchError(status: number, message: string): void {
-  vi.stubGlobal('fetch', vi.fn().mockResolvedValue({
-    ok: false,
-    status,
-    text: () => Promise.resolve(message),
-    json: () => Promise.resolve({ error: message }),
-  }));
+  vi.stubGlobal(
+    'fetch',
+    vi.fn().mockResolvedValue({
+      ok: false,
+      status,
+      text: () => Promise.resolve(message),
+      json: () => Promise.resolve({ error: message }),
+    }),
+  );
 }
 
 // ── Tests ─────────────────────────────────────────────────────────────────────
 
 describe('MlitClient', () => {
-  afterEach(() => { vi.unstubAllGlobals(); });
+  afterEach(() => {
+    vi.unstubAllGlobals();
+  });
 
   describe('fetchTransactions', () => {
     it('returns transaction array on success', async () => {
@@ -163,7 +171,8 @@ describe('MlitClient', () => {
 
     it('passes correct headers and URL parameters', async () => {
       const mockFn = vi.fn().mockResolvedValue({
-        ok: true, status: 200,
+        ok: true,
+        status: 200,
         json: () => Promise.resolve(MLIT_FIXTURE),
       });
       vi.stubGlobal('fetch', mockFn);
@@ -174,7 +183,9 @@ describe('MlitClient', () => {
       expect(url).toContain('area=13'); // Tokyo = 13
       expect(url).toContain('year=2025');
       expect(url).toContain('quarter=2');
-      expect((opts?.headers as Record<string, string>)?.['Ocp-Apim-Subscription-Key']).toBe('my-api-key');
+      expect((opts?.headers as Record<string, string>)?.['Ocp-Apim-Subscription-Key']).toBe(
+        'my-api-key',
+      );
     });
 
     it('throws on HTTP error', async () => {
@@ -266,13 +277,17 @@ describe('MlitClient', () => {
       const client = new MlitClient('key');
       const rows = client.toLandPriceRows(MLIT_FIXTURE.data, 2025);
       const csv = landPriceToCsv(rows);
-      expect(csv.split('\n')[0]).toBe('year,city,district,address,land_use,price_per_sqm,change_rate,lat,lng');
+      expect(csv.split('\n')[0]).toBe(
+        'year,city,district,address,land_use,price_per_sqm,change_rate,lat,lng',
+      );
     });
   });
 });
 
 describe('EstatClient', () => {
-  afterEach(() => { vi.unstubAllGlobals(); });
+  afterEach(() => {
+    vi.unstubAllGlobals();
+  });
 
   describe('fetchPopulation', () => {
     it('returns e-Stat API response on success', async () => {
@@ -284,7 +299,8 @@ describe('EstatClient', () => {
 
     it('includes appId in request URL', async () => {
       const mockFn = vi.fn().mockResolvedValue({
-        ok: true, status: 200,
+        ok: true,
+        status: 200,
         json: () => Promise.resolve(ESTAT_FIXTURE),
       });
       vi.stubGlobal('fetch', mockFn);

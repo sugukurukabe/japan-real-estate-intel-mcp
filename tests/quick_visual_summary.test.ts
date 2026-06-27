@@ -22,11 +22,13 @@ describe('quick_visual_summary', () => {
   });
 
   it('uses intent-specific dashboard modes', () => {
-    const store = quickVisualSummary(QuickVisualSummaryInput.parse({
-      prefecture: '福岡県',
-      area: '福岡市博多区',
-      intent: 'store',
-    }));
+    const store = quickVisualSummary(
+      QuickVisualSummaryInput.parse({
+        prefecture: '福岡県',
+        area: '福岡市博多区',
+        intent: 'store',
+      }),
+    );
 
     expect(store.layer).toBe('human_flow');
     expect(store.dashboardUrl).toContain('mode=store');
@@ -34,22 +36,26 @@ describe('quick_visual_summary', () => {
   });
 
   it('cashflow intent opens leveraged CF mode and suggests simulate_leveraged_cashflow', () => {
-    const cf = quickVisualSummary(QuickVisualSummaryInput.parse({
-      prefecture: '愛知県',
-      area: '名古屋市中村区',
-      intent: 'cashflow',
-    }));
+    const cf = quickVisualSummary(
+      QuickVisualSummaryInput.parse({
+        prefecture: '愛知県',
+        area: '名古屋市中村区',
+        intent: 'cashflow',
+      }),
+    );
 
     expect(cf.dashboardUrl).toContain('mode=cashflow');
     expect(cf.nextActions[0]?.tool).toBe('simulate_leveraged_cashflow');
   });
 
   it('investment intent prioritizes leveraged cashflow next action', () => {
-    const inv = quickVisualSummary(QuickVisualSummaryInput.parse({
-      prefecture: '東京都',
-      area: '世田谷区',
-      intent: 'investment',
-    }));
+    const inv = quickVisualSummary(
+      QuickVisualSummaryInput.parse({
+        prefecture: '東京都',
+        area: '世田谷区',
+        intent: 'investment',
+      }),
+    );
 
     expect(inv.nextActions[0]?.tool).toBe('simulate_leveraged_cashflow');
   });

@@ -15,14 +15,17 @@ import pino from 'pino';
 
 const level = (process.env.LOG_LEVEL ?? 'info') as pino.Level;
 
-export const logger = pino({
-  level,
-  name: 'japan-re-intel',
-  // Always write to stderr so stdout stays clean for MCP stdio transport
-  transport: undefined,
-  base: { pid: process.pid },
-  timestamp: pino.stdTimeFunctions.isoTime,
-}, process.stderr);
+export const logger = pino(
+  {
+    level,
+    name: 'japan-re-intel',
+    // Always write to stderr so stdout stays clean for MCP stdio transport
+    transport: undefined,
+    base: { pid: process.pid },
+    timestamp: pino.stdTimeFunctions.isoTime,
+  },
+  process.stderr,
+);
 
 /**
  * Logs a completed tool invocation with structured fields.
@@ -32,12 +35,7 @@ export const logger = pino({
  * @param startMs    Value of Date.now() captured before the tool ran
  * @param err        Optional error if the tool failed
  */
-export function toolLogger(
-  tool: string,
-  prefecture: string,
-  startMs: number,
-  err?: unknown,
-): void {
+export function toolLogger(tool: string, prefecture: string, startMs: number, err?: unknown): void {
   const duration_ms = Date.now() - startMs;
   if (err) {
     logger.warn({ tool, prefecture, duration_ms, err }, 'tool failed');

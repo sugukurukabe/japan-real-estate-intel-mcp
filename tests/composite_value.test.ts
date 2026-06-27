@@ -1,5 +1,8 @@
 import { describe, it, expect } from 'vitest';
-import { computeCompositeValueScore, generateCompositeMarkdown } from '../src/analysis/composite_value.js';
+import {
+  computeCompositeValueScore,
+  generateCompositeMarkdown,
+} from '../src/analysis/composite_value.js';
 import { generateCompositeFallbackNarrative } from '../src/analysis/gemini_narrative.js';
 
 describe('composite_value_score', () => {
@@ -12,7 +15,7 @@ describe('composite_value_score', () => {
   it('returns 5 axes', () => {
     const result = computeCompositeValueScore('aichi', '名古屋市中区');
     expect(result.axes).toHaveLength(5);
-    const axisNames = result.axes.map(a => a.axis);
+    const axisNames = result.axes.map((a) => a.axis);
     expect(axisNames).toContain('landPrice');
     expect(axisNames).toContain('education');
     expect(axisNames).toContain('transport');
@@ -31,16 +34,25 @@ describe('composite_value_score', () => {
   it('custom weights change the result', () => {
     const defaultResult = computeCompositeValueScore('aichi', '名古屋市中区');
     const heavyLandPrice = computeCompositeValueScore('aichi', '名古屋市中区', {
-      landPrice: 0.90, education: 0.025, transport: 0.025, futurePlan: 0.025, riskSafety: 0.025,
+      landPrice: 0.9,
+      education: 0.025,
+      transport: 0.025,
+      futurePlan: 0.025,
+      riskSafety: 0.025,
     });
     expect(heavyLandPrice.compositeScore).not.toBe(defaultResult.compositeScore);
   });
 
   it('tier boundaries: S >= 80, A >= 65, B >= 50, C < 50', () => {
     const result = computeCompositeValueScore('aichi', '名古屋市中区');
-    const expected = result.compositeScore >= 80 ? 'S'
-      : result.compositeScore >= 65 ? 'A'
-      : result.compositeScore >= 50 ? 'B' : 'C';
+    const expected =
+      result.compositeScore >= 80
+        ? 'S'
+        : result.compositeScore >= 65
+          ? 'A'
+          : result.compositeScore >= 50
+            ? 'B'
+            : 'C';
     expect(result.tier).toBe(expected);
   });
 

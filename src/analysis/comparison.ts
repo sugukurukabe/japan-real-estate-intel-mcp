@@ -40,16 +40,15 @@ function extractMetrics(prefKey: string, area: string): { raw: RawMetrics; notes
   const displayName = loader.displayName;
 
   // land price
-  const landPrices = loader.getLandPrices().filter(
-    (r) => r.city.includes(area) || area.includes(r.city),
-  );
+  const landPrices = loader
+    .getLandPrices()
+    .filter((r) => r.city.includes(area) || area.includes(r.city));
   let price: number | null = null;
   let priceChangeRate: number | null = null;
   if (landPrices.length > 0) {
     price = Math.round(landPrices.reduce((s, r) => s + r.price_per_sqm, 0) / landPrices.length);
-    priceChangeRate = Math.round(
-      (landPrices.reduce((s, r) => s + r.change_rate, 0) / landPrices.length) * 10,
-    ) / 10;
+    priceChangeRate =
+      Math.round((landPrices.reduce((s, r) => s + r.change_rate, 0) / landPrices.length) * 10) / 10;
   }
 
   // risk
@@ -63,9 +62,9 @@ function extractMetrics(prefKey: string, area: string): { raw: RawMetrics; notes
   // human flow
   let humanFlowScore: number | null = null;
   if (loader.capabilities.humanFlow) {
-    const flows = loader.getHumanFlow().filter(
-      (r) => r.city.includes(area) || area.includes(r.city),
-    );
+    const flows = loader
+      .getHumanFlow()
+      .filter((r) => r.city.includes(area) || area.includes(r.city));
     if (flows.length > 0) {
       const avg = flows.reduce((s, r) => s + r.weekday_avg_flow, 0) / flows.length;
       humanFlowScore = Math.min(100, Math.round(avg / 2000));
@@ -77,9 +76,9 @@ function extractMetrics(prefKey: string, area: string): { raw: RawMetrics; notes
   // education
   let educationScore: number | null = null;
   if (loader.capabilities.education) {
-    const schools = loader.getSchoolDistricts().filter(
-      (r) => r.city.includes(area) || area.includes(r.city),
-    );
+    const schools = loader
+      .getSchoolDistricts()
+      .filter((r) => r.city.includes(area) || area.includes(r.city));
     if (schools.length > 0) {
       educationScore = Math.round(
         schools.reduce((s, r) => s + r.education_score, 0) / schools.length,
@@ -92,9 +91,9 @@ function extractMetrics(prefKey: string, area: string): { raw: RawMetrics; notes
   // corporate
   let corporateScore: number | null = null;
   if (loader.capabilities.corporate) {
-    const corps = loader.getCorporateLocations().filter(
-      (r) => r.city.includes(area) || area.includes(r.city),
-    );
+    const corps = loader
+      .getCorporateLocations()
+      .filter((r) => r.city.includes(area) || area.includes(r.city));
     if (corps.length > 0) {
       const totalEst = corps.reduce((s, r) => s + r.total_establishments, 0);
       corporateScore = Math.min(100, Math.round(totalEst / 200));
@@ -106,9 +105,9 @@ function extractMetrics(prefKey: string, area: string): { raw: RawMetrics; notes
   // transport
   let transportScore: number | null = null;
   if (loader.capabilities.transport) {
-    const stations = loader.getTransport().filter(
-      (r) => r.city.includes(area) || area.includes(r.city),
-    );
+    const stations = loader
+      .getTransport()
+      .filter((r) => r.city.includes(area) || area.includes(r.city));
     if (stations.length > 0) {
       const totalPassengers = stations.reduce((s, r) => s + r.daily_passengers, 0);
       transportScore = Math.min(100, Math.round(totalPassengers / 10000));
@@ -120,9 +119,9 @@ function extractMetrics(prefKey: string, area: string): { raw: RawMetrics; notes
   // commercial
   let commercialScore: number | null = null;
   if (loader.capabilities.commercial) {
-    const facilities = loader.getCommercialFacilities().filter(
-      (r) => r.city.includes(area) || area.includes(r.city),
-    );
+    const facilities = loader
+      .getCommercialFacilities()
+      .filter((r) => r.city.includes(area) || area.includes(r.city));
     if (facilities.length > 0) {
       commercialScore = Math.min(100, Math.round(facilities.length / 5));
     }
@@ -133,9 +132,9 @@ function extractMetrics(prefKey: string, area: string): { raw: RawMetrics; notes
   // medical
   let medicalScore: number | null = null;
   if (loader.capabilities.medical) {
-    const medicals = loader.getMedicalFacilities().filter(
-      (r) => r.city.includes(area) || area.includes(r.city),
-    );
+    const medicals = loader
+      .getMedicalFacilities()
+      .filter((r) => r.city.includes(area) || area.includes(r.city));
     if (medicals.length > 0) {
       const hospitalCount = medicals.filter((r) => r.type === 'hospital').length;
       medicalScore = Math.min(100, Math.round((medicals.length + hospitalCount * 2) / 3));
@@ -145,13 +144,28 @@ function extractMetrics(prefKey: string, area: string): { raw: RawMetrics; notes
   }
 
   // investment score
-  const priceComp = priceChangeRate != null ? Math.max(0, Math.min(40, (priceChangeRate + 10) * 2)) : 20;
+  const priceComp =
+    priceChangeRate != null ? Math.max(0, Math.min(40, (priceChangeRate + 10) * 2)) : 20;
   const riskComp = riskScore != null ? Math.max(0, (100 - riskScore) * 0.3) : 15;
   const demandComp = humanFlowScore != null ? humanFlowScore * 0.3 : 15;
   const investmentScore = Math.round(Math.max(0, Math.min(100, priceComp + riskComp + demandComp)));
 
   return {
-    raw: { prefKey, displayName, area, price, priceChangeRate, riskScore, humanFlowScore, educationScore, corporateScore, transportScore, commercialScore, medicalScore, investmentScore },
+    raw: {
+      prefKey,
+      displayName,
+      area,
+      price,
+      priceChangeRate,
+      riskScore,
+      humanFlowScore,
+      educationScore,
+      corporateScore,
+      transportScore,
+      commercialScore,
+      medicalScore,
+      investmentScore,
+    },
     notes,
   };
 }
@@ -211,7 +225,7 @@ export function buildComparisonOutput(
   const metrics = ['価格', '安全', '人流', '教育', '企業', '投資', '交通', '商業', '医療'];
   const rawByMetric = [
     raws.map((r) => r.price),
-    raws.map((r) => r.riskScore != null ? 100 - r.riskScore : null),
+    raws.map((r) => (r.riskScore != null ? 100 - r.riskScore : null)),
     raws.map((r) => r.humanFlowScore),
     raws.map((r) => r.educationScore),
     raws.map((r) => r.corporateScore),
@@ -286,15 +300,15 @@ export function buildComparisonOutput(
       `| 指標 | ${raws.map((r) => r.displayName).join(' | ')} |`,
       `|---|${raws.map(() => '---').join('|')}|`,
       `| 投資スコア | ${raws.map((r) => `**${r.investmentScore}**`).join(' | ')} |`,
-      `| 地価（万円/㎡） | ${raws.map((r) => r.price != null ? `${(r.price / 10000).toFixed(1)}万` : '-').join(' | ')} |`,
-      `| 価格変化率 | ${raws.map((r) => r.priceChangeRate != null ? `${r.priceChangeRate > 0 ? '+' : ''}${r.priceChangeRate}%` : '-').join(' | ')} |`,
-      `| リスクスコア | ${raws.map((r) => r.riskScore != null ? `${r.riskScore}/100` : '-').join(' | ')} |`,
-      `| 人流スコア | ${raws.map((r) => r.humanFlowScore != null ? `${r.humanFlowScore}/100` : '未対応').join(' | ')} |`,
-      `| 教育スコア | ${raws.map((r) => r.educationScore != null ? `${r.educationScore}/100` : '未対応').join(' | ')} |`,
-      `| 企業立地 | ${raws.map((r) => r.corporateScore != null ? `${r.corporateScore}/100` : '未対応').join(' | ')} |`,
-      `| 交通 | ${raws.map((r) => r.transportScore != null ? `${r.transportScore}/100` : '未対応').join(' | ')} |`,
-      `| 商業 | ${raws.map((r) => r.commercialScore != null ? `${r.commercialScore}/100` : '未対応').join(' | ')} |`,
-      `| 医療 | ${raws.map((r) => r.medicalScore != null ? `${r.medicalScore}/100` : '未対応').join(' | ')} |`,
+      `| 地価（万円/㎡） | ${raws.map((r) => (r.price != null ? `${(r.price / 10000).toFixed(1)}万` : '-')).join(' | ')} |`,
+      `| 価格変化率 | ${raws.map((r) => (r.priceChangeRate != null ? `${r.priceChangeRate > 0 ? '+' : ''}${r.priceChangeRate}%` : '-')).join(' | ')} |`,
+      `| リスクスコア | ${raws.map((r) => (r.riskScore != null ? `${r.riskScore}/100` : '-')).join(' | ')} |`,
+      `| 人流スコア | ${raws.map((r) => (r.humanFlowScore != null ? `${r.humanFlowScore}/100` : '未対応')).join(' | ')} |`,
+      `| 教育スコア | ${raws.map((r) => (r.educationScore != null ? `${r.educationScore}/100` : '未対応')).join(' | ')} |`,
+      `| 企業立地 | ${raws.map((r) => (r.corporateScore != null ? `${r.corporateScore}/100` : '未対応')).join(' | ')} |`,
+      `| 交通 | ${raws.map((r) => (r.transportScore != null ? `${r.transportScore}/100` : '未対応')).join(' | ')} |`,
+      `| 商業 | ${raws.map((r) => (r.commercialScore != null ? `${r.commercialScore}/100` : '未対応')).join(' | ')} |`,
+      `| 医療 | ${raws.map((r) => (r.medicalScore != null ? `${r.medicalScore}/100` : '未対応')).join(' | ')} |`,
       ``,
       `## 用途別おすすめ`,
       ``,
@@ -302,28 +316,36 @@ export function buildComparisonOutput(
       `- **安全性重視**: ${bestFor.safety}`,
       `- **成長性重視**: ${bestFor.growth}`,
       ``,
-      ...(diffs.length > 0 ? [
-        `## 差分ハイライト（${base.displayName}比）`,
-        ``,
-        ...diffs.map((d) => {
-          const arrow = d.direction === 'up' ? '▲' : d.direction === 'down' ? '▼' : '→';
-          const sign = d.delta > 0 ? '+' : '';
-          return `- ${d.target} / ${d.metric}: ${arrow} ${sign}${d.delta}%`;
-        }),
-        ``,
-      ] : []),
-      ...(allNotes.length > 0 ? [
-        `## データ対応状況`,
-        ``,
-        ...allNotes.map((n) => `- ${n}`),
-        ``,
-      ] : []),
+      ...(diffs.length > 0
+        ? [
+            `## 差分ハイライト（${base.displayName}比）`,
+            ``,
+            ...diffs.map((d) => {
+              const arrow = d.direction === 'up' ? '▲' : d.direction === 'down' ? '▼' : '→';
+              const sign = d.delta > 0 ? '+' : '';
+              return `- ${d.target} / ${d.metric}: ${arrow} ${sign}${d.delta}%`;
+            }),
+            ``,
+          ]
+        : []),
+      ...(allNotes.length > 0
+        ? [`## データ対応状況`, ``, ...allNotes.map((n) => `- ${n}`), ``]
+        : []),
       `---`,
       `${ATTRIBUTION}`,
     ].join('\n');
   }
 
-  return { summary, scores, ranking, radarData, diffs, bestFor, markdownReport, unsupportedNotes: allNotes };
+  return {
+    summary,
+    scores,
+    ranking,
+    radarData,
+    diffs,
+    bestFor,
+    markdownReport,
+    unsupportedNotes: allNotes,
+  };
 }
 
 export function analyzePrefecturesForComparison(

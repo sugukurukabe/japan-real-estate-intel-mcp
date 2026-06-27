@@ -4,7 +4,11 @@ import { ContractSupportInput, AssessContractRiskInput } from '../src/schemas.js
 describe('v6.9.0 Contract schemas', () => {
   it('ContractSupportInput validates', () => {
     const input = ContractSupportInput.parse({
-      ward: '中区', chochou: '栄三丁目', buildingAge: 28, floorArea: 72, price: 42000000,
+      ward: '中区',
+      chochou: '栄三丁目',
+      buildingAge: 28,
+      floorArea: 72,
+      price: 42000000,
     });
     expect(input.ward).toBe('中区');
   });
@@ -20,9 +24,15 @@ describe('v6.9.0 Contract schemas', () => {
 
 describe('contract tools', () => {
   it('generate_contract_support_package returns markdown', async () => {
-    const { generateContractSupportPackageTool } = await import('../src/tools/generate_contract_support_package.js');
+    const { generateContractSupportPackageTool } =
+      await import('../src/tools/generate_contract_support_package.js');
     const result = generateContractSupportPackageTool({
-      ward: '中区', chochou: '栄', buildingAge: 28, floorArea: 72, price: 42000000, propertyType: 'mansion',
+      ward: '中区',
+      chochou: '栄',
+      buildingAge: 28,
+      floorArea: 72,
+      price: 42000000,
+      propertyType: 'mansion',
     });
     expect(result.content[0].text).toContain('売買契約支援パッケージ');
     expect(result.structuredContent.riskMatrix.length).toBeGreaterThan(0);

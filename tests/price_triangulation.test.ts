@@ -1,11 +1,15 @@
 import { describe, it, expect } from 'vitest';
-import { computeTriangulationForCity, BENCHMARK, buildMarkdownReport } from '../src/analysis/price_triangulation.js';
+import {
+  computeTriangulationForCity,
+  BENCHMARK,
+  buildMarkdownReport,
+} from '../src/analysis/price_triangulation.js';
 import type { ArbitrageSignalItem } from '../src/schemas.js';
 import { getLoader } from '../src/data-loaders/index.js';
 
 describe('price_triangulation (v6.15.0)', () => {
   it('BENCHMARK has expected standard ratios', () => {
-    expect(BENCHMARK.nationalRosenkaKojiRatio).toBe(0.80);
+    expect(BENCHMARK.nationalRosenkaKojiRatio).toBe(0.8);
     expect(BENCHMARK.nationalTxKojiRatio).toBe(1.05);
   });
 
@@ -42,8 +46,8 @@ describe('price_triangulation (v6.15.0)', () => {
       const result = computeTriangulationForCity(loader, city);
       if (result) {
         // The generated rosenka data is 80% of koji, so ratio should be close to 0.80
-        expect(result.rosenkaKojiRatio).toBeGreaterThan(0.60);
-        expect(result.rosenkaKojiRatio).toBeLessThan(1.00);
+        expect(result.rosenkaKojiRatio).toBeGreaterThan(0.6);
+        expect(result.rosenkaKojiRatio).toBeLessThan(1.0);
         break;
       }
     }
@@ -66,27 +70,29 @@ describe('price_triangulation (v6.15.0)', () => {
     const loader = getLoader('aichi');
     const cities = loader.getCities();
     // Most cities with tx data close to koji × 1.05 should be 'fair'
-    const results = cities.flatMap(c => {
+    const results = cities.flatMap((c) => {
       const r = computeTriangulationForCity(loader, c);
       return r ? [r] : [];
     });
     expect(results.length).toBeGreaterThan(0);
-    const fairCount = results.filter(r => r.signal === 'fair').length;
+    const fairCount = results.filter((r) => r.signal === 'fair').length;
     expect(fairCount).toBeGreaterThan(0);
   });
 
   it('buildMarkdownReport returns non-empty markdown', () => {
-    const items: ArbitrageSignalItem[] = [{
-      city: '名古屋市中区',
-      rosenka: 400000,
-      koji: 500000,
-      transactionMedian: 520000,
-      rosenkaKojiRatio: 0.80,
-      transactionKojiRatio: 1.04,
-      assessmentGap: 120000,
-      signal: 'fair',
-      interpretation: 'テスト解釈テキスト',
-    }];
+    const items: ArbitrageSignalItem[] = [
+      {
+        city: '名古屋市中区',
+        rosenka: 400000,
+        koji: 500000,
+        transactionMedian: 520000,
+        rosenkaKojiRatio: 0.8,
+        transactionKojiRatio: 1.04,
+        assessmentGap: 120000,
+        signal: 'fair',
+        interpretation: 'テスト解釈テキスト',
+      },
+    ];
     const md = buildMarkdownReport('愛知県', items, 20, 2024, false);
     expect(md).toContain('価格トライアングル分析レポート');
     expect(md).toContain('名古屋市中区');

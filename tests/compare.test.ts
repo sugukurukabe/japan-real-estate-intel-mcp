@@ -4,9 +4,7 @@ import { ComparePrefecturesInput, ComparePrefecturesOutput } from '../src/schema
 
 describe('compare_prefectures', () => {
   it('rejects fewer than 2 prefectures', () => {
-    expect(() =>
-      ComparePrefecturesInput.parse({ prefectures: ['愛知県'] }),
-    ).toThrow();
+    expect(() => ComparePrefecturesInput.parse({ prefectures: ['愛知県'] })).toThrow();
   });
 
   it('rejects more than 5 prefectures', () => {

@@ -5,9 +5,11 @@
 import type { Tier } from './tiers.js';
 import { TIER_CONFIG } from './tiers.js';
 import { getClientUsage, incrementClientUsage, resetClientUsageForTests } from './auth/oauth-store.js';
+import { moduleLogger } from './logger.js';
+
+const log = moduleLogger('quota_store');
 
 type UsageState = { month: string; count: number };
-
 const usageByClient = new Map<string, UsageState>();
 
 function currentMonthUtc(): string {
@@ -15,8 +17,8 @@ function currentMonthUtc(): string {
   return `${d.getUTCFullYear()}-${String(d.getUTCMonth() + 1).padStart(2, '0')}`;
 }
 
-function clientKey(): string {
-  return process.env.USAGE_CLIENT_ID?.trim() || 'default';
+export function clientKey(): string {
+  return process.env.USAGE_CLIENT_ID?.trim() || 'default-ip-client';
 }
 
 function monthlyLimit(tier: Tier): number {
@@ -31,6 +33,7 @@ function monthlyLimit(tier: Tier): number {
 export function getToolCallUsage(tier: Tier, clientId?: string): { count: number; limit: number; month: string } {
   const month = currentMonthUtc();
   const key = clientId || clientKey();
+  const limit = monthlyLimit(tier);
   let count = 0;
   try {
     count = getClientUsage(key, month);
@@ -39,7 +42,6 @@ export function getToolCallUsage(tier: Tier, clientId?: string): { count: number
     const state = usageByClient.get(key);
     count = state?.month === month ? state.count : 0;
   }
-  const limit = monthlyLimit(tier);
   return { count, limit, month };
 }
 
@@ -73,6 +75,7 @@ export function recordToolCall(tier: Tier, clientId?: string): void {
     incrementClientUsage(key, month);
   } catch (err) {
     // Ignore db-write failure under pure-stdio local contexts
+    log.debug({ err }, 'Failed to persist quota usage, using in-memory only');
   }
 }
 
@@ -85,4 +88,3 @@ export function resetToolCallUsageForTests(): void {
     // Ignore if DB not ready
   }
 }
-

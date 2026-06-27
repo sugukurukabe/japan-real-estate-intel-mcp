@@ -6,7 +6,7 @@ import type {
 } from '../data-loaders/types.js';
 
 export function median(nums: number[]): number | null {
-  const vals = nums.filter(n => typeof n === 'number' && !Number.isNaN(n));
+  const vals = nums.filter((n) => typeof n === 'number' && !Number.isNaN(n));
   if (vals.length === 0) return null;
   const s = [...vals].sort((a, b) => a - b);
   const m = Math.floor(s.length / 2);
@@ -36,7 +36,7 @@ export function computeLandPriceYoY(
   records: LandPriceRecord[],
   cityFilter?: string,
 ): LandPriceYoYSummary {
-  const rows = records.filter(r => cityMatches(r.city, cityFilter));
+  const rows = records.filter((r) => cityMatches(r.city, cityFilter));
   const byYear = new Map<number, number[]>();
   const changeByYear = new Map<number, number[]>();
   for (const r of rows) {
@@ -102,7 +102,7 @@ export function computeTransactionRecentSummary(
   cityFilter: string | undefined,
   yearSpan = 3,
 ): TransactionRecentSummary {
-  const rows = records.filter(r => cityMatches(r.city, cityFilter));
+  const rows = records.filter((r) => cityMatches(r.city, cityFilter));
   const byYear = new Map<number, number[]>();
   const countByYear = new Map<number, number>();
   for (const r of rows) {
@@ -118,8 +118,11 @@ export function computeTransactionRecentSummary(
       arr.push(r.price_per_sqm);
     }
   }
-  const years = [...countByYear.keys()].sort((a, b) => b - a).slice(0, yearSpan).sort((a, b) => a - b);
-  const yearsOut = years.map(year => ({
+  const years = [...countByYear.keys()]
+    .sort((a, b) => b - a)
+    .slice(0, yearSpan)
+    .sort((a, b) => a - b);
+  const yearsOut = years.map((year) => ({
     year,
     count: countByYear.get(year) ?? 0,
     medianPricePerSqm: (() => {
@@ -143,7 +146,7 @@ export function computePopulationDeclineAvg(
   records: PopulationProjectionRecord[],
   cityFilter?: string,
 ): PopulationMacroSummary {
-  const rows = records.filter(r => cityMatches(r.city, cityFilter));
+  const rows = records.filter((r) => cityMatches(r.city, cityFilter));
   if (rows.length === 0) {
     return { avgDecline2050: null, municipalityCount: 0, definition: POP_DEF };
   }

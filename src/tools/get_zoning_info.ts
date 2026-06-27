@@ -16,10 +16,10 @@ export async function getZoningInfoTool(rawArgs: Record<string, unknown>): Promi
   let records = loader.getZoning();
 
   if (input.area) {
-    records = records.filter(r => r.city.includes(input.area!));
+    records = records.filter((r) => r.city.includes(input.area!));
   }
   if (input.district) {
-    records = records.filter(r => r.district.includes(input.district!));
+    records = records.filter((r) => r.district.includes(input.district!));
   }
 
   const zoneDistribution: Record<string, number> = {};
@@ -27,16 +27,16 @@ export async function getZoningInfoTool(rawArgs: Record<string, unknown>): Promi
     zoneDistribution[r.zone_type] = (zoneDistribution[r.zone_type] ?? 0) + 1;
   }
 
-  const topZone = Object.entries(zoneDistribution)
-    .sort(([, a], [, b]) => b - a)[0];
+  const topZone = Object.entries(zoneDistribution).sort(([, a], [, b]) => b - a)[0];
   const areaLabel = input.area ?? prefDisplay;
-  const summary = records.length > 0
-    ? `${areaLabel}: ${records.length}地区の用途地域データ。最多は「${topZone?.[0] ?? '不明'}」(${topZone?.[1] ?? 0}件)。`
-    : `${areaLabel}: 用途地域データが見つかりませんでした。`;
+  const summary =
+    records.length > 0
+      ? `${areaLabel}: ${records.length}地区の用途地域データ。最多は「${topZone?.[0] ?? '不明'}」(${topZone?.[1] ?? 0}件)。`
+      : `${areaLabel}: 用途地域データが見つかりませんでした。`;
 
   const result = {
     area: areaLabel,
-    records: records.map(r => ({
+    records: records.map((r) => ({
       city: r.city,
       district: r.district,
       zone_type: r.zone_type,
@@ -54,11 +54,14 @@ export async function getZoningInfoTool(rawArgs: Record<string, unknown>): Promi
     '',
     `| 地区 | 用途地域 | 建蔽率 | 容積率 | 高さ制限 |`,
     `|------|---------|--------|--------|---------|`,
-    ...records.map(r =>
-      `| ${r.city} ${r.district} | ${r.zone_type} | ${r.coverage_ratio}% | ${r.floor_area_ratio}% | ${r.height_limit ? r.height_limit + 'm' : '−'} |`,
+    ...records.map(
+      (r) =>
+        `| ${r.city} ${r.district} | ${r.zone_type} | ${r.coverage_ratio}% | ${r.floor_area_ratio}% | ${r.height_limit ? r.height_limit + 'm' : '−'} |`,
     ),
     '',
-    `**分布**: ${Object.entries(zoneDistribution).map(([k, v]) => `${k}: ${v}件`).join(', ')}`,
+    `**分布**: ${Object.entries(zoneDistribution)
+      .map(([k, v]) => `${k}: ${v}件`)
+      .join(', ')}`,
     '',
     `> ${ATTRIBUTION}`,
   ].join('\n');

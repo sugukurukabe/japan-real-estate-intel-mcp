@@ -22,7 +22,9 @@ describe('cross-file version consistency', () => {
   });
 
   it('server.json npm package version matches', () => {
-    const npmPkg = serverJson.packages.find((p: { registryType: string }) => p.registryType === 'npm');
+    const npmPkg = serverJson.packages.find(
+      (p: { registryType: string }) => p.registryType === 'npm',
+    );
     expect(npmPkg?.version).toBe(version);
   });
 

@@ -8,7 +8,10 @@ import { resolvePrefecture } from '../prefecture/resolver.js';
 import { getLoader } from '../data-loaders/index.js';
 import { computeTriangulationForCity, BENCHMARK } from '../analysis/price_triangulation.js';
 
-function linearRegression(xs: number[], ys: number[]): { slope: number; intercept: number; r2: number } {
+function linearRegression(
+  xs: number[],
+  ys: number[],
+): { slope: number; intercept: number; r2: number } {
   const n = xs.length;
   const sumX = xs.reduce((a, b) => a + b, 0);
   const sumY = ys.reduce((a, b) => a + b, 0);
@@ -30,7 +33,9 @@ function movingAvgSlope(ys: number[], windowSize = 3): number {
   return diffs.reduce((a, b) => a + b, 0) / diffs.length;
 }
 
-export function forecastLandPriceTrend(input: ForecastLandPriceTrendInput): ForecastLandPriceTrendOutput {
+export function forecastLandPriceTrend(
+  input: ForecastLandPriceTrendInput,
+): ForecastLandPriceTrendOutput {
   const prefKey = resolvePrefecture(input.prefecture);
   const loader = getLoader(prefKey);
 
@@ -49,7 +54,7 @@ export function forecastLandPriceTrend(input: ForecastLandPriceTrendInput): Fore
   }
 
   const historicalYears = [...byYear.keys()].sort();
-  const historicalPrices = historicalYears.map(y => {
+  const historicalPrices = historicalYears.map((y) => {
     const vals = byYear.get(y)!;
     return vals.reduce((a, b) => a + b, 0) / vals.length;
   });
@@ -112,34 +117,48 @@ export function forecastLandPriceTrend(input: ForecastLandPriceTrendInput): Fore
       });
     }
   } else {
-    forecastYears.forEach(yr => {
+    forecastYears.forEach((yr) => {
       series.push({ year: yr, price_per_sqm: latestPrice ?? 0, isForecast: true });
     });
   }
 
   const keyDrivers = buildDrivers(trendDirection, input.landUse, input.city);
   const riskFactors = buildRisks(trendDirection, input.city);
-  const investmentSignal = trendDirection === 'rising' && trendStrength !== 'weak'
-    ? 'buy'
-    : trendDirection === 'declining'
-    ? 'caution'
-    : 'hold';
+  const investmentSignal =
+    trendDirection === 'rising' && trendStrength !== 'weak'
+      ? 'buy'
+      : trendDirection === 'declining'
+        ? 'caution'
+        : 'hold';
 
   // Price triangulation context (v6.15.0)
   const tri = computeTriangulationForCity(loader, input.city);
-  const triangulationContext = tri ? {
-    rosenka: tri.rosenka,
-    currentSpread: tri.assessmentGap,
-    fairValueRange: {
-      low: Math.round(tri.rosenka),
-      high: Math.round(tri.koji * BENCHMARK.nationalTxKojiRatio),
-    },
-    signal: tri.signal,
-  } : undefined;
+  const triangulationContext = tri
+    ? {
+        rosenka: tri.rosenka,
+        currentSpread: tri.assessmentGap,
+        fairValueRange: {
+          low: Math.round(tri.rosenka),
+          high: Math.round(tri.koji * BENCHMARK.nationalTxKojiRatio),
+        },
+        signal: tri.signal,
+      }
+    : undefined;
 
   let markdownReport: string | undefined;
   if (input.includeMarkdown) {
-    markdownReport = buildMarkdown({ input, series, cagr, trendDirection, trendStrength, keyDrivers, riskFactors, investmentSignal, latestPrice, triangulationContext });
+    markdownReport = buildMarkdown({
+      input,
+      series,
+      cagr,
+      trendDirection,
+      trendStrength,
+      keyDrivers,
+      riskFactors,
+      investmentSignal,
+      latestPrice,
+      triangulationContext,
+    });
   }
 
   return {
@@ -195,11 +214,24 @@ function buildMarkdown(opts: {
     signal: string;
   };
 }): string {
-  const { input, series, cagr, trendDirection, trendStrength, keyDrivers, riskFactors, investmentSignal, latestPrice, triangulationContext } = opts;
-  const signal = investmentSignal === 'buy' ? '買い推奨' : investmentSignal === 'hold' ? '様子見' : '慎重対応';
-  const dir = trendDirection === 'rising' ? '上昇' : trendDirection === 'declining' ? '下落' : '横ばい';
-  const historical = series.filter(s => !s.isForecast);
-  const forecasted = series.filter(s => s.isForecast);
+  const {
+    input,
+    series,
+    cagr,
+    trendDirection,
+    trendStrength,
+    keyDrivers,
+    riskFactors,
+    investmentSignal,
+    latestPrice,
+    triangulationContext,
+  } = opts;
+  const signal =
+    investmentSignal === 'buy' ? '買い推奨' : investmentSignal === 'hold' ? '様子見' : '慎重対応';
+  const dir =
+    trendDirection === 'rising' ? '上昇' : trendDirection === 'declining' ? '下落' : '横ばい';
+  const historical = series.filter((s) => !s.isForecast);
+  const forecasted = series.filter((s) => s.isForecast);
 
   const rows = [
     `# 地価トレンド予測レポート — ${input.city}`,
@@ -215,12 +247,12 @@ function buildMarkdown(opts: {
     `## 実績推移`,
     '| 年 | 地価（円/㎡） |',
     '|---|---|',
-    ...historical.map(p => `| ${p.year} | ${p.price_per_sqm.toLocaleString()} |`),
+    ...historical.map((p) => `| ${p.year} | ${p.price_per_sqm.toLocaleString()} |`),
     '',
     `## ${input.horizon} 予測`,
     '| 年 | 予測地価（円/㎡） | 信頼区間（下限〜上限） |',
     '|---|---|---|',
-    ...forecasted.map(p => {
+    ...forecasted.map((p) => {
       const ci = p.confidenceInterval
         ? `${p.confidenceInterval.low.toLocaleString()} 〜 ${p.confidenceInterval.high.toLocaleString()}`
         : 'N/A';
@@ -228,21 +260,23 @@ function buildMarkdown(opts: {
     }),
     '',
     `## 価格上昇・下落ドライバー`,
-    ...keyDrivers.map(d => `- ${d}`),
+    ...keyDrivers.map((d) => `- ${d}`),
     '',
     `## リスク要因`,
-    ...riskFactors.map(r => `- ${r}`),
+    ...riskFactors.map((r) => `- ${r}`),
     '',
-    ...(triangulationContext ? [
-      `## 価格トライアングル（三角測量コンテキスト）`,
-      `| 指標 | 値 |`,
-      `|------|-----|`,
-      `| 路線価（推計） | ${triangulationContext.rosenka.toLocaleString()} 円/㎡ |`,
-      `| 取引vs路線価スプレッド | ${triangulationContext.currentSpread >= 0 ? '+' : ''}${triangulationContext.currentSpread.toLocaleString()} 円/㎡ |`,
-      `| 適正価格レンジ | ${triangulationContext.fairValueRange.low.toLocaleString()} 〜 ${triangulationContext.fairValueRange.high.toLocaleString()} 円/㎡ |`,
-      `| アービトラージシグナル | ${triangulationContext.signal} |`,
-      '',
-    ] : []),
+    ...(triangulationContext
+      ? [
+          `## 価格トライアングル（三角測量コンテキスト）`,
+          `| 指標 | 値 |`,
+          `|------|-----|`,
+          `| 路線価（推計） | ${triangulationContext.rosenka.toLocaleString()} 円/㎡ |`,
+          `| 取引vs路線価スプレッド | ${triangulationContext.currentSpread >= 0 ? '+' : ''}${triangulationContext.currentSpread.toLocaleString()} 円/㎡ |`,
+          `| 適正価格レンジ | ${triangulationContext.fairValueRange.low.toLocaleString()} 〜 ${triangulationContext.fairValueRange.high.toLocaleString()} 円/㎡ |`,
+          `| アービトラージシグナル | ${triangulationContext.signal} |`,
+          '',
+        ]
+      : []),
     `> ※本予測は過去の地価公示データを元にした簡易モデルです。投資判断には最新の専門家意見をご確認ください。`,
   ];
   return rows.join('\n');

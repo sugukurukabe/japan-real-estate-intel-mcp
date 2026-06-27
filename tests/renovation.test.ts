@@ -70,10 +70,16 @@ describe('renovation yield calculation', () => {
   it('older buildings have lower acquisition estimates', async () => {
     const { calculateRenovationYield } = await import('../src/analysis/renovation_yield.js');
     const young = calculateRenovationYield({
-      ward: '中区', chochou: '栄', buildingAge: 10, floorArea: 70,
+      ward: '中区',
+      chochou: '栄',
+      buildingAge: 10,
+      floorArea: 70,
     });
     const old = calculateRenovationYield({
-      ward: '中区', chochou: '栄', buildingAge: 40, floorArea: 70,
+      ward: '中区',
+      chochou: '栄',
+      buildingAge: 40,
+      floorArea: 70,
     });
     expect(old.estimatedAcquisition).toBeLessThan(young.estimatedAcquisition);
   });
@@ -81,7 +87,10 @@ describe('renovation yield calculation', () => {
   it('accepts explicit acquisitionPrice', async () => {
     const { calculateRenovationYield } = await import('../src/analysis/renovation_yield.js');
     const result = calculateRenovationYield({
-      ward: '中区', chochou: '栄', buildingAge: 30, floorArea: 70,
+      ward: '中区',
+      chochou: '栄',
+      buildingAge: 30,
+      floorArea: 70,
       acquisitionPrice: 40_000_000,
     });
     expect(result.estimatedAcquisition).toBe(40_000_000);
@@ -117,7 +126,10 @@ describe('tool output format', () => {
   it('analyze_renovation_yield returns markdown content', async () => {
     const { analyzeRenovationYieldTool } = await import('../src/tools/analyze_renovation_yield.js');
     const result = analyzeRenovationYieldTool({
-      ward: '中区', chochou: '栄', buildingAge: 30, floorArea: 70,
+      ward: '中区',
+      chochou: '栄',
+      buildingAge: 30,
+      floorArea: 70,
     });
     expect(result.content).toHaveLength(1);
     expect(result.content[0].type).toBe('text');
@@ -150,8 +162,16 @@ describe('EstatClient new methods', () => {
         GET_STATS_DATA: {
           RESULT: { STATUS: 0 },
           STATISTICAL_DATA: {
-            CLASS_INF: { CLASS_OBJ: [{ '@id': 'area', '@name': '地域', CLASS: [{ '@code': '23101', '@name': '名古屋市中区' }] }] },
-            DATA_INF: { VALUE: [{ '@area': '23101', '@cat01': '0', '$': '52000' }] },
+            CLASS_INF: {
+              CLASS_OBJ: [
+                {
+                  '@id': 'area',
+                  '@name': '地域',
+                  CLASS: [{ '@code': '23101', '@name': '名古屋市中区' }],
+                },
+              ],
+            },
+            DATA_INF: { VALUE: [{ '@area': '23101', '@cat01': '0', $: '52000' }] },
           },
         },
       }),
@@ -204,16 +224,93 @@ describe('MlitClient chochou filter', () => {
       ok: true,
       json: async () => ({
         data: [
-          { Municipality: '名古屋市中区', DistrictName: '栄三丁目', TradePrice: '50000000', UnitPrice: '400000', Period: '2025年第1四半期', Type: 'マンション', Region: '住宅地', MunicipalityCode: '23106', Prefecture: '愛知県', Area: '70', PricePerUnit: '', FloorPlan: '3LDK', LandShape: '', BuildingYear: '2010年', Structure: 'RC', Use: '住宅', CityPlanning: '商業地域', CoverageRatio: '80', FloorAreaRatio: '600', Renovation: '', Remarks: '', PriceCategory: '不動産取引価格情報', DistrictCode: '' },
-          { Municipality: '名古屋市中区', DistrictName: '丸の内', TradePrice: '30000000', UnitPrice: '300000', Period: '2025年第1四半期', Type: 'マンション', Region: '住宅地', MunicipalityCode: '23106', Prefecture: '愛知県', Area: '60', PricePerUnit: '', FloorPlan: '2LDK', LandShape: '', BuildingYear: '2005年', Structure: 'RC', Use: '住宅', CityPlanning: '商業地域', CoverageRatio: '80', FloorAreaRatio: '400', Renovation: '', Remarks: '', PriceCategory: '不動産取引価格情報', DistrictCode: '' },
-          { Municipality: '名古屋市東区', DistrictName: '泉', TradePrice: '40000000', UnitPrice: '350000', Period: '2025年第1四半期', Type: 'マンション', Region: '住宅地', MunicipalityCode: '23102', Prefecture: '愛知県', Area: '65', PricePerUnit: '', FloorPlan: '2LDK', LandShape: '', BuildingYear: '2008年', Structure: 'RC', Use: '住宅', CityPlanning: '商業地域', CoverageRatio: '80', FloorAreaRatio: '400', Renovation: '', Remarks: '', PriceCategory: '不動産取引価格情報', DistrictCode: '' },
+          {
+            Municipality: '名古屋市中区',
+            DistrictName: '栄三丁目',
+            TradePrice: '50000000',
+            UnitPrice: '400000',
+            Period: '2025年第1四半期',
+            Type: 'マンション',
+            Region: '住宅地',
+            MunicipalityCode: '23106',
+            Prefecture: '愛知県',
+            Area: '70',
+            PricePerUnit: '',
+            FloorPlan: '3LDK',
+            LandShape: '',
+            BuildingYear: '2010年',
+            Structure: 'RC',
+            Use: '住宅',
+            CityPlanning: '商業地域',
+            CoverageRatio: '80',
+            FloorAreaRatio: '600',
+            Renovation: '',
+            Remarks: '',
+            PriceCategory: '不動産取引価格情報',
+            DistrictCode: '',
+          },
+          {
+            Municipality: '名古屋市中区',
+            DistrictName: '丸の内',
+            TradePrice: '30000000',
+            UnitPrice: '300000',
+            Period: '2025年第1四半期',
+            Type: 'マンション',
+            Region: '住宅地',
+            MunicipalityCode: '23106',
+            Prefecture: '愛知県',
+            Area: '60',
+            PricePerUnit: '',
+            FloorPlan: '2LDK',
+            LandShape: '',
+            BuildingYear: '2005年',
+            Structure: 'RC',
+            Use: '住宅',
+            CityPlanning: '商業地域',
+            CoverageRatio: '80',
+            FloorAreaRatio: '400',
+            Renovation: '',
+            Remarks: '',
+            PriceCategory: '不動産取引価格情報',
+            DistrictCode: '',
+          },
+          {
+            Municipality: '名古屋市東区',
+            DistrictName: '泉',
+            TradePrice: '40000000',
+            UnitPrice: '350000',
+            Period: '2025年第1四半期',
+            Type: 'マンション',
+            Region: '住宅地',
+            MunicipalityCode: '23102',
+            Prefecture: '愛知県',
+            Area: '65',
+            PricePerUnit: '',
+            FloorPlan: '2LDK',
+            LandShape: '',
+            BuildingYear: '2008年',
+            Structure: 'RC',
+            Use: '住宅',
+            CityPlanning: '商業地域',
+            CoverageRatio: '80',
+            FloorAreaRatio: '400',
+            Renovation: '',
+            Remarks: '',
+            PriceCategory: '不動産取引価格情報',
+            DistrictCode: '',
+          },
         ],
       }),
     });
     vi.stubGlobal('fetch', mockFetch);
 
     const client = new MlitClient('test-key');
-    const results = await client.fetchTransactionsByChochou('aichi', '名古屋市中区', '栄三丁目', 2025);
+    const results = await client.fetchTransactionsByChochou(
+      'aichi',
+      '名古屋市中区',
+      '栄三丁目',
+      2025,
+    );
 
     expect(results).toHaveLength(1);
     expect(results[0].DistrictName).toBe('栄三丁目');
@@ -242,8 +339,9 @@ describe('server registration', () => {
   it('new tools are registered', { timeout: 15000 }, async () => {
     const { createServer } = await import('../src/server.js');
     const server = createServer();
-    const raw = (server as unknown as { _registeredTools?: Map<string, unknown> | Record<string, unknown> })
-      ._registeredTools;
+    const raw = (
+      server as unknown as { _registeredTools?: Map<string, unknown> | Record<string, unknown> }
+    )._registeredTools;
     const has = (name: string) =>
       raw instanceof Map ? raw.has(name) : Boolean(raw && typeof raw === 'object' && name in raw!);
     expect(has('analyze_renovation_yield')).toBe(true);

@@ -9,9 +9,10 @@ export function computePriceTrend(
     return { current: 0, changeRate: 0, forecast: 'データ不足のため予測不可' };
   }
 
-  const prices = landPrices.length > 0
-    ? landPrices.map((r) => ({ year: r.year, price: r.price_per_sqm }))
-    : transactions.map((r) => ({ year: r.year, price: r.price_per_sqm }));
+  const prices =
+    landPrices.length > 0
+      ? landPrices.map((r) => ({ year: r.year, price: r.price_per_sqm }))
+      : transactions.map((r) => ({ year: r.year, price: r.price_per_sqm }));
 
   const sorted = [...prices].sort((a, b) => a.year - b.year);
   const current = sorted[sorted.length - 1]?.price ?? 0;
@@ -35,9 +36,8 @@ export function computePriceTrend(
     changeRate = years > 0 ? ((last - first) / first) * 100 : 0;
   }
 
-  const annualChange = yearAvgs.length >= 2
-    ? changeRate / (yearAvgs[yearAvgs.length - 1].year - yearAvgs[0].year)
-    : 0;
+  const annualChange =
+    yearAvgs.length >= 2 ? changeRate / (yearAvgs[yearAvgs.length - 1].year - yearAvgs[0].year) : 0;
 
   let forecast: string;
   if (annualChange > 2) {

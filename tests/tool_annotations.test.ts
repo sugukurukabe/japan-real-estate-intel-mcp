@@ -21,9 +21,11 @@ describe('tool annotations', () => {
   it('all tools have readOnlyHint: true', async () => {
     const server = createServer();
 
-    const listResult = (server as unknown as {
-      _registeredTools: Map<string, RegisteredTool> | Record<string, RegisteredTool>;
-    })._registeredTools;
+    const listResult = (
+      server as unknown as {
+        _registeredTools: Map<string, RegisteredTool> | Record<string, RegisteredTool>;
+      }
+    )._registeredTools;
 
     const entries = registeredToolEntries(listResult);
     expect(entries.length).toBeGreaterThanOrEqual(16);
@@ -39,9 +41,11 @@ describe('tool annotations', () => {
   it('all tools have destructiveHint: false', async () => {
     const server = createServer();
 
-    const listResult = (server as unknown as {
-      _registeredTools: Map<string, RegisteredTool> | Record<string, RegisteredTool>;
-    })._registeredTools;
+    const listResult = (
+      server as unknown as {
+        _registeredTools: Map<string, RegisteredTool> | Record<string, RegisteredTool>;
+      }
+    )._registeredTools;
 
     for (const [name, tool] of registeredToolEntries(listResult)) {
       expect(
@@ -54,9 +58,11 @@ describe('tool annotations', () => {
   it('all tools have openWorldHint: false', async () => {
     const server = createServer();
 
-    const listResult = (server as unknown as {
-      _registeredTools: Map<string, RegisteredTool> | Record<string, RegisteredTool>;
-    })._registeredTools;
+    const listResult = (
+      server as unknown as {
+        _registeredTools: Map<string, RegisteredTool> | Record<string, RegisteredTool>;
+      }
+    )._registeredTools;
 
     for (const [name, tool] of registeredToolEntries(listResult)) {
       expect(
@@ -76,9 +82,11 @@ describe('tool annotations', () => {
 
   it('search and fetch tools are registered', async () => {
     const server = createServer();
-    const tools = (server as unknown as {
-      _registeredTools: Map<string, unknown> | Record<string, unknown>;
-    })._registeredTools;
+    const tools = (
+      server as unknown as {
+        _registeredTools: Map<string, unknown> | Record<string, unknown>;
+      }
+    )._registeredTools;
 
     const keys = tools instanceof Map ? [...tools.keys()] : Object.keys(tools);
     expect(keys).toContain('search');
@@ -88,9 +96,11 @@ describe('tool annotations', () => {
   it('tool descriptions are bilingual (EN | JP)', async () => {
     const server = createServer();
 
-    const listResult = (server as unknown as {
-      _registeredTools: Map<string, RegisteredTool> | Record<string, RegisteredTool>;
-    })._registeredTools;
+    const listResult = (
+      server as unknown as {
+        _registeredTools: Map<string, RegisteredTool> | Record<string, RegisteredTool>;
+      }
+    )._registeredTools;
 
     for (const [name, tool] of registeredToolEntries(listResult)) {
       if (tool.description) {

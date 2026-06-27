@@ -10,9 +10,10 @@ export function assessContractRiskTool(rawArgs: Record<string, unknown>): {
 
   const cityKey = `名古屋市${input.ward}`;
   const landPrices = getLandPricesForCity(cityKey, 'aichi');
-  const avgPrice = landPrices.length > 0
-    ? Math.round(landPrices.reduce((s, r) => s + r.price_per_sqm, 0) / landPrices.length)
-    : 250_000;
+  const avgPrice =
+    landPrices.length > 0
+      ? Math.round(landPrices.reduce((s, r) => s + r.price_per_sqm, 0) / landPrices.length)
+      : 250_000;
 
   const timeline = getFutureTimeline(input.ward, input.chochou);
 
@@ -37,7 +38,9 @@ export function assessContractRiskTool(rawArgs: Record<string, unknown>): {
     clause: '建物状況調査',
     riskScore: hasInspection ? 20 : 65,
     level: hasInspection ? 'low' : 'high',
-    explanation: hasInspection ? '第三者インスペクション実施済み' : '築年数が高いため検査未実施はリスク大',
+    explanation: hasInspection
+      ? '第三者インスペクション実施済み'
+      : '築年数が高いため検査未実施はリスク大',
     suggestedFix: hasInspection ? undefined : '売主負担でのインスペクションを必須化',
   });
 
@@ -56,11 +59,10 @@ export function assessContractRiskTool(rawArgs: Record<string, unknown>): {
     clauseRisks.reduce((sum, c) => sum + c.riskScore, 0) / clauseRisks.length,
   );
 
-  const dealBreakers = clauseRisks
-    .filter(c => c.level === 'high')
-    .map(c => c.clause);
+  const dealBreakers = clauseRisks.filter((c) => c.level === 'high').map((c) => c.clause);
 
-  const summary = `全体リスクスコア ${overall} / 100。` +
+  const summary =
+    `全体リスクスコア ${overall} / 100。` +
     (dealBreakers.length > 0
       ? ` ディールブレーカー: ${dealBreakers.join(', ')}`
       : ' 重大リスクなし。');
@@ -70,9 +72,10 @@ export function assessContractRiskTool(rawArgs: Record<string, unknown>): {
     `**対象**: 名古屋市${input.ward}${input.chochou ? ' ' + input.chochou : ''}`,
     `**全体スコア**: ${overall}`,
     '',
-    ...clauseRisks.map(c =>
-      `- **${c.clause}** (${c.level})\n  - スコア: ${c.riskScore}\n  - ${c.explanation}` +
-      (c.suggestedFix ? `\n  - 推奨: ${c.suggestedFix}` : ''),
+    ...clauseRisks.map(
+      (c) =>
+        `- **${c.clause}** (${c.level})\n  - スコア: ${c.riskScore}\n  - ${c.explanation}` +
+        (c.suggestedFix ? `\n  - 推奨: ${c.suggestedFix}` : ''),
     ),
     '',
     dealBreakers.length > 0 ? `> ⚠️ ディールブレーカー: ${dealBreakers.join(', ')}` : '',

@@ -5,9 +5,15 @@ import { getLoader } from '../data-loaders/index.js';
 import { resolvePrefecture } from '../prefecture/resolver.js';
 
 export type {
-  LandPriceRecord, TransactionRecord, PopulationRecord, EarthquakeRecord,
-  HumanFlowRecord, SchoolDistrictRecord, CorporateLocationRecord,
-  CrimeStatsRecord, PlateauBuildingRecord,
+  LandPriceRecord,
+  TransactionRecord,
+  PopulationRecord,
+  EarthquakeRecord,
+  HumanFlowRecord,
+  SchoolDistrictRecord,
+  CorporateLocationRecord,
+  CrimeStatsRecord,
+  PlateauBuildingRecord,
 } from '../data-loaders/types.js';
 
 export function getLandPricesForCity(city: string, prefecture = 'aichi') {
@@ -72,7 +78,11 @@ export function filterByTimeRange<T extends { year: number }>(
   return records.filter((r) => r.year >= cutoff);
 }
 
-export function getFloodFeatureAtPoint(lat: number, lng: number, prefecture = 'aichi'): Feature<Geometry> | undefined {
+export function getFloodFeatureAtPoint(
+  lat: number,
+  lng: number,
+  prefecture = 'aichi',
+): Feature<Geometry> | undefined {
   const fc = getFloodZones(prefecture);
   const pt = turfPoint([lng, lat]);
   return fc.features.find((f: Feature<Geometry>) => {
@@ -84,7 +94,11 @@ export function getFloodFeatureAtPoint(lat: number, lng: number, prefecture = 'a
   });
 }
 
-export function getLandslideFeatureAtPoint(lat: number, lng: number, prefecture = 'aichi'): Feature<Geometry> | undefined {
+export function getLandslideFeatureAtPoint(
+  lat: number,
+  lng: number,
+  prefecture = 'aichi',
+): Feature<Geometry> | undefined {
   const fc = getLandslideZones(prefecture);
   const pt = turfPoint([lng, lat]);
   return fc.features.find((f: Feature<Geometry>) => {
@@ -109,7 +123,9 @@ export function getSchoolDistricts(prefecture = 'aichi') {
 }
 
 export function getSchoolDistrictsForCity(city: string, prefecture = 'aichi') {
-  return getSchoolDistricts(prefecture).filter((r) => r.city.includes(city) || city.includes(r.city));
+  return getSchoolDistricts(prefecture).filter(
+    (r) => r.city.includes(city) || city.includes(r.city),
+  );
 }
 
 export function getCorporateLocations(prefecture = 'aichi') {
@@ -117,7 +133,9 @@ export function getCorporateLocations(prefecture = 'aichi') {
 }
 
 export function getCorporateForCity(city: string, prefecture = 'aichi') {
-  return getCorporateLocations(prefecture).filter((r) => r.city.includes(city) || city.includes(r.city));
+  return getCorporateLocations(prefecture).filter(
+    (r) => r.city.includes(city) || city.includes(r.city),
+  );
 }
 
 export function getCrimeStats(prefecture = 'aichi') {
@@ -133,5 +151,7 @@ export function getPlateauBuildings(prefecture = 'aichi') {
 }
 
 export function getPlateauBuildingsForCity(city: string, prefecture = 'aichi') {
-  return getPlateauBuildings(prefecture).filter((r) => r.city.includes(city) || city.includes(r.city));
+  return getPlateauBuildings(prefecture).filter(
+    (r) => r.city.includes(city) || city.includes(r.city),
+  );
 }

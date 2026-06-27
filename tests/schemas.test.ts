@@ -82,7 +82,13 @@ describe('CrossAnalyzeOutput', () => {
       investmentScore: 72,
       keyInsights: ['test insight'],
       charts: {},
-      humanFlow: { weekdayAvgFlow: 50000, weekendAvgFlow: 40000, avgStayMinutes: 60, flowTrend: 'increasing', peakHour: '12:00' },
+      humanFlow: {
+        weekdayAvgFlow: 50000,
+        weekendAvgFlow: 40000,
+        avgStayMinutes: 60,
+        flowTrend: 'increasing',
+        peakHour: '12:00',
+      },
       realDemandScore: 65,
       vacancyRiskScore: 20,
       educationSummary: { avgScore: 75, topSchool: 'テスト小学校' },
@@ -158,8 +164,10 @@ describe('GenerateReportInput', () => {
   // v6.0 branding fields
   it('accepts branding fields companyName and agentName', () => {
     const r = GenerateReportInput.parse({
-      area: '名古屋市中区', purpose: 'investment',
-      companyName: '○○不動産', agentName: '山田太郎',
+      area: '名古屋市中区',
+      purpose: 'investment',
+      companyName: '○○不動産',
+      agentName: '山田太郎',
     });
     expect(r.companyName).toBe('○○不動産');
     expect(r.agentName).toBe('山田太郎');
@@ -173,7 +181,8 @@ describe('GenerateReportInput', () => {
 
   it('accepts includeLinearImpact=true with optional disclaimer', () => {
     const r = GenerateReportInput.parse({
-      area: '名古屋市中村区', purpose: 'investment',
+      area: '名古屋市中村区',
+      purpose: 'investment',
       includeLinearImpact: true,
       disclaimer: 'テスト免責事項',
     });
@@ -182,7 +191,9 @@ describe('GenerateReportInput', () => {
   });
 
   it('rejects unknown format', () => {
-    expect(() => GenerateReportInput.parse({ area: 'test', purpose: 'investment', format: 'html' })).toThrow();
+    expect(() =>
+      GenerateReportInput.parse({ area: 'test', purpose: 'investment', format: 'html' }),
+    ).toThrow();
   });
 });
 
@@ -194,7 +205,16 @@ describe('OpenDashboardInput', () => {
   });
 
   it('accepts all layers', () => {
-    for (const l of ['land_price', 'transaction', 'flood_risk', 'population', 'human_flow', 'school_district', 'corporate_density', 'plateau_3d'] as const) {
+    for (const l of [
+      'land_price',
+      'transaction',
+      'flood_risk',
+      'population',
+      'human_flow',
+      'school_district',
+      'corporate_density',
+      'plateau_3d',
+    ] as const) {
       const r = OpenDashboardInput.parse({ layer: l });
       expect(r.layer).toBe(l);
     }
@@ -296,7 +316,13 @@ describe('StoreLocationInput', () => {
   });
 
   it('accepts all store types', () => {
-    for (const t of ['convenience', 'family_restaurant', 'cafe', 'drugstore', 'supermarket'] as const) {
+    for (const t of [
+      'convenience',
+      'family_restaurant',
+      'cafe',
+      'drugstore',
+      'supermarket',
+    ] as const) {
       const r = StoreLocationInput.parse({ city: '名古屋市', storeType: t });
       expect(r.storeType).toBe(t);
     }
@@ -327,7 +353,11 @@ describe('StoreLocationInput', () => {
 
 describe('CrossAnalyzeInput v2.2 flags', () => {
   it('includeTransport defaults to false', () => {
-    const r = CrossAnalyzeInput.parse({ area: '名古屋市中区', propertyType: 'residential', timeRange: '1y' });
+    const r = CrossAnalyzeInput.parse({
+      area: '名古屋市中区',
+      propertyType: 'residential',
+      timeRange: '1y',
+    });
     expect(r.includeTransport).toBe(false);
     expect(r.includeCommercial).toBe(false);
     expect(r.includeMedical).toBe(false);
@@ -365,7 +395,12 @@ describe('PortfolioOptimizerInput (v5.0)', () => {
     const r = PortfolioOptimizerInput.parse({
       targets: [
         { prefecture: '東京都', city: '新宿区', propertyType: 'office', budgetManYen: 10000 },
-        { prefecture: '大阪府', city: '大阪市北区', propertyType: 'commercial', budgetManYen: 5000 },
+        {
+          prefecture: '大阪府',
+          city: '大阪市北区',
+          propertyType: 'commercial',
+          budgetManYen: 5000,
+        },
       ],
     });
     expect(r.targets).toHaveLength(2);
@@ -392,7 +427,12 @@ describe('PortfolioOptimizerInput (v5.0)', () => {
       const r = PortfolioOptimizerInput.parse({
         targets: [
           { prefecture: '東京都', city: '新宿区', propertyType: 'office', budgetManYen: 5000 },
-          { prefecture: '埼玉県', city: 'さいたま市大宮区', propertyType: 'residential', budgetManYen: 3000 },
+          {
+            prefecture: '埼玉県',
+            city: 'さいたま市大宮区',
+            propertyType: 'residential',
+            budgetManYen: 3000,
+          },
         ],
         riskTolerance: rt,
       });
@@ -417,7 +457,12 @@ describe('PortfolioOptimizerInput (v5.0)', () => {
     for (const opt of ['return', 'risk_adjusted', 'diversification', 'stability'] as const) {
       const r = PortfolioOptimizerInput.parse({
         targets: [
-          { prefecture: '福岡県', city: '福岡市博多区', propertyType: 'residential', budgetManYen: 4000 },
+          {
+            prefecture: '福岡県',
+            city: '福岡市博多区',
+            propertyType: 'residential',
+            budgetManYen: 4000,
+          },
           { prefecture: '北海道', city: '札幌市中央区', propertyType: 'land', budgetManYen: 2000 },
         ],
         optimizeFor: opt,
@@ -427,14 +472,21 @@ describe('PortfolioOptimizerInput (v5.0)', () => {
   });
 
   it('rejects fewer than 2 targets', () => {
-    expect(() => PortfolioOptimizerInput.parse({
-      targets: [{ prefecture: '東京都', city: '新宿区', propertyType: 'office', budgetManYen: 5000 }],
-    })).toThrow();
+    expect(() =>
+      PortfolioOptimizerInput.parse({
+        targets: [
+          { prefecture: '東京都', city: '新宿区', propertyType: 'office', budgetManYen: 5000 },
+        ],
+      }),
+    ).toThrow();
   });
 
   it('rejects more than 5 targets', () => {
     const targets = Array.from({ length: 6 }, (_, i) => ({
-      prefecture: '東京都', city: `区${i}`, propertyType: 'office' as const, budgetManYen: 1000,
+      prefecture: '東京都',
+      city: `区${i}`,
+      propertyType: 'office' as const,
+      budgetManYen: 1000,
     }));
     expect(() => PortfolioOptimizerInput.parse({ targets })).toThrow();
   });

@@ -191,7 +191,9 @@ export class MlitClient {
       });
     }
 
-    return rows.sort((a, b) => a.city.localeCompare(b.city, 'ja') || a.district.localeCompare(b.district, 'ja'));
+    return rows.sort(
+      (a, b) => a.city.localeCompare(b.city, 'ja') || a.district.localeCompare(b.district, 'ja'),
+    );
   }
 }
 

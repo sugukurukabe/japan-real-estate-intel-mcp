@@ -29,7 +29,9 @@ export class BigQueryProvider implements OpportunityDataProvider {
   }
 
   getCities(prefKey: string): string[] {
-    throw new Error(`BigQueryProvider.getCities() must be called via getCitiesAsync(). prefKey=${prefKey}`);
+    throw new Error(
+      `BigQueryProvider.getCities() must be called via getCitiesAsync(). prefKey=${prefKey}`,
+    );
   }
 
   async getCitiesAsync(prefKey: string): Promise<string[]> {
@@ -41,7 +43,9 @@ export class BigQueryProvider implements OpportunityDataProvider {
   }
 
   getCityMetrics(prefKey: string, city: string): CityMetrics {
-    throw new Error(`BigQueryProvider.getCityMetrics() must be called via getCityMetricsAsync(). prefKey=${prefKey}, city=${city}`);
+    throw new Error(
+      `BigQueryProvider.getCityMetrics() must be called via getCityMetricsAsync(). prefKey=${prefKey}, city=${city}`,
+    );
   }
 
   async getCityMetricsAsync(prefKey: string, city: string): Promise<CityMetrics> {
@@ -64,15 +68,17 @@ export class BigQueryProvider implements OpportunityDataProvider {
       city,
       avgPricePerSqm: lp.avg_price ?? null,
       avgChangeRate: lp.avg_change ?? null,
-      population: pop ? {
-        city,
-        population_2020: pop.population_2020 ?? 0,
-        population_2025: pop.population_2025 ?? 0,
-        households_2020: pop.households_2020 ?? 0,
-        households_2025: pop.households_2025 ?? 0,
-        density_per_sqkm: pop.density_per_sqkm ?? 0,
-        aging_rate: pop.aging_rate ?? 0,
-      } : null,
+      population: pop
+        ? {
+            city,
+            population_2020: pop.population_2020 ?? 0,
+            population_2025: pop.population_2025 ?? 0,
+            households_2020: pop.households_2020 ?? 0,
+            households_2025: pop.households_2025 ?? 0,
+            density_per_sqkm: pop.density_per_sqkm ?? 0,
+            aging_rate: pop.aging_rate ?? 0,
+          }
+        : null,
       humanFlow: null,
       education: null,
       corporate: null,
@@ -96,15 +102,28 @@ export class BigQueryProvider implements OpportunityDataProvider {
     crime: CrimeStatsRecord[];
     earthquake: EarthquakeRecord[];
   } {
-    log.warn({ prefKey }, 'BigQueryProvider.getAllRawData() returns empty; use async variant for production');
+    log.warn(
+      { prefKey },
+      'BigQueryProvider.getAllRawData() returns empty; use async variant for production',
+    );
     return {
-      landPrices: [], population: [], humanFlow: [], education: [],
-      corporate: [], transport: [], commercial: [], medical: [],
-      crime: [], earthquake: [],
+      landPrices: [],
+      population: [],
+      humanFlow: [],
+      education: [],
+      corporate: [],
+      transport: [],
+      commercial: [],
+      medical: [],
+      crime: [],
+      earthquake: [],
     };
   }
 
-  async getFreshTransactionSignal(prefKey: string, city: string): Promise<FreshTransactionSignal | null> {
+  async getFreshTransactionSignal(
+    prefKey: string,
+    city: string,
+  ): Promise<FreshTransactionSignal | null> {
     try {
       const [rows] = await this.bq.query({
         query: `SELECT
@@ -127,9 +146,8 @@ export class BigQueryProvider implements OpportunityDataProvider {
       });
 
       const histPrice = histRows[0]?.hist_price ?? 0;
-      const delta = histPrice > 0
-        ? Math.round(((row.median_price - histPrice) / histPrice) * 1000) / 10
-        : 0;
+      const delta =
+        histPrice > 0 ? Math.round(((row.median_price - histPrice) / histPrice) * 1000) / 10 : 0;
 
       return {
         sampleCount: row.sample_count,

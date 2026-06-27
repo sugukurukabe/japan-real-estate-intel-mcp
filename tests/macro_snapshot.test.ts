@@ -31,8 +31,16 @@ describe('macro_snapshot', () => {
   });
 
   it('city filter narrows transactions', () => {
-    const all = computeTransactionRecentSummary(getLoader('aichi').getTransactions(), undefined, 10);
-    const narrow = computeTransactionRecentSummary(getLoader('aichi').getTransactions(), '名古屋市中区', 10);
+    const all = computeTransactionRecentSummary(
+      getLoader('aichi').getTransactions(),
+      undefined,
+      10,
+    );
+    const narrow = computeTransactionRecentSummary(
+      getLoader('aichi').getTransactions(),
+      '名古屋市中区',
+      10,
+    );
     const allCount = all.years.reduce((s, y) => s + y.count, 0);
     const narrowCount = narrow.years.reduce((s, y) => s + y.count, 0);
     expect(narrowCount).toBeLessThanOrEqual(allCount);

@@ -10,12 +10,17 @@
 - **Analysis engines**: `src/analysis/portfolio_optimization.ts`, `zoning_compliance.ts`, `demographic_forecast.ts`
 - **UI premium widgets**: Dashboard insight panel with Pro/Enterprise tool buttons, MCP bridge integration
 - **23 new unit tests** in `tests/premium_features.test.ts`
+- **Stripe & Licensing integration**:
+  - Stripe webhook for automated license key delivery (`src/billing/stripe-webhook.ts`)
+  - ECDSA license key verification and dynamic tier resolution (`src/auth/license.ts`)
+  - Offline key generator script (`scripts/generate-license.js`) and tests
 
 ### Changed
 
 - Tool count: 33 → **38 tools** (README, server.json, metadata test updated)
 - Free tier now includes MCP Apps UI dashboard resources
 - Zod schemas: added `PortfolioAnalysisItem`, `DemographicForecastYear` type exports
+- Pro plan pricing: 550 yen per month
 
 ### Fixed
 
@@ -23,6 +28,16 @@
 - `security_tiering.test.ts`: Updated free tier dashboard resource test
 - `new_features.test.ts`: Fixed mock text assertion
 - `metadata.test.ts`: Updated tool count from 33 to 38
+
+## [6.15.4] - 2026-05-28
+
+### Added
+- **Dependency Hardening**: Downgrade and pin Zod library to stable `^3.23.8` to fix type compilation failures in schema definitions.
+
+## [6.15.3] - 2026-05-28
+
+### Added
+- **Premium Upgrades Integration**: Add elegant, non-intrusive dotted gold promotional card in sidebar for Free users to easily upgrade to Pro.
 
 ## [6.15.2] - 2026-05-20
 

@@ -26,8 +26,16 @@ describe('assess_family_friendly_score (Aichi)', () => {
   });
 
   it('returns lower score for lower-education area', () => {
-    const highResult = assessFamilyFriendlyScore({ prefecture: '愛知県', area: '名古屋市千種区', childAge: 'all' });
-    const lowResult = assessFamilyFriendlyScore({ prefecture: '愛知県', area: '名古屋市港区', childAge: 'all' });
+    const highResult = assessFamilyFriendlyScore({
+      prefecture: '愛知県',
+      area: '名古屋市千種区',
+      childAge: 'all',
+    });
+    const lowResult = assessFamilyFriendlyScore({
+      prefecture: '愛知県',
+      area: '名古屋市港区',
+      childAge: 'all',
+    });
 
     expect(highResult.schoolDistrict.educationScore).toBeGreaterThan(
       lowResult.schoolDistrict.educationScore,

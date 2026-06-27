@@ -57,13 +57,19 @@ export function generateKeyInsights(params: {
   }
 
   if (priceChangeRate > 3) {
-    insights.push(`地価は上昇傾向（${priceChangeRate > 0 ? '+' : ''}${priceChangeRate}%）。キャピタルゲインが期待できます。`);
+    insights.push(
+      `地価は上昇傾向（${priceChangeRate > 0 ? '+' : ''}${priceChangeRate}%）。キャピタルゲインが期待できます。`,
+    );
   } else if (priceChangeRate < -3) {
-    insights.push(`地価は下落傾向（${priceChangeRate}%）。底値買いの機会、または構造的リスクの可能性。`);
+    insights.push(
+      `地価は下落傾向（${priceChangeRate}%）。底値買いの機会、または構造的リスクの可能性。`,
+    );
   }
 
   if (riskScore >= 60) {
-    insights.push(`災害リスクスコアが高い（${riskScore}/100）。保険コスト増を価格に織り込む必要があります。`);
+    insights.push(
+      `災害リスクスコアが高い（${riskScore}/100）。保険コスト増を価格に織り込む必要があります。`,
+    );
   } else if (riskScore <= 20) {
     insights.push(`災害リスクが低い地域（${riskScore}/100）。安全性をセールスポイントにできます。`);
   }
@@ -73,12 +79,16 @@ export function generateKeyInsights(params: {
       ((population.population_2025 - population.population_2020) / population.population_2020) *
       100;
     if (popGrowth > 0) {
-      insights.push(`人口増加地域（+${popGrowth.toFixed(1)}%）。${propertyType === 'residential' ? '住宅' : '商業'}需要の拡大が見込まれます。`);
+      insights.push(
+        `人口増加地域（+${popGrowth.toFixed(1)}%）。${propertyType === 'residential' ? '住宅' : '商業'}需要の拡大が見込まれます。`,
+      );
     } else if (popGrowth < -3) {
       insights.push(`人口減少が進行中（${popGrowth.toFixed(1)}%）。将来の需要縮小リスクに注意。`);
     }
     if (population.aging_rate > 30) {
-      insights.push(`高齢化率${population.aging_rate}%。高齢者向け施設・サービス付き住宅の需要あり。`);
+      insights.push(
+        `高齢化率${population.aging_rate}%。高齢者向け施設・サービス付き住宅の需要あり。`,
+      );
     }
   }
 

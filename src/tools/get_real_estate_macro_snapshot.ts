@@ -36,10 +36,14 @@ export async function getRealEstateMacroSnapshotTool(rawArgs: Record<string, unk
         const client = new EstatClient(estatId);
         construction = await client.fetchBuildingConstructionPrefectureSummary(prefKey);
         if (!construction) {
-          externalWarnings.push('建築物着工（e-Stat）: 値が空でした（地域コードまたは表変更の可能性）。');
+          externalWarnings.push(
+            '建築物着工（e-Stat）: 値が空でした（地域コードまたは表変更の可能性）。',
+          );
         }
       } catch (e) {
-        externalWarnings.push(`建築物着工（e-Stat）: ${e instanceof Error ? e.message : String(e)}`);
+        externalWarnings.push(
+          `建築物着工（e-Stat）: ${e instanceof Error ? e.message : String(e)}`,
+        );
       }
     } else {
       externalWarnings.push('建築物着工（e-Stat）: ESTAT_APP_ID 未設定のためスキップ。');
@@ -67,7 +71,7 @@ export async function getRealEstateMacroSnapshotTool(rawArgs: Record<string, unk
 
   const summary = [
     `${prefDisplay}${input.area ? `（${input.area}）` : ''}: 公示地価㎡中央値の年次YoY ${lp.yoyMedianPct ?? 'N/A'}%、`,
-    `取引は ${tx.years.map(y => `${y.year}年${y.count}件`).join(' / ')}、`,
+    `取引は ${tx.years.map((y) => `${y.year}年${y.count}件`).join(' / ')}、`,
     `2050年までの人口減少率（市区町村平均）${pop.avgDecline2050 ?? 'N/A'}%。`,
     construction
       ? ` 建築物着工（県合算・参考）: 時点 ${construction.latestTime} 合計 ${construction.latestTotal}（前年比 ${construction.yoyPct ?? 'N/A'}%）。`
@@ -97,7 +101,9 @@ export async function getRealEstateMacroSnapshotTool(rawArgs: Record<string, unk
     '',
     '| 年 | 件数 | ㎡単価中央値（円） |',
     '|----|------|-------------------|',
-    ...tx.years.map(y => `| ${y.year} | ${y.count} | ${y.medianPricePerSqm?.toLocaleString() ?? '—'} |`),
+    ...tx.years.map(
+      (y) => `| ${y.year} | ${y.count} | ${y.medianPricePerSqm?.toLocaleString() ?? '—'} |`,
+    ),
     '',
     '### 将来人口（2050年減少率の市区町村平均）',
     `_${pop.definition}_`,
@@ -108,25 +114,27 @@ export async function getRealEstateMacroSnapshotTool(rawArgs: Record<string, unk
     '',
     construction
       ? [
-        '### 建築物着工（都道府県、政府統計 e-Stat）',
-        `| 最新時点 | 合計 | 前時点 | 前年合計 | YoY（%） |`,
-        '|------------|------|--------|----------|----------|',
-        `| ${construction.latestTime} | ${construction.latestTotal.toLocaleString()} | ${construction.priorTime ?? '—'} | ${construction.priorTotal?.toLocaleString() ?? '—'} | ${construction.yoyPct ?? '—'} |`,
-        '',
-      ].join('\n')
+          '### 建築物着工（都道府県、政府統計 e-Stat）',
+          `| 最新時点 | 合計 | 前時点 | 前年合計 | YoY（%） |`,
+          '|------------|------|--------|----------|----------|',
+          `| ${construction.latestTime} | ${construction.latestTotal.toLocaleString()} | ${construction.priorTime ?? '—'} | ${construction.priorTotal?.toLocaleString() ?? '—'} | ${construction.yoyPct ?? '—'} |`,
+          '',
+        ].join('\n')
       : '',
     policyRate
       ? [
-        '### 短期金利プロキシ（FRED / 中央銀行系列）',
-        `| 最新日付 | 水準（%） | 1年前 | 差（pt） |`,
-        '|----------|-----------|-------|-----------|',
-        `| ${policyRate.latestObservationDate} | ${policyRate.latestRatePct} | ${policyRate.yearAgoRatePct} (${policyRate.yearAgoObservationDate}) | ${policyRate.deltaPercentagePoints} |`,
-        '',
-      ].join('\n')
+          '### 短期金利プロキシ（FRED / 中央銀行系列）',
+          `| 最新日付 | 水準（%） | 1年前 | 差（pt） |`,
+          '|----------|-----------|-------|-----------|',
+          `| ${policyRate.latestObservationDate} | ${policyRate.latestRatePct} | ${policyRate.yearAgoRatePct} (${policyRate.yearAgoObservationDate}) | ${policyRate.deltaPercentagePoints} |`,
+          '',
+        ].join('\n')
       : '',
-    externalWarnings.length > 0 ? ['**外部データ**:', ...externalWarnings.map(w => `- ${w}`), ''].join('\n') : '',
+    externalWarnings.length > 0
+      ? ['**外部データ**:', ...externalWarnings.map((w) => `- ${w}`), ''].join('\n')
+      : '',
     '### 出所',
-    ...attribution.map(a => `- ${a}`),
+    ...attribution.map((a) => `- ${a}`),
   ]
     .filter(Boolean)
     .join('\n');

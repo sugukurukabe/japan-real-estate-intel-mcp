@@ -23,9 +23,7 @@ describe('StoreLocationInput schema', () => {
   });
 
   it('rejects invalid storeType', () => {
-    expect(() =>
-      StoreLocationInput.parse({ city: '名古屋市', storeType: 'invalid' }),
-    ).toThrow();
+    expect(() => StoreLocationInput.parse({ city: '名古屋市', storeType: 'invalid' })).toThrow();
   });
 
   it('accepts all valid store types', () => {
@@ -133,7 +131,16 @@ describe('evaluateStoreLocation (Aichi)', () => {
       storeType: 'convenience',
       radiusM: 500,
       includeMarkdown: false,
-      customWeights: { humanFlow: 100, population: 0, risk: 0, competition: 0, transport: 0, education: 0, commercial: 0, medical: 0 },
+      customWeights: {
+        humanFlow: 100,
+        population: 0,
+        risk: 0,
+        competition: 0,
+        transport: 0,
+        education: 0,
+        commercial: 0,
+        medical: 0,
+      },
     });
     expect(customResult.overallScore).toBe(customResult.breakdown.humanFlow);
   });

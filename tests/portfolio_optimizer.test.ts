@@ -141,8 +141,16 @@ describe('portfolioOptimizer — optimization modes', () => {
   });
 
   it('high risk tolerance produces higher expected return than low risk', () => {
-    const low: PortfolioOptimizerInput = { ...SAMPLE_2_TARGETS, riskTolerance: 'low', optimizeFor: 'return' };
-    const high: PortfolioOptimizerInput = { ...SAMPLE_2_TARGETS, riskTolerance: 'high', optimizeFor: 'return' };
+    const low: PortfolioOptimizerInput = {
+      ...SAMPLE_2_TARGETS,
+      riskTolerance: 'low',
+      optimizeFor: 'return',
+    };
+    const high: PortfolioOptimizerInput = {
+      ...SAMPLE_2_TARGETS,
+      riskTolerance: 'high',
+      optimizeFor: 'return',
+    };
     const rLow = portfolioOptimizer(low);
     const rHigh = portfolioOptimizer(high);
     expect(rHigh.portfolioReturnPct).toBeGreaterThan(rLow.portfolioReturnPct);

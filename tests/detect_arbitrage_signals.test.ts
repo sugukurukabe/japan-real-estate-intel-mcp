@@ -50,7 +50,7 @@ describe('detect_arbitrage_signals tool (v6.15.0)', () => {
     const input = ArbitrageScanInput.parse({ prefecture: 'aichi' });
     const output = await detectArbitrageSignals(input);
 
-    expect(output.benchmark.nationalRosenkaKojiRatio).toBe(0.80);
+    expect(output.benchmark.nationalRosenkaKojiRatio).toBe(0.8);
     expect(output.benchmark.nationalTxKojiRatio).toBe(1.05);
   });
 
@@ -65,8 +65,9 @@ describe('detect_arbitrage_signals tool (v6.15.0)', () => {
   it('detect_arbitrage_signals tool is registered in server', async () => {
     const { createServer } = await import('../src/server.js');
     const server = createServer();
-    const tools = (server as unknown as { _registeredTools: Map<string, unknown> | Record<string, unknown> })
-      ._registeredTools;
+    const tools = (
+      server as unknown as { _registeredTools: Map<string, unknown> | Record<string, unknown> }
+    )._registeredTools;
     if (tools instanceof Map) {
       expect(tools.has('detect_arbitrage_signals')).toBe(true);
     } else {

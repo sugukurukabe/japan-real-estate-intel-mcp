@@ -101,7 +101,12 @@ function fetchArea(id: string, url: string, parts: string[]): FetchOutput {
     title: `${displayName} ${city} 不動産分析`,
     text: lines.join('\n'),
     url,
-    metadata: { source: 'cross_analyze_real_estate_market', attribution: ATTRIBUTION, prefecture: prefKey, city },
+    metadata: {
+      source: 'cross_analyze_real_estate_market',
+      attribution: ATTRIBUTION,
+      prefecture: prefKey,
+      city,
+    },
   };
 }
 
@@ -113,10 +118,14 @@ function fetchPrefecture(id: string, url: string, parts: string[]): FetchOutput 
   const landPrices = loader.getLandPrices();
   const population = loader.getPopulation();
 
-  const avgPrice = landPrices.length > 0
-    ? Math.round(landPrices.reduce((s, r) => s + r.price_per_sqm, 0) / landPrices.length)
-    : 0;
-  const totalPop = population.reduce((s, r) => s + (r.population_2025 ?? r.population_2020 ?? 0), 0);
+  const avgPrice =
+    landPrices.length > 0
+      ? Math.round(landPrices.reduce((s, r) => s + r.price_per_sqm, 0) / landPrices.length)
+      : 0;
+  const totalPop = population.reduce(
+    (s, r) => s + (r.population_2025 ?? r.population_2020 ?? 0),
+    0,
+  );
   const cities = [...new Set(landPrices.map((r) => r.city))].slice(0, 20);
 
   const capsList = Object.entries(caps)
@@ -168,14 +177,26 @@ function fetchNeighborhood(id: string, url: string, parts: string[]): FetchOutpu
     title: `${displayName} ${city ?? ''} ${neighborhood} 街区分析`,
     text: result.markdownReport ?? JSON.stringify(result, null, 2),
     url,
-    metadata: { source: 'drill_down_local_analysis', attribution: ATTRIBUTION, prefecture: prefKey ?? 'aichi', city, neighborhood },
+    metadata: {
+      source: 'drill_down_local_analysis',
+      attribution: ATTRIBUTION,
+      prefecture: prefKey ?? 'aichi',
+      city,
+      neighborhood,
+    },
   };
 }
 
 function fetchFuture(id: string, url: string, parts: string[]): FetchOutput {
   const [prefKey, scenario] = parts;
   if (prefKey !== 'aichi') {
-    return { id, title: '未対応', text: `将来シミュレーションは現在愛知県のみ対応しています。`, url, metadata: {} };
+    return {
+      id,
+      title: '未対応',
+      text: `将来シミュレーションは現在愛知県のみ対応しています。`,
+      url,
+      metadata: {},
+    };
   }
 
   const result = simulateAichiFuture({
@@ -197,19 +218,40 @@ function fetchFuture(id: string, url: string, parts: string[]): FetchOutput {
 function fetchToolInfo(id: string, url: string, parts: string[]): FetchOutput {
   const toolName = parts.join(':');
   const meta: Record<string, { title: string; desc: string }> = {
-    cross_analyze_real_estate_market: { title: '不動産市場クロス分析', desc: '地価トレンド・投資スコア・人流・教育・企業立地を総合分析するメインツール。prefecture, area, propertyType, timeRange を指定して呼び出す。' },
-    assess_property_risk: { title: '災害リスク評価', desc: '浸水・土砂災害・地震リスクを統合評価。prefecture, area を指定。' },
-    assess_family_friendly_score: { title: 'ファミリー向け適性評価', desc: '教育・安全・医療の3軸で住宅適地を評価。' },
-    predict_corporate_demand: { title: '企業立地需要予測', desc: '製造業・オフィス・小売の需要スコア。' },
-    generate_area_report: { title: 'エリアレポート生成', desc: 'Markdown / PDFの包括レポート。branding対応。' },
+    cross_analyze_real_estate_market: {
+      title: '不動産市場クロス分析',
+      desc: '地価トレンド・投資スコア・人流・教育・企業立地を総合分析するメインツール。prefecture, area, propertyType, timeRange を指定して呼び出す。',
+    },
+    assess_property_risk: {
+      title: '災害リスク評価',
+      desc: '浸水・土砂災害・地震リスクを統合評価。prefecture, area を指定。',
+    },
+    assess_family_friendly_score: {
+      title: 'ファミリー向け適性評価',
+      desc: '教育・安全・医療の3軸で住宅適地を評価。',
+    },
+    predict_corporate_demand: {
+      title: '企業立地需要予測',
+      desc: '製造業・オフィス・小売の需要スコア。',
+    },
+    generate_area_report: {
+      title: 'エリアレポート生成',
+      desc: 'Markdown / PDFの包括レポート。branding対応。',
+    },
     compare_prefectures: { title: '都道府県比較', desc: '最大5都道府県を横断比較。' },
     drill_down_local_analysis: { title: '街区ドリルダウン', desc: '町丁目レベルの詳細分析。' },
-    evaluate_store_location: { title: '店舗出店適地評価', desc: '人流・競合分布を考慮した出店スコア。' },
+    evaluate_store_location: {
+      title: '店舗出店適地評価',
+      desc: '人流・競合分布を考慮した出店スコア。',
+    },
     simulate_landscape_impact: { title: '日照シミュレーション', desc: 'PLATEAU 3D + SunCalc。' },
     forecast_land_price_trend: { title: '地価トレンド予測', desc: 'CAGR・投資シグナルを返す。' },
     scenario_what_if: { title: 'What-Ifシナリオ', desc: '仮想イベントの影響試算。' },
     portfolio_optimizer: { title: 'ポートフォリオ最適化', desc: 'シャープレシオ・最適配分。' },
-    simulate_aichi_future: { title: '愛知県将来シミュレーター', desc: 'リニア・セントレア・トヨタの影響。' },
+    simulate_aichi_future: {
+      title: '愛知県将来シミュレーター',
+      desc: 'リニア・セントレア・トヨタの影響。',
+    },
     open_dashboard: { title: 'ダッシュボード', desc: '可視化UI（2D/3D）。' },
   };
 
@@ -246,7 +288,10 @@ function fetchDataSummary(id: string, url: string, parts: string[]): FetchOutput
     case 'population': {
       const data = loader.getPopulation();
       title = `${displayName} 人口推移データ`;
-      summary = `件数: ${data.length}\n対象: ${data.slice(0, 5).map((r) => r.city).join(', ')}`;
+      summary = `件数: ${data.length}\n対象: ${data
+        .slice(0, 5)
+        .map((r) => r.city)
+        .join(', ')}`;
       break;
     }
     default:
@@ -259,6 +304,11 @@ function fetchDataSummary(id: string, url: string, parts: string[]): FetchOutput
     title,
     text: `# ${title}\n\n${summary}\n\n---\n${ATTRIBUTION}`,
     url,
-    metadata: { source: 'data_summary', kind, prefecture: prefKey ?? 'aichi', attribution: ATTRIBUTION },
+    metadata: {
+      source: 'data_summary',
+      kind,
+      prefecture: prefKey ?? 'aichi',
+      attribution: ATTRIBUTION,
+    },
   };
 }

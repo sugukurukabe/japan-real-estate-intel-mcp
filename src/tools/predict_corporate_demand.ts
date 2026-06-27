@@ -1,10 +1,7 @@
 import type { CorporateDemandInput, CorporateDemandOutput } from '../schemas.js';
 import { resolvePrefecture } from '../prefecture/resolver.js';
 import { getLoader } from '../data-loaders/index.js';
-import {
-  getCorporateForCity,
-  getHumanFlowForCity,
-} from '../data/loader.js';
+import { getCorporateForCity, getHumanFlowForCity } from '../data/loader.js';
 import { computeCorporateDemand } from '../analysis/corporate_demand.js';
 
 export function predictCorporateDemand(input: CorporateDemandInput): CorporateDemandOutput {
@@ -17,7 +14,9 @@ export function predictCorporateDemand(input: CorporateDemandInput): CorporateDe
   const result = computeCorporateDemand(corporate, humanFlow, propertyType, area);
 
   if (!loader.capabilities.corporate) {
-    result.insights.unshift(`${loader.displayName}では企業立地データを提供していません。汎用推定値を使用しています。`);
+    result.insights.unshift(
+      `${loader.displayName}では企業立地データを提供していません。汎用推定値を使用しています。`,
+    );
   }
 
   const summary = [

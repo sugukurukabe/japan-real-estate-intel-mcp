@@ -59,7 +59,10 @@ function majorityTrend(records: HumanFlowRecord[]): string {
   let best = 'stable';
   let max = 0;
   for (const [k, v] of Object.entries(counts)) {
-    if (v > max) { max = v; best = k; }
+    if (v > max) {
+      max = v;
+      best = k;
+    }
   }
   return best;
 }
@@ -77,34 +80,49 @@ function aggregateByCity(
   crime: CrimeStatsRecord[],
   earthquake: EarthquakeRecord[],
 ): CityMetrics {
-  const lp = landPrices.filter(r => matchCity(r.city, city));
+  const lp = landPrices.filter((r) => matchCity(r.city, city));
   const avgPrice = lp.length > 0 ? lp.reduce((s, r) => s + r.price_per_sqm, 0) / lp.length : null;
   const avgChange = lp.length > 0 ? lp.reduce((s, r) => s + r.change_rate, 0) / lp.length : null;
 
-  const pop = population.find(r => matchCity(r.city, city)) ?? null;
+  const pop = population.find((r) => matchCity(r.city, city)) ?? null;
 
-  const hf = humanFlow.filter(r => matchCity(r.city, city));
-  const hfAgg = hf.length > 0
-    ? { weekdayAvg: hf.reduce((s, r) => s + r.weekday_avg_flow, 0) / hf.length, trend: majorityTrend(hf) }
-    : null;
+  const hf = humanFlow.filter((r) => matchCity(r.city, city));
+  const hfAgg =
+    hf.length > 0
+      ? {
+          weekdayAvg: hf.reduce((s, r) => s + r.weekday_avg_flow, 0) / hf.length,
+          trend: majorityTrend(hf),
+        }
+      : null;
 
-  const edu = education.filter(r => matchCity(r.city, city));
-  const eduAgg = edu.length > 0 ? { avgScore: edu.reduce((s, r) => s + r.education_score, 0) / edu.length } : null;
+  const edu = education.filter((r) => matchCity(r.city, city));
+  const eduAgg =
+    edu.length > 0
+      ? { avgScore: edu.reduce((s, r) => s + r.education_score, 0) / edu.length }
+      : null;
 
-  const corp = corporate.filter(r => matchCity(r.city, city));
-  const corpAgg = corp.length > 0
-    ? { totalEstablishments: corp.reduce((s, r) => s + r.total_establishments, 0), majorCompanies: corp.reduce((s, r) => s + r.major_company_count, 0) }
-    : null;
+  const corp = corporate.filter((r) => matchCity(r.city, city));
+  const corpAgg =
+    corp.length > 0
+      ? {
+          totalEstablishments: corp.reduce((s, r) => s + r.total_establishments, 0),
+          majorCompanies: corp.reduce((s, r) => s + r.major_company_count, 0),
+        }
+      : null;
 
-  const tr = transport.filter(r => matchCity(r.city, city));
-  const trAgg = tr.length > 0
-    ? { stationCount: tr.length, avgPassengers: tr.reduce((s, r) => s + r.daily_passengers, 0) / tr.length }
-    : null;
+  const tr = transport.filter((r) => matchCity(r.city, city));
+  const trAgg =
+    tr.length > 0
+      ? {
+          stationCount: tr.length,
+          avgPassengers: tr.reduce((s, r) => s + r.daily_passengers, 0) / tr.length,
+        }
+      : null;
 
-  const com = commercial.filter(r => matchCity(r.city, city));
-  const med = medical.filter(r => matchCity(r.city, city));
-  const cr = crime.find(r => matchCity(r.city, city)) ?? null;
-  const eq = earthquake.find(r => matchCity(r.city, city)) ?? null;
+  const com = commercial.filter((r) => matchCity(r.city, city));
+  const med = medical.filter((r) => matchCity(r.city, city));
+  const cr = crime.find((r) => matchCity(r.city, city)) ?? null;
+  const eq = earthquake.find((r) => matchCity(r.city, city)) ?? null;
 
   return {
     city,

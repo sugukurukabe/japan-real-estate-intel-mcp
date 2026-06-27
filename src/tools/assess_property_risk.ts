@@ -19,9 +19,15 @@ export function assessPropertyRisk(input: AssessRiskInput): AssessRiskOutput {
     const coords = geocode(input.address, prefKey);
     if (!coords) {
       return {
-        floodRisk: { level: 'low', probability: 0, description: `住所が${loader.displayName}内で特定できませんでした。` },
+        floodRisk: {
+          level: 'low',
+          probability: 0,
+          description: `住所が${loader.displayName}内で特定できませんでした。`,
+        },
         overallRiskScore: 0,
-        recommendations: [`住所を${loader.displayName}内の市区町村名を含む形式で再入力してください。`],
+        recommendations: [
+          `住所を${loader.displayName}内の市区町村名を含む形式で再入力してください。`,
+        ],
         adjustedPriceImpact: 0,
       };
     }

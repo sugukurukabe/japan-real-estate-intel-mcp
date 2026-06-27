@@ -45,11 +45,11 @@ describe('Rosenka data layer (v6.15.0)', () => {
     const landPrices = loader.getLandPrices();
     if (rosenka.length > 0 && landPrices.length > 0) {
       const r = rosenka[0]!;
-      const matchKoji = landPrices.filter(p => p.city === r.city && p.year === r.year);
+      const matchKoji = landPrices.filter((p) => p.city === r.city && p.year === r.year);
       if (matchKoji.length > 0) {
         const kojiMedian = matchKoji[Math.floor(matchKoji.length / 2)]!.price_per_sqm;
         // Should be roughly 80% of koji (allow 5% tolerance for rounding)
-        expect(r.median_per_sqm / kojiMedian).toBeCloseTo(0.80, 1);
+        expect(r.median_per_sqm / kojiMedian).toBeCloseTo(0.8, 1);
       }
     }
   });
@@ -68,7 +68,18 @@ describe('Rosenka data layer (v6.15.0)', () => {
   });
 
   it('getRosenka() for all 10 prefectures returns data', () => {
-    const prefs = ['aichi', 'tokyo', 'osaka', 'fukuoka', 'hokkaido', 'kanagawa', 'kyoto', 'hyogo', 'chiba', 'saitama'];
+    const prefs = [
+      'aichi',
+      'tokyo',
+      'osaka',
+      'fukuoka',
+      'hokkaido',
+      'kanagawa',
+      'kyoto',
+      'hyogo',
+      'chiba',
+      'saitama',
+    ];
     for (const pref of prefs) {
       const loader = getLoader(pref);
       const rows = loader.getRosenka();

@@ -27,18 +27,6 @@ export const TIER_CONFIG: Record<Tier, TierConfig> = {
       'search_area_candidates',
       'cross_analyze_real_estate_market',
       'assess_property_risk',
-      'forecast_land_price_trend',
-      'scenario_what_if',
-      'compare_prefectures',
-      'discover_opportunities',
-      'get_chochou_profile',
-      'get_future_timeline',
-      'composite_value_score',
-      'get_zoning_info',
-      'get_vacancy_stats',
-      'get_population_outlook',
-      'get_real_estate_macro_snapshot',
-      'detect_arbitrage_signals',
       'quick_visual_summary',
       'simulate_leveraged_cashflow',
       'open_dashboard',
@@ -96,6 +84,7 @@ export const TIER_CONFIG: Record<Tier, TierConfig> = {
       'analyze_commute_accessibility',
       'optimize_portfolio_allocation',
       'forecast_demographic_shift',
+      'review_purchase_recommendation',
     ],
     resources: [
       'realestate://land-price/{prefecture}/{area}',
@@ -144,7 +133,7 @@ export function isToolAllowed(tier: Tier, toolName: string): boolean {
 export function isResourceAllowed(tier: Tier, resourceUri: string): boolean {
   if (tier === 'enterprise') return true;
   const config = TIER_CONFIG[tier];
-  return config.resources.some(pattern => {
+  return config.resources.some((pattern) => {
     const regex = new RegExp('^' + pattern.replace(/\{[^}]+\}/g, '[^/]+') + '$');
     return regex.test(resourceUri);
   });
@@ -164,8 +153,39 @@ export function getTierDisplayInfo(tier: Tier): {
     case 'free':
       return { name: 'Free', nameJa: '無料', priceJpy: 0 };
     case 'pro':
-      return { name: 'Pro', nameJa: 'プロ', priceJpy: 5000 };
+      return { name: 'Pro', nameJa: 'プロ', priceJpy: 550 };
     case 'enterprise':
       return { name: 'Enterprise', nameJa: 'エンタープライズ', priceJpy: null };
   }
+}
+
+import { verifyLicenseKey } from './auth/license.js';
+
+/**
+ * Dynamically resolves the active tier by validating the requested tier
+ * against the provided license key.
+ */
+export async function resolveTier(
+  requestedTier: Tier,
+  licenseKey: string | undefined,
+): Promise<{ tier: Tier; errorReason?: string }> {
+  if (requestedTier === 'free') {
+    return { tier: 'free' };
+  }
+
+  const result = await verifyLicenseKey(licenseKey);
+  if (result.success) {
+    if (result.tier === 'enterprise') {
+      return { tier: requestedTier };
+    }
+    if (result.tier === 'pro' && requestedTier === 'pro') {
+      return { tier: 'pro' };
+    }
+    return {
+      tier: 'free',
+      errorReason: `ライセンスプラン (${result.tier}) は要求されたプラン (${requestedTier}) と一致しません`,
+    };
+  }
+
+  return { tier: 'free', errorReason: result.reason ?? '有効なライセンスキーがありません' };
 }
