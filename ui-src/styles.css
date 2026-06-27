@@ -5,18 +5,72 @@
 }
 
 :root {
-  --bg: #0f1419;
-  --surface: #1a1f2e;
-  --surface-2: #232a3b;
-  --border: #2d3548;
-  --text: #e4e8f1;
-  --text-muted: #8892a6;
-  --accent: #4f8cff;
-  --accent-hover: #6ba0ff;
-  --danger: #ff4d6a;
-  --warning: #ffb340;
-  --success: #34d399;
-  --radius: 8px;
+  /* Default: Dark Theme variables */
+  --bg: #0f141c;
+  --surface: #171d2b;
+  --surface-2: #21293a;
+  --border: #2e3b52;
+  --text: #f0f4fa;
+  --text-muted: #94a3b8;
+  --accent: #3b82f6;
+  --accent-hover: #60a5fa;
+  --danger: #ef4444;
+  --warning: #f59e0b;
+  --success: #10b981;
+  --radius: 10px;
+  --shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+}
+
+/* Explicit data-theme selectors */
+[data-theme="dark"] {
+  --bg: #0f141c;
+  --surface: #171d2b;
+  --surface-2: #21293a;
+  --border: #2e3b52;
+  --text: #f0f4fa;
+  --text-muted: #94a3b8;
+  --accent: #3b82f6;
+  --accent-hover: #60a5fa;
+  --danger: #ef4444;
+  --warning: #f59e0b;
+  --success: #10b981;
+  --radius: 10px;
+  --shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+}
+
+[data-theme="light"] {
+  --bg: #f8fafc;
+  --surface: #ffffff;
+  --surface-2: #f1f5f9;
+  --border: #e2e8f0;
+  --text: #0f172a;
+  --text-muted: #64748b;
+  --accent: #2563eb;
+  --accent-hover: #1d4ed8;
+  --danger: #dc2626;
+  --warning: #d97706;
+  --success: #16a34a;
+  --radius: 10px;
+  --shadow: 0 4px 12px rgba(0, 0, 0, 0.05), 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+/* Fallback if data-theme is not explicitly set, but prefers-color-scheme matches */
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme="dark"]) {
+    --bg: #f8fafc;
+    --surface: #ffffff;
+    --surface-2: #f1f5f9;
+    --border: #e2e8f0;
+    --text: #0f172a;
+    --text-muted: #64748b;
+    --accent: #2563eb;
+    --accent-hover: #1d4ed8;
+    --danger: #dc2626;
+    --warning: #d97706;
+    --success: #16a34a;
+    --radius: 10px;
+    --shadow: 0 4px 12px rgba(0, 0, 0, 0.05), 0 1px 2px rgba(0, 0, 0, 0.05);
+  }
 }
 
 body {
@@ -888,35 +942,103 @@ body.mode-store .layer-btn-primary {
   pointer-events: none;
 }
 
-/* ── ChatGPT / MCP Apps iframe responsive embed (v6.16.0) ── */
-@media (max-width: 800px) {
-  #search-panel { width: 200px; min-width: 160px; padding: 10px; }
-  #insight-panel { width: 260px; min-width: 220px; padding: 10px; }
-  #header { padding: 6px 12px; gap: 8px; }
-  #header h1 { font-size: 14px; }
-  #header .subtitle { font-size: 10px; }
+/* ── Responsive Iframe Embed & Drawers (v7.0.0) ── */
+#mobile-backdrop {
+  display: none;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.4);
+  z-index: 998;
+  backdrop-filter: blur(2px);
+  cursor: pointer;
+}
+#mobile-backdrop.visible {
+  display: block;
 }
 
-@media (max-width: 600px) {
-  #main { flex-direction: column; }
-  #search-panel { width: 100%; min-width: auto; max-height: 120px; border-right: none; border-bottom: 1px solid var(--border); }
-  #insight-panel { width: 100%; min-width: auto; max-height: 40vh; border-left: none; border-top: 1px solid var(--border); }
-  #map-wrapper { min-height: 200px; }
-}
-
-@media (prefers-color-scheme: light) {
-  :root {
-    --bg: #f8fafc;
-    --surface: #ffffff;
-    --surface-2: #f1f5f9;
-    --border: #e2e8f0;
-    --text: #1e293b;
-    --text-muted: #64748b;
-    --accent: #2563eb;
-    --accent-hover: #3b82f6;
-    --danger: #ef4444;
-    --warning: #f59e0b;
-    --success: #10b981;
+@media (max-width: 768px) {
+  #header {
+    padding: 8px 12px;
+    gap: 8px;
+  }
+  #header h1 {
+    font-size: 13px;
+  }
+  #header .subtitle {
+    display: none;
+  }
+  #main {
+    position: relative;
+  }
+  #search-panel {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    width: 280px;
+    max-width: 80vw;
+    z-index: 1020;
+    transform: translateX(-100%);
+    transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    border-right: 1px solid var(--border);
+    box-shadow: var(--shadow);
+  }
+  #search-panel.visible {
+    transform: translateX(0);
+  }
+  #insight-panel {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    right: 0;
+    width: 300px;
+    max-width: 80vw;
+    z-index: 1020;
+    transform: translateX(100%);
+    transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    border-left: 1px solid var(--border);
+    box-shadow: var(--shadow);
+  }
+  #insight-panel.visible {
+    transform: translateX(0);
+  }
+  
+  .legend {
+    bottom: 70px !important;
+  }
+  
+  /* Floating Toggle Buttons on the Map */
+  .mobile-toggle-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    position: absolute;
+    bottom: 16px;
+    z-index: 1005;
+    padding: 8px 14px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    color: var(--text);
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 600;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.25);
+    cursor: pointer;
+    transition: background 0.2s, border-color 0.2s;
+  }
+  .mobile-toggle-btn:hover {
+    background: var(--surface-2);
+    border-color: var(--accent);
+  }
+  #mobile-filter-toggle {
+    left: 16px;
+  }
+  #mobile-insight-toggle {
+    right: 16px;
   }
 }
 

@@ -221,13 +221,48 @@ function riskToColor(overall: number): string {
   return '#34d399';
 }
 
-function createLeafletMap(containerId: string, prefKey: string): any {
-  const cfg = pref(prefKey);
-  const m = L.map(containerId, { center: cfg.center, zoom: cfg.zoom, zoomControl: true });
-  L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+let activeTileLayer: any = null;
+let activeSecondaryTileLayer: any = null;
+
+function getCurrentTheme(): 'dark' | 'light' {
+  const rootTheme = document.documentElement.getAttribute('data-theme');
+  if (rootTheme === 'light' || rootTheme === 'dark') return rootTheme;
+  if (window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches) {
+    return 'light';
+  }
+  return 'dark';
+}
+
+function applyTileLayer(m: any, isSecondary = false) {
+  if (!m) return;
+  const theme = getCurrentTheme();
+  
+  if (isSecondary && activeSecondaryTileLayer) {
+    m.removeLayer(activeSecondaryTileLayer);
+  } else if (!isSecondary && activeTileLayer) {
+    m.removeLayer(activeTileLayer);
+  }
+  
+  const url = theme === 'light'
+    ? 'https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png'
+    : 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png';
+    
+  const layer = L.tileLayer(url, {
     attribution: '&copy; <a href="https://carto.com/">CARTO</a>',
     maxZoom: 18,
   }).addTo(m);
+  
+  if (isSecondary) {
+    activeSecondaryTileLayer = layer;
+  } else {
+    activeTileLayer = layer;
+  }
+}
+
+function createLeafletMap(containerId: string, prefKey: string): any {
+  const cfg = pref(prefKey);
+  const m = L.map(containerId, { center: cfg.center, zoom: cfg.zoom, zoomControl: true });
+  applyTileLayer(m, containerId === 'map-container-secondary');
   return m;
 }
 
@@ -2103,6 +2138,59 @@ function initReportOverlay() {
 }
 
 function init() {
+  // Hide header if embedded in iframe (MCP Apps host style match)
+  if (window.parent !== window) {
+    document.body.classList.add('in-iframe');
+  }
+
+  // Theme observers for dynamically updating map tile styling
+  if (window.matchMedia) {
+    window.matchMedia('(prefers-color-scheme: light)').addEventListener('change', () => {
+      if (map) applyTileLayer(map, false);
+      if (mapSecondary) applyTileLayer(mapSecondary, true);
+    });
+  }
+  const themeObserver = new MutationObserver((mutations) => {
+    mutations.forEach((mutation) => {
+      if (mutation.attributeName === 'data-theme') {
+        if (map) applyTileLayer(map, false);
+        if (mapSecondary) applyTileLayer(mapSecondary, true);
+      }
+    });
+  });
+  themeObserver.observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
+
+  // Mobile Drawer toggles
+  const filterBtn = document.getElementById('mobile-filter-toggle');
+  const insightBtn = document.getElementById('mobile-insight-toggle');
+  const backdrop = document.getElementById('mobile-backdrop');
+  const searchPanel = document.getElementById('search-panel');
+  const insightPanel = document.getElementById('insight-panel');
+
+  const closeDrawers = () => {
+    searchPanel?.classList.remove('visible');
+    insightPanel?.classList.remove('visible');
+    backdrop?.classList.remove('visible');
+  };
+
+  filterBtn?.addEventListener('click', (e) => {
+    e.stopPropagation();
+    insightPanel?.classList.remove('visible');
+    searchPanel?.classList.toggle('visible');
+    const isVisible = searchPanel?.classList.contains('visible');
+    backdrop?.classList.toggle('visible', !!isVisible);
+  });
+
+  insightBtn?.addEventListener('click', (e) => {
+    e.stopPropagation();
+    searchPanel?.classList.remove('visible');
+    insightPanel?.classList.toggle('visible');
+    const isVisible = insightPanel?.classList.contains('visible');
+    backdrop?.classList.toggle('visible', !!isVisible);
+  });
+
+  backdrop?.addEventListener('click', closeDrawers);
+
   initSearchPanel();
   initMap();
   initReportOverlay();
