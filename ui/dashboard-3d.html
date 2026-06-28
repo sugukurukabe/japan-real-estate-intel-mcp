@@ -15,12 +15,37 @@
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
 :root{
+  /* Default: Dark mode */
   --bg:#0f0f23;--surface:rgba(26,31,46,0.88);--surface-solid:#1a1f2e;
   --border:#2d3548;--text:#e4e8f1;--text-muted:#8892a6;
-  --accent:#4f8cff;--accent-hover:#6ba0ff;--danger:#ff4d6a;
-  --warning:#ffb340;--success:#34d399;--radius:8px;
+  --accent:#3b82f6;--accent-hover:#60a5fa;--danger:#ef4444;
+  --warning:#f59e0b;--success:#10b981;--radius:10px;
   --office:#6366f1;--commercial:#f59e0b;--residential:#10b981;
 }
+
+[data-theme="dark"] {
+  --bg:#0f0f23;--surface:rgba(26,31,46,0.88);--surface-solid:#1a1f2e;
+  --border:#2d3548;--text:#e4e8f1;--text-muted:#8892a6;
+  --accent:#3b82f6;--accent-hover:#60a5fa;--danger:#ef4444;
+  --warning:#f59e0b;--success:#10b981;--radius:10px;
+}
+
+[data-theme="light"] {
+  --bg:#f8fafc;--surface:rgba(255,255,255,0.88);--surface-solid:#ffffff;
+  --border:#e2e8f0;--text:#0f172a;--text-muted:#64748b;
+  --accent:#2563eb;--accent-hover:#1d4ed8;--danger:#dc2626;
+  --warning:#d97706;--success:#16a34a;--radius:10px;
+}
+
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme="dark"]) {
+    --bg:#f8fafc;--surface:rgba(255,255,255,0.88);--surface-solid:#ffffff;
+    --border:#e2e8f0;--text:#0f172a;--text-muted:#64748b;
+    --accent:#2563eb;--accent-hover:#1d4ed8;--danger:#dc2626;
+    --warning:#d97706;--success:#16a34a;--radius:10px;
+  }
+}
+
 html,body{width:100%;height:100%;overflow:hidden;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans JP',sans-serif}
 canvas{display:block}
 
@@ -31,7 +56,7 @@ canvas{display:block}
   position:absolute;top:0;left:0;right:0;
   display:flex;align-items:center;gap:16px;
   padding:12px 20px;
-  background:linear-gradient(180deg,rgba(15,15,35,0.92) 60%,transparent);
+  background:linear-gradient(180deg,var(--bg) 60%,transparent);
 }
 #title-bar h1{font-size:16px;font-weight:700;color:var(--accent)}
 #title-bar .subtitle{font-size:12px;color:var(--text-muted)}
@@ -103,6 +128,61 @@ canvas{display:block}
   padding:6px 10px;font-size:11px;color:var(--text);
   pointer-events:none;white-space:nowrap;z-index:20;
 }
+
+@media (max-width: 768px) {
+  #title-bar {
+    padding: 8px 12px;
+  }
+  #title-bar h1 {
+    font-size: 13px;
+  }
+  #title-bar .subtitle {
+    display: none;
+  }
+  #back-link {
+    font-size: 10px;
+    padding: 4px 8px;
+  }
+  
+  #time-controls {
+    top: 50px;
+    right: 12px;
+    left: 12px;
+    justify-content: center;
+  }
+  
+  #legend {
+    top: 105px;
+    left: 12px;
+    right: 12px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    padding: 8px 12px;
+  }
+  #legend .legend-title {
+    width: 100%;
+    margin-bottom: 2px;
+  }
+  .legend-item {
+    margin-bottom: 0;
+  }
+  
+  #stats-panel {
+    bottom: 12px;
+    left: 12px;
+    right: 12px;
+    padding: 10px 14px;
+  }
+  
+  #info-panel {
+    bottom: 110px;
+    left: 12px;
+    right: 12px;
+    min-width: 0;
+    max-width: none;
+  }
+}
 </style>
 </head>
 <body>
@@ -110,7 +190,7 @@ canvas{display:block}
   <div id="title-bar">
     <h1>PLATEAU 3D ビューア</h1>
     <span class="subtitle">名古屋駅周辺 — 建物影シミュレーション</span>
-    <a id="back-link" href="#">← 2D ダッシュボードへ</a>
+    <a id="back-link" href="dashboard.html">← 2D ダッシュボードへ</a>
   </div>
 
   <div id="time-controls">
@@ -201,15 +281,49 @@ const buildingMeshes = [];
 const raycaster = new THREE.Raycaster();
 const mouse = new THREE.Vector2();
 let hoveredMesh = null;
+let gridHelper = null;
+let groundMesh, roadEWMesh, roadNSMesh;
+let groundMat, roadMat;
+
+function getCurrentTheme() {
+  const rootTheme = document.documentElement.getAttribute('data-theme');
+  if (rootTheme === 'light' || rootTheme === 'dark') return rootTheme;
+  if (window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches) {
+    return 'light';
+  }
+  return 'dark';
+}
+
+function updateSceneTheme() {
+  if (!scene) return;
+  const theme = getCurrentTheme();
+  
+  // Recreate GridHelper with colors matching the theme
+  if (gridHelper) scene.remove(gridHelper);
+  const gridColor = theme === 'light' ? 0xcbd5e1 : 0x2d3548;
+  const gridLineColor = theme === 'light' ? 0xe2e8f0 : 0x1e2636;
+  gridHelper = new THREE.GridHelper(600, 120, gridColor, gridLineColor);
+  gridHelper.position.y = 0;
+  scene.add(gridHelper);
+  
+  // Update ground & road material colors
+  if (groundMat) {
+    groundMat.color.setHex(theme === 'light' ? 0xe2e8f0 : 0x1a2233);
+  }
+  if (roadMat) {
+    roadMat.color.setHex(theme === 'light' ? 0xcbd5e1 : 0x252d40);
+  }
+  
+  // Update background and fog
+  updateSunPosition(currentPreset);
+}
 
 function init() {
   scene = new THREE.Scene();
-  scene.background = new THREE.Color(0x0f0f23);
-  scene.fog = new THREE.FogExp2(0x0f0f23, 0.0015);
-
+  
   camera = new THREE.PerspectiveCamera(55, window.innerWidth / window.innerHeight, 0.1, 2000);
   camera.position.set(40, 35, 50);
-
+ 
   renderer = new THREE.WebGLRenderer({ antialias: true });
   renderer.setSize(window.innerWidth, window.innerHeight);
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
@@ -218,7 +332,7 @@ function init() {
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
   renderer.toneMappingExposure = 1.1;
   document.body.insertBefore(renderer.domElement, document.getElementById('overlay'));
-
+ 
   controls = new OrbitControls(camera, renderer.domElement);
   controls.enableDamping = true;
   controls.dampingFactor = 0.08;
@@ -226,13 +340,13 @@ function init() {
   controls.minDistance = 5;
   controls.maxDistance = 300;
   controls.target.set(0, 8, 0);
-
+ 
   const ambient = new THREE.AmbientLight(0x4466aa, 0.5);
   scene.add(ambient);
-
+ 
   const hemi = new THREE.HemisphereLight(0x88aaff, 0x443322, 0.4);
   scene.add(hemi);
-
+ 
   sunLight = new THREE.DirectionalLight(0xffeedd, 1.8);
   sunLight.castShadow = true;
   sunLight.shadow.mapSize.width = 4096;
@@ -247,18 +361,25 @@ function init() {
   sunLight.shadow.normalBias = 0.02;
   scene.add(sunLight);
   scene.add(sunLight.target);
-
+ 
   createGround();
   createBuildings();
-  updateSunPosition(currentPreset);
+  
+  // Set up Fog using initial background color
+  const theme = getCurrentTheme();
+  const initialBg = theme === 'light' ? 0xf8fafc : 0x0f0f23;
+  scene.background = new THREE.Color(initialBg);
+  scene.fog = new THREE.FogExp2(initialBg, 0.0015);
+  
+  updateSceneTheme();
   updateStats();
-
+ 
   document.getElementById('loading').style.display = 'none';
-
+ 
   window.addEventListener('resize', onResize);
   renderer.domElement.addEventListener('mousemove', onMouseMove);
   renderer.domElement.addEventListener('click', onClickBuilding);
-
+ 
   document.getElementById('time-controls').addEventListener('click', (e) => {
     const btn = e.target.closest('.time-btn');
     if (!btn) return;
@@ -270,50 +391,60 @@ function init() {
     updateStats();
   });
 
+  // Watch for dynamic theme changes from the host
+  const themeObserver = new MutationObserver(() => {
+    updateSceneTheme();
+  });
+  themeObserver.observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
+  
+  // Listen for prefers-color-scheme media changes
+  if (window.matchMedia) {
+    window.matchMedia('(prefers-color-scheme: light)').addEventListener('change', updateSceneTheme);
+  }
+ 
   animate();
 }
-
+ 
 function createGround() {
+  const theme = getCurrentTheme();
   const groundGeo = new THREE.PlaneGeometry(600, 600);
-  const groundMat = new THREE.MeshStandardMaterial({
-    color: 0x1a2233,
+  groundMat = new THREE.MeshStandardMaterial({
+    color: theme === 'light' ? 0xe2e8f0 : 0x1a2233,
     roughness: 0.95,
     metalness: 0.05,
   });
-  const ground = new THREE.Mesh(groundGeo, groundMat);
-  ground.rotation.x = -Math.PI / 2;
-  ground.position.y = -0.01;
-  ground.receiveShadow = true;
-  scene.add(ground);
-
-  const grid = new THREE.GridHelper(600, 120, 0x2d3548, 0x1e2636);
-  grid.position.y = 0;
-  scene.add(grid);
-
-  const roadColor = 0x252d40;
-  const roadMat = new THREE.MeshStandardMaterial({ color: roadColor, roughness: 0.9 });
-
+  groundMesh = new THREE.Mesh(groundGeo, groundMat);
+  groundMesh.rotation.x = -Math.PI / 2;
+  groundMesh.position.y = -0.01;
+  groundMesh.receiveShadow = true;
+  scene.add(groundMesh);
+ 
+  roadMat = new THREE.MeshStandardMaterial({
+    color: theme === 'light' ? 0xcbd5e1 : 0x252d40,
+    roughness: 0.9
+  });
+ 
   const mainRoadGeo = new THREE.PlaneGeometry(300, 1.2);
-  const roadEW = new THREE.Mesh(mainRoadGeo, roadMat);
-  roadEW.rotation.x = -Math.PI / 2;
-  roadEW.position.y = 0.005;
-  scene.add(roadEW);
-
-  const roadNS = new THREE.Mesh(new THREE.PlaneGeometry(1.2, 300), roadMat);
-  roadNS.rotation.x = -Math.PI / 2;
-  roadNS.position.y = 0.005;
-  scene.add(roadNS);
+  roadEWMesh = new THREE.Mesh(mainRoadGeo, roadMat);
+  roadEWMesh.rotation.x = -Math.PI / 2;
+  roadEWMesh.position.y = 0.005;
+  scene.add(roadEWMesh);
+ 
+  roadNSMesh = new THREE.Mesh(new THREE.PlaneGeometry(1.2, 300), roadMat);
+  roadNSMesh.rotation.x = -Math.PI / 2;
+  roadNSMesh.position.y = 0.005;
+  scene.add(roadNSMesh);
 }
-
+ 
 function createBuildings() {
   for (const b of BUILDINGS) {
     const [x, z] = latLngToXZ(b.lat, b.lng);
     const h = b.height * SCALE;
     const footprint = Math.sqrt(b.height) * 0.3;
-
+ 
     const geo = new THREE.BoxGeometry(footprint, h, footprint);
     geo.translate(0, h / 2, 0);
-
+ 
     const baseColor = USE_COLORS[b.use] ?? 0x94a3b8;
     const mat = new THREE.MeshStandardMaterial({
       color: baseColor,
@@ -322,7 +453,7 @@ function createBuildings() {
       transparent: true,
       opacity: 0.92,
     });
-
+ 
     const mesh = new THREE.Mesh(geo, mat);
     mesh.position.set(x, 0, z);
     mesh.castShadow = true;
@@ -330,7 +461,7 @@ function createBuildings() {
     mesh.userData = b;
     scene.add(mesh);
     buildingMeshes.push(mesh);
-
+ 
     const edgesGeo = new THREE.EdgesGeometry(geo);
     const edgesMat = new THREE.LineBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.08 });
     const edges = new THREE.LineSegments(edgesGeo, edgesMat);
@@ -338,32 +469,46 @@ function createBuildings() {
     scene.add(edges);
   }
 }
-
+ 
 function updateSunPosition(preset) {
   const params = SUN_PRESETS[preset];
   const azRad = (params.azimuth * Math.PI) / 180;
   const altRad = (params.altitude * Math.PI) / 180;
   const dist = 150;
-
+ 
   const sx = dist * Math.cos(altRad) * Math.sin(azRad);
   const sy = dist * Math.sin(altRad);
   const sz = -dist * Math.cos(altRad) * Math.cos(azRad);
-
+ 
   sunLight.position.set(sx, sy, sz);
   sunLight.target.position.set(0, 0, 0);
-
+ 
   const intensity = preset === 'noon' ? 1.8 : preset === 'morning' ? 1.2 : 0.9;
   sunLight.intensity = intensity;
-
+ 
   const warmth = preset === 'evening' ? 0xffaa66 : preset === 'morning' ? 0xffeebb : 0xffeedd;
   sunLight.color.set(warmth);
-
-  const bgColors = {
-    morning: 0x0d1220,
-    noon: 0x0f0f23,
-    evening: 0x15101a,
-  };
-  scene.background.set(bgColors[preset]);
+ 
+  const theme = getCurrentTheme();
+  const bgColors = theme === 'light'
+    ? {
+        morning: 0xf1f5f9,
+        noon: 0xf8fafc,
+        evening: 0xfee2e2,
+      }
+    : {
+        morning: 0x0d1220,
+        noon: 0x0f0f23,
+        evening: 0x15101a,
+      };
+      
+  const chosenColor = bgColors[preset];
+  if (scene) {
+    scene.background.setHex(chosenColor);
+    if (scene.fog) {
+      scene.fog.color.setHex(chosenColor);
+    }
+  }
 }
 
 function updateStats() {

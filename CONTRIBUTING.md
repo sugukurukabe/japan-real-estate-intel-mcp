@@ -13,7 +13,7 @@ Thank you for considering contributing to `@sugukuru/japan-real-estate-intel-mcp
 ## Development Setup
 
 ```bash
-git clone https://github.com/sugukuru/japan-real-estate-intel-mcp.git
+git clone https://github.com/sugukurukabe/japan-real-estate-intel-mcp.git
 cd japan-real-estate-intel-mcp
 pnpm install
 ```
@@ -115,4 +115,4 @@ docs: add store location evaluation examples
 
 ## License
 
-By contributing, you agree your contributions will be licensed under the MIT License.
+By contributing, you agree your contributions will be licensed under the AGPL-3.0 License.

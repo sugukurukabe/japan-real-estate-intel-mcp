@@ -28,15 +28,21 @@ export const TIER_CONFIG: Record<Tier, TierConfig> = {
       'cross_analyze_real_estate_market',
       'assess_property_risk',
       'quick_visual_summary',
+      'simulate_leveraged_cashflow',
+      'open_dashboard',
+      'assess_exterior_visuals',
+      'analyze_commute_accessibility',
     ],
     resources: [
       'realestate://land-price/{prefecture}/{area}',
       'hazard://flood/{prefecture}/{area}',
       'stats://population-trend/{prefecture}/{area}',
+      'ui://japan-real-estate-intel/dashboard',
+      'ui://japan-real-estate-intel/dashboard-3d',
     ],
     prompts: ['quick_start_examples'],
     monthlyToolCalls: 50,
-    mcpAppsEnabled: false,
+    mcpAppsEnabled: true,
     brandedExport: false,
     priorityDataUpdates: false,
   },
@@ -74,6 +80,10 @@ export const TIER_CONFIG: Record<Tier, TierConfig> = {
       'detect_arbitrage_signals',
       'quick_visual_summary',
       'simulate_leveraged_cashflow',
+      'assess_exterior_visuals',
+      'analyze_commute_accessibility',
+      'optimize_portfolio_allocation',
+      'forecast_demographic_shift',
       'review_purchase_recommendation',
     ],
     resources: [
@@ -94,7 +104,7 @@ export const TIER_CONFIG: Record<Tier, TierConfig> = {
       'aichi_future_value',
       'opportunity_radar',
       'composite_value_report',
-      'zoning_lookup',
+      'zoning_check',
       'vacancy_analysis',
       'population_outlook_report',
       'arbitrage_scan',
@@ -127,6 +137,11 @@ export function isResourceAllowed(tier: Tier, resourceUri: string): boolean {
     const regex = new RegExp('^' + pattern.replace(/\{[^}]+\}/g, '[^/]+') + '$');
     return regex.test(resourceUri);
   });
+}
+
+export function isPromptAllowed(tier: Tier, promptName: string): boolean {
+  if (tier === 'enterprise') return true;
+  return TIER_CONFIG[tier].prompts.includes(promptName);
 }
 
 export function getTierDisplayInfo(tier: Tier): {

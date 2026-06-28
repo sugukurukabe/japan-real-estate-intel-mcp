@@ -60,7 +60,7 @@ export async function fetchPolicyRateFromFred(
       signal: ac.signal,
       headers: {
         'User-Agent':
-          'japan-real-estate-intel-mcp/macro-snapshot (+https://github.com/sugukuru/japan-real-estate-intel-mcp)',
+          'japan-real-estate-intel-mcp/macro-snapshot (+https://github.com/sugukurukabe/japan-real-estate-intel-mcp)',
       },
     });
     if (!res.ok) return null;

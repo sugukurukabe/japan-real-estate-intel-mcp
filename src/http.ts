@@ -9,6 +9,7 @@ import { createServer } from './server.js';
 import { moduleLogger } from './logger.js';
 import { randomUUID } from 'node:crypto';
 import { registerOAuthRoutes } from './auth/oauth-routes.js';
+import { validateAccessToken } from './auth/oauth-store.js';
 import { registerStripeWebhookRoutes } from './billing/stripe-webhook.js';
 import { getLicenseByEmail } from './billing/license-store.js';
 import { collectDefaultMetrics, register, Counter, Histogram, Gauge } from 'prom-client';
@@ -92,6 +93,7 @@ app.use((req: Request, res: Response, next: NextFunction) => {
             'data:',
             'https://*.tile.openstreetmap.org',
             'https://*.basemaps.cartocdn.com',
+            'https://api.qrserver.com',
           ],
           connectSrc: [
             "'self'",
@@ -107,20 +109,20 @@ app.use((req: Request, res: Response, next: NextFunction) => {
 
 // Rate limiting (skip /health)
 if (RATE_LIMIT_ENABLED) {
-  app.use(
-    rateLimit({
-      windowMs: RATE_LIMIT_WINDOW_MS,
-      max: RATE_LIMIT_MAX,
-      standardHeaders: true,
-      legacyHeaders: false,
-      skip: (req) => req.path === '/health',
-      handler: (req, res) => {
-        log.warn({ ip: req.ip, path: req.path }, 'Rate limit exceeded');
-        res.status(429).json({ error: 'Too Many Requests' });
-      },
-    }),
-  );
-  log.info({ windowMs: RATE_LIMIT_WINDOW_MS, max: RATE_LIMIT_MAX }, 'Rate limiting enabled');
+  const apiLimiter = rateLimit({
+    windowMs: RATE_LIMIT_WINDOW_MS,
+    max: RATE_LIMIT_MAX,
+    standardHeaders: true,
+    legacyHeaders: false,
+    skip: (req) => req.path === '/health',
+    handler: (req, res) => {
+      log.warn({ ip: req.ip, path: req.path }, 'Rate limit exceeded');
+      res.status(429).json({ error: 'Too Many Requests' });
+    },
+  });
+  app.use('/mcp', apiLimiter);
+  app.use('/oauth', apiLimiter);
+  log.info({ windowMs: RATE_LIMIT_WINDOW_MS, max: RATE_LIMIT_MAX }, 'Rate limiting enabled on API and OAuth endpoints');
 }
 
 // ── Stripe Webhook (raw body — must come BEFORE express.json()) ────────────
@@ -136,7 +138,6 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.resolve(__dirname, '..');
 
 app.use(express.static(path.join(ROOT, 'ui'), { extensions: ['html'] }));
-app.use('/data', express.static(path.join(ROOT, 'data')));
 app.use('/assets', express.static(path.join(ROOT, 'assets')));
 
 // Redirect root to dashboard for convenience
@@ -146,6 +147,7 @@ app.get('/', (_req, res) => res.redirect('/dashboard.html'));
 function isPublicPath(p: string): boolean {
   if (
     p === '/health' ||
+    p === '/metrics' ||
     p === '/' ||
     p === '/sw.js' ||
     p === '/manifest.webmanifest'
@@ -184,6 +186,8 @@ app.use((req, res, next) => {
   }
   next();
 });
+
+app.use('/data', express.static(path.join(ROOT, 'data')));
 
 // ── OAuth 2.1 + PKCE endpoints ────────────────────────────────────────────
 registerOAuthRoutes(app);
@@ -290,12 +294,34 @@ app.post('/mcp', async (req, res) => {
       sessions.delete(newId);
     }, SESSION_TIMEOUT_MS);
 
+    const auth = req.headers['authorization'];
+    const bearer = typeof auth === 'string' && auth.startsWith('Bearer ') ? auth.slice(7) : undefined;
+    const xApi = req.headers['x-api-key'];
+    let tier: Tier | undefined = undefined;
+    let clientId: string | undefined = undefined;
+
+    if (API_KEY && (bearer === API_KEY || xApi === API_KEY)) {
+      tier = (process.env.DEFAULT_TIER as Tier) ?? 'pro';
+      clientId = 'api_key_owner';
+    } else if (bearer) {
+      const tokenInfo = validateAccessToken(bearer);
+      if (tokenInfo) {
+        tier = tokenInfo.tier as Tier;
+        clientId = tokenInfo.clientId;
+      }
+    }
+
+    if (!clientId) {
+      clientId = 'anon:' + (req.ip || 'default');
+    }
+
     entry = { transport, lastActivity: Date.now(), timer };
     sessions.set(newId, entry);
 
-    const mcpServer = createServer({ activeTierOverride: clientTierOverride });
+    const activeTier = reqLicenseKey ? clientTierOverride : (tier ?? 'free');
+    const mcpServer = createServer({ activeTierOverride: activeTier, clientId });
     await mcpServer.connect(transport);
-    log.info({ sessionId: newId, tier: clientTierOverride }, 'New MCP session created with tier');
+    log.info({ sessionId: newId, tier: activeTier, clientId }, 'New MCP session created');
 
     transport.onclose = () => {
       clearTimeout(timer);
@@ -310,11 +336,18 @@ app.post('/mcp', async (req, res) => {
 });
 
 app.get('/mcp', async (req, res) => {
-  const sessionId = req.headers['mcp-session-id'] as string | undefined;
+  const sessionId =
+    (req.headers['mcp-session-id'] as string | undefined) ||
+    (req.query['mcp-session-id'] as string | undefined) ||
+    (req.query.sessionId as string | undefined);
   if (!sessionId || !sessions.has(sessionId)) {
     res.status(400).json({ error: 'Missing or invalid session ID' });
     return;
   }
+  // Inject into headers and rawHeaders to satisfy the MCP SDK's Hono conversion
+  req.headers['mcp-session-id'] = sessionId;
+  req.rawHeaders.push('mcp-session-id', sessionId);
+
   touchSession(sessionId);
   await sessions.get(sessionId)!.transport.handleRequest(req, res);
 });
@@ -369,11 +402,14 @@ process.on('SIGINT', () => gracefulShutdown('SIGINT'));
 
 // ── Start server ───────────────────────────────────────────────────────────
 
-const httpServer = app.listen(PORT, HOST, () => {
-  log.info(
-    { host: HOST, port: PORT, authEnabled: !!API_KEY },
-    'Japan Real Estate Intel MCP (HTTP) started',
-  );
-});
+let httpServer: ReturnType<typeof app.listen> | null = null;
+if (process.env.NODE_ENV !== 'test') {
+  httpServer = app.listen(PORT, HOST, () => {
+    log.info(
+      { host: HOST, port: PORT, authEnabled: !!API_KEY },
+      'Japan Real Estate Intel MCP (HTTP) started',
+    );
+  });
+}
 
 export { app, httpServer, sessions };

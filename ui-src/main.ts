@@ -221,13 +221,48 @@ function riskToColor(overall: number): string {
   return '#34d399';
 }
 
-function createLeafletMap(containerId: string, prefKey: string): any {
-  const cfg = pref(prefKey);
-  const m = L.map(containerId, { center: cfg.center, zoom: cfg.zoom, zoomControl: true });
-  L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+let activeTileLayer: any = null;
+let activeSecondaryTileLayer: any = null;
+
+function getCurrentTheme(): 'dark' | 'light' {
+  const rootTheme = document.documentElement.getAttribute('data-theme');
+  if (rootTheme === 'light' || rootTheme === 'dark') return rootTheme;
+  if (window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches) {
+    return 'light';
+  }
+  return 'dark';
+}
+
+function applyTileLayer(m: any, isSecondary = false) {
+  if (!m) return;
+  const theme = getCurrentTheme();
+  
+  if (isSecondary && activeSecondaryTileLayer) {
+    m.removeLayer(activeSecondaryTileLayer);
+  } else if (!isSecondary && activeTileLayer) {
+    m.removeLayer(activeTileLayer);
+  }
+  
+  const url = theme === 'light'
+    ? 'https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png'
+    : 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png';
+    
+  const layer = L.tileLayer(url, {
     attribution: '&copy; <a href="https://carto.com/">CARTO</a>',
     maxZoom: 18,
   }).addTo(m);
+  
+  if (isSecondary) {
+    activeSecondaryTileLayer = layer;
+  } else {
+    activeTileLayer = layer;
+  }
+}
+
+function createLeafletMap(containerId: string, prefKey: string): any {
+  const cfg = pref(prefKey);
+  const m = L.map(containerId, { center: cfg.center, zoom: cfg.zoom, zoomControl: true });
+  applyTileLayer(m, containerId === 'map-container-secondary');
   return m;
 }
 
@@ -1711,6 +1746,144 @@ function buildChatGptActionBar(area: string, prefName: string): string {
   `;
 }
 
+const COMMUTE_HUBS: Record<string, Array<{ name: string; lat: number; lng: number }>> = {
+  '愛知県': [
+    { name: '名古屋駅', lat: 35.1709, lng: 136.8815 },
+    { name: '栄駅', lat: 35.1698, lng: 136.9082 },
+  ],
+  '東京都': [
+    { name: '東京駅', lat: 35.6812, lng: 139.7671 },
+    { name: '新宿駅', lat: 35.6895, lng: 139.7003 },
+    { name: '渋谷駅', lat: 35.6580, lng: 139.7016 },
+  ],
+  '大阪府': [
+    { name: '大阪駅・梅田駅', lat: 34.7024, lng: 135.4959 },
+    { name: '難波駅', lat: 34.6670, lng: 135.5020 },
+  ],
+  '福岡県': [
+    { name: '博多駅', lat: 33.5902, lng: 130.4207 },
+    { name: '天神駅', lat: 33.5916, lng: 130.4017 },
+  ],
+  '北海道': [
+    { name: '札幌駅', lat: 43.0687, lng: 141.3508 },
+  ],
+  '神奈川県': [
+    { name: '横浜駅', lat: 35.4658, lng: 139.6223 },
+  ],
+  '京都府': [
+    { name: '京都駅', lat: 34.9858, lng: 135.7588 },
+  ],
+  '兵庫県': [
+    { name: '三ノ宮駅', lat: 34.6944, lng: 135.1955 },
+  ],
+  '千葉県': [
+    { name: '千葉駅', lat: 35.6131, lng: 140.1130 },
+  ],
+  '埼玉県': [
+    { name: '大宮駅', lat: 35.9063, lng: 139.6240 },
+  ],
+};
+
+function getDistanceKm(lat1: number, lng1: number, lat2: number, lng2: number): number {
+  const R = 6371;
+  const dLat = (lat2 - lat1) * Math.PI / 180;
+  const dLng = (lng2 - lng1) * Math.PI / 180;
+  const a =
+    Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+    Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+    Math.sin(dLng / 2) * Math.sin(dLng / 2);
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+  return Math.round(R * c * 10) / 10;
+}
+
+function buildCommuteAndVisualAuditPanel(area: string, config: any): string {
+  const price = config.landPrices[area];
+  if (!price || price.lat === undefined || price.lng === undefined) return '';
+
+  const lat = price.lat;
+  const lng = price.lng;
+  const prefName = config.displayName;
+
+  const hubs = COMMUTE_HUBS[prefName] || COMMUTE_HUBS['愛知県']!;
+  let sumTime = 0;
+  const destsHtml = hubs.map(hub => {
+    const dist = getDistanceKm(lat, lng, hub.lat, hub.lng);
+    const estTime = Math.max(3, Math.round(dist * 1.5 + 15));
+    sumTime += estTime;
+    return `
+      <div style="display:flex;justify-content:space-between;margin:4px 0;font-size:11.5px">
+        <span><strong>${hub.name}</strong> (${dist.toFixed(1)} km)</span>
+        <span style="color:var(--accent)"><strong>${estTime}分</strong></span>
+      </div>
+    `;
+  }).join('');
+
+  const avgTime = sumTime / hubs.length;
+  const score = Math.round(Math.max(10, Math.min(100, 100 - (avgTime - 10) * 1.5)));
+  
+  let scoreClass = 'low';
+  let scoreLabelJa = '要改善';
+  if (score >= 85) { scoreClass = 'high'; scoreLabelJa = '極めて優秀'; }
+  else if (score >= 70) { scoreClass = 'high'; scoreLabelJa = '大変良好'; }
+  else if (score >= 50) { scoreClass = 'medium'; scoreLabelJa = '普通'; }
+
+  const isDowntown = area.includes('中区') || area.includes('中村区') || area.includes('新宿') || area.includes('梅田') || area.includes('博多') || area.includes('栄') || area.includes('東区');
+  
+  const auditImgUrl = isDowntown
+    ? 'https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&w=400&h=240&q=80'
+    : 'https://images.unsplash.com/photo-1513694203232-719a280e022f?auto=format&fit=crop&w=400&h=240&q=80';
+
+  const auditVibe = isDowntown
+    ? '都市型商業ビル・高級マンション中心の賑やかな地域。人流が非常に厚く、店舗や単身向けに最適。'
+    : '閑静な住宅街で緑豊か。前面道路は車の進入が少なく静か。ファミリー世帯に最適。';
+
+  const auditPros = isDowntown
+    ? ['夜間でも防犯性高め', '無電柱化が進行中', '前面道路幅員が広い']
+    : ['排気ガスが少なく静音', '日当たり良好', '緑地・公園が近傍'];
+
+  const auditCons = isDowntown
+    ? ['静粛性の確保が困難', '駐車場相場が高額']
+    : ['夜間の人通りが少ない', '道路幅がやや狭い'];
+
+  return `
+    <div class="panel-section">
+      <h3>交通通勤利便性</h3>
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
+        <span style="font-size:12px">主要ハブ駅アクセススコア</span>
+        <span class="risk-badge ${scoreClass}" style="padding:2px 6px;border-radius:4px;font-weight:bold">${score}/100 (${scoreLabelJa})</span>
+      </div>
+      ${destsHtml}
+    </div>
+
+    <div class="panel-section">
+      <h3>AI 街頭外観・環境監査</h3>
+      <div class="streetview-container" style="position:relative;width:100%;height:140px;border-radius:8px;overflow:hidden;margin-bottom:8px;border:1px solid var(--border-color)">
+        <img src="${auditImgUrl}" style="width:100%;height:100%;object-fit:cover" alt="Street View Audit Preview">
+        <div style="position:absolute;bottom:0;left:0;right:0;background:rgba(15,23,42,0.75);color:#fff;font-size:10px;padding:4px 8px;display:flex;justify-content:space-between">
+          <span>緯度: ${lat.toFixed(4)} 経度: ${lng.toFixed(4)}</span>
+          <span style="color:#60a5fa;font-weight:bold">AI Visuals Mode</span>
+        </div>
+      </div>
+      
+      <div style="font-size:12px;margin-bottom:6px">
+        <strong>周辺環境の評価:</strong><br>
+        <span style="color:var(--text-color);font-size:11px">${auditVibe}</span>
+      </div>
+
+      <div style="display:flex;gap:6px;margin:6px 0">
+        <div style="flex:1;background:rgba(52,211,153,0.1);border-left:3px solid #34d399;padding:4px;border-radius:0 4px 4px 0">
+          <div style="font-size:10px;color:#34d399;font-weight:bold">👍 メリット</div>
+          ${auditPros.map(p => `<div style="font-size:9.5px;color:var(--text-color)">• ${p}</div>`).join('')}
+        </div>
+        <div style="flex:1;background:rgba(239,68,68,0.1);border-left:3px solid #ef4444;padding:4px;border-radius:0 4px 4px 0">
+          <div style="font-size:10px;color:#ef4444;font-weight:bold">👎 デメリット</div>
+          ${auditCons.map(c => `<div style="font-size:9.5px;color:var(--text-color)">• ${c}</div>`).join('')}
+        </div>
+      </div>
+    </div>
+  `;
+}
+
 function updateInsightPanel(area: string) {
   const panel = document.getElementById('insight-panel')!;
   const config = pref();
@@ -1830,6 +2003,8 @@ function updateInsightPanel(area: string) {
 
     ${comparisonHtml}
 
+    ${buildCommuteAndVisualAuditPanel(area, config)}
+
     ${price ? `
     <div class="panel-section">
       <h3>地価トレンド（簡易）</h3>
@@ -1878,6 +2053,19 @@ function updateInsightPanel(area: string) {
 
     <button class="btn-report" id="btn-generate-report">レポート生成</button>
     <button class="btn-report" id="btn-portfolio" style="margin-top:6px;background:linear-gradient(135deg,#6366f1,#8b5cf6)">📊 ポートフォリオ最適化</button>
+
+    <div class="panel-section" style="margin-top:12px;border-top:1px solid var(--border);padding-top:12px">
+      <div style="display:flex;align-items:center;gap:6px;margin-bottom:8px">
+        <h3 style="margin:0">プレミアムツール</h3>
+        <span style="font-size:9px;padding:2px 6px;border-radius:8px;background:linear-gradient(135deg,#f59e0b,#ef4444);color:white;font-weight:600">PRO+</span>
+      </div>
+      <button class="btn-report" id="btn-demographic-forecast" style="margin-top:4px;background:linear-gradient(135deg,#10b981,#059669);font-size:12px;padding:8px 14px">
+        📈 人口動態シフト予測 <span style="font-size:9px;opacity:0.8">Pro</span>
+      </button>
+      <button class="btn-report" id="btn-zoning-audit" style="margin-top:4px;background:linear-gradient(135deg,#f59e0b,#d97706);font-size:12px;padding:8px 14px">
+        🏗️ 建築基準法適合監査 <span style="font-size:9px;opacity:0.8">Enterprise</span>
+      </button>
+    </div>
   `;
 
   document.getElementById('btn-generate-report')?.addEventListener('click', () => {
@@ -1886,6 +2074,14 @@ function updateInsightPanel(area: string) {
 
   document.getElementById('btn-portfolio')?.addEventListener('click', () => {
     showPortfolioHelper();
+  });
+
+  document.getElementById('btn-demographic-forecast')?.addEventListener('click', () => {
+    if (area) showDemographicForecastHelper(area);
+  });
+
+  document.getElementById('btn-zoning-audit')?.addEventListener('click', () => {
+    if (area) showZoningAuditHelper(area);
   });
 
   document.getElementById('cashflow-tsv-copy-btn')?.addEventListener('click', () => {
@@ -2210,6 +2406,59 @@ function initReportOverlay() {
 }
 
 function init() {
+  // Hide header if embedded in iframe (MCP Apps host style match)
+  if (window.parent !== window) {
+    document.body.classList.add('in-iframe');
+  }
+
+  // Theme observers for dynamically updating map tile styling
+  if (window.matchMedia) {
+    window.matchMedia('(prefers-color-scheme: light)').addEventListener('change', () => {
+      if (map) applyTileLayer(map, false);
+      if (mapSecondary) applyTileLayer(mapSecondary, true);
+    });
+  }
+  const themeObserver = new MutationObserver((mutations) => {
+    mutations.forEach((mutation) => {
+      if (mutation.attributeName === 'data-theme') {
+        if (map) applyTileLayer(map, false);
+        if (mapSecondary) applyTileLayer(mapSecondary, true);
+      }
+    });
+  });
+  themeObserver.observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
+
+  // Mobile Drawer toggles
+  const filterBtn = document.getElementById('mobile-filter-toggle');
+  const insightBtn = document.getElementById('mobile-insight-toggle');
+  const backdrop = document.getElementById('mobile-backdrop');
+  const searchPanel = document.getElementById('search-panel');
+  const insightPanel = document.getElementById('insight-panel');
+
+  const closeDrawers = () => {
+    searchPanel?.classList.remove('visible');
+    insightPanel?.classList.remove('visible');
+    backdrop?.classList.remove('visible');
+  };
+
+  filterBtn?.addEventListener('click', (e) => {
+    e.stopPropagation();
+    insightPanel?.classList.remove('visible');
+    searchPanel?.classList.toggle('visible');
+    const isVisible = searchPanel?.classList.contains('visible');
+    backdrop?.classList.toggle('visible', !!isVisible);
+  });
+
+  insightBtn?.addEventListener('click', (e) => {
+    e.stopPropagation();
+    searchPanel?.classList.remove('visible');
+    insightPanel?.classList.toggle('visible');
+    const isVisible = insightPanel?.classList.contains('visible');
+    backdrop?.classList.toggle('visible', !!isVisible);
+  });
+
+  backdrop?.addEventListener('click', closeDrawers);
+
   initSearchPanel();
   initMap();
   initReportOverlay();
@@ -2626,6 +2875,154 @@ function showQuickStartExamples(): void {
   document.getElementById('qs-dismiss-forever')?.addEventListener('click', () => {
     localStorage.setItem('rei-seen', '1');
     overlay.classList.remove('visible');
+  });
+}
+
+// ── Premium Tool Helpers ──────────────────────────────────────────────────
+
+function showDemographicForecastHelper(area: string): void {
+  const overlay = document.getElementById('report-overlay');
+  const content = document.getElementById('report-content');
+  if (!overlay || !content) return;
+
+  const config = pref();
+  const prefName = config.displayName;
+
+  content.innerHTML = `
+    <h2 style="margin-bottom:16px">📈 人口動態シフト予測</h2>
+    <span style="font-size:10px;padding:2px 8px;border-radius:8px;background:linear-gradient(135deg,#10b981,#059669);color:white;font-weight:600">Pro プラン</span>
+    <p style="font-size:13px;color:var(--text-muted);margin:12px 0">
+      将来10年間の人口・世帯数・高齢化率・人流指数を予測し、不動産需要の長期的な変動リスクを可視化します。
+    </p>
+    <div style="background:var(--bg-secondary);border-radius:8px;padding:12px;margin:12px 0">
+      <div style="font-size:12px;color:var(--text-muted);margin-bottom:6px">対象エリア</div>
+      <div style="font-size:14px;font-weight:600">${prefName} — ${area}</div>
+    </div>
+    <div id="demographic-result" style="margin-top:12px"></div>
+    <button id="btn-run-demographic" class="btn-report" style="background:linear-gradient(135deg,#10b981,#059669)">予測を実行</button>
+    <p style="font-size:11px;color:var(--text-muted);margin-top:12px">
+      または Claude へ: <code>forecast_demographic_shift({ prefecture: "${prefName}", city: "${area}" })</code>
+    </p>
+  `;
+
+  overlay.classList.add('visible');
+
+  document.getElementById('btn-run-demographic')?.addEventListener('click', async () => {
+    const resultDiv = document.getElementById('demographic-result');
+    if (!resultDiv) return;
+    resultDiv.innerHTML = '<div style="text-align:center;padding:12px;color:var(--text-muted)">⏳ 予測中…</div>';
+
+    if (window.__mcpBridge?.callServerTool) {
+      try {
+        const result = await window.__mcpBridge.callServerTool('forecast_demographic_shift', {
+          prefecture: prefName,
+          city: area,
+        });
+        const r = result as Record<string, unknown>;
+        resultDiv.innerHTML = typeof r.markdownReport === 'string'
+          ? `<div style="font-size:12px;white-space:pre-wrap">${r.markdownReport}</div>`
+          : `<pre style="font-size:11px;white-space:pre-wrap;max-height:300px;overflow:auto">${JSON.stringify(result, null, 2)}</pre>`;
+      } catch (e: unknown) {
+        const msg = e instanceof Error ? e.message : String(e);
+        resultDiv.innerHTML = `<div style="color:#ff4d6a;font-size:12px">エラー: ${msg}<br><small>Pro プランが必要な可能性があります。</small></div>`;
+      }
+    } else {
+      resultDiv.innerHTML = `<div style="font-size:12px;color:var(--text-muted)">MCPブリッジ未接続。Claude で以下を実行してください：<br><code style="font-size:11px">forecast_demographic_shift({ prefecture: "${prefName}", city: "${area}" })</code></div>`;
+    }
+  });
+}
+
+function showZoningAuditHelper(area: string): void {
+  const overlay = document.getElementById('report-overlay');
+  const content = document.getElementById('report-content');
+  if (!overlay || !content) return;
+
+  const config = pref();
+  const prefName = config.displayName;
+
+  content.innerHTML = `
+    <h2 style="margin-bottom:16px">🏗️ 建築基準法適合監査</h2>
+    <span style="font-size:10px;padding:2px 8px;border-radius:8px;background:linear-gradient(135deg,#f59e0b,#d97706);color:white;font-weight:600">Enterprise プラン</span>
+    <p style="font-size:13px;color:var(--text-muted);margin:12px 0">
+      建蔽率・容積率・斜線制限・高度地区制限を自動チェックし、建築計画の法適合性を判定します。
+    </p>
+    <div style="background:var(--bg-secondary);border-radius:8px;padding:12px;margin:12px 0">
+      <div style="font-size:12px;color:var(--text-muted);margin-bottom:6px">対象エリア</div>
+      <div style="font-size:14px;font-weight:600">${prefName} — ${area}</div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:12px 0">
+      <div>
+        <label style="font-size:11px;color:var(--text-muted)">用途</label>
+        <select id="za-use" class="neighborhood-input">
+          <option value="residential">住宅</option>
+          <option value="commercial" selected>商業</option>
+          <option value="office">事務所</option>
+          <option value="industrial">工業</option>
+          <option value="mixed">複合</option>
+        </select>
+      </div>
+      <div>
+        <label style="font-size:11px;color:var(--text-muted)">高さ (m)</label>
+        <input id="za-height" class="neighborhood-input" type="number" value="31" min="1">
+      </div>
+      <div>
+        <label style="font-size:11px;color:var(--text-muted)">階数</label>
+        <input id="za-floors" class="neighborhood-input" type="number" value="9" min="1">
+      </div>
+      <div>
+        <label style="font-size:11px;color:var(--text-muted)">敷地面積 (㎡)</label>
+        <input id="za-site" class="neighborhood-input" type="number" value="500" min="1">
+      </div>
+      <div>
+        <label style="font-size:11px;color:var(--text-muted)">建築面積 (㎡)</label>
+        <input id="za-bldg" class="neighborhood-input" type="number" value="300" min="1">
+      </div>
+      <div>
+        <label style="font-size:11px;color:var(--text-muted)">延床面積 (㎡)</label>
+        <input id="za-total" class="neighborhood-input" type="number" value="2700" min="1">
+      </div>
+      <div>
+        <label style="font-size:11px;color:var(--text-muted)">前面道路幅 (m)</label>
+        <input id="za-road" class="neighborhood-input" type="number" value="12" min="1">
+      </div>
+    </div>
+    <div id="zoning-result" style="margin-top:12px"></div>
+    <button id="btn-run-zoning" class="btn-report" style="background:linear-gradient(135deg,#f59e0b,#d97706)">適合監査を実行</button>
+  `;
+
+  overlay.classList.add('visible');
+
+  document.getElementById('btn-run-zoning')?.addEventListener('click', async () => {
+    const resultDiv = document.getElementById('zoning-result');
+    if (!resultDiv) return;
+    resultDiv.innerHTML = '<div style="text-align:center;padding:12px;color:var(--text-muted)">⏳ 監査中…</div>';
+
+    const params = {
+      prefecture: prefName,
+      city: area,
+      proposedUse: (document.getElementById('za-use') as HTMLSelectElement)?.value ?? 'commercial',
+      proposedHeightM: Number((document.getElementById('za-height') as HTMLInputElement)?.value ?? 31),
+      proposedFloors: Number((document.getElementById('za-floors') as HTMLInputElement)?.value ?? 9),
+      siteAreaSqm: Number((document.getElementById('za-site') as HTMLInputElement)?.value ?? 500),
+      proposedBuildingAreaSqm: Number((document.getElementById('za-bldg') as HTMLInputElement)?.value ?? 300),
+      proposedTotalFloorAreaSqm: Number((document.getElementById('za-total') as HTMLInputElement)?.value ?? 2700),
+      frontRoadWidthM: Number((document.getElementById('za-road') as HTMLInputElement)?.value ?? 12),
+    };
+
+    if (window.__mcpBridge?.callServerTool) {
+      try {
+        const result = await window.__mcpBridge.callServerTool('audit_zoning_compliance', params);
+        const r = result as Record<string, unknown>;
+        resultDiv.innerHTML = typeof r.markdownReport === 'string'
+          ? `<div style="font-size:12px;white-space:pre-wrap">${r.markdownReport}</div>`
+          : `<pre style="font-size:11px;white-space:pre-wrap;max-height:300px;overflow:auto">${JSON.stringify(result, null, 2)}</pre>`;
+      } catch (e: unknown) {
+        const msg = e instanceof Error ? e.message : String(e);
+        resultDiv.innerHTML = `<div style="color:#ff4d6a;font-size:12px">エラー: ${msg}<br><small>Enterprise プランが必要な可能性があります。</small></div>`;
+      }
+    } else {
+      resultDiv.innerHTML = `<div style="font-size:12px;color:var(--text-muted)">MCPブリッジ未接続。Claude で以下を実行してください：<br><code style="font-size:11px">audit_zoning_compliance(${JSON.stringify(params)})</code></div>`;
+    }
   });
 }
 

@@ -1544,3 +1544,182 @@ export const ArbitrageScanOutput = z.object({
   attribution: z.string(),
 });
 export type ArbitrageScanOutput = z.infer<typeof ArbitrageScanOutput>;
+
+// ── assess_exterior_visuals (v2.8 new) ──
+export const AssessExteriorVisualsInput = z.object({
+  prefecture: prefectureField,
+  city: z.string().optional().describe("市区町村（例: '名古屋市中村区'、'世田谷区'）"),
+  address: z.string().optional().describe("詳細な住所または建物名（例: '名駅南1丁目3-9'）"),
+  latitude: z.number().optional().describe('緯度'),
+  longitude: z.number().optional().describe('経度'),
+  heading: z.number().int().min(0).max(360).optional().default(0).describe('カメラの向き (0=北、90=東、180=南、270=西)'),
+  pitch: z.number().int().min(-90).max(90).optional().default(0).describe('カメラの上下角 (-90=真下、0=水平、90=真上)'),
+});
+export type AssessExteriorVisualsInput = z.infer<typeof AssessExteriorVisualsInput>;
+
+export const AssessExteriorVisualsOutput = z.object({
+  imageUrl: z.string().describe('取得またはモックされたストリートビュー画像のURL (または Base64 埋め込み)'),
+  hasLiveImage: z.boolean().describe('Google Street View APIからライブ画像を取得できたか'),
+  hasLiveAnalysis: z.boolean().describe('Gemini Vision APIによるライブ画像画像解析が行われたか'),
+  latitude: z.number(),
+  longitude: z.number(),
+  analysis: z.object({
+    overallVibe: z.string().describe('周辺の雰囲気の要約'),
+    exteriorQuality: z.string().describe('外観の状態や高級感・劣化具合'),
+    roadCondition: z.string().describe('前面道路の幅員や舗装、歩道の有無'),
+    parkingAvailability: z.string().describe('敷地内または周辺の駐車スペース'),
+    issuesIdentified: z.array(z.string()).describe('懸念点 (電線、落書き、ゴミ置き場近傍など)'),
+    pros: z.array(z.string()).describe('ポジティブな特徴 (植栽の豊かさ、静かな環境、広い道路など)'),
+    cons: z.array(z.string()).describe('ネガティブな特徴'),
+    estimatedAgeVibe: z.string().describe('視覚的な推定築年数帯'),
+    recommendationsJa: z.string().describe('不動産仲介・投資観点での推奨事項 (日本語)')
+  }),
+  markdownReport: z.string().describe('Markdown形式の詳細レポート'),
+  attribution: z.string(),
+});
+export type AssessExteriorVisualsOutput = z.infer<typeof AssessExteriorVisualsOutput>;
+
+// ── analyze_commute_accessibility (v2.8 new) ──
+export const AnalyzeCommuteAccessibilityInput = z.object({
+  prefecture: prefectureField,
+  city: z.string().optional().describe("市区町村（例: '名古屋市中村区'、'世田谷区'）"),
+  address: z.string().optional().describe("詳細住所または建物名"),
+  latitude: z.number().optional().describe('緯度'),
+  longitude: z.number().optional().describe('経度'),
+});
+export type AnalyzeCommuteAccessibilityInput = z.infer<typeof AnalyzeCommuteAccessibilityInput>;
+
+export const CommuteDestination = z.object({
+  name: z.string().describe('主要ハブ駅名 (例: 名古屋、栄、東京、新宿、梅田)'),
+  distanceKm: z.number().describe('直線距離または道路距離 (km)'),
+  estimatedTimeMin: z.number().describe('推定または実測の所要時間 (分)'),
+  routeDescription: z.string().describe('利用する主な路線と経路の説明'),
+  mode: z.enum(['transit', 'driving', 'walking']),
+});
+export type CommuteDestination = z.infer<typeof CommuteDestination>;
+
+export const AnalyzeCommuteAccessibilityOutput = z.object({
+  latitude: z.number(),
+  longitude: z.number(),
+  closestStation: z.string().describe('最寄り駅名'),
+  closestStationDistanceKm: z.number().describe('最寄り駅までの距離 (km)'),
+  closestStationWalkMin: z.number().describe('最寄り駅までの徒歩分数'),
+  accessibilityScore: z.number().min(0).max(100).describe('総合利便性スコア (0-100)'),
+  destinations: z.array(CommuteDestination).describe('各主要駅への通勤アクセス詳細'),
+  hasLiveTraffic: z.boolean().describe('Google Maps APIのライブ路線・交通データを使用したか'),
+  transitScoreCategory: z.enum(['excellent', 'very_good', 'good', 'fair', 'poor']).describe('利便性カテゴリ'),
+  markdownReport: z.string().describe('Markdown形式の詳細通勤レポート'),
+  attribution: z.string(),
+});
+export type AnalyzeCommuteAccessibilityOutput = z.infer<typeof AnalyzeCommuteAccessibilityOutput>;
+
+// ── optimize_portfolio_allocation (v2.8 premium) ──
+export const PortfolioProperty = z.object({
+  name: z.string().describe('物件名または識別子'),
+  prefecture: z.string().describe('都道府県名'),
+  city: z.string().describe('市区町村'),
+  purchasePriceJpy: z.number().describe('購入価格または想定価格（円）'),
+  annualRentJpy: z.number().describe('年間想定賃料収入（円）'),
+  propertyType: z.enum(['residential', 'commercial', 'office', 'mixed']),
+  latitude: z.number().optional().describe('緯度（オプション）'),
+  longitude: z.number().optional().describe('経度（オプション）'),
+});
+
+export const OptimizePortfolioInput = z.object({
+  properties: z.array(PortfolioProperty).describe('ポートフォリオ物件一覧'),
+  targetGoal: z.enum(['yield_max', 'risk_min', 'balanced']).default('balanced').describe('最適化の目的'),
+});
+export type OptimizePortfolioInput = z.infer<typeof OptimizePortfolioInput>;
+
+export const PortfolioAnalysisItem = z.object({
+  name: z.string(),
+  currentYield: z.number().describe('現在の表面利回り（%）'),
+  hazardRiskScore: z.number().describe('災害リスクスコア (0-100)'),
+  landPriceTrendCagr: z.number().describe('予測地価CAGR（%）'),
+  riskAdjustedReturnScore: z.number().describe('リスク調整後リターンスコア (0-100)'),
+  actionRecommendation: z.string().describe('推奨アクション JA'),
+});
+export type PortfolioAnalysisItem = z.infer<typeof PortfolioAnalysisItem>;
+
+export const OptimizePortfolioOutput = z.object({
+  totalAssetsJpy: z.number().describe('ポートフォリオ総資産額'),
+  overallYield: z.number().describe('ポートフォリオ全体の平均表面利回り'),
+  portfolioRiskScore: z.number().min(0).max(100).describe('全体のリスクスコア (0-100)'),
+  diversificationScore: z.number().min(0).max(100).describe('地域・用途分散度スコア (0-100)'),
+  items: z.array(PortfolioAnalysisItem).describe('物件ごとの個別分析評価'),
+  optimizationStrategyJa: z.string().describe('全体最適化戦略アドバイス JA'),
+  markdownReport: z.string().describe('Markdown形式の詳細レポート'),
+  attribution: z.string(),
+});
+export type OptimizePortfolioOutput = z.infer<typeof OptimizePortfolioOutput>;
+
+// ── audit_zoning_compliance (v2.8 premium) ──
+export const AuditZoningComplianceInput = z.object({
+  prefecture: prefectureField,
+  city: z.string().describe("市区町村（例: '名古屋市中区'）"),
+  address: z.string().optional().describe('詳細住所'),
+  latitude: z.number().optional().describe('緯度'),
+  longitude: z.number().optional().describe('経度'),
+  proposedUse: z.enum(['residential', 'commercial', 'industrial', 'office', 'mixed']),
+  proposedHeightM: z.number().describe('計画建物の高さ (m)'),
+  proposedFloors: z.number().int().describe('計画建物の階数'),
+  proposedBuildingAreaSqm: z.number().describe('計画建物の建築面積 (㎡)'),
+  proposedTotalFloorAreaSqm: z.number().describe('計画建物の延床面積 (㎡)'),
+  siteAreaSqm: z.number().describe('敷地面積 (㎡)'),
+  frontRoadWidthM: z.number().describe('前面道路幅員 (m)'),
+});
+export type AuditZoningComplianceInput = z.infer<typeof AuditZoningComplianceInput>;
+
+export const AuditZoningComplianceOutput = z.object({
+  latitude: z.number(),
+  longitude: z.number(),
+  zoningType: z.string().describe('用途地域種別'),
+  legalMaxCoverageRatio: z.number().describe('法定最大建蔽率 (%)'),
+  legalMaxFloorAreaRatio: z.number().describe('法定最大容積率 (%)'),
+  proposedCoverageRatio: z.number().describe('計画建蔽率 (%)'),
+  proposedFloorAreaRatio: z.number().describe('計画容積率 (%)'),
+  coverageRatioCompliant: z.boolean().describe('建蔽率が法定内か'),
+  floorAreaRatioCompliant: z.boolean().describe('容積率が法定内か'),
+  slantLineCompliant: z.boolean().describe('道路・隣地斜線制限を満たすか'),
+  heightLimitCompliant: z.boolean().describe('絶対高さ制限を満たすか'),
+  isFullyCompliant: z.boolean().describe('すべての規制に適合しているか'),
+  complianceSummaryJa: z.string().describe('適合性状況の日本語要約'),
+  optimizationTipsJa: z.array(z.string()).describe('容積最大化・最適化のためのアドバイス'),
+  markdownReport: z.string().describe('Markdown形式の詳細監査レポート'),
+  attribution: z.string(),
+});
+export type AuditZoningComplianceOutput = z.infer<typeof AuditZoningComplianceOutput>;
+
+// ── forecast_demographic_shift (v2.8 premium) ──
+export const ForecastDemographicShiftInput = z.object({
+  prefecture: prefectureField,
+  city: z.string().describe("市区町村（例: '名古屋市中区'）"),
+  neighborhood: z.string().optional().describe("町丁目（例: '栄3丁目'）"),
+  latitude: z.number().optional(),
+  longitude: z.number().optional(),
+});
+export type ForecastDemographicShiftInput = z.infer<typeof ForecastDemographicShiftInput>;
+
+export const DemographicForecastYear = z.object({
+  year: z.number(),
+  estimatedPopulation: z.number().describe('推計人口（人）'),
+  estimatedHouseholds: z.number().describe('推計世帯数（世帯）'),
+  agingRate: z.number().describe('高齢化率（%）'),
+  familyRatio: z.number().describe('ファミリー世帯比率（%）'),
+  pedestrianFlowIndex: z.number().describe('人流指数（基準100）'),
+});
+export type DemographicForecastYear = z.infer<typeof DemographicForecastYear>;
+
+export const ForecastDemographicShiftOutput = z.object({
+  city: z.string(),
+  neighborhood: z.string().optional(),
+  growthCategory: z.enum(['active_growth', 'stable', 'moderate_decline', 'rapid_decline']).describe('エリア成長性分類'),
+  growthCategoryJa: z.string(),
+  timeline: z.array(DemographicForecastYear).describe('10年後（および2050年）までの推移予測データ'),
+  tenYearPopulationChangeRate: z.number().describe('10年間の人口増減率（%）'),
+  tenYearPedestrianFlowChangeRate: z.number().describe('10年間の人流増減率（%）'),
+  forecastSummaryJa: z.string().describe('将来予測の日本語サマリー'),
+  markdownReport: z.string().describe('Markdown形式の詳細将来予測レポート'),
+  attribution: z.string(),
+});
+export type ForecastDemographicShiftOutput = z.infer<typeof ForecastDemographicShiftOutput>;

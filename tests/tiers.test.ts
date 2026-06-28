@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { isToolAllowed, isResourceAllowed, getTierDisplayInfo, TIER_CONFIG } from '../src/tiers.js';
+import { isToolAllowed, isResourceAllowed, isPromptAllowed, getTierDisplayInfo, TIER_CONFIG } from '../src/tiers.js';
 
 describe('Tiering', () => {
   describe('isToolAllowed', () => {
@@ -33,12 +33,26 @@ describe('Tiering', () => {
       expect(isResourceAllowed('free', 'realestate://land-price/aichi/名古屋市中区')).toBe(true);
     });
 
-    it('free tier blocks UI resources', () => {
-      expect(isResourceAllowed('free', 'ui://japan-real-estate-intel/dashboard')).toBe(false);
+    it('free tier allows UI resources (MCP Apps enabled)', () => {
+      expect(isResourceAllowed('free', 'ui://japan-real-estate-intel/dashboard')).toBe(true);
     });
 
     it('pro tier allows UI resources', () => {
       expect(isResourceAllowed('pro', 'ui://japan-real-estate-intel/dashboard')).toBe(true);
+    });
+  });
+
+  describe('isPromptAllowed', () => {
+    it('free tier allows free prompts', () => {
+      expect(isPromptAllowed('free', 'quick_start_examples')).toBe(true);
+    });
+
+    it('free tier blocks pro prompts', () => {
+      expect(isPromptAllowed('free', 'investment_report')).toBe(false);
+    });
+
+    it('pro tier allows pro prompts', () => {
+      expect(isPromptAllowed('pro', 'investment_report')).toBe(true);
     });
   });
 

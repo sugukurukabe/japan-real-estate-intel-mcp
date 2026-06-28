@@ -14,7 +14,7 @@
 
 ### Option 1: GitHub Private Security Advisory (Preferred)
 
-1. Go to the [Security tab](https://github.com/sugukuru/japan-real-estate-intel-mcp/security) of this repository
+1. Go to the [Security tab](https://github.com/sugukurukabe/japan-real-estate-intel-mcp/security) of this repository
 2. Click **"Report a vulnerability"**
 3. Fill in the advisory form with:
    - Description of the vulnerability
@@ -24,7 +24,7 @@
 
 ### Option 2: Direct Contact
 
-Email: **See the [GitHub profile](https://github.com/sugukuru) for contact info**
+Email: **See the [GitHub profile](https://github.com/sugukurukabe) for contact info**
 
 ### What to Expect
 
@@ -49,7 +49,7 @@ This project is an **MCP server** that serves as a data analysis layer over Japa
 - Issues requiring physical access to the server
 - Denial-of-service via legitimate tool calls (rate limiting is in place)
 
-## Security Measures in Place (v6.15.0)
+## Security Measures in Place (v6.15.2)
 
 - `helmet` middleware sets security-related HTTP headers on all HTTP mode responses
 - Request body limited to 10 MB (`express.json({ limit: '10mb' })`)

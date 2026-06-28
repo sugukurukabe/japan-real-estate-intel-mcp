@@ -32,7 +32,7 @@ This Code of Conduct applies within all community spaces, and also applies when 
 
 ## Enforcement
 
-Instances of abusive, harassing, or otherwise unacceptable behavior may be reported to the project team via [GitHub Issues](https://github.com/sugukuru/japan-real-estate-intel-mcp/issues) (use a private security advisory for sensitive reports).
+Instances of abusive, harassing, or otherwise unacceptable behavior may be reported to the project team via [GitHub Issues](https://github.com/sugukurukabe/japan-real-estate-intel-mcp/issues) (use a private security advisory for sensitive reports).
 
 All complaints will be reviewed and investigated promptly and fairly.
 

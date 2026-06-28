@@ -1,30 +1,16 @@
+/**
+ * In-process monthly tool-call budget for Free tier (single-host / demo).
+ * Resets each calendar month (UTC). Persisted to SQLite DB with in-memory fallback.
+ */
 import type { Tier } from './tiers.js';
 import { TIER_CONFIG } from './tiers.js';
-import Database from 'better-sqlite3';
-import { resolve, dirname } from 'node:path';
-import { mkdirSync } from 'node:fs';
+import { getClientUsage, incrementClientUsage, resetClientUsageForTests } from './auth/oauth-store.js';
 import { moduleLogger } from './logger.js';
 
 const log = moduleLogger('quota_store');
-const DB_PATH = process.env.QUOTA_DB_PATH ?? resolve(process.cwd(), 'db', 'quota.sqlite');
 
-let _db: Database.Database | null = null;
-
-function getDb(): Database.Database {
-  if (_db) return _db;
-  mkdirSync(dirname(DB_PATH), { recursive: true });
-  _db = new Database(DB_PATH);
-  _db.pragma('journal_mode = WAL');
-  _db.exec(`
-    CREATE TABLE IF NOT EXISTS ip_quotas (
-      client_key TEXT NOT NULL,
-      month TEXT NOT NULL,
-      call_count INTEGER NOT NULL DEFAULT 0,
-      PRIMARY KEY (client_key, month)
-    );
-  `);
-  return _db;
-}
+type UsageState = { month: string; count: number };
+const usageByClient = new Map<string, UsageState>();
 
 function currentMonthUtc(): string {
   const d = new Date();
@@ -44,58 +30,61 @@ function monthlyLimit(tier: Tier): number {
   return TIER_CONFIG[tier].monthlyToolCalls;
 }
 
-export function getToolCallUsage(tier: Tier): { count: number; limit: number; month: string } {
+export function getToolCallUsage(tier: Tier, clientId?: string): { count: number; limit: number; month: string } {
   const month = currentMonthUtc();
-  const key = clientKey();
+  const key = clientId || clientKey();
   const limit = monthlyLimit(tier);
-
+  let count = 0;
   try {
-    const row = getDb()
-      .prepare('SELECT call_count FROM ip_quotas WHERE client_key = ? AND month = ?')
-      .get(key, month) as { call_count: number } | undefined;
-    return { count: row?.call_count ?? 0, limit, month };
+    count = getClientUsage(key, month);
   } catch (err) {
-    log.error({ err }, 'Error reading quota usage from DB');
-    return { count: 0, limit, month };
+    // Graceful fallback to in-memory for testing or if DB is offline
+    const state = usageByClient.get(key);
+    count = state?.month === month ? state.count : 0;
   }
+  return { count, limit, month };
 }
 
 /** Returns error message when Free monthly budget is exhausted. */
-export function checkToolCallBudget(tier: Tier): string | null {
+export function checkToolCallBudget(tier: Tier, clientId?: string): string | null {
   const limit = monthlyLimit(tier);
   if (!Number.isFinite(limit)) return null;
-  const { count } = getToolCallUsage(tier);
+  const { count } = getToolCallUsage(tier, clientId);
   if (count >= limit) {
     return `Free プランの月間ツール呼び出し上限（${limit} 回）に達しました。翌月（UTC）までお待ちいただくか、Pro プランをご検討ください。`;
   }
   return null;
 }
 
-export function recordToolCall(tier: Tier): void {
+export function recordToolCall(tier: Tier, clientId?: string): void {
   const limit = monthlyLimit(tier);
   if (!Number.isFinite(limit)) return;
   const month = currentMonthUtc();
-  const key = clientKey();
+  const key = clientId || clientKey();
+  
+  // 1. Update in-memory for tests / fallback
+  const state = usageByClient.get(key);
+  if (!state || state.month !== month) {
+    usageByClient.set(key, { month, count: 1 });
+  } else {
+    state.count += 1;
+  }
 
+  // 2. Persist to SQLite DB
   try {
-    getDb()
-      .prepare(`
-        INSERT INTO ip_quotas (client_key, month, call_count)
-        VALUES (?, ?, 1)
-        ON CONFLICT(client_key, month) DO UPDATE SET call_count = call_count + 1
-      `)
-      .run(key, month);
+    incrementClientUsage(key, month);
   } catch (err) {
-    log.error({ err }, 'Error recording quota usage in DB');
+    // Ignore db-write failure under pure-stdio local contexts
+    log.debug({ err }, 'Failed to persist quota usage, using in-memory only');
   }
 }
 
 /** Test-only reset */
 export function resetToolCallUsageForTests(): void {
+  usageByClient.clear();
   try {
-    getDb().prepare('DELETE FROM ip_quotas').run();
+    resetClientUsageForTests();
   } catch (err) {
-    // ignore
+    // Ignore if DB not ready
   }
 }
-

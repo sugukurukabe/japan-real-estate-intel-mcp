@@ -10,7 +10,7 @@
 
 # Japan Real Estate Intel MCP
 
-[![npm version](https://img.shields.io/npm/v/@sugukuru/japan-real-estate-intel-mcp)](https://www.npmjs.com/package/@sugukuru/japan-real-estate-intel-mcp) [![npm downloads](https://img.shields.io/npm/dm/@sugukuru/japan-real-estate-intel-mcp)](https://www.npmjs.com/package/@sugukuru/japan-real-estate-intel-mcp) [![CI](https://github.com/sugukurukabe/japan-real-estate-intel-mcp/actions/workflows/ci.yml/badge.svg)](https://github.com/sugukurukabe/japan-real-estate-intel-mcp/actions/workflows/ci.yml) [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE) [![Node.js >= 20](https://img.shields.io/badge/node-%E2%89%A520-brightgreen)](https://nodejs.org) [![Docker](https://img.shields.io/badge/GHCR-available-blue)](https://github.com/sugukurukabe/japan-real-estate-intel-mcp/pkgs/container/japan-real-estate-intel-mcp) [![MCP Registry](https://img.shields.io/badge/MCP_Registry-listed-blueviolet)](https://registry.modelcontextprotocol.io/v0.1/servers?search=japan-real-estate-intel) [![awesome-mcp PR](https://img.shields.io/badge/awesome--mcp-PR_%236630-green)](https://github.com/punkpeye/awesome-mcp-servers/pull/6630)
+[![npm version](https://img.shields.io/npm/v/@sugukuru/japan-real-estate-intel-mcp)](https://www.npmjs.com/package/@sugukuru/japan-real-estate-intel-mcp) [![npm downloads](https://img.shields.io/npm/dm/@sugukuru/japan-real-estate-intel-mcp)](https://www.npmjs.com/package/@sugukuru/japan-real-estate-intel-mcp) [![CI](https://github.com/sugukurukabe/japan-real-estate-intel-mcp/actions/workflows/ci.yml/badge.svg)](https://github.com/sugukurukabe/japan-real-estate-intel-mcp/actions/workflows/ci.yml) [![License: AGPL-3.0](https://img.shields.io/badge/License-AGPL_3.0-blue.svg)](LICENSE) [![Node.js >= 20](https://img.shields.io/badge/node-%E2%89%A520-brightgreen)](https://nodejs.org) [![Docker](https://img.shields.io/badge/GHCR-available-blue)](https://github.com/sugukurukabe/japan-real-estate-intel-mcp/pkgs/container/japan-real-estate-intel-mcp) [![MCP Registry](https://img.shields.io/badge/MCP_Registry-listed-blueviolet)](https://registry.modelcontextprotocol.io/v0.1/servers?search=japan-real-estate-intel) [![awesome-mcp PR](https://img.shields.io/badge/awesome--mcp-PR_%236630-green)](https://github.com/punkpeye/awesome-mcp-servers/pull/6630)
 
 **Cross-analyze Japanese real estate data across 10 prefectures via MCP.** Land prices, disaster risk, population, foot traffic, education, corporate presence, PLATEAU 3D buildings, renovation yield, and contract support — all accessible through Claude, ChatGPT, Cursor, or any MCP client.
 
@@ -71,7 +71,7 @@ npx @sugukuru/japan-real-estate-intel-mcp
 
 ## Key Features
 
-- **33 tools** covering market analysis, risk assessment, forecasts, renovation yield, contract support, zoning, vacancy, population outlook, macro snapshots (land price YoY, transactions, optional e-Stat building starts and policy-rate proxy), and price triangulation arbitrage
+- **38 tools** covering market analysis, risk assessment, forecasts, renovation yield, contract support, zoning, vacancy, population outlook, macro snapshots, price triangulation arbitrage, portfolio optimization, demographic forecasting, and building code compliance audit
 - **10 prefectures**: Aichi, Tokyo, Osaka, Fukuoka, Hokkaido, Kanagawa, Kyoto, Hyogo, Saitama, Chiba
 - **17+ data sources**: land prices, 路線価 (rosenka), disaster hazards (earthquake + flood), population, zoning, vacancy, population projection, foot traffic, education, corporate, transport, commercial, medical, PLATEAU 3D
 - **Interactive dashboard** with 2D map, 3D PLATEAU view, responsive PWA, and price triangulation panel
@@ -708,7 +708,7 @@ node dist/index.js  # または npm start
 
 
 
-- **33 ツール**: 市場クロス分析 / リスク / ファミリー / 法人需要 / レポート / ダッシュボード / 都道府県比較 / ドリルダウン / 出店 / 日照シミュ / 予測・What-If / PF 最適化 / リノベ・契約・用途地域・空き家率・人口推計・マクロ・アービトラージ等（詳細は冒頭 Key Features）
+- **38 ツール**: 市場クロス分析 / リスク / ファミリー / 法人需要 / レポート / ダッシュボード / 都道府県比較 / ドリルダウン / 出店 / 日照シミュ / 予測・What-If / PF 最適化 / リノベ・契約・用途地域・空き家率・人口推計・マクロ・アービトラージ / 人口動態予測 / 建築基準適合監査 等（詳細は冒頭 Key Features）
 
 - **12 レイヤーダッシュボード + 3D ビューア**: 地価 / 災害リスク / 取引 / 人口 / 人流 / 学区 / 企業密度 / 3D 建物 / 交通 / 商業施設 / 医療 / 影 + **Three.js 3D ビューア**
 
@@ -736,7 +736,7 @@ node dist/index.js  # または npm start
 
 ```bash
 
-git clone https://github.com/sugukuru/japan-real-estate-intel-mcp.git
+git clone https://github.com/sugukurukabe/japan-real-estate-intel-mcp.git
 
 cd japan-real-estate-intel-mcp
 
@@ -836,7 +836,7 @@ node dist/http.js
 
 ## ツール一覧（参考: v2.3 時点の 10 本）
 
-> **現行**は **33 ツール**です。完全な一覧はリポジトリ直下の `server.json` の `tools` 配列、または `pnpm test` が通る `tests/server_json_tools_sync.test.ts` を参照してください。
+> **現行**は **38 ツール**です。完全な一覧はリポジトリ直下の `server.json` の `tools` 配列、または `pnpm test` が通る `tests/server_json_tools_sync.test.ts` を参照してください。
 
 ### `cross_analyze_real_estate_market`
 
@@ -1158,7 +1158,7 @@ pnpm lint         # 型チェック
 - 総合価値スコアにアービトラージ補正加味
 - UI に価格トライアングルパネル追加
 - 用途地域・空き家率・将来人口推計データ
-- 10 都道府県 / 33 ツール（`server.json` と実行時で一致） / 696 テスト（50 ファイル）
+- 10 都道府県 / 38 ツール（`server.json` と実行時で一致） / 696+ テスト（55 ファイル）
 
 ## ライセンス
 

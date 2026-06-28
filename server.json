@@ -3,17 +3,27 @@
   "name": "io.github.sugukurukabe/japan-real-estate-intel-mcp",
   "title": "Japan Real Estate Intel",
   "description": "Japan real estate MCP: land price, risk, foot traffic, renovation. 10 prefectures.",
-  "version": "6.15.4",
+  "version": "6.16.0",
   "websiteUrl": "https://realestate-mcp.jp/dashboard.html",
   "repository": {
     "url": "https://github.com/sugukurukabe/japan-real-estate-intel-mcp",
     "source": "github"
   },
+  "iconUrl": "https://realestate-mcp.jp/assets/logo.svg",
+  "privacyPolicyUrl": "https://realestate-mcp.jp/privacy-policy.html",
+  "termsOfServiceUrl": "https://realestate-mcp.jp/terms.html",
+  "contactEmail": "support@realestate-mcp.jp",
+  "auth": {
+    "type": "oauth2",
+    "authorizationUrl": "https://realestate-mcp.jp/oauth/authorize",
+    "tokenUrl": "https://realestate-mcp.jp/oauth/token",
+    "scopes": ["read", "write", "admin"]
+  },
   "packages": [
     {
       "registryType": "npm",
       "identifier": "@sugukuru/japan-real-estate-intel-mcp",
-      "version": "6.15.4",
+      "version": "6.16.0",
       "transport": {
         "type": "stdio"
       },
@@ -76,6 +86,11 @@
     "simulate_leveraged_cashflow",
     "search",
     "fetch",
-    "search_area_candidates"
+    "search_area_candidates",
+    "assess_exterior_visuals",
+    "analyze_commute_accessibility",
+    "optimize_portfolio_allocation",
+    "audit_zoning_compliance",
+    "forecast_demographic_shift"
   ]
 }

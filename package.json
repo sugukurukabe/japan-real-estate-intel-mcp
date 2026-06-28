@@ -56,15 +56,15 @@
     "arbitrage"
   ],
   "author": "sugukuru",
-  "license": "MIT",
+  "license": "AGPL-3.0-only",
   "mcpName": "io.github.sugukurukabe/japan-real-estate-intel-mcp",
   "repository": {
     "type": "git",
-    "url": "https://github.com/sugukuru/japan-real-estate-intel-mcp.git"
+    "url": "https://github.com/sugukurukabe/japan-real-estate-intel-mcp.git"
   },
   "homepage": "https://realestate-mcp.jp",
   "bugs": {
-    "url": "https://github.com/sugukuru/japan-real-estate-intel-mcp/issues"
+    "url": "https://github.com/sugukurukabe/japan-real-estate-intel-mcp/issues"
   },
   "private": false,
   "publishConfig": {

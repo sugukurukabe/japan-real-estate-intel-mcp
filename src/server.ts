@@ -48,6 +48,14 @@ import {
   PurchaseReviewOutput,
   LeveragedCashflowInput,
   LeveragedCashflowOutput,
+  AssessExteriorVisualsInput,
+  AnalyzeCommuteAccessibilityInput,
+  OptimizePortfolioInput,
+  OptimizePortfolioOutput,
+  AuditZoningComplianceInput,
+  AuditZoningComplianceOutput,
+  ForecastDemographicShiftInput,
+  ForecastDemographicShiftOutput,
 } from './schemas.js';
 import { crossAnalyze } from './tools/cross_analyze_real_estate_market.js';
 import { assessPropertyRisk } from './tools/assess_property_risk.js';
@@ -62,6 +70,9 @@ import { evaluateStoreLocation } from './tools/evaluate_store_location.js';
 import { simulateLandscape } from './tools/simulate_landscape_impact.js';
 import { forecastLandPriceTrend } from './tools/forecast_land_price_trend.js';
 import { portfolioOptimizer } from './tools/portfolio_optimizer.js';
+import { optimizePortfolioTool } from './tools/optimize_portfolio.js';
+import { auditZoningComplianceTool } from './tools/audit_zoning_compliance.js';
+import { forecastDemographicShiftTool } from './tools/forecast_demographic_shift.js';
 import { simulateAichiFuture, AichiFutureInput } from './tools/simulate_aichi_future.js';
 import { scenarioWhatIf } from './tools/scenario_what_if.js';
 import { discoverOpportunitiesTool } from './tools/discover_opportunities.js';
@@ -77,6 +88,8 @@ import { getVacancyStatsTool } from './tools/get_vacancy_stats.js';
 import { getPopulationOutlookTool } from './tools/get_population_outlook.js';
 import { getRealEstateMacroSnapshotTool } from './tools/get_real_estate_macro_snapshot.js';
 import { detectArbitrageSignals } from './tools/detect_arbitrage_signals.js';
+import { assessExteriorVisuals } from './tools/assess_exterior_visuals.js';
+import { analyzeCommuteAccessibilityTool } from './tools/analyze_commute_accessibility.js';
 import { reviewPurchaseRecommendation } from './analysis/purchase_review.js';
 import { simulateLeveragedCashflow } from './analysis/leveraged_cashflow.js';
 import { mcpSearch } from './tools/search.js';
@@ -90,7 +103,7 @@ import { ATTRIBUTION } from './data/attribution.js';
 import { formatErrorMessage, isClientError } from './errors.js';
 import { toolLogger } from './logger.js';
 import { checkToolCallBudget, recordToolCall } from './tier-usage.js';
-import { isToolAllowed, resolveTier, type Tier } from './tiers.js';
+import { isToolAllowed, isResourceAllowed, isPromptAllowed, resolveTier, type Tier } from './tiers.js';
 import './data-loaders/index.js';
 
 const DASHBOARD_URI = 'ui://japan-real-estate-intel/dashboard';
@@ -100,7 +113,7 @@ const TILE_CDN = 'https://tile.openstreetmap.org';
 const CARTO_TILE_CDN = 'https://*.basemaps.cartocdn.com';
 const JSDELIVR_CDN = 'https://cdn.jsdelivr.net';
 const DASHBOARD_CSP = {
-  resourceDomains: [LEAFLET_CDN, 'https://cdnjs.cloudflare.com', CARTO_TILE_CDN],
+  resourceDomains: [LEAFLET_CDN, 'https://cdnjs.cloudflare.com', CARTO_TILE_CDN, 'https://api.qrserver.com'],
   connectDomains: [TILE_CDN, 'https://*.tile.openstreetmap.org', CARTO_TILE_CDN],
 };
 const DASHBOARD_3D_CSP = {
@@ -138,18 +151,33 @@ function applyOutputMode(
   };
 }
 
-export function createServer(options?: { activeTierOverride?: Tier }): McpServer {
+export function createServer(
+  tierOrOptions?: Tier | { activeTierOverride?: Tier; clientId?: string },
+  clientIdParam?: string,
+): McpServer {
   const server = new McpServer({
     name: 'japan-real-estate-intel-mcp',
     version: '6.16.0',
   });
 
-  let activeTier: Tier = options?.activeTierOverride ?? 'free';
+  let activeTier: Tier = 'free';
+  let clientId: string | undefined = undefined;
+
+  if (tierOrOptions && typeof tierOrOptions === 'object') {
+    activeTier = tierOrOptions.activeTierOverride ?? 'free';
+    clientId = tierOrOptions.clientId;
+  } else {
+    activeTier = (tierOrOptions as Tier) ?? 'free';
+    clientId = clientIdParam;
+  }
+
   const licenseKey = process.env.LICENSE_KEY;
   const requestedTier = (process.env.DEFAULT_TIER as Tier) ?? 'free';
 
-  if (options?.activeTierOverride) {
-    activeTier = options.activeTierOverride;
+  if (tierOrOptions && typeof tierOrOptions === 'object' && tierOrOptions.activeTierOverride) {
+    activeTier = tierOrOptions.activeTierOverride;
+  } else if (typeof tierOrOptions === 'string') {
+    activeTier = tierOrOptions;
   } else if (process.env.NODE_ENV === 'test') {
     activeTier = requestedTier;
   } else {
@@ -219,7 +247,7 @@ export function createServer(options?: { activeTierOverride?: Tier }): McpServer
         isError: true,
       });
     }
-    const budgetMsg = checkToolCallBudget(tier);
+    const budgetMsg = checkToolCallBudget(tier, clientId);
     if (budgetMsg) {
       server
         .sendLoggingMessage({
@@ -232,7 +260,7 @@ export function createServer(options?: { activeTierOverride?: Tier }): McpServer
         isError: true,
       });
     }
-    recordToolCall(tier);
+    recordToolCall(tier, clientId);
     const start = Date.now();
     server
       .sendLoggingMessage({ level: 'debug', data: { tool: toolName, prefecture, event: 'start' } })
@@ -266,6 +294,18 @@ export function createServer(options?: { activeTierOverride?: Tier }): McpServer
         };
       },
     );
+  }
+
+  function withPromptTierCheck<T>(
+    promptName: string,
+    handler: (args: T) => any
+  ): (args: T) => any {
+    return (args: T) => {
+      if (!isPromptAllowed(activeTier, promptName)) {
+        throw new Error(`プロンプト "${promptName}" は現在のプラン (${activeTier}) では利用できません。アップグレードをご検討ください。`);
+      }
+      return handler(args);
+    };
   }
 
   // ── ChatGPT Apps SDK compatibility tools (search / fetch) ────────────────
@@ -590,6 +630,36 @@ export function createServer(options?: { activeTierOverride?: Tier }): McpServer
           };
         },
       ),
+  );
+
+  server.tool(
+    'assess_exterior_visuals',
+    'AI visual exterior audit of a property based on Google Street View static imagery + Gemini Vision AI. Falls back to simulated audit if API keys are missing. | AI街頭外観監査。ストリートビュー画像とGemini Vision AIを用いて建物の外観・道路幅・環境を自動評価。',
+    AssessExteriorVisualsInput.shape,
+    RO,
+    (args) => withErrorHandling('assess_exterior_visuals', String(args.prefecture ?? 'aichi'), async () => {
+      const input = AssessExteriorVisualsInput.parse(args);
+      const result = await assessExteriorVisuals(input);
+      return {
+        content: [{ type: 'text' as const, text: result.markdownReport }],
+        structuredContent: { ...result, attribution: ATTRIBUTION },
+      };
+    }),
+  );
+
+  server.tool(
+    'analyze_commute_accessibility',
+    'Transit commute accessibility analyzer to regional station hubs. Calculates travel times, routes, and overall score. | 交通通勤アクセシビリティ評価。主要ターミナル駅への所要時間、経路、利便性スコアを算出。',
+    AnalyzeCommuteAccessibilityInput.shape,
+    RO,
+    (args) => withErrorHandling('analyze_commute_accessibility', String(args.prefecture ?? 'aichi'), async () => {
+      const input = AnalyzeCommuteAccessibilityInput.parse(args);
+      const result = await analyzeCommuteAccessibilityTool(input);
+      return {
+        content: [{ type: 'text' as const, text: result.markdownReport }],
+        structuredContent: { ...result, attribution: ATTRIBUTION },
+      };
+    }),
   );
 
   server.tool(
@@ -1094,6 +1164,84 @@ export function createServer(options?: { activeTierOverride?: Tier }): McpServer
       ),
   );
 
+  registerAppTool(
+    server,
+    'optimize_portfolio_allocation',
+    {
+      title: 'ポートフォリオ統合リスク・リターン最適化',
+      description: 'Optimize real estate portfolio risk & return: aggregates hazards, land price trends, and generates allocation strategies. | 複数物件のポートフォリオ災害リスク・地価動向を横断分析し、最適配分をシミュレートする。',
+      inputSchema: OptimizePortfolioInput.shape,
+      outputSchema: OptimizePortfolioOutput.shape,
+      annotations: RO,
+      _meta: {
+        ui: { resourceUri: DASHBOARD_URI },
+        'openai/outputTemplate': DASHBOARD_URI,
+        'openai/toolInvocation/invoking': 'ポートフォリオ最適化を実行中…',
+        'openai/toolInvocation/invoked': 'ポートフォリオ最適化が完了しました。',
+      },
+    },
+    (args) => withErrorHandling('optimize_portfolio_allocation', 'multi', async () => {
+      const input = OptimizePortfolioInput.parse(args);
+      const output = await optimizePortfolioTool(input);
+      return {
+        content: [{ type: 'text' as const, text: output.markdownReport }],
+        structuredContent: output as unknown as Record<string, unknown>,
+      };
+    }),
+  );
+
+  registerAppTool(
+    server,
+    'audit_zoning_compliance',
+    {
+      title: '3D用途地域・法的斜線制限自動監査',
+      description: 'Audit proposed building metrics (FAR, coverage, slant line, height limit) against local zoning rules. | 敷地での計画建物スペック（建蔽率・容積率・斜線制限など）の適合性を自動監査する。',
+      inputSchema: AuditZoningComplianceInput.shape,
+      outputSchema: AuditZoningComplianceOutput.shape,
+      annotations: RO,
+      _meta: {
+        ui: { resourceUri: DASHBOARD_3D_URI },
+        'openai/outputTemplate': DASHBOARD_3D_URI,
+        'openai/toolInvocation/invoking': '用途制限・斜線制限を監査中…',
+        'openai/toolInvocation/invoked': '法的監査が完了しました。',
+      },
+    },
+    (args) => withErrorHandling('audit_zoning_compliance', String((args as unknown as Record<string, string>).prefecture ?? 'aichi'), async () => {
+      const input = AuditZoningComplianceInput.parse(args);
+      const output = await auditZoningComplianceTool(input);
+      return {
+        content: [{ type: 'text' as const, text: output.markdownReport }],
+        structuredContent: output as unknown as Record<string, unknown>,
+      };
+    }),
+  );
+
+  registerAppTool(
+    server,
+    'forecast_demographic_shift',
+    {
+      title: '町丁目レベル10年後人流・人口動態予測',
+      description: 'Predict demographic, aging and human flow trends for a specific neighborhood or city. | 国勢調査・人流統計から、指定エリア（町丁目単位）の10年後の人口・世帯・高齢化率を予測する。',
+      inputSchema: ForecastDemographicShiftInput.shape,
+      outputSchema: ForecastDemographicShiftOutput.shape,
+      annotations: RO,
+      _meta: {
+        ui: { resourceUri: DASHBOARD_URI },
+        'openai/outputTemplate': DASHBOARD_URI,
+        'openai/toolInvocation/invoking': '人流・人口予測を実行中…',
+        'openai/toolInvocation/invoked': '人流・人口動態予測が完了しました。',
+      },
+    },
+    (args) => withErrorHandling('forecast_demographic_shift', String((args as unknown as Record<string, string>).prefecture ?? 'aichi'), async () => {
+      const input = ForecastDemographicShiftInput.parse(args);
+      const output = await forecastDemographicShiftTool(input);
+      return {
+        content: [{ type: 'text' as const, text: output.markdownReport }],
+        structuredContent: output as unknown as Record<string, unknown>,
+      };
+    }),
+  );
+
   // ── Resources (prefecture/{area} pattern) ────────────────────────────────
 
   function safeResource(
@@ -1131,6 +1279,9 @@ export function createServer(options?: { activeTierOverride?: Tier }): McpServer
       mimeType: 'application/json',
     },
     async (uri) => {
+      if (!isResourceAllowed(activeTier, uri.href)) {
+        return { contents: [{ uri: uri.href, mimeType: 'application/json' as const, text: JSON.stringify({ error: `リソース "${uri.href}" は現在のプラン (${activeTier}) では利用できません。` }) }] };
+      }
       const parts = uri.pathname.split('/').filter(Boolean);
       const prefecture = decodeURIComponent(parts[0] ?? 'aichi');
       const area = decodeURIComponent(parts[1] ?? '名古屋市');
@@ -1146,6 +1297,9 @@ export function createServer(options?: { activeTierOverride?: Tier }): McpServer
       mimeType: 'application/json',
     },
     async (uri) => {
+      if (!isResourceAllowed(activeTier, uri.href)) {
+        return { contents: [{ uri: uri.href, mimeType: 'application/json' as const, text: JSON.stringify({ error: `リソース "${uri.href}" は現在のプラン (${activeTier}) では利用できません。` }) }] };
+      }
       const parts = uri.pathname.split('/').filter(Boolean);
       const prefecture = decodeURIComponent(parts[0] ?? 'aichi');
       const area = decodeURIComponent(parts[1] ?? '名古屋市');
@@ -1161,6 +1315,9 @@ export function createServer(options?: { activeTierOverride?: Tier }): McpServer
       mimeType: 'application/json',
     },
     async (uri) => {
+      if (!isResourceAllowed(activeTier, uri.href)) {
+        return { contents: [{ uri: uri.href, mimeType: 'application/json' as const, text: JSON.stringify({ error: `リソース "${uri.href}" は現在のプラン (${activeTier}) では利用できません。` }) }] };
+      }
       const parts = uri.pathname.split('/').filter(Boolean);
       const prefecture = decodeURIComponent(parts[0] ?? 'aichi');
       const area = decodeURIComponent(parts[1] ?? '名古屋市');
@@ -1182,16 +1339,19 @@ export function createServer(options?: { activeTierOverride?: Tier }): McpServer
         },
       },
     },
-    async () => ({
-      contents: [
-        {
+    async () => {
+      if (!isResourceAllowed(activeTier, DASHBOARD_URI)) {
+        return { contents: [{ uri: DASHBOARD_URI, mimeType: RESOURCE_MIME_TYPE, text: `<html><body><h1>プラン制限</h1><p>現在のプラン (${activeTier}) ではダッシュボードを利用できません。アップグレードをご検討ください。</p></body></html>` }] };
+      }
+      return {
+        contents: [{
           uri: DASHBOARD_URI,
           mimeType: RESOURCE_MIME_TYPE,
           text: getDashboardHtml(),
           _meta: { ui: { csp: DASHBOARD_CSP } },
-        },
-      ],
-    }),
+        }],
+      };
+    },
   );
 
   registerAppResource(
@@ -1208,16 +1368,19 @@ export function createServer(options?: { activeTierOverride?: Tier }): McpServer
         },
       },
     },
-    async () => ({
-      contents: [
-        {
+    async () => {
+      if (!isResourceAllowed(activeTier, DASHBOARD_3D_URI)) {
+        return { contents: [{ uri: DASHBOARD_3D_URI, mimeType: RESOURCE_MIME_TYPE, text: `<html><body><h1>プラン制限</h1><p>現在のプラン (${activeTier}) では3Dダッシュボードを利用できません。アップグレードをご検討ください。</p></body></html>` }] };
+      }
+      return {
+        contents: [{
           uri: DASHBOARD_3D_URI,
           mimeType: RESOURCE_MIME_TYPE,
           text: getDashboard3dHtml(),
           _meta: { ui: { csp: DASHBOARD_3D_CSP } },
-        },
-      ],
-    }),
+        }],
+      };
+    },
   );
 
   // ── Prompts ──────────────────────────────────────────────────────────────
@@ -1233,17 +1396,15 @@ export function createServer(options?: { activeTierOverride?: Tier }): McpServer
         .optional()
         .describe('用途（residential/commercial/office/logistics/mixed）'),
     },
-    (args) => ({
-      messages: [
-        {
-          role: 'user' as const,
-          content: {
-            type: 'text' as const,
-            text: `投資判断レポートを作成してください。\n\n都道府県: ${args.prefecture ?? '愛知県'}\nエリア: ${args.area ?? '名古屋市中区'}\n用途: ${args.property_type ?? 'mixed'}\n\n手順:\n1. cross_analyze_real_estate_market で市場を総合分析\n2. assess_property_risk でリスク評価\n3. generate_area_report でレポート生成（format: "markdown"）\n4. 結果を統合して投資判断を提示`,
-          },
+    withPromptTierCheck('investment_report', (args) => ({
+      messages: [{
+        role: 'user' as const,
+        content: {
+          type: 'text' as const,
+          text: `投資判断レポートを作成してください。\n\n都道府県: ${args.prefecture ?? '愛知県'}\nエリア: ${args.area ?? '名古屋市中区'}\n用途: ${args.property_type ?? 'mixed'}\n\n手順:\n1. cross_analyze_real_estate_market で市場を総合分析\n2. assess_property_risk でリスク評価\n3. generate_area_report でレポート生成（format: "markdown"）\n4. 結果を統合して投資判断を提示`,
         },
-      ],
-    }),
+      }],
+    })),
   );
 
   server.prompt(
@@ -1259,17 +1420,15 @@ export function createServer(options?: { activeTierOverride?: Tier }): McpServer
           '店舗種別（convenience/restaurant/cafe/pharmacy/gym/beauty/supermarket/specialty）',
         ),
     },
-    (args) => ({
-      messages: [
-        {
-          role: 'user' as const,
-          content: {
-            type: 'text' as const,
-            text: `店舗出店適地を評価してください。\n\n都道府県: ${args.prefecture ?? '愛知県'}\nエリア: ${args.area ?? '名古屋市中区'}\n店舗種別: ${args.store_type ?? 'restaurant'}\n\n手順:\n1. evaluate_store_location で適地スコア算出\n2. drill_down_local_analysis で周辺の詳細分析\n3. 競合・人流を考慮した総合判断\n4. 推奨アクションを提示`,
-          },
+    withPromptTierCheck('store_location_evaluation', (args) => ({
+      messages: [{
+        role: 'user' as const,
+        content: {
+          type: 'text' as const,
+          text: `店舗出店適地を評価してください。\n\n都道府県: ${args.prefecture ?? '愛知県'}\nエリア: ${args.area ?? '名古屋市中区'}\n店舗種別: ${args.store_type ?? 'restaurant'}\n\n手順:\n1. evaluate_store_location で適地スコア算出\n2. drill_down_local_analysis で周辺の詳細分析\n3. 競合・人流を考慮した総合判断\n4. 推奨アクションを提示`,
         },
-      ],
-    }),
+      }],
+    })),
   );
 
   server.prompt(
@@ -1282,17 +1441,15 @@ export function createServer(options?: { activeTierOverride?: Tier }): McpServer
       ),
       metrics: z.string().optional().describe('比較指標（land_price,population,risk）'),
     },
-    (args) => ({
-      messages: [
-        {
-          role: 'user' as const,
-          content: {
-            type: 'text' as const,
-            text: `都道府県横断比較を行ってください。\n\n対象: ${args.prefectures ?? '愛知県,東京都,大阪府'}\n指標: ${args.metrics ?? 'land_price,population,risk'}\n\n手順:\n1. compare_prefectures で一括比較\n2. 各指標のランキングを分析\n3. 投資先として有望な県を推奨\n4. リスクと機会を整理`,
-          },
+    withPromptTierCheck('prefecture_comparison', (args) => ({
+      messages: [{
+        role: 'user' as const,
+        content: {
+          type: 'text' as const,
+          text: `都道府県横断比較を行ってください。\n\n対象: ${args.prefectures ?? '愛知県,東京都,大阪府'}\n指標: ${args.metrics ?? 'land_price,population,risk'}\n\n手順:\n1. compare_prefectures で一括比較\n2. 各指標のランキングを分析\n3. 投資先として有望な県を推奨\n4. リスクと機会を整理`,
         },
-      ],
-    }),
+      }],
+    })),
   );
 
   server.prompt(
@@ -1306,24 +1463,22 @@ export function createServer(options?: { activeTierOverride?: Tier }): McpServer
       city: completable(z.string().optional().describe('市区町村'), completeArea),
       horizon: z.string().optional().describe('予測期間（1y/3y/5y）'),
     },
-    ({ prefecture, city, horizon }) => ({
-      messages: [
-        {
-          role: 'user' as const,
-          content: {
-            type: 'text' as const,
-            text: [
-              `地価トレンド予測レポートを生成してください。`,
-              `都道府県: ${prefecture ?? '愛知県'}`,
-              `市区町村: ${city ?? '名古屋市中区'}`,
-              `予測期間: ${horizon ?? '3y'}`,
-              ``,
-              `forecast_land_price_trend ツールでCAGR・トレンド方向・将来予測・投資シグナルを含むMarkdownレポートを出力。`,
-            ].join('\n'),
-          },
+    withPromptTierCheck('land_price_forecast_report', ({ prefecture, city, horizon }) => ({
+      messages: [{
+        role: 'user' as const,
+        content: {
+          type: 'text' as const,
+          text: [
+            `地価トレンド予測レポートを生成してください。`,
+            `都道府県: ${prefecture ?? '愛知県'}`,
+            `市区町村: ${city ?? '名古屋市中区'}`,
+            `予測期間: ${horizon ?? '3y'}`,
+            ``,
+            `forecast_land_price_trend ツールでCAGR・トレンド方向・将来予測・投資シグナルを含むMarkdownレポートを出力。`,
+          ].join('\n'),
         },
-      ],
-    }),
+      }],
+    })),
   );
 
   server.prompt(
@@ -1335,25 +1490,23 @@ export function createServer(options?: { activeTierOverride?: Tier }): McpServer
       scenario: z.string().optional().describe('シナリオ種別'),
       scale: z.string().optional().describe('規模（small/medium/large）'),
     },
-    ({ prefecture, city, scenario, scale }) => ({
-      messages: [
-        {
-          role: 'user' as const,
-          content: {
-            type: 'text' as const,
-            text: [
-              `以下の条件でWhat-Ifシナリオ分析を行ってください。`,
-              `都道府県: ${prefecture ?? '愛知県'}`,
-              `市区町村: ${city ?? '名古屋市中区'}`,
-              `シナリオ: ${scenario ?? 'new_commercial_facility'}`,
-              `規模: ${scale ?? 'medium'}`,
-              ``,
-              `scenario_what_if ツールでベースラインvsシナリオ後の地価・投資スコア・リスク影響を比較しMarkdownで出力。`,
-            ].join('\n'),
-          },
+    withPromptTierCheck('scenario_what_if_analysis', ({ prefecture, city, scenario, scale }) => ({
+      messages: [{
+        role: 'user' as const,
+        content: {
+          type: 'text' as const,
+          text: [
+            `以下の条件でWhat-Ifシナリオ分析を行ってください。`,
+            `都道府県: ${prefecture ?? '愛知県'}`,
+            `市区町村: ${city ?? '名古屋市中区'}`,
+            `シナリオ: ${scenario ?? 'new_commercial_facility'}`,
+            `規模: ${scale ?? 'medium'}`,
+            ``,
+            `scenario_what_if ツールでベースラインvsシナリオ後の地価・投資スコア・リスク影響を比較しMarkdownで出力。`,
+          ].join('\n'),
         },
-      ],
-    }),
+      }],
+    })),
   );
 
   server.prompt(
@@ -1367,24 +1520,22 @@ export function createServer(options?: { activeTierOverride?: Tier }): McpServer
       budget_man_yen: z.string().optional().describe('各エリアの予算（万円、カンマ区切り）'),
       risk_tolerance: z.string().optional().describe('リスク許容度 low/medium/high'),
     },
-    ({ prefectures, budget_man_yen, risk_tolerance }) => ({
-      messages: [
-        {
-          role: 'user' as const,
-          content: {
-            type: 'text' as const,
-            text: [
-              `ポートフォリオ最適化レポートを作成してください。`,
-              `対象都道府県: ${prefectures ?? '東京都,大阪府,埼玉県'}`,
-              `予算(万円): ${budget_man_yen ?? '10000,5000,5000'}`,
-              `リスク許容度: ${risk_tolerance ?? 'medium'}`,
-              ``,
-              `portfolio_optimizer ツールで各エリアのリターン・リスク・推奨配分を算出しMarkdownレポートを生成。`,
-            ].join('\n'),
-          },
+    withPromptTierCheck('portfolio_optimization', ({ prefectures, budget_man_yen, risk_tolerance }) => ({
+      messages: [{
+        role: 'user' as const,
+        content: {
+          type: 'text' as const,
+          text: [
+            `ポートフォリオ最適化レポートを作成してください。`,
+            `対象都道府県: ${prefectures ?? '東京都,大阪府,埼玉県'}`,
+            `予算(万円): ${budget_man_yen ?? '10000,5000,5000'}`,
+            `リスク許容度: ${risk_tolerance ?? 'medium'}`,
+            ``,
+            `portfolio_optimizer ツールで各エリアのリターン・リスク・推奨配分を算出しMarkdownレポートを生成。`,
+          ].join('\n'),
         },
-      ],
-    }),
+      }],
+    })),
   );
 
   server.prompt(
@@ -1491,22 +1642,20 @@ export function createServer(options?: { activeTierOverride?: Tier }): McpServer
         .describe('探索目的'),
       horizon: z.enum(['1y', '3y', '5y']).default('3y').describe('投資期間'),
     },
-    (args) => ({
-      messages: [
-        {
-          role: 'user' as const,
-          content: {
-            type: 'text' as const,
-            text: [
-              'Opportunity Radarを実行してください。',
-              `discover_opportunities(${JSON.stringify({ prefecture: args.prefecture ?? '愛知県', goal: args.goal, horizon: args.horizon, limit: 5, includeMarkdown: true })})`,
-              '',
-              '結果のカードごとに、推奨ツールを使って深掘り分析を行い、総合的な判断材料をまとめてください。',
-            ].join('\n'),
-          },
+    withPromptTierCheck('opportunity_radar', (args) => ({
+      messages: [{
+        role: 'user' as const,
+        content: {
+          type: 'text' as const,
+          text: [
+            'Opportunity Radarを実行してください。',
+            `discover_opportunities(${JSON.stringify({ prefecture: args.prefecture ?? '愛知県', goal: args.goal, horizon: args.horizon, limit: 5, includeMarkdown: true })})`,
+            '',
+            '結果のカードごとに、推奨ツールを使って深掘り分析を行い、総合的な判断材料をまとめてください。',
+          ].join('\n'),
         },
-      ],
-    }),
+      }],
+    })),
   );
 
   server.prompt(
@@ -1518,25 +1667,18 @@ export function createServer(options?: { activeTierOverride?: Tier }): McpServer
       ),
       horizon: z.enum(['3y', '5y', '10y']).default('10y').describe('試算期間'),
     },
-    (args) => ({
-      messages: [
-        {
-          role: 'user' as const,
-          content: {
-            type: 'text' as const,
-            text: [
-              '愛知県将来価値シミュレーターを実行してください。',
-              JSON.stringify({
-                city: args.city,
-                horizon: args.horizon,
-                scenarios: ['all'],
-                includeMarkdown: true,
-              }),
-            ].join('\n'),
-          },
+    withPromptTierCheck('aichi_future_value', (args) => ({
+      messages: [{
+        role: 'user' as const,
+        content: {
+          type: 'text' as const,
+          text: [
+            '愛知県将来価値シミュレーターを実行してください。',
+            JSON.stringify({ city: args.city, horizon: args.horizon, scenarios: ['all'], includeMarkdown: true }),
+          ].join('\n'),
         },
-      ],
-    }),
+      }],
+    })),
   );
 
   server.prompt(
@@ -1547,22 +1689,20 @@ export function createServer(options?: { activeTierOverride?: Tier }): McpServer
       area: completable(z.string().optional().describe('市区町村'), completeArea),
       horizon: z.enum(['1y', '3y', '5y']).default('3y').describe('分析期間'),
     },
-    (args) => ({
-      messages: [
-        {
-          role: 'user' as const,
-          content: {
-            type: 'text' as const,
-            text: [
-              '総合価値スコアレポートを生成してください。',
-              `composite_value_score(${JSON.stringify({ prefecture: args.prefecture ?? '愛知県', area: args.area ?? '名古屋市中区', horizon: args.horizon, includeNarrative: true, includeMarkdown: true })})`,
-              '',
-              '結果の5軸レーダーとTier評価に基づき、投資判断に役立つ総合分析をまとめてください。',
-            ].join('\n'),
-          },
+    withPromptTierCheck('composite_value_report', (args) => ({
+      messages: [{
+        role: 'user' as const,
+        content: {
+          type: 'text' as const,
+          text: [
+            '総合価値スコアレポートを生成してください。',
+            `composite_value_score(${JSON.stringify({ prefecture: args.prefecture ?? '愛知県', area: args.area ?? '名古屋市中区', horizon: args.horizon, includeNarrative: true, includeMarkdown: true })})`,
+            '',
+            '結果の5軸レーダーとTier評価に基づき、投資判断に役立つ総合分析をまとめてください。',
+          ].join('\n'),
         },
-      ],
-    }),
+      }],
+    })),
   );
 
   server.prompt(
@@ -1572,17 +1712,15 @@ export function createServer(options?: { activeTierOverride?: Tier }): McpServer
       prefecture: completable(z.string().optional().describe('都道府県'), completePrefecture),
       area: completable(z.string().optional().describe('市区町村'), completeArea),
     },
-    (args) => ({
-      messages: [
-        {
-          role: 'user' as const,
-          content: {
-            type: 'text' as const,
-            text: `用途地域を確認してください。\nget_zoning_info(${JSON.stringify({ prefecture: args.prefecture ?? '愛知県', area: args.area ?? '名古屋市中区' })})\n\n建蔽率・容積率から何が建てられるか分かりやすくまとめてください。`,
-          },
+    withPromptTierCheck('zoning_check', (args) => ({
+      messages: [{
+        role: 'user' as const,
+        content: {
+          type: 'text' as const,
+          text: `用途地域を確認してください。\nget_zoning_info(${JSON.stringify({ prefecture: args.prefecture ?? '愛知県', area: args.area ?? '名古屋市中区' })})\n\n建蔽率・容積率から何が建てられるか分かりやすくまとめてください。`,
         },
-      ],
-    }),
+      }],
+    })),
   );
 
   server.prompt(
@@ -1592,17 +1730,15 @@ export function createServer(options?: { activeTierOverride?: Tier }): McpServer
       prefecture: completable(z.string().optional().describe('都道府県'), completePrefecture),
       area: completable(z.string().optional().describe('市区町村'), completeArea),
     },
-    (args) => ({
-      messages: [
-        {
-          role: 'user' as const,
-          content: {
-            type: 'text' as const,
-            text: `空き家率を分析してください。\nget_vacancy_stats(${JSON.stringify({ prefecture: args.prefecture ?? '愛知県', area: args.area })})\n\n全国平均との比較と投資への影響を分かりやすくまとめてください。`,
-          },
+    withPromptTierCheck('vacancy_analysis', (args) => ({
+      messages: [{
+        role: 'user' as const,
+        content: {
+          type: 'text' as const,
+          text: `空き家率を分析してください。\nget_vacancy_stats(${JSON.stringify({ prefecture: args.prefecture ?? '愛知県', area: args.area })})\n\n全国平均との比較と投資への影響を分かりやすくまとめてください。`,
         },
-      ],
-    }),
+      }],
+    })),
   );
 
   server.prompt(
@@ -1612,17 +1748,15 @@ export function createServer(options?: { activeTierOverride?: Tier }): McpServer
       prefecture: completable(z.string().optional().describe('都道府県'), completePrefecture),
       area: completable(z.string().optional().describe('市区町村'), completeArea),
     },
-    (args) => ({
-      messages: [
-        {
-          role: 'user' as const,
-          content: {
-            type: 'text' as const,
-            text: `将来人口推計を分析してください。\nget_population_outlook(${JSON.stringify({ prefecture: args.prefecture ?? '愛知県', area: args.area })})\n\n2050年までの人口変動が不動産市場に与える影響を分かりやすくまとめてください。`,
-          },
+    withPromptTierCheck('population_outlook_report', (args) => ({
+      messages: [{
+        role: 'user' as const,
+        content: {
+          type: 'text' as const,
+          text: `将来人口推計を分析してください。\nget_population_outlook(${JSON.stringify({ prefecture: args.prefecture ?? '愛知県', area: args.area })})\n\n2050年までの人口変動が不動産市場に与える影響を分かりやすくまとめてください。`,
         },
-      ],
-    }),
+      }],
+    })),
   );
 
   server.prompt(
@@ -1635,24 +1769,22 @@ export function createServer(options?: { activeTierOverride?: Tier }): McpServer
         .optional()
         .describe('シグナル種別（discount/inheritance_edge/overheated/fair/未指定=全件）'),
     },
-    (args) => ({
-      messages: [
-        {
-          role: 'user' as const,
-          content: {
-            type: 'text' as const,
-            text: [
-              `価格トライアングル分析を実行してください。`,
-              `都道府県: ${args.prefecture ?? '愛知県'}`,
-              args.signal_type ? `シグナル絞り込み: ${args.signal_type}` : '（全シグナル表示）',
-              ``,
-              `detect_arbitrage_signals ツールで路線価・公示地価・取引価格の三角測量を実行し、`,
-              `割安物件候補（discount）・相続有利エリア（inheritance_edge）・市場過熱（overheated）をMarkdownレポートで返してください。`,
-            ].join('\n'),
-          },
+    withPromptTierCheck('arbitrage_scan', (args) => ({
+      messages: [{
+        role: 'user' as const,
+        content: {
+          type: 'text' as const,
+          text: [
+            `価格トライアングル分析を実行してください。`,
+            `都道府県: ${args.prefecture ?? '愛知県'}`,
+            args.signal_type ? `シグナル絞り込み: ${args.signal_type}` : '（全シグナル表示）',
+            ``,
+            `detect_arbitrage_signals ツールで路線価・公示地価・取引価格の三角測量を実行し、`,
+            `割安物件候補（discount）・相続有利エリア（inheritance_edge）・市場過熱（overheated）をMarkdownレポートで返してください。`,
+          ].join('\n'),
         },
-      ],
-    }),
+      }],
+    })),
   );
 
   return server;
