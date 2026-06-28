@@ -103,6 +103,7 @@ app.use((req: Request, res: Response, next: NextFunction) => {
           fontSrc: ["'self'", 'https://cdnjs.cloudflare.com'],
         },
       },
+      frameguard: { action: 'sameorigin' },
     })(req, res, next);
   }
 });
