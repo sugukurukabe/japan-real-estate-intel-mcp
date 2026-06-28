@@ -12,7 +12,7 @@
   "iconUrl": "https://realestate-mcp.jp/assets/logo.svg",
   "privacyPolicyUrl": "https://realestate-mcp.jp/privacy-policy.html",
   "termsOfServiceUrl": "https://realestate-mcp.jp/terms.html",
-  "contactEmail": "support@realestate-mcp.jp",
+  "contactEmail": "support@sugu-kuru.co.jp",
   "auth": {
     "type": "oauth2",
     "authorizationUrl": "https://realestate-mcp.jp/oauth/authorize",
