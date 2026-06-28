@@ -2,7 +2,7 @@
   "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
   "name": "io.github.sugukurukabe/japan-real-estate-intel-mcp",
   "title": "Japan Real Estate Intel",
-  "description": "Japan real estate MCP: land price, risk, foot traffic, renovation. 10 prefectures.",
+  "description": "Japan real estate intelligence: land price, risk, foot traffic, renovation. 10 prefectures.",
   "version": "6.16.0",
   "websiteUrl": "https://realestate-mcp.jp/dashboard.html",
   "repository": {
