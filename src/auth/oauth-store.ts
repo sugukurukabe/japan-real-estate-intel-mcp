@@ -62,7 +62,16 @@ function getDb(): Database.Database {
     CREATE INDEX IF NOT EXISTS idx_access_tokens_expires ON access_tokens(expires_at);
     CREATE INDEX IF NOT EXISTS idx_refresh_tokens_expires ON refresh_tokens(expires_at);
   `);
-  log.info({ path: dbPath }, 'OAuth SQLite store initialized');
+
+  // Seed default static client for Claude/Anthropic directory
+  const defaultClientId = 'anthropic-claude';
+  const redirectUris = JSON.stringify(['https://claude.ai/api/mcp/auth_callback']);
+  _db.prepare(`
+    INSERT OR IGNORE INTO oauth_clients (client_id, client_name, redirect_uris)
+    VALUES (?, ?, ?)
+  `).run(defaultClientId, 'Claude AI Client', redirectUris);
+
+  log.info({ path: dbPath }, 'OAuth SQLite store initialized and default clients seeded');
   return _db;
 }
 

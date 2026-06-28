@@ -6,7 +6,6 @@ WORKDIR /app
 # Copy package files and install all deps (including devDeps for build)
 COPY package.json pnpm-lock.yaml .npmrc ./
 RUN corepack enable && corepack prepare pnpm@latest --activate \
-    && pnpm config set minimum-release-age 0 --location project \
     && pnpm install --frozen-lockfile --ignore-scripts
 
 # Copy source and build
@@ -21,7 +20,6 @@ WORKDIR /app
 # Install production deps only
 COPY package.json pnpm-lock.yaml .npmrc ./
 RUN corepack enable && corepack prepare pnpm@latest --activate \
-    && pnpm config set minimum-release-age 0 --location project \
     && pnpm install --frozen-lockfile --prod --ignore-scripts
 
 # Copy built artifacts and runtime assets
