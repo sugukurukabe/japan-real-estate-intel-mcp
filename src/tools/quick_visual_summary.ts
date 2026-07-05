@@ -6,8 +6,9 @@ import type {
 import { resolvePrefecture, getPrefectureDisplayName } from '../prefecture/resolver.js';
 import { ATTRIBUTION } from '../data/attribution.js';
 
+// 2D/3D/ウィジェットは単一の統合MCP Appリソースに集約されている(v7〜)。
+// 2D/3D/widgets now converge into a single unified MCP App resource (v7+).
 const DASHBOARD_URI = 'ui://japan-real-estate-intel/dashboard';
-const DASHBOARD_3D_URI = 'ui://japan-real-estate-intel/dashboard-3d';
 
 const INTENT_LABEL: Record<QuickVisualSummaryInput['intent'], string> = {
   investment: '投資機会',
@@ -149,7 +150,7 @@ export function quickVisualSummary(input: QuickVisualSummaryInput): QuickVisualS
   const prefDisplay = getPrefectureDisplayName(prefKey);
   const area = input.area ?? `${prefDisplay}全体`;
   const layer = INTENT_LAYER[input.intent];
-  const dashboardUri = input.mode === '3d' ? DASHBOARD_3D_URI : DASHBOARD_URI;
+  const dashboardUri = DASHBOARD_URI;
   const dashboardUrl = buildDashboardUrl(input, prefKey, layer);
   const nextActions = buildNextActions(area, prefDisplay, input.intent);
 

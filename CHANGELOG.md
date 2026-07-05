@@ -1,4 +1,25 @@
 # Changelog
+## [7.0.0] - 2026-07-06
+
+### Added
+
+- **Official MCP Apps SDK integration**: The dashboard now embeds `@modelcontextprotocol/ext-apps` (`^1.7.4`) directly — the custom `ui/mcp-bridge.js` (314 lines) is gone, replaced by the official `App` class / `useApp()` React hook. A `legacyBridgeShim` preserves the `window.__mcpBridge` API for the ported imperative dashboard code.
+- **Unified React + Vite dashboard**: 2D map (Leaflet) and 3D PLATEAU viewer (Three.js) are now a single MCP Apps resource (`ui/dashboard.html`), built from `ui-src/` (React + TypeScript + Vite, `vite-plugin-singlefile`). The separate `ui/dashboard-3d.html` resource and `ui://.../dashboard-3d` URI are removed; switch views in-app via the new 3D toggle button.
+- **Extensible widget registry**: `ui-src/src/widgets/` — a declarative `WidgetConfig` + `AutoWidget`/`WidgetOverlay` system rendering per-tool KPI/list result cards. 12 of 14 `registerAppTool` tools (all except the dashboard-rendering `open_dashboard`/`quick_visual_summary`) now have a dedicated widget.
+- **Bundled runtime dependencies**: Leaflet and Three.js are npm dependencies bundled by Vite instead of CDN `<script>` includes, shrinking the CSP (`DASHBOARD_CSP`) to map-tile/QR domains only.
+- **UI smoke test**: `npm run verify:ui` (`scripts/verify-dashboard-smoke.mjs`) — real headless-Chromium check that React mounts, Leaflet renders, the 3D switch works, and there are no console errors.
+
+### Changed
+
+- `npm run build` now runs `vite build` (via `scripts/build-ui.js`) instead of esbuild for the UI bundle.
+- `src/server.ts`: consolidated `registerAppResource` to a single `ui://japan-real-estate-intel/dashboard` resource and CSP object (previously split 2D/3D).
+- Upgraded `zod` to `^4.4.3` (fixed `z.record()` two-argument call sites and a nested `.default()` typing issue this exposed) and `stripe` to `^22.x` across the codebase.
+- `.agents/AGENTS.md` and `.agents/skills/ui-widget-development/SKILL.md` updated for the new React/Vite build flow and widget-addition convention.
+
+### Removed
+
+- `ui/mcp-bridge.js`, `ui/dashboard-3d.html`, `ui-src/main.ts`, `ui-src/styles.css`, `src/resources/ui_dashboard_3d.ts` — superseded by the unified React app and official SDK.
+
 ## [6.16.0] - 2026-06-28
 
 ### Added

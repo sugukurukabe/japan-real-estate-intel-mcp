@@ -3,9 +3,9 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="日本10都道府県の地価・取引価格・路線価・災害リスク・人流・教育データをクロス分析するダッシュボード。MCP対応。">
+  <meta name="description" content="日本10都道府県の地価・取引価格・路線価・災害リスク・人流・教育データをクロス分析するダッシュボード。MCP Apps対応。">
   <meta property="og:title" content="日本不動産インテリジェンス">
-  <meta property="og:description" content="地価・取引価格・路線価・災害リスク・人口・人流データを融合分析。10都道府県29ツール対応。">
+  <meta property="og:description" content="地価・取引価格・路線価・災害リスク・人口・人流データを融合分析。10都道府県38ツール対応。">
   <meta property="og:image" content="/assets/og-image.png">
   <meta property="og:type" content="website">
   <meta name="twitter:card" content="summary_large_image">
@@ -14,87 +14,9 @@
   <link rel="apple-touch-icon" href="/icons/icon-192.png">
   <link rel="manifest" href="/manifest.webmanifest">
   <meta name="theme-color" content="#0f172a">
-  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-  <!-- CSS_PLACEHOLDER -->
 </head>
 <body>
-  <div id="app">
-    <header id="header">
-      <h1>日本不動産インテリジェンス</h1>
-      <span class="subtitle">地価・取引・災害リスク クロス分析ダッシュボード</span>
-      <div id="offline-indicator" class="offline-indicator" style="display: none;">
-        <span class="offline-dot"></span>
-        <span class="offline-text">現地オフラインモード</span>
-      </div>
-      <div class="header-right-actions" style="margin-left: auto; display: flex; align-items: center; gap: 12px;">
-        <span id="header-tier-indicator" class="header-tier-tag free-tag">FREE プラン</span>
-        <button id="btn-header-upgrade" class="header-upgrade-btn">⚡ Proにアップグレード</button>
-      </div>
-    </header>
-    <div id="main">
-      <div id="mobile-backdrop"></div>
-      <aside id="search-panel"></aside>
-      <div id="map-wrapper">
-        <button id="mobile-filter-toggle" class="mobile-toggle-btn">🔍 フィルター</button>
-        <button id="mobile-insight-toggle" class="mobile-toggle-btn">📊 インサイト</button>
-        <div id="map-container"></div>
-      </div>
-      <aside id="insight-panel"></aside>
-    </div>
-  </div>
-  <!-- JS_PLACEHOLDER -->
-<script>
-/* ── フェードイン遷移 — overlay .visible 付与時にコンテンツに rei-reveal を適用 ── */
-(function reiReveal() {
-  var OVERLAY_CONTENT_MAP = {
-    'report-overlay': 'report-content',
-    'opportunity-overlay': 'opportunity-content',
-  };
-  function applyReveal(overlayId) {
-    var contentId = OVERLAY_CONTENT_MAP[overlayId];
-    if (!contentId) return;
-    var el = document.getElementById(contentId);
-    if (!el) return;
-    el.classList.remove('rei-reveal');
-    void el.offsetWidth;
-    el.classList.add('rei-reveal');
-  }
-  function patchInsightPanel() {
-    var ip = document.getElementById('insight-panel');
-    if (!ip || ip._reiRevealPatched) return;
-    ip._reiRevealPatched = true;
-    var mo = new MutationObserver(function (mutations) {
-      var hasAddedNodes = mutations.some(function (m) { return m.addedNodes.length > 0; });
-      if (!hasAddedNodes) return;
-      ip.classList.remove('rei-reveal');
-      void ip.offsetWidth;
-      ip.classList.add('rei-reveal');
-    });
-    mo.observe(ip, { childList: true, subtree: false });
-  }
-  var overlayObs = new MutationObserver(function (mutations) {
-    mutations.forEach(function (m) {
-      if (m.type !== 'attributes' || m.attributeName !== 'class') return;
-      var el = m.target;
-      if (el.classList && el.classList.contains('visible')) {
-        applyReveal(el.id);
-      }
-    });
-  });
-  function init() {
-    Object.keys(OVERLAY_CONTENT_MAP).forEach(function (id) {
-      var el = document.getElementById(id);
-      if (el) overlayObs.observe(el, { attributes: true });
-    });
-    patchInsightPanel();
-  }
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', init);
-  } else {
-    init();
-  }
-})();
-</script>
+  <div id="root"></div>
+  <script type="module" src="/src/main.tsx"></script>
 </body>
 </html>

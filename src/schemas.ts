@@ -113,7 +113,7 @@ export const CrossAnalyzeOutput = z.object({
     })
     .optional(),
   commercialSummary: z
-    .object({ facilityCountByType: z.record(z.number()), totalGFA: z.number() })
+    .object({ facilityCountByType: z.record(z.string(), z.number()), totalGFA: z.number() })
     .optional(),
   medicalSummary: z
     .object({ facilityCount: z.number(), hospitalCount: z.number(), totalBeds: z.number() })
@@ -840,7 +840,7 @@ export type FreshTransactionSignal = z.infer<typeof FreshTransactionSignal>;
 export const OpportunityUiAction = z.object({
   label: z.string(),
   tool: z.string(),
-  args: z.record(z.unknown()),
+  args: z.record(z.string(), z.unknown()),
 });
 export type OpportunityUiAction = z.infer<typeof OpportunityUiAction>;
 
@@ -970,7 +970,7 @@ export type ContractSupportOutput = z.infer<typeof ContractSupportOutput>;
 export const AssessContractRiskInput = z.object({
   ward: z.string().describe('名古屋市の区名'),
   chochou: z.string().default('').describe('町丁目名'),
-  proposedTerms: z.record(z.unknown()).describe('提案中の契約条項（JSON 形式）'),
+  proposedTerms: z.record(z.string(), z.unknown()).describe('提案中の契約条項（JSON 形式）'),
 });
 export type AssessContractRiskInput = z.infer<typeof AssessContractRiskInput>;
 
@@ -1168,7 +1168,13 @@ export const LeveragedCashflowInput = z.object({
         .default(20)
         .describe('所得税・住民税の簡易限界税率（%）'),
     })
-    .default({})
+    .default({
+      simulationYears: 10,
+      rentGrowthPct: 1,
+      expenseGrowthPct: 1,
+      exitCostPct: 3,
+      marginalTaxRatePct: 20,
+    })
     .describe('10年収支・税務前提'),
   output_mode: outputModeField,
 });
@@ -1268,7 +1274,7 @@ export const ZoningInfoOutput = z.object({
       height_limit: z.number().nullable().describe('高さ制限 (m) — null=制限なし'),
     }),
   ),
-  zoneDistribution: z.record(z.number()).describe('用途地域別の件数分布'),
+  zoneDistribution: z.record(z.string(), z.number()).describe('用途地域別の件数分布'),
   summary: z.string(),
   attribution: z.string(),
 });

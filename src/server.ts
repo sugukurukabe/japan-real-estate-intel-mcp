@@ -98,7 +98,6 @@ import { getLandPriceResource } from './resources/land_price.js';
 import { getFloodResource } from './resources/flood.js';
 import { getPopulationResource } from './resources/population.js';
 import { getDashboardHtml } from './resources/ui_dashboard.js';
-import { getDashboard3dHtml } from './resources/ui_dashboard_3d.js';
 import { ATTRIBUTION } from './data/attribution.js';
 import { formatErrorMessage, isClientError } from './errors.js';
 import { toolLogger } from './logger.js';
@@ -106,19 +105,20 @@ import { checkToolCallBudget, recordToolCall } from './tier-usage.js';
 import { isToolAllowed, isResourceAllowed, isPromptAllowed, resolveTier, type Tier } from './tiers.js';
 import './data-loaders/index.js';
 
+// 統合ダッシュボード(2D地図 + 3D PLATEAUビュー + ツールウィジェット)は単一のMCP Appリソース。
+// Unified dashboard (2D map + 3D PLATEAU view + tool widgets) is a single MCP App resource.
 const DASHBOARD_URI = 'ui://japan-real-estate-intel/dashboard';
-const DASHBOARD_3D_URI = 'ui://japan-real-estate-intel/dashboard-3d';
-const LEAFLET_CDN = 'https://unpkg.com';
 const TILE_CDN = 'https://tile.openstreetmap.org';
+const OSM_SUBDOMAIN_CDN = 'https://*.tile.openstreetmap.org';
 const CARTO_TILE_CDN = 'https://*.basemaps.cartocdn.com';
-const JSDELIVR_CDN = 'https://cdn.jsdelivr.net';
+const QR_API = 'https://api.qrserver.com';
+// Leaflet/Three.jsはnpm依存としてバンドル済み(CDN読込は廃止)。
+// 残るのはランタイムで取得する地図タイル画像とQRコード画像のみ。
+// Leaflet/Three.js are now bundled npm dependencies (CDN loading removed).
+// The only remaining external resources are runtime-fetched map tile images and QR code images.
 const DASHBOARD_CSP = {
-  resourceDomains: [LEAFLET_CDN, 'https://cdnjs.cloudflare.com', CARTO_TILE_CDN, 'https://api.qrserver.com'],
-  connectDomains: [TILE_CDN, 'https://*.tile.openstreetmap.org', CARTO_TILE_CDN],
-};
-const DASHBOARD_3D_CSP = {
-  resourceDomains: [LEAFLET_CDN, 'https://cdnjs.cloudflare.com', JSDELIVR_CDN],
-  connectDomains: [TILE_CDN, 'https://*.tile.openstreetmap.org'],
+  resourceDomains: [TILE_CDN, OSM_SUBDOMAIN_CDN, CARTO_TILE_CDN, QR_API],
+  connectDomains: [TILE_CDN, OSM_SUBDOMAIN_CDN, CARTO_TILE_CDN],
 };
 
 type ToolResult = {
@@ -157,7 +157,7 @@ export function createServer(
 ): McpServer {
   const server = new McpServer({
     name: 'japan-real-estate-intel-mcp',
-    version: '6.16.0',
+    version: '7.0.0',
   });
 
   let activeTier: Tier = 'free';
@@ -516,7 +516,6 @@ export function createServer(
       withErrorHandling('open_dashboard', String(args.prefecture ?? 'aichi'), async () => {
         const input = OpenDashboardInput.parse(args);
         const result = openDashboard(input);
-        const uiUri = result.mode === '3d' ? DASHBOARD_3D_URI : DASHBOARD_URI;
         return {
           content: [
             {
@@ -525,7 +524,7 @@ export function createServer(
             },
           ],
           structuredContent: { ...result, attribution: ATTRIBUTION },
-          _meta: { ui: { resourceUri: uiUri } },
+          _meta: { ui: { resourceUri: DASHBOARD_URI } },
         };
       }),
   );
@@ -551,11 +550,10 @@ export function createServer(
       withErrorHandling('quick_visual_summary', String(args.prefecture ?? '愛知県'), async () => {
         const input = QuickVisualSummaryInput.parse(args);
         const result = quickVisualSummary(input);
-        const uiUri = result.mode === '3d' ? DASHBOARD_3D_URI : DASHBOARD_URI;
         return {
           content: [{ type: 'text' as const, text: result.markdownReport }],
           structuredContent: result as unknown as Record<string, unknown>,
-          _meta: { ui: { resourceUri: uiUri }, 'openai/outputTemplate': uiUri },
+          _meta: { ui: { resourceUri: DASHBOARD_URI }, 'openai/outputTemplate': DASHBOARD_URI },
         };
       }),
   );
@@ -1200,8 +1198,8 @@ export function createServer(
       outputSchema: AuditZoningComplianceOutput.shape,
       annotations: RO,
       _meta: {
-        ui: { resourceUri: DASHBOARD_3D_URI },
-        'openai/outputTemplate': DASHBOARD_3D_URI,
+        ui: { resourceUri: DASHBOARD_URI },
+        'openai/outputTemplate': DASHBOARD_URI,
         'openai/toolInvocation/invoking': '用途制限・斜線制限を監査中…',
         'openai/toolInvocation/invoked': '法的監査が完了しました。',
       },
@@ -1327,11 +1325,11 @@ export function createServer(
 
   registerAppResource(
     server,
-    '不動産ダッシュボード 2D',
+    '不動産ダッシュボード',
     DASHBOARD_URI,
     {
       description:
-        'Real estate intelligence dashboard (2D map, charts, tables). Interactive MCP App. | 不動産インテリジェンスダッシュボード（2Dマップ・チャート・テーブル付き）。MCP App対応。',
+        'Unified real estate intelligence dashboard: 2D map, 3D PLATEAU building view, and per-tool result widgets in a single MCP App (React + official ext-apps SDK). | 2Dマップ・3D PLATEAU建物ビュー・ツール別結果ウィジェットを統合した単一MCP App(React + 公式ext-apps SDK)。',
       _meta: {
         ui: {
           csp: DASHBOARD_CSP,
@@ -1349,35 +1347,6 @@ export function createServer(
           mimeType: RESOURCE_MIME_TYPE,
           text: getDashboardHtml(),
           _meta: { ui: { csp: DASHBOARD_CSP } },
-        }],
-      };
-    },
-  );
-
-  registerAppResource(
-    server,
-    '不動産ダッシュボード 3D',
-    DASHBOARD_3D_URI,
-    {
-      description:
-        'PLATEAU 3D building view dashboard (Three.js). Interactive MCP App. | PLATEAU 3D建物ビューダッシュボード（Three.js）。MCP App対応。',
-      _meta: {
-        ui: {
-          csp: DASHBOARD_3D_CSP,
-          domain: WIDGET_DOMAIN,
-        },
-      },
-    },
-    async () => {
-      if (!isResourceAllowed(activeTier, DASHBOARD_3D_URI)) {
-        return { contents: [{ uri: DASHBOARD_3D_URI, mimeType: RESOURCE_MIME_TYPE, text: `<html><body><h1>プラン制限</h1><p>現在のプラン (${activeTier}) では3Dダッシュボードを利用できません。アップグレードをご検討ください。</p></body></html>` }] };
-      }
-      return {
-        contents: [{
-          uri: DASHBOARD_3D_URI,
-          mimeType: RESOURCE_MIME_TYPE,
-          text: getDashboard3dHtml(),
-          _meta: { ui: { csp: DASHBOARD_3D_CSP } },
         }],
       };
     },

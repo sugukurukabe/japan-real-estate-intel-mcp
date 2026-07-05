@@ -38,7 +38,6 @@ export const TIER_CONFIG: Record<Tier, TierConfig> = {
       'hazard://flood/{prefecture}/{area}',
       'stats://population-trend/{prefecture}/{area}',
       'ui://japan-real-estate-intel/dashboard',
-      'ui://japan-real-estate-intel/dashboard-3d',
     ],
     prompts: ['quick_start_examples'],
     monthlyToolCalls: 50,
@@ -91,7 +90,6 @@ export const TIER_CONFIG: Record<Tier, TierConfig> = {
       'hazard://flood/{prefecture}/{area}',
       'stats://population-trend/{prefecture}/{area}',
       'ui://japan-real-estate-intel/dashboard',
-      'ui://japan-real-estate-intel/dashboard-3d',
     ],
     prompts: [
       'quick_start_examples',

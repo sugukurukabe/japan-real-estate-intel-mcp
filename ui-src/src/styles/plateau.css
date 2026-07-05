@@ -1,0 +1,291 @@
+#plateau-view {
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  background: var(--bg, #0f0f23);
+  color: var(--text, #e4e8f1);
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans JP', sans-serif;
+
+  --bg: #0f0f23;
+  --surface: rgba(26, 31, 46, 0.88);
+  --surface-solid: #1a1f2e;
+  --border: #2d3548;
+  --text: #e4e8f1;
+  --text-muted: #8892a6;
+  --accent: #3b82f6;
+  --accent-hover: #60a5fa;
+  --danger: #ef4444;
+  --warning: #f59e0b;
+  --success: #10b981;
+  --radius: 10px;
+  --office: #6366f1;
+  --commercial: #f59e0b;
+  --residential: #10b981;
+}
+
+[data-theme='light'] #plateau-view {
+  --bg: #f8fafc;
+  --surface: rgba(255, 255, 255, 0.88);
+  --surface-solid: #ffffff;
+  --border: #e2e8f0;
+  --text: #0f172a;
+  --text-muted: #64748b;
+  --accent: #2563eb;
+  --accent-hover: #1d4ed8;
+  --danger: #dc2626;
+  --warning: #d97706;
+  --success: #16a34a;
+}
+
+#plateau-view canvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: block;
+}
+
+#plateau-view #overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 10;
+}
+
+#plateau-view #overlay > * {
+  pointer-events: auto;
+}
+
+#plateau-view #title-bar {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 12px 20px;
+  background: linear-gradient(180deg, var(--bg) 60%, transparent);
+}
+
+#plateau-view #title-bar h1 {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--accent);
+  margin: 0;
+}
+
+#plateau-view #title-bar .subtitle {
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+#plateau-view #back-link {
+  margin-left: auto;
+  font-size: 12px;
+  color: var(--accent);
+  background: transparent;
+  text-decoration: none;
+  padding: 6px 12px;
+  border: 1px solid var(--accent);
+  border-radius: var(--radius);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+#plateau-view #back-link:hover {
+  background: var(--accent);
+  color: #fff;
+}
+
+#plateau-view #time-controls {
+  position: absolute;
+  top: 60px;
+  right: 20px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 8px 12px;
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  backdrop-filter: blur(8px);
+}
+
+#plateau-view #time-controls label {
+  font-size: 12px;
+  color: var(--text-muted);
+  white-space: nowrap;
+}
+
+#plateau-view .time-btn {
+  padding: 5px 12px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--surface-solid);
+  color: var(--text-muted);
+  cursor: pointer;
+  font-size: 12px;
+  transition: all 0.2s;
+}
+
+#plateau-view .time-btn:hover {
+  border-color: var(--accent);
+}
+
+#plateau-view .time-btn.active {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+}
+
+#plateau-view #info-panel {
+  position: absolute;
+  bottom: 20px;
+  left: 20px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 16px;
+  min-width: 260px;
+  max-width: 320px;
+  backdrop-filter: blur(8px);
+}
+
+#plateau-view #info-panel .info-title {
+  font-size: 15px;
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+
+#plateau-view #info-panel .info-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 12px;
+  padding: 3px 0;
+  border-bottom: 1px solid rgba(45, 53, 72, 0.5);
+}
+
+#plateau-view #info-panel .info-row:last-child {
+  border-bottom: none;
+}
+
+#plateau-view .use-badge {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 10px;
+  font-weight: 600;
+}
+
+#plateau-view .use-office { background: rgba(99, 102, 241, 0.2); color: var(--office); }
+#plateau-view .use-commercial { background: rgba(245, 158, 11, 0.2); color: var(--commercial); }
+#plateau-view .use-residential { background: rgba(16, 185, 129, 0.2); color: var(--residential); }
+
+#plateau-view #stats-panel {
+  position: absolute;
+  bottom: 20px;
+  right: 20px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 14px 18px;
+  backdrop-filter: blur(8px);
+}
+
+#plateau-view #stats-panel .stat-title {
+  font-size: 11px;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 6px;
+}
+
+#plateau-view #stats-panel .stat-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 24px;
+  font-size: 12px;
+  padding: 2px 0;
+}
+
+#plateau-view #stats-panel .stat-val {
+  font-weight: 600;
+  color: var(--accent);
+}
+
+#plateau-view #legend {
+  position: absolute;
+  top: 60px;
+  left: 20px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 10px 14px;
+  font-size: 11px;
+  backdrop-filter: blur(8px);
+}
+
+#plateau-view #legend .legend-title {
+  font-weight: 600;
+  margin-bottom: 6px;
+}
+
+#plateau-view .legend-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 3px;
+}
+
+#plateau-view .legend-swatch {
+  width: 14px;
+  height: 14px;
+  border-radius: 3px;
+}
+
+#plateau-view #loading {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 14px;
+  color: var(--text-muted);
+}
+
+#plateau-view #tooltip {
+  position: absolute;
+  background: rgba(15, 15, 35, 0.92);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 6px 10px;
+  font-size: 11px;
+  color: var(--text);
+  pointer-events: none;
+  white-space: nowrap;
+  z-index: 20;
+}
+
+@media (max-width: 768px) {
+  #plateau-view #title-bar { padding: 8px 12px; }
+  #plateau-view #title-bar h1 { font-size: 13px; }
+  #plateau-view #title-bar .subtitle { display: none; }
+  #plateau-view #back-link { font-size: 10px; padding: 4px 8px; }
+  #plateau-view #time-controls { top: 50px; right: 12px; left: 12px; justify-content: center; }
+  #plateau-view #legend {
+    top: 105px;
+    left: 12px;
+    right: 12px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    padding: 8px 12px;
+  }
+  #plateau-view #legend .legend-title { width: 100%; margin-bottom: 2px; }
+  #plateau-view .legend-item { margin-bottom: 0; }
+  #plateau-view #stats-panel { bottom: 12px; left: 12px; right: 12px; padding: 10px 14px; }
+  #plateau-view #info-panel { bottom: 110px; left: 12px; right: 12px; min-width: 0; max-width: none; }
+}

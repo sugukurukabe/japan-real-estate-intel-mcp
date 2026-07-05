@@ -3,16 +3,17 @@
  * Caches core assets for offline / poor-signal use (field mode)
  */
 
-const CACHE_VERSION = 'rei-v6.15.4';
+const CACHE_VERSION = 'rei-v7.0.0';
 const CACHE_STATIC = `${CACHE_VERSION}-static`;
 const CACHE_DATA = `${CACHE_VERSION}-data`;
 
+// v7.0.0〜: 2D/3D/ウィジェットが単一のViteバンドル(dashboard.html、JS/CSSインライン)に
+// 統合されたため、個別の dashboard.css / dashboard.js / mcp-bridge.js / dashboard-3d.html は撤去。
+// As of v7.0.0, 2D/3D/widgets are unified into a single Vite bundle (dashboard.html with
+// inlined JS/CSS), so the separate dashboard.css / dashboard.js / mcp-bridge.js / dashboard-3d.html
+// files have been removed.
 const STATIC_ASSETS = [
   '/dashboard.html',
-  '/dashboard-3d.html',
-  '/dashboard.css',
-  '/dashboard.js',
-  '/mcp-bridge.js',
   '/manifest.webmanifest',
   '/icons/icon-192.png',
   '/icons/icon-512.png',

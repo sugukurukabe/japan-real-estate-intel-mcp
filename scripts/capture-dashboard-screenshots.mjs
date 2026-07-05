@@ -93,11 +93,13 @@ async function main() {
       await p.locator('#area-search').selectOption({ label: '名古屋市中村区' }).catch(() => {});
     });
 
+    // v7.0.0〜: 3Dビューは統合ダッシュボード内の切替ボタン(#btn-switch-3d)から表示する
+    // (旧: 別ページ dashboard-3d.html への遷移)。
     const page3d = await browser.newPage({ viewport: { width: 1280, height: 800 } });
-    await page3d.goto(`http://127.0.0.1:${PORT}/dashboard-3d.html?prefecture=aichi`, {
-      waitUntil: 'networkidle',
-      timeout: 90000,
-    });
+    await page3d.goto(`${base}?prefecture=aichi`, { waitUntil: 'networkidle', timeout: 90000 });
+    await page3d.waitForTimeout(1500);
+    await dismissQuickstart(page3d);
+    await page3d.click('#btn-switch-3d');
     await page3d.waitForTimeout(4000);
     await page3d.screenshot({ path: resolve(OUT, '3d-view.png'), fullPage: false });
     await page3d.close();

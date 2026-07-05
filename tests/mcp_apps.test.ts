@@ -2,7 +2,6 @@ import { describe, it, expect } from 'vitest';
 import { RESOURCE_MIME_TYPE } from '@modelcontextprotocol/ext-apps';
 import { createServer } from '../src/server.js';
 import { getDashboardHtml } from '../src/resources/ui_dashboard.js';
-import { getDashboard3dHtml } from '../src/resources/ui_dashboard_3d.js';
 import {
   CrossAnalyzeInput,
   ForecastLandPriceTrendInput,
@@ -87,17 +86,21 @@ describe('MCP Apps integration', () => {
     expect(summary.outputSchema).toBeDefined();
   });
 
-  it('dashboard HTML includes MCP bridge script', () => {
+  it('audit_zoning_compliance is wired to the unified dashboard resource', () => {
+    const { _registeredTools: tools } = getPrivateRegistries();
+    const zoning = tools.audit_zoning_compliance;
+
+    expect(zoning).toBeDefined();
+    expect((zoning._meta?.ui as { resourceUri?: string })?.resourceUri).toBe(
+      'ui://japan-real-estate-intel/dashboard',
+    );
+  });
+
+  it('unified dashboard HTML embeds the official MCP Apps SDK bridge (via legacy shim)', () => {
     const html = getDashboardHtml();
     expect(html).toContain('__mcpBridge');
     expect(html).toContain('ui/initialize');
-    expect(html).toContain('callServerTool');
-  });
-
-  it('dashboard-3d HTML includes MCP bridge script', () => {
-    const html = getDashboard3dHtml();
-    expect(html).toContain('__mcpBridge');
-    expect(html).toContain('ui/initialize');
+    expect(html).toContain('2026-01-26');
   });
 
   it('dashboard includes scenario panel', () => {
@@ -125,11 +128,12 @@ describe('MCP Apps integration', () => {
     const html = getDashboardHtml();
     expect(html).not.toContain('<!-- JS_PLACEHOLDER -->');
     expect(html).not.toContain('<!-- CSS_PLACEHOLDER -->');
+    expect(html).not.toContain('Dashboard not built');
   });
 
   it('bridge implements postMessage protocol', () => {
     const html = getDashboardHtml();
-    expect(html).toContain('window.parent.postMessage');
+    expect(html).toContain('postMessage(');
     expect(html).toContain('ui/notifications/initialized');
     expect(html).toContain('ui/notifications/tool-result');
     expect(html).toContain('tools/call');
@@ -143,36 +147,30 @@ describe('MCP Apps integration', () => {
     expect(html).toContain('2026-01-26');
   });
 
-  it('registered dashboard resources use MCP App MIME type and CSP metadata', async () => {
+  it('registered dashboard resource uses MCP App MIME type and a minimal, bundled-asset CSP', async () => {
     const { _registeredResources: resources } = getPrivateRegistries();
     const dashboard = resources['ui://japan-real-estate-intel/dashboard'];
-    const dashboard3d = resources['ui://japan-real-estate-intel/dashboard-3d'];
 
+    expect(dashboard).toBeDefined();
+    expect(resources['ui://japan-real-estate-intel/dashboard-3d']).toBeUndefined();
     expect(dashboard.metadata?.mimeType).toBe(RESOURCE_MIME_TYPE);
-    expect(dashboard3d.metadata?.mimeType).toBe(RESOURCE_MIME_TYPE);
     expect(dashboard.metadata?._meta?.ui?.csp?.resourceDomains).toContain(
       'https://*.basemaps.cartocdn.com',
     );
-    expect(dashboard3d.metadata?._meta?.ui?.csp?.resourceDomains).toContain(
+    // Leaflet/Three.js are bundled locally now, so the CDN used to be
+    // required for the 3D viewer must no longer appear in the CSP.
+    expect(dashboard.metadata?._meta?.ui?.csp?.resourceDomains).not.toContain(
       'https://cdn.jsdelivr.net',
     );
 
-    const read2d = await dashboard.readCallback?.(
+    const read = await dashboard.readCallback?.(
       new URL('ui://japan-real-estate-intel/dashboard'),
       {},
     );
-    const read3d = await dashboard3d.readCallback?.(
-      new URL('ui://japan-real-estate-intel/dashboard-3d'),
-      {},
-    );
 
-    expect(read2d?.contents[0].mimeType).toBe(RESOURCE_MIME_TYPE);
-    expect(read2d?.contents[0]._meta?.ui?.csp?.resourceDomains).toContain(
+    expect(read?.contents[0].mimeType).toBe(RESOURCE_MIME_TYPE);
+    expect(read?.contents[0]._meta?.ui?.csp?.resourceDomains).toContain(
       'https://*.basemaps.cartocdn.com',
-    );
-    expect(read3d?.contents[0].mimeType).toBe(RESOURCE_MIME_TYPE);
-    expect(read3d?.contents[0]._meta?.ui?.csp?.resourceDomains).toContain(
-      'https://cdn.jsdelivr.net',
     );
   });
 
