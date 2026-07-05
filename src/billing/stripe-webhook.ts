@@ -52,7 +52,6 @@ export function registerStripeWebhookRoutes(router: Router): void {
   async function getStripe(): Promise<import('stripe').default> {
     if (stripeInstance) return stripeInstance;
     const { default: Stripe } = await import('stripe');
-    // @ts-expect-error - Stripe type resolution in sandboxed environment is stubbed
     stripeInstance = new Stripe(secretKey!);
     return stripeInstance as any;
   }

@@ -1,5 +1,5 @@
-import { build } from 'esbuild';
-import { readFileSync, writeFileSync, mkdirSync, existsSync, copyFileSync } from 'node:fs';
+import { build } from 'vite';
+import { mkdirSync, renameSync, rmSync, existsSync } from 'node:fs';
 import { resolve, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { execFileSync } from 'node:child_process';
@@ -7,6 +7,8 @@ import { createRequire } from 'node:module';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const ROOT = resolve(__dirname, '..');
+const UI_SRC = resolve(ROOT, 'ui-src');
+const UI_OUT = resolve(ROOT, 'ui');
 
 function generatePrefectureData() {
   const require = createRequire(import.meta.url);
@@ -18,51 +20,41 @@ function generatePrefectureData() {
   });
 }
 
+/**
+ * MCP Appsダッシュボード(2D地図・3D PLATEAUビュー・ツールウィジェットを統合した
+ * 単一Reactアプリ)をViteでビルドし、`ui/dashboard.html`として出力する。
+ * JS/CSSは`vite-plugin-singlefile`により単一HTMLにインライン化されるため、
+ * MCP Appsリソースとしてそのまま配信できる(外部CDN依存なし)。
+ *
+ * Builds the MCP Apps dashboard (a single React app unifying the 2D map,
+ * the 3D PLATEAU view, and tool-result widgets) with Vite and emits it as
+ * `ui/dashboard.html`. JS/CSS are inlined into a single HTML file via
+ * `vite-plugin-singlefile`, so it can be served directly as an MCP Apps
+ * resource with no external CDN dependency.
+ */
 async function main() {
-  mkdirSync(resolve(ROOT, 'ui'), { recursive: true });
+  mkdirSync(UI_OUT, { recursive: true });
 
   generatePrefectureData();
 
-  await build({
-    entryPoints: [resolve(ROOT, 'ui-src', 'main.ts')],
-    bundle: true,
-    minify: true,
-    outfile: resolve(ROOT, 'ui', 'dashboard.js'),
-    format: 'iife',
-    target: 'es2020',
-    define: {
-      'process.env.NODE_ENV': '"production"',
-    },
-  });
+  await build({ configFile: resolve(UI_SRC, 'vite.config.ts') });
 
-  await build({
-    entryPoints: [resolve(ROOT, 'ui-src', 'styles.css')],
-    bundle: true,
-    minify: true,
-    outfile: resolve(ROOT, 'ui', 'dashboard.css'),
-  });
-
-  const htmlTemplate = readFileSync(resolve(ROOT, 'ui-src', 'index.html'), 'utf-8');
-  /** Break out of HTML script if bundle ever contained this sequence (defense in depth). */
-  const js = readFileSync(resolve(ROOT, 'ui', 'dashboard.js'), 'utf-8').replace(/<\/script/gi, '<\\/script');
-  const css = readFileSync(resolve(ROOT, 'ui', 'dashboard.css'), 'utf-8');
-
-  // Use replacer functions so minified JS tokens like `$&`, `$'`, `$$` in css/js are not treated as
-  // String.replace substitution patterns (would corrupt the bundle inside <script>).
-  const inlined = htmlTemplate
-    .replace('<!-- CSS_PLACEHOLDER -->', () => `<style>${css}</style>`)
-    .replace('<!-- JS_PLACEHOLDER -->', () => `<script>${js}</script>`);
-
-  writeFileSync(resolve(ROOT, 'ui', 'dashboard.html'), inlined, 'utf-8');
-  console.log('UI built → ui/dashboard.html');
-
-  const dashboard3dSrc = resolve(ROOT, 'ui-src', 'dashboard-3d.html');
-  if (existsSync(dashboard3dSrc)) {
-    copyFileSync(dashboard3dSrc, resolve(ROOT, 'ui', 'dashboard-3d.html'));
-    console.log('UI copied → ui/dashboard-3d.html (from ui-src)');
-  } else {
-    console.log('ℹ  ui/dashboard-3d.html already exists (standalone)');
+  // vite-plugin-singlefile inlines JS/CSS but still emits the built HTML as
+  // `index.html` (matching the `input` entry name) — rename to the URI the
+  // MCP resource handlers expect.
+  const builtIndex = resolve(UI_OUT, 'index.html');
+  const dashboardHtml = resolve(UI_OUT, 'dashboard.html');
+  if (existsSync(builtIndex)) {
+    renameSync(builtIndex, dashboardHtml);
   }
+  // vite-plugin-singlefile inlines all assets; the now-empty assets directory
+  // (and any stray chunk files) can be removed.
+  const assetsDir = resolve(UI_OUT, 'dashboard-assets');
+  if (existsSync(assetsDir)) {
+    rmSync(assetsDir, { recursive: true, force: true });
+  }
+
+  console.log('UI built → ui/dashboard.html (2D + 3D + widgets, single MCP Apps bundle)');
 }
 
 main().catch((err) => {

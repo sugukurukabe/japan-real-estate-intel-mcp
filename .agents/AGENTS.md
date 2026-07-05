@@ -16,10 +16,24 @@
 - **Tiers & Quotas**: Respect the tool access control tiers (`free`, `pro`, `enterprise`) defined in `src/tiers.ts`. Verify if the tool requires pro/enterprise settings before implementation.
 
 ## 3. UI Dashboard & Widgets
-- **No Direct HTML Editing**: The frontend resides in `ui-src/index.html`, `ui-src/main.ts`, and `ui-src/styles.css`.
-- **Inline Compilation**: When modifying the UI, always run `npm run build` to compile, minify, and inline the resources into `ui/dashboard.html`. Do not edit `ui/dashboard.html` or `ui/dashboard-3d.html` directly.
-- **Content Security Policy (CSP)**: If you load external resources (e.g. Leaflet CDN, OpenStreetMap tiles, new CSS fonts), ensure the domain is added to `DASHBOARD_CSP` or `DASHBOARD_3D_CSP` in `src/server.ts`.
-- **App spec compliance**: Follow the latest Model Context Protocol Apps UI specification for components.
+- **React + Vite, single bundle**: The frontend is a React + TypeScript app in `ui-src/src/`
+  (see `.agents/skills/ui-widget-development/SKILL.md`), built with Vite into one MCP Apps
+  resource: `ui/dashboard.html`. There is no separate 3D page — 2D map (`MapView`), 3D PLATEAU
+  viewer (`PlateauView`), and per-tool result widgets (`ui-src/src/widgets/`) are all views of
+  one unified app.
+- **No Direct HTML/dist Editing**: Never edit `ui/dashboard.html` directly — it's a generated
+  build artifact. Edit files under `ui-src/src/` and run `npm run build:ui`.
+- **Official MCP Apps SDK**: The UI talks to the host via `@modelcontextprotocol/ext-apps`
+  (`useApp()` / the `App` class), not a hand-rolled bridge. The legacy `window.__mcpBridge`
+  API is preserved only as a compatibility shim (`ui-src/src/bridge/legacyBridgeShim.ts`) for
+  the ported imperative 2D/3D code — new code should prefer `useApp()` directly.
+- **No CDN dependencies**: Leaflet, Three.js, React, etc. must be npm dependencies bundled by
+  Vite (`vite-plugin-singlefile`), not loaded from a CDN `<script>` tag.
+- **Content Security Policy (CSP)**: If you call a new external domain from the browser (e.g.
+  a new map tile provider or API), add it to the single `DASHBOARD_CSP` object in
+  `src/server.ts` (`resourceDomains` / `connectDomains`).
+- **App spec compliance**: Follow the latest Model Context Protocol Apps UI specification for
+  components.
 
 ## 4. Database & External APIs
 - **SQL Injection Prevention**: When querying SQLite database using `better-sqlite3`, always use parameterized queries with `?` or named parameters (e.g. `db.prepare('SELECT * FROM ... WHERE id = ?').all(id)`). Never interpolate strings directly into SQL queries.

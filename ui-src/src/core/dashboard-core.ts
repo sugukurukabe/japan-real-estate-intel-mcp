@@ -1,18 +1,8 @@
-import prefecturesJson from './generated-prefectures.json';
-
-declare const L: any;
-
-interface McpAppBridge {
-  callServerTool?: (name: string, args?: Record<string, unknown>) => Promise<unknown>;
-  updateContext?: (data: Record<string, unknown>) => Promise<unknown>;
-  sendMessage?: (text: string) => Promise<unknown>;
-}
-
-declare global {
-  interface Window {
-    __mcpBridge?: McpAppBridge;
-  }
-}
+import L from 'leaflet';
+import 'leaflet/dist/leaflet.css';
+import '../styles/dashboard.css';
+import prefecturesJson from '../../generated-prefectures.json';
+import type {} from '../bridge/legacyBridgeShim';
 
 interface PriceBucket { min: number; color: string; label: string }
 
@@ -34,7 +24,7 @@ interface PrefectureConfig {
   medical: Record<string, { facilities: number; hospitals: number; beds: number }>;
 }
 
-const PREFECTURES: Record<string, PrefectureConfig> = prefecturesJson as Record<string, PrefectureConfig>;
+const PREFECTURES: Record<string, PrefectureConfig> = prefecturesJson as unknown as Record<string, PrefectureConfig>;
 
 
 let map: any;
@@ -96,7 +86,7 @@ const STORE_LAYERS = [
   'corporate_density', 'plateau_3d', 'shadow', 'school_district',
 ];
 
-function getDefaultLayerForMode(mode: 'investment' | 'store'): string {
+function getDefaultLayerForMode(mode: 'investment' | 'store' | 'cashflow'): string {
   return mode === 'store' ? 'human_flow' : 'land_price';
 }
 
@@ -2405,7 +2395,7 @@ function initReportOverlay() {
   });
 }
 
-function init() {
+export function initDashboardCore(): void {
   // Hide header if embedded in iframe (MCP Apps host style match)
   if (window.parent !== window) {
     document.body.classList.add('in-iframe');
@@ -3282,8 +3272,6 @@ function showUpgradeGateway(): void {
   });
 }
 
-if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', init);
-} else {
-  init();
-}
+// Bootstrap is now driven by React (see views/MapView.tsx) instead of an
+// implicit DOMContentLoaded listener, so the DOM ids this module queries are
+// guaranteed to exist (rendered by MapView) before initDashboardCore() runs.
