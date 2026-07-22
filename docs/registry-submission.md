@@ -80,7 +80,7 @@ This uses GitHub OAuth to verify ownership of the `sugukurukabe` account.
 
 After each release:
 
-1. Update `version_detail.version` and `packages[0].version` in `server.json`
+1. Update the top-level `version` and `packages[0].version` in `server.json` (both must match `package.json`)
 2. Keep the `tools` array in sync with what `createServer()` registers (same names, no extras). CI runs `tests/server_json_tools_sync.test.ts` so `pnpm test` must pass before you publish metadata.
 3. Run `mcp-publisher publish --file server.json`
 
