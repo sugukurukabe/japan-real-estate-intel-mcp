@@ -50,7 +50,7 @@
 
 | 項目 | URL / 備考 |
 |------|------------|
-| ライセンス | MIT |
+| ライセンス | AGPL-3.0-only |
 | 本番 | https://realestate-mcp.jp |
 | プライバシー | https://realestate-mcp.jp/privacy-policy.html |
 | 利用規約 | https://realestate-mcp.jp/terms.html |
