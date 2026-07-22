@@ -1,6 +1,7 @@
 {
   "name": "@sugukuru/japan-real-estate-intel-mcp",
   "version": "8.0.0",
+  "packageManager": "pnpm@10.33.0",
   "description": "Japan real estate intelligence connector - land price, transactions, population, zoning, vacancy, population projection, disaster risk, human flow, education, corporate location cross-analysis (10 prefectures: Aichi/Tokyo/Osaka/Fukuoka/Hokkaido/Kanagawa/Kyoto/Hyogo/Chiba/Saitama)",
   "type": "module",
   "main": "dist/index.js",
@@ -75,13 +76,6 @@
   },
   "engines": {
     "node": ">=20.0.0"
-  },
-  "pnpm": {
-    "onlyBuiltDependencies": [
-      "esbuild",
-      "better-sqlite3",
-      "sharp"
-    ]
   },
   "dependencies": {
     "@google-cloud/bigquery": "^8.3.1",

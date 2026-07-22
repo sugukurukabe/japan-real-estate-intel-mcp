@@ -60,6 +60,57 @@ portability and dashboard export UX improvements.
   `ContractSupportOutput` / `ComparePrefecturesOutput` — superseded by the
   `resource_link` artifacts above.
 
+### Fixed
+
+- **Critical: `better-sqlite3` never actually worked inside the production
+  Docker image.** Found while smoke-testing the artifact/resource_link work
+  above against a real local `docker compose build && up`. Two independent
+  bugs, both silent because `/health` still returns `200 ok` either way:
+  1. `Dockerfile` ran `pnpm install --ignore-scripts` in both stages. pnpm
+     already blocks build scripts by default for everything *except* the
+     packages listed in `onlyBuiltDependencies` — but that allowlist lived in
+     `package.json`'s `pnpm` field, a location pnpm 10 silently stopped
+     reading (moved to `pnpm-workspace.yaml`). With no allowlist in effect,
+     `--ignore-scripts` blocked `better-sqlite3`'s native binding build
+     entirely, so every `new Database(...)` call threw
+     `Could not locate the bindings file`.
+  2. Even after fixing (1), the `rei_sqlite` named volume mounted at `/app/db`
+     was created root-owned by Docker, but the container runs as the
+     non-root `rei` user — so every SQLite open failed with
+     `SQLITE_CANTOPEN`. Fixed by pre-creating `/app/db` and `/app/artifacts`
+     with `chown rei:rei` in the image *before* `USER rei`, so Docker seeds
+     the named volume's initial ownership from the image instead of root.
+  - Practical impact before this fix: Free-tier monthly quota silently
+    degraded to in-memory-only (resets on every restart, `tier-usage.ts` has
+    a `try/catch` fallback), while `generate_area_report` (PDF),
+    `compare_prefectures` (xlsx), `portfolio_optimizer` (CSV),
+    `generate_contract_support_package`/`assess_contract_risk` (Markdown),
+    and license-key storage/lookup would all throw uncaught in a container
+    built before this fix.
+  - Added `pnpm-workspace.yaml` (correct home for `onlyBuiltDependencies`),
+    pinned `"packageManager": "pnpm@10.33.0"` in `package.json` so
+    `corepack prepare --activate` can't silently pick up a future pnpm major
+    that moves this setting again, and added a verification snippet to
+    [docs/deploy.md](docs/deploy.md).
+- `.env.example` had two outright wrong variable names that silently no-op:
+  `GEMINI_API_KEY` (code reads `GOOGLE_GENAI_API_KEY`) and `MLIT_BASE_URL`
+  (code reads `MLIT_API_KEY`; no `MLIT_BASE_URL` exists anywhere in the
+  codebase). Fixed, and added the several env vars the code reads that were
+  missing from `.env.example` entirely (`API_KEY`, `GOOGLE_MAPS_API_KEY`,
+  `GCP_PROJECT`/`BQ_DATASET`, `LICENSE_DB_PATH`, `LICENSE_SERVER_URL`,
+  `USAGE_DB_PATH`, `LOG_LEVEL`, `SENTRY_DSN`, rate-limit/session vars).
+- `docker-compose.yml` now sets `ARTIFACT_DIR=/app/db/artifacts` explicitly —
+  without it, generated artifact files lived at the default `/app/artifacts`,
+  which isn't a mounted volume, while their SQLite metadata (already under
+  `/app/db` by default) would survive a container recreation pointing at
+  files that no longer exist.
+- `scripts/capture-dashboard-screenshots.mjs` referenced `#area-search` and a
+  fixed 800ms wait, both stale since the v7.0.0 React rewrite (the real
+  selector is `#area-select`; the comparison-prefecture `<select>` is created
+  asynchronously). `renovation-mode.png`/`comparison-mode.png` had silently
+  been duplicating other screenshots since that rewrite. Fixed and
+  regenerated all 5 screenshots.
+
 ## [7.0.0] - 2026-07-06
 
 ### Added

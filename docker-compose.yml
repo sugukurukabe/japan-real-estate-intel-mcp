@@ -11,6 +11,14 @@ services:
       PORT: "3100"
       HOST: "0.0.0.0"
       NODE_ENV: production
+      # Keep generated report/CSV/Excel artifact files inside the rei_sqlite
+      # volume, alongside artifacts.sqlite (whose default path, /app/db/artifacts.sqlite,
+      # is already inside that volume). Without this, ARTIFACT_DIR defaults to
+      # /app/artifacts — not mounted — so a container recreation would leave
+      # artifacts.sqlite pointing at files that no longer exist (getArtifact()
+      # degrades to a 404 rather than erroring, but outstanding resource_links
+      # would break before their TTL expires).
+      ARTIFACT_DIR: /app/db/artifacts
     expose:
       - "3100"
     volumes:

@@ -1,0 +1,11 @@
+# pnpm 10+ moved `onlyBuiltDependencies` out of package.json's `pnpm` field
+# into this file (package.json still lists it for readers, but pnpm silently
+# ignores it there — see https://pnpm.io/settings). This allowlist matters
+# because Dockerfile installs with `--ignore-scripts` for supply-chain safety;
+# without this file, better-sqlite3's native binding never gets built inside
+# the image, and every SQLite-backed feature (usage quota, license storage,
+# downloadable artifacts) throws at runtime while /health still reports "ok".
+onlyBuiltDependencies:
+  - better-sqlite3
+  - esbuild
+  - sharp
