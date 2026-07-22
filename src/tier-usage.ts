@@ -4,7 +4,7 @@
  */
 import type { Tier } from './tiers.js';
 import { TIER_CONFIG } from './tiers.js';
-import { getClientUsage, incrementClientUsage, resetClientUsageForTests } from './auth/oauth-store.js';
+import { getClientUsage, incrementClientUsage, resetClientUsageForTests } from './usage-store.js';
 import { moduleLogger } from './logger.js';
 
 const log = moduleLogger('quota_store');

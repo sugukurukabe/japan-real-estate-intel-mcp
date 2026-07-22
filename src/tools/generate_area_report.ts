@@ -105,10 +105,16 @@ function buildLinearImpactSection(area: string): string {
 
 export type ProgressFn = (progress: number, total: number, message?: string) => void;
 
+/**
+ * `pdfBase64` is intentionally NOT part of the `GenerateReportOutput` Zod
+ * schema (and therefore never lands in `structuredContent`/model transcript):
+ * src/server.ts pulls it off this wider return type, persists it via
+ * src/artifacts.ts, and returns a `resource_link` content block instead.
+ */
 export async function generateAreaReport(
   input: GenerateReportInput,
   onProgress?: ProgressFn,
-): Promise<GenerateReportOutput> {
+): Promise<GenerateReportOutput & { pdfBase64?: string }> {
   const prefKey = resolvePrefecture(input.prefecture);
   const loader = getLoader(prefKey);
   const notify = onProgress ?? (() => {});

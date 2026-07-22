@@ -3,7 +3,7 @@
  * Caches core assets for offline / poor-signal use (field mode)
  */
 
-const CACHE_VERSION = 'rei-v7.0.0';
+const CACHE_VERSION = 'rei-v8.0.0';
 const CACHE_STATIC = `${CACHE_VERSION}-static`;
 const CACHE_DATA = `${CACHE_VERSION}-data`;
 

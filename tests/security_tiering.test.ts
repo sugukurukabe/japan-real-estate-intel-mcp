@@ -4,21 +4,17 @@ import http from 'node:http';
 import { mkdtempSync, rmSync } from 'node:fs';
 import { join } from 'node:path';
 import { tmpdir } from 'node:os';
-import Database from 'better-sqlite3';
 import { createServer } from '../src/server.js';
-import { createHash } from 'node:crypto';
-
 
 let tmpDir: string;
 let app: any;
 let httpServer: any;
-let db: Database.Database;
 
 beforeAll(async () => {
-  // Setup temp OAuth database for HTTP tests
-  tmpDir = mkdtempSync(join(tmpdir(), 'oauth-sec-test-'));
-  process.env.OAUTH_DB_PATH = join(tmpDir, 'sec-oauth.sqlite');
-  
+  // Setup temp usage-quota database for HTTP tests
+  tmpDir = mkdtempSync(join(tmpdir(), 'usage-sec-test-'));
+  process.env.USAGE_DB_PATH = join(tmpDir, 'sec-usage.sqlite');
+
   // Set default tier to free
   process.env.DEFAULT_TIER = 'free';
 
@@ -26,19 +22,13 @@ beforeAll(async () => {
   app = mod.app;
   // Start server manually for integration test on port 3100
   httpServer = app.listen(3100, '0.0.0.0');
-  
-  // Connect to the same OAuth DB
-  db = new Database(process.env.OAUTH_DB_PATH);
 }, 30000);
 
 afterAll(async () => {
   if (httpServer) {
     httpServer.close();
   }
-  if (db) {
-    db.close();
-  }
-  const { closeDb } = await import('../src/auth/oauth-store.js');
+  const { closeDb } = await import('../src/usage-store.js');
   closeDb();
   try { rmSync(tmpDir, { recursive: true, force: true }); } catch { /* ignore */ }
 });
@@ -141,34 +131,14 @@ describe('HTTP Server Dynamic Session Tiering', () => {
     expect(res.text).toContain('利用できません');
   });
 
-  it('HTTP POST /mcp with Pro OAuth token unlocks generate_area_report', async () => {
-    // 1. Calculate PKCE challenge dynamically
-    const verifier = 'my-pkce-verifier-1234567890';
-    const challenge = createHash('sha256').update(verifier).digest('base64url');
-
-    // 2. Initialize DB and exchange token using the official oauth-store API
-    const { registerClient, createAuthCode, exchangeCode } = await import('../src/auth/oauth-store.js');
-    const { clientId } = registerClient('Validate App', ['http://localhost:3000/callback']);
-    const code = createAuthCode({
-      clientId,
-      codeChallenge: challenge,
-      scope: 'read',
-      redirectUri: 'http://localhost:3000/callback',
-    });
-    const exchangeResult = exchangeCode(code, verifier, 'http://localhost:3000/callback');
-    expect(exchangeResult).not.toBeNull();
-    const token = exchangeResult!.accessToken;
-    
-    // 3. Set the token's tier to 'pro' in the database
-    const tokenHash = createHash('sha256').update(token).digest('hex');
-    db.prepare("UPDATE access_tokens SET tier = 'pro' WHERE token_hash = ?").run(tokenHash);
-
-    // 4. Initialize dynamic session using the Pro bearer token
+  it('HTTP POST /mcp with a valid Pro license key (X-License-Key) unlocks generate_area_report', async () => {
+    // 1. Initialize a dynamic session, presenting a test-only Pro license key.
+    //    (test-valid-pro-key is only honored when NODE_ENV !== 'production'.)
     const initRes = await request(app)
       .post('/mcp')
       .set('Content-Type', 'application/json')
       .set('Accept', 'application/json, text/event-stream')
-      .set('Authorization', `Bearer ${token}`)
+      .set('X-License-Key', 'test-valid-pro-key')
       .send({
         jsonrpc: '2.0',
         method: 'initialize',
@@ -184,7 +154,7 @@ describe('HTTP Server Dynamic Session Tiering', () => {
     const sessionId = initRes.headers['mcp-session-id'];
     expect(sessionId).toBeDefined();
 
-    // 5. Call pro-only tool using this Pro session
+    // 2. Call pro-only tool using this Pro session
     const res = await request(app)
       .post('/mcp')
       .set('Content-Type', 'application/json')
@@ -208,6 +178,27 @@ describe('HTTP Server Dynamic Session Tiering', () => {
 });
 
 describe('Security Fixes Audit Verification', () => {
+  it('a forged, unsigned _licenseKey does not unlock Pro/Enterprise (getRequestTier bypass closed)', async () => {
+    const server = createServer('free');
+    const tools = (server as any)._registeredTools;
+
+    // Forge an unsigned Base64 JSON payload of the exact shape the old
+    // getRequestTier() implementation trusted without any signature check.
+    const forged = Buffer.from(
+      JSON.stringify({ tier: 'enterprise', expiresAt: '2099-01-01T00:00:00Z' }),
+    ).toString('base64');
+
+    const tool = tools['portfolio_optimizer'];
+    expect(tool).toBeDefined();
+    const result = await tool.handler({
+      areas: ['aichi:名古屋市中区', 'tokyo:新宿区'],
+      budget_man_yen: 10000,
+      goal: 'balanced',
+      _licenseKey: forged,
+    });
+    expect(result.content[0].text).toContain('利用できません');
+  });
+
   it('GET /mcp with query parameter sessionId successfully connects', async () => {
     // 1. Initialize session to get a valid sessionId
     const initRes = await request(app)

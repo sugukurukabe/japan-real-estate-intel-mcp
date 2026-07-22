@@ -5,8 +5,7 @@ Japan Real Estate Intel MCP を Claude Desktop で使う手順です。
 ## 前提
 
 - Claude Desktop (最新版)
-- MCP サーバーがデプロイ済み (HTTPS)
-- API Key を取得済み
+- **アカウント登録・API Key は不要**（`https://realestate-mcp.jp` は認証不要の公開コネクタ。Pro/Enterprise機能のみ任意で`X-License-Key`ヘッダーで解放）
 
 ## 接続設定
 
@@ -17,16 +16,15 @@ Japan Real Estate Intel MCP を Claude Desktop で使う手順です。
 {
   "mcpServers": {
     "japan-real-estate-intel": {
-      "url": "https://realestate-mcp.jp/mcp",
-      "headers": {
-        "X-Api-Key": "your-api-key-here"
-      }
+      "url": "https://realestate-mcp.jp/mcp"
     }
   }
 }
 ```
 
 保存後、Claude Desktop を再起動してください。
+
+> **Pro/Enterprise機能を試す場合のみ**: 上記の`"url"`の隣に`"headers": { "X-License-Key": "your-license-key" }`を追加してください（Stripe決済後に発行されるECDSA署名済みキー）。`X-Api-Key`とは別物です — `X-Api-Key`は自己ホスト時の任意アクセス制限用で、`https://realestate-mcp.jp`の公開インスタンスでは設定されていません。
 
 ## 接続確認
 
@@ -103,6 +101,7 @@ Claude が `generate_area_report` を呼び出します。
 | 症状 | 対処 |
 |---|---|
 | ツールが表示されない | claude_desktop_config.json のパスと JSON 構文を確認 |
-| 401 エラー | API Key が正しいか確認 |
+| 401 エラー | 自己ホストで `API_KEY` を設定している場合のみ発生。`https://realestate-mcp.jp` の公開インスタンスでは認証不要のため通常は起きない |
 | ダッシュボードが開かない | MCP Apps 対応の Claude Desktop 最新版か確認 |
 | プログレスバーが出ない | PDF レポート生成時のみ表示される |
+| Pro/Enterprise限定ツールが拒否される | Free ティアの上限。`X-License-Key` ヘッダーでライセンスキーを設定するとPro/Enterprise機能が解放される |

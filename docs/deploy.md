@@ -101,10 +101,36 @@ docker compose restart mcp
 docker compose exec mcp npm run data:fetch:all
 ```
 
-**OAuth SQLite** (`rei_sqlite:/app/db`):
-- `oauth.sqlite` は初回アクセス時に自動生成されます
-- バックアップ: `docker compose cp mcp:/app/db/oauth.sqlite ./backup/`
-- 復元: `docker compose cp ./backup/oauth.sqlite mcp:/app/db/`
+**Usage / License SQLite** (`rei_sqlite:/app/db`):
+- `usage.sqlite`（Free プランの月間クォータ）と `licenses.sqlite`（Stripe 発行ライセンス）は初回アクセス時に自動生成されます
+- バックアップ: `docker compose cp mcp:/app/db/usage.sqlite ./backup/` / `docker compose cp mcp:/app/db/licenses.sqlite ./backup/`
+- 復元: `docker compose cp ./backup/usage.sqlite mcp:/app/db/` / `docker compose cp ./backup/licenses.sqlite mcp:/app/db/`
+
+> 本サーバーは Claude 公式ディレクトリ向けに **認証不要（authless）の公開コネクタ** として動作します。OAuth は実装していません。Pro/Enterprise 機能はライセンスキー（`X-License-Key` ヘッダー、ECDSA署名オフライン検証）で解放します。
+
+**生成アーティファクト（レポート/CSV/Excel）** (`rei_sqlite:/app/db/artifacts`):
+- `generate_area_report` の PDF、`compare_prefectures` の Excel、`portfolio_optimizer` の CSV などは `resource_link` として返却され、`ARTIFACT_TTL_HOURS`（デフォルト24時間）で自動削除されます
+- `docker-compose.yml` は `ARTIFACT_DIR=/app/db/artifacts` を明示的に設定し、メタデータDB（`artifacts.sqlite`、デフォルトで既に `/app/db` 配下）とファイル本体を同じ named volume 内に置くことで、コンテナ再作成後もTTL内のダウンロードリンクが有効なままになるようにしています
+- バックアップ/復元は不要（TTLで自然に消える設計）ですが、必要な場合は `docker compose cp mcp:/app/db/artifacts ./backup/`
+
+## デプロイ後の動作確認（SQLite依存機能）
+
+v8.0.0で、`Dockerfile`の`--ignore-scripts`と名前付きボリュームの権限設定に起因して、**`better-sqlite3`のネイティブバインディングが本番イメージ内で一度も正しく動作していなかった**不具合を修正しました（`/health`は正常応答するため見逃されやすい）。影響範囲: Freeプランの月間クォータ・ライセンスキー保存・ダウンロードアーティファクト（PDF/CSV/Excel）が全て失敗（クォータ/使用量は無言でメモリのみにフォールバックし、アーティファクト系は例外を投げてツールエラーになる）。
+
+デプロイ後、以下で実際に直っているか確認してください:
+
+```bash
+# コンテナがrei（非root）ユーザーで/app/dbに書き込めるか確認
+docker compose exec mcp node -e "
+const { saveArtifact, getArtifact } = require('./dist/artifacts.js');
+const m = saveArtifact('smoke test', 'smoke.txt', 'text/plain');
+console.log(getArtifact(m.id)?.data.toString('utf-8'));
+"
+# 'smoke test' が出力されればOK。SqliteError や bindings エラーが出た場合は
+# pnpm-workspace.yaml の onlyBuiltDependencies と Dockerfile の chown 済みか確認。
+
+docker compose exec mcp ls -la /app/db/   # rei:rei 所有であること（root:root ならボリューム再作成が必要）
+```
 
 ## アップデート
 

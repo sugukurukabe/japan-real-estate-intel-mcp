@@ -6,6 +6,9 @@
  */
 import { describe, it, expect, beforeAll, afterAll } from 'vitest';
 import request from 'supertest';
+import { mkdtempSync, rmSync } from 'node:fs';
+import { join } from 'node:path';
+import { tmpdir } from 'node:os';
 
 // Dynamically import so environment variables can be set before module load
 let app: Express.Application;
@@ -66,6 +69,25 @@ describe('POST /mcp', () => {
       .set('Accept', 'application/json, text/event-stream')
       .send({ invalid: true });
     expect(res.status).toBeLessThan(500);
+  });
+
+  it('rejects an unknown/expired mcp-session-id instead of silently starting a new session', async () => {
+    const res = await request(app)
+      .post('/mcp')
+      .set('Content-Type', 'application/json')
+      .set('Accept', 'application/json, text/event-stream')
+      .set('mcp-session-id', 'nonexistent-session-id')
+      .send({
+        jsonrpc: '2.0',
+        method: 'tools/list',
+        id: 1,
+        params: {},
+      });
+    expect(res.status).toBe(404);
+    expect(res.body.error).toBeDefined();
+    // The response must not carry a fresh session ID — that would mean a
+    // new session was silently created under the client's stale header.
+    expect(res.headers['mcp-session-id']).toBeUndefined();
   });
 });
 
@@ -132,6 +154,55 @@ describe('Static UI assets (public, no auth)', () => {
   it('GET /sw.js returns 200', async () => {
     const res = await request(app).get('/sw.js');
     expect(res.status).toBe(200);
+  });
+});
+
+describe('GET /artifacts/:id/:filename', () => {
+  let artifactTmpDir: string;
+  let seededId: string;
+  const seededFilename = 'test_report.csv';
+
+  beforeAll(async () => {
+    artifactTmpDir = mkdtempSync(join(tmpdir(), 'http-artifacts-test-'));
+    process.env.ARTIFACT_DIR = join(artifactTmpDir, 'artifacts');
+    process.env.ARTIFACT_DB_PATH = join(artifactTmpDir, 'artifacts.sqlite');
+    const { saveArtifact } = await import('../src/artifacts.js');
+    const meta = saveArtifact('col1,col2\n1,2\n', seededFilename, 'text/csv');
+    seededId = meta.id;
+  });
+
+  afterAll(async () => {
+    const { closeDb } = await import('../src/artifacts.js');
+    closeDb();
+    try {
+      rmSync(artifactTmpDir, { recursive: true, force: true });
+    } catch {
+      /* ignore */
+    }
+    delete process.env.ARTIFACT_DIR;
+    delete process.env.ARTIFACT_DB_PATH;
+  });
+
+  it('serves a stored artifact with a Content-Disposition attachment header', async () => {
+    const res = await request(app).get(`/artifacts/${seededId}/${seededFilename}`);
+    expect(res.status).toBe(200);
+    expect(res.headers['content-type']).toMatch(/text\/csv/);
+    expect(res.headers['content-disposition']).toContain(
+      `attachment; filename="${seededFilename}"`,
+    );
+    expect(res.text).toContain('col1,col2');
+  });
+
+  it('returns 404 for an unknown (but well-formed) ID', async () => {
+    const res = await request(app).get(
+      '/artifacts/00000000-0000-0000-0000-000000000000/x.txt',
+    );
+    expect(res.status).toBe(404);
+  });
+
+  it('returns 404 for a malformed (non-UUID) ID rather than touching the filesystem', async () => {
+    const res = await request(app).get('/artifacts/not-a-uuid/x.txt');
+    expect(res.status).toBe(404);
   });
 });
 

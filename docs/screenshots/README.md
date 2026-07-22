@@ -7,8 +7,8 @@ Place screenshots and demo GIFs here for README and directory submissions.
 | File | Description | Size |
 |------|-------------|------|
 | `dashboard-overview.png` | Main dashboard with map and panels | 1280x800 recommended |
-| `renovation-mode.png` | Renovation yield analysis view | 1280x800 |
-| `contract-mode.png` | Contract support package view | 1280x800 |
+| `investment-mode.png` | 不動産投資 (investment) mode — area drilldown with investment score | 1280x800 |
+| `cashflow-mode.png` | 融資CF (leveraged cashflow) mode — loan/rent/vacancy 10-year simulation | 1280x800 |
 | `comparison-mode.png` | Prefecture comparison with radar chart | 1280x800 |
 | `3d-view.png` | PLATEAU 3D building visualization | 1280x800 |
 | `demo-preview.webm` | ~45s dashboard demo (`pnpm run demo:record`) | 1280x800 |

@@ -21,6 +21,9 @@ export interface TierConfig {
 
 export const TIER_CONFIG: Record<Tier, TierConfig> = {
   free: {
+    // Kept in sync with the 3 demo prompts in docs/free-demo-prompts.md and the
+    // README "Try in 60 seconds" example — those are the tools an anonymous
+    // Claude directory reviewer will actually try, so they must work on Free.
     tools: [
       'search',
       'fetch',
@@ -32,6 +35,10 @@ export const TIER_CONFIG: Record<Tier, TierConfig> = {
       'open_dashboard',
       'assess_exterior_visuals',
       'analyze_commute_accessibility',
+      'discover_opportunities',
+      'get_future_timeline',
+      'detect_arbitrage_signals',
+      'forecast_land_price_trend',
     ],
     resources: [
       'realestate://land-price/{prefecture}/{area}',

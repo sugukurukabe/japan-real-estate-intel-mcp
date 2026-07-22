@@ -4,9 +4,9 @@
 
 | Version | Supported |
 |---------|-----------|
-| 6.x     | ✅ Active  |
-| 5.x     | ⚠️ Bug fixes only |
-| < 5.0   | ❌ No longer supported |
+| 8.x     | ✅ Active  |
+| 7.x     | ⚠️ Bug fixes only |
+| < 7.0   | ❌ No longer supported |
 
 ## Reporting a Vulnerability
 
@@ -24,7 +24,7 @@
 
 ### Option 2: Direct Contact
 
-Email: **See the [GitHub profile](https://github.com/sugukurukabe) for contact info**
+Email: **info@sugu-kuru.co.jp**
 
 ### What to Expect
 
@@ -40,7 +40,7 @@ Email: **See the [GitHub profile](https://github.com/sugukurukabe) for contact i
 This project is an **MCP server** that serves as a data analysis layer over Japanese public datasets. The following areas are in scope:
 
 - Remote code execution via MCP tool inputs
-- Authentication bypass for the HTTP mode (`API_KEY` header)
+- Authentication bypass for the HTTP mode (`API_KEY` header) or the license-key tier system
 - Injection vulnerabilities (CSV/JSON parsing, file path traversal)
 - Dependency vulnerabilities in production dependencies
 
@@ -49,15 +49,22 @@ This project is an **MCP server** that serves as a data analysis layer over Japa
 - Issues requiring physical access to the server
 - Denial-of-service via legitimate tool calls (rate limiting is in place)
 
-## Security Measures in Place (v6.15.2)
+## Security Measures in Place (v8.0.0)
 
+- **Authless public connector**: no OAuth is implemented or advertised; all endpoints work without an account. Pro/Enterprise tiers are unlocked exclusively via ECDSA-signed license keys, verified offline (`verifyLicenseKeyOffline`) — unsigned/self-crafted payloads are rejected.
+- License-key signing private key is never committed to the repository; `scripts/generate-license.js` / `src/auth/generate-license.ts` load it exclusively from the `LICENSE_PRIVATE_KEY_PEM` environment variable at runtime
 - `helmet` middleware sets security-related HTTP headers on all HTTP mode responses
 - Request body limited to 10 MB (`express.json({ limit: '10mb' })`)
-- Optional `API_KEY` authentication for HTTP mode
+- Optional `API_KEY` authentication for HTTP mode (self-hosted deployments only — the public directory endpoint runs authless)
+- `/metrics` (Prometheus) always requires a key (`METRICS_KEY` or `API_KEY`); returns 404 when neither is configured, independent of the general `API_KEY` gate
+- An unknown/expired `mcp-session-id` on `POST /mcp` returns an explicit 404 rather than silently minting a new session under the client's stale header
+- Free-tier monthly quota is keyed per MCP session ID, not client IP — avoids collapsing all users into one bucket behind a shared proxy/hosted-connector egress IP
+- License-key delivery (`GET /api/license`) is looked up by the opaque, single-use Stripe Checkout `session_id` (never by email), preventing license-key disclosure via email enumeration
 - Session timeout (30 minutes idle)
 - Graceful shutdown on SIGTERM/SIGINT
 - Weekly CodeQL analysis via GitHub Actions
 - `npm audit --prod` in CI pipeline
+- CI `docker-sqlite-smoke` job verifies the non-root container user can read/write the persisted SQLite volume (usage quota, license storage, artifacts) on every build
 
 ## Known Limitations
 

@@ -31,13 +31,13 @@
   </div>
 
   <div id="en" class="section active">
-    <p class="effective">Effective: 2026-05-11 &mdash; Last updated: 2026-05-11</p>
+    <p class="effective">Effective: 2026-05-11 &mdash; Last updated: 2026-07-22 (v8.0.0)</p>
 
     <h2>1. Acceptance</h2>
     <p>By using Japan Real Estate Intel MCP ("Service"), you agree to these Terms. If you do not agree, do not use the Service.</p>
 
     <h2>2. Service Description</h2>
-    <p>The Service provides Japanese real estate market data analysis via the Model Context Protocol (MCP). It aggregates publicly available government data (land prices, population, hazard maps, etc.) for informational purposes only.</p>
+    <p>The Service provides Japanese real estate market data analysis via the Model Context Protocol (MCP). It aggregates publicly available government data (land prices, population, hazard maps, etc.) for informational purposes only. The public endpoint (<code>https://realestate-mcp.jp/mcp</code>) is an authless connector — no account or login is required for Free-tier tools. Some tools additionally generate downloadable artifacts (PDF/Excel/CSV/Markdown reports), which are retained temporarily and then deleted (see <a href="privacy-policy.html">Privacy Policy</a>).</p>
 
     <h2>3. No Investment Advice</h2>
     <p><strong>The Service does NOT constitute financial, legal, or investment advice.</strong> All data, scores, forecasts, and recommendations are for informational and research purposes only. Always consult qualified professionals before making investment or real estate decisions.</p>
@@ -53,19 +53,19 @@
     <p>You agree not to:</p>
     <ul>
       <li>Use the Service for illegal activities</li>
-      <li>Attempt to bypass rate limits or authentication</li>
+      <li>Attempt to bypass rate limits or license-key verification</li>
       <li>Redistribute raw API responses commercially without attribution</li>
       <li>Use the Service in a way that harms its availability for others</li>
     </ul>
 
-    <h2>6. Service Tiers</h2>
-    <p>Access may be tiered (free/pro/enterprise). Tier-restricted tools return an upgrade prompt. We reserve the right to modify tier configurations.</p>
+    <h2>6. Service Tiers &amp; License Keys</h2>
+    <p>Access is tiered (Free / Pro / Enterprise). The Free tier requires no account and is subject to a monthly tool-call limit. Pro and Enterprise tools are unlocked by a cryptographically signed license key, issued after payment (via Stripe Checkout) and supplied via the <code>X-License-Key</code> header or <code>_licenseKey</code> tool argument — never via the connector's own authentication mechanism. Tier-restricted tools return an upgrade prompt when called without a valid key. We reserve the right to modify tier configurations.</p>
 
     <h2>7. Availability</h2>
     <p>We provide the Service on an "as-is" basis. We do not guarantee uptime and may modify or discontinue the Service at any time.</p>
 
     <h2>8. Intellectual Property</h2>
-    <p>The Service source code is licensed under MIT. Government data used is public domain or under government open license terms. Analysis results generated for you are yours to use.</p>
+    <p>The Service source code is licensed under AGPL-3.0-only (see <a href="https://github.com/sugukurukabe/japan-real-estate-intel-mcp/blob/main/LICENSE">LICENSE</a>). Government data used is public domain or under government open license terms. Analysis results and generated artifacts (reports, exports) produced for you are yours to use.</p>
 
     <h2>9. Limitation of Liability</h2>
     <p>To the maximum extent permitted by law, we shall not be liable for any indirect, incidental, or consequential damages arising from your use of the Service, including but not limited to investment losses.</p>
@@ -78,13 +78,13 @@
   </div>
 
   <div id="ja" class="section">
-    <p class="effective">発効日: 2026-05-11 &mdash; 最終更新: 2026-05-11</p>
+    <p class="effective">発効日: 2026-05-11 &mdash; 最終更新: 2026-07-22（v8.0.0）</p>
 
     <h2>1. 同意</h2>
     <p>Japan Real Estate Intel MCP（以下「本サービス」）をご利用になることで、本利用規約に同意したものとみなされます。同意いただけない場合は、本サービスをご利用にならないでください。</p>
 
     <h2>2. サービスの説明</h2>
-    <p>本サービスは、Model Context Protocol（MCP）を通じて日本の不動産市場データ分析を提供します。政府公開データ（地価・人口・ハザードマップ等）を集約し、情報提供のみを目的としています。</p>
+    <p>本サービスは、Model Context Protocol（MCP）を通じて日本の不動産市場データ分析を提供します。政府公開データ（地価・人口・ハザードマップ等）を集約し、情報提供のみを目的としています。公開エンドポイント（<code>https://realestate-mcp.jp/mcp</code>）は認証不要（authless）のコネクタであり、Freeティアのツール利用にアカウント登録は不要です。一部のツールはダウンロード可能なアーティファクト（PDF・Excel・CSV・Markdownレポート）を生成しますが、これらは一定期間後に削除されます（詳細は<a href="privacy-policy.html">プライバシーポリシー</a>参照）。</p>
 
     <h2>3. 投資助言の非該当性</h2>
     <p><strong>本サービスは、金融・法律・投資に関する助言を構成するものではありません。</strong>すべてのデータ、スコア、予測、および推奨事項は情報提供および調査目的のみです。投資や不動産に関する意思決定を行う前に、必ず有資格の専門家にご相談ください。</p>
@@ -99,19 +99,19 @@
     <h2>5. 利用上の禁止事項</h2>
     <ul>
       <li>違法行為への利用</li>
-      <li>レート制限や認証の回避の試み</li>
+      <li>レート制限やライセンスキー検証の回避の試み</li>
       <li>帰属表示なしのAPIレスポンスの商業的再配布</li>
       <li>他のユーザーへのサービス提供を妨げる利用</li>
     </ul>
 
-    <h2>6. サービスティア</h2>
-    <p>アクセスはティア（free/pro/enterprise）で制限される場合があります。制限されたツールはアップグレードを促すメッセージを返します。ティア構成は変更される場合があります。</p>
+    <h2>6. サービスティア・ライセンスキー</h2>
+    <p>アクセスはティア（Free / Pro / Enterprise）で分かれます。Freeティアはアカウント登録不要で、月間ツール呼び出し数に上限があります。Pro・Enterprise限定ツールは、決済（Stripe Checkout）後に発行される署名済みライセンスキーを<code>X-License-Key</code>ヘッダーまたは<code>_licenseKey</code>ツール引数で渡すことで解放されます（コネクタ自体の認証機構とは無関係です）。有効なキーなしで制限付きツールを呼び出すとアップグレードを促すメッセージが返されます。ティア構成は変更される場合があります。</p>
 
     <h2>7. 可用性</h2>
     <p>本サービスは「現状のまま」で提供されます。稼働時間を保証せず、随時変更または中止する場合があります。</p>
 
     <h2>8. 知的財産権</h2>
-    <p>本サービスのソースコードはMITライセンスの下で提供されます。使用する政府データはパブリックドメインまたは政府オープンライセンスに基づきます。生成された分析結果はご自由にお使いいただけます。</p>
+    <p>本サービスのソースコードは AGPL-3.0-only の下で提供されます（<a href="https://github.com/sugukurukabe/japan-real-estate-intel-mcp/blob/main/LICENSE">LICENSE</a>参照）。使用する政府データはパブリックドメインまたは政府オープンライセンスに基づきます。生成された分析結果・アーティファクト（レポート・エクスポート）はご自由にお使いいただけます。</p>
 
     <h2>9. 責任の制限</h2>
     <p>法律で許容される最大限の範囲において、本サービスの利用から生じる間接的、付随的、または結果的損害（投資損失を含むがこれに限定されない）について、当方は一切の責任を負いません。</p>

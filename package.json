@@ -1,6 +1,7 @@
 {
   "name": "@sugukuru/japan-real-estate-intel-mcp",
-  "version": "7.0.0",
+  "version": "8.0.0",
+  "packageManager": "pnpm@10.33.0",
   "description": "Japan real estate intelligence connector - land price, transactions, population, zoning, vacancy, population projection, disaster risk, human flow, education, corporate location cross-analysis (10 prefectures: Aichi/Tokyo/Osaka/Fukuoka/Hokkaido/Kanagawa/Kyoto/Hyogo/Chiba/Saitama)",
   "type": "module",
   "main": "dist/index.js",
@@ -40,6 +41,7 @@
     "fonts:download": "node scripts/download-fonts.js",
     "screenshots": "node scripts/capture-dashboard-screenshots.mjs",
     "verify:ui": "node scripts/verify-dashboard-smoke.mjs",
+    "license:generate": "node scripts/generate-license.js",
     "demo:record": "node scripts/record-demo-video.mjs",
     "prepublishOnly": "npm run build"
   },
@@ -75,13 +77,6 @@
   },
   "engines": {
     "node": ">=20.0.0"
-  },
-  "pnpm": {
-    "onlyBuiltDependencies": [
-      "esbuild",
-      "better-sqlite3",
-      "sharp"
-    ]
   },
   "dependencies": {
     "@google-cloud/bigquery": "^8.3.1",
@@ -126,6 +121,7 @@
     "esbuild": "^0.28.0",
     "eslint": "^10.7.0",
     "eslint-config-prettier": "^10.1.8",
+    "html-to-image": "^1.11.13",
     "leaflet": "^1.9.4",
     "playwright": "1.61.1",
     "prettier": "^3.9.5",

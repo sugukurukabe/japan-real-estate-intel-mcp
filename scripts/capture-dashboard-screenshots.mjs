@@ -77,20 +77,25 @@ async function main() {
 
     await capture(page, 'comparison-mode.png', `${base}?prefecture=aichi`, async (p) => {
       await p.click('#comparison-toggle');
-      await p.waitForTimeout(800);
       const sel = p.locator('#comparison-pref-select');
+      await sel.waitFor({ state: 'attached', timeout: 5000 }).catch(() => {});
       if (await sel.count()) {
         await sel.selectOption('tokyo');
       }
     });
 
-    await capture(page, 'renovation-mode.png', `${base}?prefecture=aichi&mode=investment`, async (p) => {
-      await p.locator('#area-search').selectOption({ label: '名古屋市中村区' }).catch(() => {});
+    // "投資スコア" analysis with an area selected — dashboard's default mode
+    // (data-mode="investment", label "不動産投資"). Filename must match what's
+    // actually shown: this is NOT a renovation-yield-specific view.
+    await capture(page, 'investment-mode.png', `${base}?prefecture=aichi&mode=investment`, async (p) => {
+      await p.locator('#area-select').selectOption({ label: '名古屋市中村区' }).catch(() => {});
     });
 
-    await capture(page, 'contract-mode.png', `${base}?prefecture=aichi`, async (p) => {
+    // Leveraged-cashflow mode (data-mode="cashflow", label "融資CF") — NOT the
+    // contract support package feature, despite the similar-sounding old name.
+    await capture(page, 'cashflow-mode.png', `${base}?prefecture=aichi`, async (p) => {
       await p.click('button[data-mode="cashflow"]');
-      await p.locator('#area-search').selectOption({ label: '名古屋市中村区' }).catch(() => {});
+      await p.locator('#area-select').selectOption({ label: '名古屋市中村区' }).catch(() => {});
     });
 
     // v7.0.0〜: 3Dビューは統合ダッシュボード内の切替ボタン(#btn-switch-3d)から表示する

@@ -1,4 +1,157 @@
 # Changelog
+## [8.0.0] - 2026-07-22
+
+Directory-readiness pass: fixes every blocker identified in an audit against the
+Claude Connectors Directory / MCP spec review guidelines, plus artifact
+portability and dashboard export UX improvements.
+
+### Added
+
+- **Downloadable artifacts** (`src/artifacts.ts`): `generate_area_report` (PDF),
+  `compare_prefectures` (Excel), `portfolio_optimizer` (CSV),
+  `generate_contract_support_package` and `assess_contract_risk` (Markdown) now
+  persist their generated file to a TTL-cleaned store and return an MCP
+  `resource_link` content block instead of embedding raw Base64 in
+  `structuredContent`. Served via `GET /artifacts/:id/:filename` (HTTP
+  transport) or the new `artifact://{id}` MCP resource (stdio transport).
+- **Dashboard CSV/PNG export**: every tool-result widget card now has an export
+  toolbar. Uses the official `@modelcontextprotocol/ext-apps` `app.downloadFile()`
+  (host-mediated, works inside the sandboxed MCP Apps iframe) with a
+  Blob+`<a>` fallback for standalone use; PNG capture via `html-to-image`
+  (fully client-side, no new CSP domain).
+- `outputSchema` declared for all 28 tools that previously returned
+  `structuredContent` without one, closing a class of silent output-validation
+  gaps; verified end-to-end against the real MCP dispatch path in
+  `tests/output_schemas.test.ts`.
+- `idempotentHint: true` and a human-readable `title` on all 38 tools
+  (required for the Claude Connectors Directory listing).
+
+### Changed
+
+- **BREAKING: OAuth removed.** This server is now an authless public connector
+  — no account, token, or client registration required for any tool. The
+  previous OAuth 2.1 implementation had an auto-approving authorization
+  endpoint and no real Dynamic Client Registration, which would not have
+  passed directory review; rather than finishing it, we removed it in favor
+  of the model the directory actually recommends for a public data connector.
+  Pro/Enterprise tiers are unlocked exclusively via ECDSA-signed license keys
+  (`X-License-Key` header / `_licenseKey` tool argument), verified offline.
+- `getRequestTier()` no longer trusts an unsigned Base64 JSON `_licenseKey`
+  payload — every key now goes through `verifyLicenseKeyOffline()`.
+- `GET /api/license` now looks up a license by the opaque, single-use Stripe
+  Checkout `session_id` instead of email, closing a license-key-disclosure-via-
+  email-enumeration path.
+- `GET /metrics` is gated by its own `METRICS_KEY` (or `API_KEY`) independent
+  of the general auth middleware, and 404s (rather than 401s) when no key is
+  configured, so a public instance doesn't advertise the endpoint's existence.
+- Free-tier monthly quota is now keyed by MCP session ID instead of client IP —
+  avoids collapsing every anonymous user behind a hosted connector's shared
+  egress IP into one quota bucket.
+- Free tier tool list realigned with the 3 demo prompts in
+  `docs/free-demo-prompts.md` / the README quickstart, so a directory reviewer
+  running the advertised examples doesn't hit a tier wall.
+
+### Removed
+
+- `src/auth/oauth-routes.ts`, `src/auth/oauth-store.ts`, `tests/oauth.test.ts`,
+  and the `auth` block in `server.json`. Client-usage/quota tracking (the only
+  non-OAuth logic in `oauth-store.ts`) moved to `src/usage-store.ts`.
+- `pdfBase64` / `xlsxBase64` fields from `GenerateReportOutput` /
+  `ContractSupportOutput` / `ComparePrefecturesOutput` — superseded by the
+  `resource_link` artifacts above.
+
+### Fixed
+
+- **Critical: `better-sqlite3` never actually worked inside the production
+  Docker image.** Found while smoke-testing the artifact/resource_link work
+  above against a real local `docker compose build && up`. Two independent
+  bugs, both silent because `/health` still returns `200 ok` either way:
+  1. `Dockerfile` ran `pnpm install --ignore-scripts` in both stages. pnpm
+     already blocks build scripts by default for everything *except* the
+     packages listed in `onlyBuiltDependencies` — but that allowlist lived in
+     `package.json`'s `pnpm` field, a location pnpm 10 silently stopped
+     reading (moved to `pnpm-workspace.yaml`). With no allowlist in effect,
+     `--ignore-scripts` blocked `better-sqlite3`'s native binding build
+     entirely, so every `new Database(...)` call threw
+     `Could not locate the bindings file`.
+  2. Even after fixing (1), the `rei_sqlite` named volume mounted at `/app/db`
+     was created root-owned by Docker, but the container runs as the
+     non-root `rei` user — so every SQLite open failed with
+     `SQLITE_CANTOPEN`. Fixed by pre-creating `/app/db` and `/app/artifacts`
+     with `chown rei:rei` in the image *before* `USER rei`, so Docker seeds
+     the named volume's initial ownership from the image instead of root.
+  - Practical impact before this fix: Free-tier monthly quota silently
+    degraded to in-memory-only (resets on every restart, `tier-usage.ts` has
+    a `try/catch` fallback), while `generate_area_report` (PDF),
+    `compare_prefectures` (xlsx), `portfolio_optimizer` (CSV),
+    `generate_contract_support_package`/`assess_contract_risk` (Markdown),
+    and license-key storage/lookup would all throw uncaught in a container
+    built before this fix.
+  - Added `pnpm-workspace.yaml` (correct home for `onlyBuiltDependencies`),
+    pinned `"packageManager": "pnpm@10.33.0"` in `package.json` so
+    `corepack prepare --activate` can't silently pick up a future pnpm major
+    that moves this setting again, and added a verification snippet to
+    [docs/deploy.md](docs/deploy.md).
+- `.env.example` had two outright wrong variable names that silently no-op:
+  `GEMINI_API_KEY` (code reads `GOOGLE_GENAI_API_KEY`) and `MLIT_BASE_URL`
+  (code reads `MLIT_API_KEY`; no `MLIT_BASE_URL` exists anywhere in the
+  codebase). Fixed, and added the several env vars the code reads that were
+  missing from `.env.example` entirely (`API_KEY`, `GOOGLE_MAPS_API_KEY`,
+  `GCP_PROJECT`/`BQ_DATASET`, `LICENSE_DB_PATH`, `LICENSE_SERVER_URL`,
+  `USAGE_DB_PATH`, `LOG_LEVEL`, `SENTRY_DSN`, rate-limit/session vars).
+- `docker-compose.yml` now sets `ARTIFACT_DIR=/app/db/artifacts` explicitly —
+  without it, generated artifact files lived at the default `/app/artifacts`,
+  which isn't a mounted volume, while their SQLite metadata (already under
+  `/app/db` by default) would survive a container recreation pointing at
+  files that no longer exist.
+- `scripts/capture-dashboard-screenshots.mjs` referenced `#area-search` and a
+  fixed 800ms wait, both stale since the v7.0.0 React rewrite (the real
+  selector is `#area-select`; the comparison-prefecture `<select>` is created
+  asynchronously). `renovation-mode.png`/`comparison-mode.png` had silently
+  been duplicating other screenshots since that rewrite. Fixed and
+  regenerated all 5 screenshots.
+- The regenerated screenshots exposed a second, longer-standing bug: two files
+  were captured correctly but named for features they don't show —
+  `renovation-mode.png` was actually the default 不動産投資 (investment) mode
+  with an area selected (no renovation-yield UI exists), and
+  `contract-mode.png` was actually 融資CF (leveraged-cashflow) mode, not the
+  contract support package. Renamed to `investment-mode.png` /
+  `cashflow-mode.png` (and updated every doc reference) so the filenames match
+  what a directory reviewer will actually see. Also removed 5 unreferenced,
+  stale duplicate screenshots under `assets/` (dead weight with the same
+  wrong names, kept `docs/screenshots/` as the single source of truth).
+- `scripts/generate-license.js` had a private ECDSA key hardcoded directly in
+  the file — harmless in practice (it only validated against the
+  `NODE_ENV=test` public key in `src/auth/license.ts`, not the production
+  key), but still a bad pattern in a public repository and a functional trap:
+  following the (correct) instructions in
+  `docs/claude-connectors-submission.md` / `docs/listing-checklist.md` to run
+  this script for a reviewer demo key would have produced a key that fails
+  verification against the real production server. Rewrote it as a thin CLI
+  over the existing, already-correct `generateSignedLicenseKey()`
+  (`src/auth/generate-license.ts`), which has always loaded the key
+  exclusively from `LICENSE_PRIVATE_KEY_PEM` at runtime. Added
+  `pnpm license:generate` and corrected `docs/licensing-and-stripe-integration.md`'s
+  example, which had already documented the env-var-only pattern correctly.
+- The "はじめての方へ" README section's 6 chat-paste examples included 5
+  Pro-only tools (`predict_corporate_demand`, `assess_family_friendly_score`,
+  `portfolio_optimizer`, `scenario_what_if`, `evaluate_store_location`)
+  presented as if they ran on Free — the same class of bug already fixed in
+  `quick_start_examples` (`src/server.ts`) earlier in this release. Replaced
+  with the 3 tools that are actually on Free
+  (`discover_opportunities`/`forecast_land_price_trend`/`detect_arbitrage_signals`),
+  with Pro/Enterprise examples clearly labeled as needing a license key.
+- Legal/marketing docs still said "MIT" or referenced OAuth/33-tools after the
+  v8.0.0 AGPL-3.0-only + authless changes: `ui/terms.html`,
+  `ui/privacy-policy.html` (also added the missing Google Maps Platform
+  disclosure and artifact-retention period), `SECURITY.md` (supported-versions
+  table), and `docs/competitive-positioning.md`.
+- README's ~500-line block of superseded per-version "What's New" sections
+  (v2.0–v5.1) contained a wrong, single-prefecture capability matrix that
+  contradicted the current 10-prefecture Key Features section above it.
+  Condensed into one historical-context paragraph pointing to
+  `docs/implementation-story.md` and `CHANGELOG.md`.
+
 ## [7.0.0] - 2026-07-06
 
 ### Added

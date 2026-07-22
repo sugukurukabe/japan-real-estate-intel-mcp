@@ -68,3 +68,75 @@ jobs:
           else
             echo "No coverage-summary.json found" >> $GITHUB_STEP_SUMMARY
           fi
+
+  # Builds the actual production Dockerfile and exercises the SQLite-backed
+  # code paths (usage quota, license storage, artifacts) inside the real
+  # container as a non-root user. This is the only check that would have
+  # caught the v8.0.0 bug where --ignore-scripts silently broke
+  # better-sqlite3's native binding and a root-owned named volume caused
+  # SQLITE_CANTOPEN — both invisible to `pnpm test` (which never builds this
+  # Dockerfile) and to /health (which returns 200 either way). See
+  # docs/deploy.md "デプロイ後の動作確認" and the v8.0.0 CHANGELOG entry.
+  docker-sqlite-smoke:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Build production image
+        run: docker build -t japan-re-intel-mcp:ci .
+
+      - name: Run container as a non-root user with a real named volume
+        run: |
+          docker volume create rei_sqlite_ci
+          # ARTIFACT_DIR matches docker-compose.yml's production setting — without
+          # it this smoke test would exercise the *default* /app/artifacts path
+          # (not a mounted volume) and could pass even if the real production
+          # config's artifact persistence were broken.
+          docker run -d --name rei-mcp-ci \
+            -v rei_sqlite_ci:/app/db \
+            -e METRICS_KEY=ci-smoke-key \
+            -e ARTIFACT_DIR=/app/db/artifacts \
+            japan-re-intel-mcp:ci
+          for i in $(seq 1 20); do
+            docker exec rei-mcp-ci wget -qO- http://127.0.0.1:3100/health && break
+            sleep 1
+          done
+
+      - name: Exercise usage-store / license-store / artifacts SQLite paths
+        run: |
+          docker exec rei-mcp-ci node -e "
+            const { saveArtifact, getArtifact } = require('./dist/artifacts.js');
+            const { incrementClientUsage, getClientUsage } = require('./dist/usage-store.js');
+            const { getLicenseBySessionId } = require('./dist/billing/license-store.js');
+
+            const meta = saveArtifact('ci smoke test', 'smoke.txt', 'text/plain');
+            const found = getArtifact(meta.id);
+            if (!found || found.data.toString('utf-8') !== 'ci smoke test') {
+              throw new Error('artifacts.ts round-trip failed inside container: ' + JSON.stringify(found));
+            }
+
+            incrementClientUsage('ci-smoke-client', '2099-01');
+            if (getClientUsage('ci-smoke-client', '2099-01') !== 1) {
+              throw new Error('usage-store.ts round-trip failed inside container');
+            }
+
+            getLicenseBySessionId('nonexistent'); // must not throw
+
+            console.log('SQLite smoke test OK: artifacts + usage-store + license-store all opened/wrote/read successfully as the non-root container user.');
+          "
+
+      - name: Confirm /app/db is writable by the non-root rei user (not root-owned)
+        run: |
+          OWNER=$(docker exec rei-mcp-ci stat -c '%U:%G' /app/db)
+          echo "Owner: $OWNER"
+          if [ "$OWNER" != "rei:rei" ]; then
+            echo "::error::/app/db is owned by $OWNER, expected rei:rei — SQLite opens will fail as SQLITE_CANTOPEN for the non-root container user."
+            exit 1
+          fi
+
+      - name: Cleanup
+        if: always()
+        run: |
+          docker logs rei-mcp-ci || true
+          docker rm -f rei-mcp-ci || true
+          docker volume rm rei_sqlite_ci || true

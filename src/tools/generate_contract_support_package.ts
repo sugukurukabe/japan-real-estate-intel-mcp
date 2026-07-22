@@ -127,7 +127,6 @@ export function generateContractSupportPackageTool(rawArgs: Record<string, unkno
       negotiationAnchors,
       recommendedClauses: recommendedClauses as any,
       markdown,
-      pdfBase64: undefined,
     },
   };
 }
