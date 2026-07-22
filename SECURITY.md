@@ -4,9 +4,9 @@
 
 | Version | Supported |
 |---------|-----------|
-| 6.x     | ✅ Active  |
-| 5.x     | ⚠️ Bug fixes only |
-| < 5.0   | ❌ No longer supported |
+| 7.x     | ✅ Active  |
+| 6.x     | ⚠️ Bug fixes only |
+| < 6.0   | ❌ No longer supported |
 
 ## Reporting a Vulnerability
 
@@ -40,7 +40,7 @@ Email: **See the [GitHub profile](https://github.com/sugukurukabe) for contact i
 This project is an **MCP server** that serves as a data analysis layer over Japanese public datasets. The following areas are in scope:
 
 - Remote code execution via MCP tool inputs
-- Authentication bypass for the HTTP mode (`API_KEY` header)
+- Authentication bypass for the HTTP mode (`API_KEY` header) or the license-key tier system
 - Injection vulnerabilities (CSV/JSON parsing, file path traversal)
 - Dependency vulnerabilities in production dependencies
 
@@ -49,11 +49,15 @@ This project is an **MCP server** that serves as a data analysis layer over Japa
 - Issues requiring physical access to the server
 - Denial-of-service via legitimate tool calls (rate limiting is in place)
 
-## Security Measures in Place (v6.15.2)
+## Security Measures in Place (v7.1.0)
 
+- **Authless public connector**: no OAuth is implemented or advertised; all endpoints work without an account. Pro/Enterprise tiers are unlocked exclusively via ECDSA-signed license keys, verified offline (`verifyLicenseKeyOffline`) — unsigned/self-crafted payloads are rejected.
 - `helmet` middleware sets security-related HTTP headers on all HTTP mode responses
 - Request body limited to 10 MB (`express.json({ limit: '10mb' })`)
 - Optional `API_KEY` authentication for HTTP mode
+- `/metrics` (Prometheus) always requires a key (`METRICS_KEY` or `API_KEY`); returns 404 when neither is configured, independent of the general `API_KEY` gate
+- Free-tier monthly quota is keyed per MCP session ID, not client IP — avoids collapsing all users into one bucket behind a shared proxy/hosted-connector egress IP
+- License-key delivery (`GET /api/license`) is looked up by the opaque, single-use Stripe Checkout `session_id` (never by email), preventing license-key disclosure via email enumeration
 - Session timeout (30 minutes idle)
 - Graceful shutdown on SIGTERM/SIGINT
 - Weekly CodeQL analysis via GitHub Actions

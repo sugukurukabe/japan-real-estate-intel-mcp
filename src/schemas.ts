@@ -9,6 +9,34 @@ const neighborhoodField = z
   .optional()
   .describe("町丁目（例: '名駅南1丁目'）。v2.4 では町丁目レベル実データに対応（対応都道府県のみ）");
 
+// ── ChatGPT Apps SDK compatibility tools (search / fetch / search_area_candidates) ──
+
+export const SearchOutput = z.object({
+  results: z.array(
+    z.object({
+      id: z.string(),
+      title: z.string(),
+      url: z.string(),
+    }),
+  ),
+});
+export type SearchOutput = z.infer<typeof SearchOutput>;
+
+export const FetchOutput = z.object({
+  id: z.string(),
+  title: z.string(),
+  text: z.string(),
+  url: z.string(),
+  metadata: z.record(z.string(), z.unknown()),
+});
+export type FetchOutput = z.infer<typeof FetchOutput>;
+
+export const SearchAreaCandidatesOutput = z.object({
+  prefecture: z.string(),
+  candidates: z.array(z.string()),
+});
+export type SearchAreaCandidatesOutput = z.infer<typeof SearchAreaCandidatesOutput>;
+
 /**
  * 共通出力モードフィールド。compact = TL;DR + 主要数値のみ、detailed = 全文Markdown付き
  */
@@ -171,7 +199,7 @@ export const GenerateReportInput = z.object({
     .enum(['markdown', 'pdf'])
     .default('markdown')
     .describe(
-      '出力フォーマット。pdf を指定すると pdfBase64 フィールドに Base64 エンコード済み PDF を返す',
+      '出力フォーマット。pdf を指定すると生成されたPDFを resource_link（ダウンロードURL）として返す',
     ),
   // ── v6.0 branding & client-ready fields ──
   companyName: z.string().optional().describe('会社名（PDFヘッダーに表示）'),
@@ -194,10 +222,6 @@ export const GenerateReportOutput = z.object({
   markdownReport: z.string(),
   chartsData: ChartsData,
   riskHighlights: z.array(z.string()),
-  pdfBase64: z
-    .string()
-    .optional()
-    .describe('format=pdf のとき Base64 エンコードされた PDF バイナリ'),
 });
 export type GenerateReportOutput = z.infer<typeof GenerateReportOutput>;
 
@@ -411,7 +435,7 @@ export const ComparePrefecturesInput = z.object({
     .enum(['json', 'markdown', 'xlsx'])
     .default('json')
     .describe(
-      '出力フォーマット。xlsx を指定すると xlsxBase64 フィールドに Base64 エンコード済み Excel を返す',
+      '出力フォーマット。xlsx を指定すると生成されたExcelを resource_link（ダウンロードURL）として返す',
     ),
 });
 export type ComparePrefecturesInput = z.infer<typeof ComparePrefecturesInput>;
@@ -468,10 +492,6 @@ export const ComparePrefecturesOutput = z.object({
   bestFor: z.object({ investment: z.string(), safety: z.string(), growth: z.string() }),
   markdownReport: z.string().optional(),
   unsupportedNotes: z.array(z.string()),
-  xlsxBase64: z
-    .string()
-    .optional()
-    .describe('exportFormat=xlsx のとき Base64 エンコードされた Excel バイナリ'),
 });
 export type ComparePrefecturesOutput = z.infer<typeof ComparePrefecturesOutput>;
 
@@ -924,6 +944,96 @@ export const RecommendRenovationTargetsInput = z.object({
 });
 export type RecommendRenovationTargetsInput = z.infer<typeof RecommendRenovationTargetsInput>;
 
+const RenovationCostRange = z.object({ low: z.number(), mid: z.number(), high: z.number() });
+
+export const RenovationYieldOutput = z.object({
+  ward: z.string(),
+  chochou: z.string(),
+  estimatedRent: z.object({
+    monthly: z.number(),
+    annual: z.number(),
+    confidence: z.enum(['high', 'medium', 'low']),
+  }),
+  estimatedAcquisition: z.number(),
+  renovationCost: RenovationCostRange,
+  totalInvestment: RenovationCostRange,
+  grossYieldPct: z.number(),
+  netYieldPct: z.number(),
+  exitStrategy: z.enum(['rent', 'sell']),
+  whatIfBoost: z.object({
+    withFutureProject: z.number(),
+    futureProjectName: z.string().nullable(),
+  }),
+  breakdown: z.object({
+    managementFeePct: z.number(),
+    vacancyRatePct: z.number(),
+    taxRatePct: z.number(),
+  }),
+});
+export type RenovationYieldOutput = z.infer<typeof RenovationYieldOutput>;
+
+const FutureTimelineEvent = z.object({
+  year: z.number(),
+  project: z.string(),
+  type: z.string(),
+  status: z.string(),
+  ward: z.string().nullable(),
+  expectedImpact: z.object({
+    priceChangePct: z.number(),
+    demandChangePct: z.number(),
+  }),
+  description: z.string(),
+  source: z.enum(['infrastructure', 'nagoya_plan', 'population']),
+});
+
+export const FutureTimelineOutput = z.object({
+  ward: z.string(),
+  chochou: z.string(),
+  events: z.array(FutureTimelineEvent),
+  summary: z.object({
+    totalEvents: z.number(),
+    avgPriceImpactPct: z.number(),
+    bestYear: z.number(),
+    bestYearImpact: z.number(),
+  }),
+});
+export type FutureTimelineOutput = z.infer<typeof FutureTimelineOutput>;
+
+export const ChochouProfileOutput = z.object({
+  ward: z.string(),
+  chochou: z.string().nullable(),
+  landPrice: z.object({ pricePerSqm: z.number(), changeRate: z.number() }).nullable(),
+  population: z
+    .object({
+      population2020: z.number(),
+      households2020: z.number(),
+      agingRate: z.number(),
+    })
+    .nullable(),
+  chochouCount: z.number(),
+  activePlans: z.number(),
+  activePlanNames: z.array(z.string()),
+});
+export type ChochouProfileOutput = z.infer<typeof ChochouProfileOutput>;
+
+export const RecommendRenovationTargetsOutput = z.object({
+  rankings: z.array(
+    z.object({
+      rank: z.number(),
+      ward: z.string(),
+      chochou: z.string(),
+      grossYieldPct: z.number(),
+      netYieldPct: z.number(),
+      estimatedRentMonthly: z.number(),
+      totalInvestmentMid: z.number(),
+      exitStrategy: z.string(),
+      futureBoostProject: z.string().nullable(),
+    }),
+  ),
+  conditions: RecommendRenovationTargetsInput,
+});
+export type RecommendRenovationTargetsOutput = z.infer<typeof RecommendRenovationTargetsOutput>;
+
 // ── v6.9.0 Contract Intelligence tools ───────────────────────────────────────
 
 export const ContractSupportInput = z.object({
@@ -963,7 +1073,6 @@ export const ContractSupportOutput = z.object({
     }),
   ),
   markdown: z.string(),
-  pdfBase64: z.string().optional(),
 });
 export type ContractSupportOutput = z.infer<typeof ContractSupportOutput>;
 

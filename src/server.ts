@@ -1,4 +1,4 @@
-import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
+import { McpServer, ResourceTemplate } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { completable } from '@modelcontextprotocol/sdk/server/completable.js';
 import { z } from 'zod';
 import {
@@ -13,35 +13,57 @@ import {
 } from './completion/area-completion.js';
 import {
   CrossAnalyzeInput,
+  CrossAnalyzeOutput,
   AssessRiskInput,
+  AssessRiskOutput,
   GenerateReportInput,
+  GenerateReportOutput,
   OpenDashboardInput,
   OpenDashboardOutput,
   QuickVisualSummaryInput,
   QuickVisualSummaryOutput,
   FamilyFriendlyInput,
+  FamilyFriendlyOutput,
   CorporateDemandInput,
+  CorporateDemandOutput,
   ComparePrefecturesInput,
+  ComparePrefecturesOutput,
   DrillDownInput,
+  DrillDownOutput,
   StoreLocationInput,
+  StoreLocationOutput,
   LandscapeInput,
+  LandscapeOutput,
   ForecastLandPriceTrendInput,
+  ForecastLandPriceTrendOutput,
   ScenarioWhatIfInput,
+  ScenarioWhatIfOutput,
   PortfolioOptimizerInput,
+  PortfolioOptimizerOutput,
   DiscoverOpportunitiesInput,
   DiscoverOpportunitiesOutput,
   RenovationYieldInput,
+  RenovationYieldOutput,
   FutureTimelineInput,
+  FutureTimelineOutput,
   ChochouProfileInput,
+  ChochouProfileOutput,
   RecommendRenovationTargetsInput,
+  RecommendRenovationTargetsOutput,
   ContractSupportInput,
+  ContractSupportOutput,
   AssessContractRiskInput,
+  AssessContractRiskOutput,
   CompositeValueScoreInput,
   CompositeValueScoreOutput,
   ZoningInfoInput,
+  ZoningInfoOutput,
   VacancyStatsInput,
+  VacancyStatsOutput,
   PopulationOutlookInput,
+  PopulationOutlookOutput,
   MacroSnapshotInput,
+  MacroSnapshotOutput,
   ArbitrageScanInput,
   ArbitrageScanOutput,
   PurchaseReviewInput,
@@ -49,13 +71,18 @@ import {
   LeveragedCashflowInput,
   LeveragedCashflowOutput,
   AssessExteriorVisualsInput,
+  AssessExteriorVisualsOutput,
   AnalyzeCommuteAccessibilityInput,
+  AnalyzeCommuteAccessibilityOutput,
   OptimizePortfolioInput,
   OptimizePortfolioOutput,
   AuditZoningComplianceInput,
   AuditZoningComplianceOutput,
   ForecastDemographicShiftInput,
   ForecastDemographicShiftOutput,
+  SearchOutput,
+  FetchOutput,
+  SearchAreaCandidatesOutput,
 } from './schemas.js';
 import { crossAnalyze } from './tools/cross_analyze_real_estate_market.js';
 import { assessPropertyRisk } from './tools/assess_property_risk.js';
@@ -73,7 +100,11 @@ import { portfolioOptimizer } from './tools/portfolio_optimizer.js';
 import { optimizePortfolioTool } from './tools/optimize_portfolio.js';
 import { auditZoningComplianceTool } from './tools/audit_zoning_compliance.js';
 import { forecastDemographicShiftTool } from './tools/forecast_demographic_shift.js';
-import { simulateAichiFuture, AichiFutureInput } from './tools/simulate_aichi_future.js';
+import {
+  simulateAichiFuture,
+  AichiFutureInput,
+  AichiFutureOutput,
+} from './tools/simulate_aichi_future.js';
 import { scenarioWhatIf } from './tools/scenario_what_if.js';
 import { discoverOpportunitiesTool } from './tools/discover_opportunities.js';
 import { analyzeRenovationYieldTool } from './tools/analyze_renovation_yield.js';
@@ -100,10 +131,15 @@ import { getPopulationResource } from './resources/population.js';
 import { getDashboardHtml } from './resources/ui_dashboard.js';
 import { ATTRIBUTION } from './data/attribution.js';
 import { formatErrorMessage, isClientError } from './errors.js';
-import { toolLogger } from './logger.js';
+import { toolLogger, moduleLogger } from './logger.js';
 import { checkToolCallBudget, recordToolCall } from './tier-usage.js';
 import { isToolAllowed, isResourceAllowed, isPromptAllowed, resolveTier, type Tier } from './tiers.js';
+import { verifyLicenseKeyOffline } from './auth/license.js';
+import { saveArtifact, getArtifact, artifactPublicUrl } from './artifacts.js';
+import { portfolioOptimizerToCsv } from './export/csv.js';
 import './data-loaders/index.js';
+
+const log = moduleLogger('server');
 
 // 統合ダッシュボード(2D地図 + 3D PLATEAUビュー + ツールウィジェット)は単一のMCP Appリソース。
 // Unified dashboard (2D map + 3D PLATEAU view + tool widgets) is a single MCP App resource.
@@ -122,13 +158,32 @@ const DASHBOARD_CSP = {
 };
 
 type ToolResult = {
-  content: { type: 'text'; text: string }[];
+  content: (
+    | { type: 'text'; text: string }
+    | { type: 'resource_link'; uri: string; name: string; description?: string; mimeType?: string }
+  )[];
   structuredContent?: Record<string, unknown>;
   _meta?: Record<string, unknown>;
   isError?: boolean;
 };
 
-const RO = { readOnlyHint: true, destructiveHint: false, openWorldHint: false } as const;
+// 全ツールは読み取り専用・非破壊・冪等（同一引数での再実行は安全）。
+// openWorldHint は「外部（政府API・Google API・Gemini等）に到達するか」を表す。
+// All tools are read-only, non-destructive, and idempotent (safe to retry with
+// the same arguments). openWorldHint reflects whether the tool reaches outside
+// the bundled local dataset (government APIs, Google APIs, Gemini, etc).
+const RO_LOCAL = {
+  readOnlyHint: true,
+  destructiveHint: false,
+  idempotentHint: true,
+  openWorldHint: false,
+} as const;
+const RO_OPENWORLD = {
+  readOnlyHint: true,
+  destructiveHint: false,
+  idempotentHint: true,
+  openWorldHint: true,
+} as const;
 const WIDGET_DOMAIN = 'https://realestate-mcp.jp';
 
 /**
@@ -142,6 +197,7 @@ function applyOutputMode(
 ): ToolResult {
   if (mode === 'detailed' || result.isError || result.content.length === 0) return result;
   const first = result.content[0];
+  if (first.type !== 'text') return result;
   return {
     ...result,
     content: [
@@ -152,7 +208,9 @@ function applyOutputMode(
 }
 
 export function createServer(
-  tierOrOptions?: Tier | { activeTierOverride?: Tier; clientId?: string },
+  tierOrOptions?:
+    | Tier
+    | { activeTierOverride?: Tier; clientId?: string; transportMode?: 'stdio' | 'http' },
   clientIdParam?: string,
 ): McpServer {
   const server = new McpServer({
@@ -162,10 +220,16 @@ export function createServer(
 
   let activeTier: Tier = 'free';
   let clientId: string | undefined = undefined;
+  // 'http' only when this McpServer instance is created for a Streamable HTTP
+  // session (src/http.ts) — that's the only mode where an /artifacts/:id
+  // download route actually exists. Everything else (stdio, tests) falls back
+  // to the artifact://{id} MCP resource, which always works.
+  let transportMode: 'stdio' | 'http' = 'stdio';
 
   if (tierOrOptions && typeof tierOrOptions === 'object') {
     activeTier = tierOrOptions.activeTierOverride ?? 'free';
     clientId = tierOrOptions.clientId;
+    transportMode = tierOrOptions.transportMode ?? 'stdio';
   } else {
     activeTier = (tierOrOptions as Tier) ?? 'free';
     clientId = clientIdParam;
@@ -190,7 +254,10 @@ export function createServer(
             data: { event: 'license_fallback', requestedTier, activeTier, reason: errorReason },
           })
           .catch(() => {});
-        console.warn(`[License Warning] ${errorReason}. Free プランにフォールバックします。`);
+        log.warn(
+          { requestedTier, activeTier, reason: errorReason },
+          'License verification failed — falling back to Free tier',
+        );
       } else if (tier !== 'free') {
         server
           .sendLoggingMessage({ level: 'info', data: { event: 'license_success', activeTier } })
@@ -199,7 +266,9 @@ export function createServer(
     });
   }
 
-  // Request-scoped dynamically parsed middleware helper to fetch client's dynamic keys
+  // Request-scoped dynamically parsed middleware helper to fetch client's dynamic keys.
+  // Uses verifyLicenseKeyOffline (ECDSA signature check, synchronous) exclusively —
+  // any unsigned/self-crafted Base64 JSON payload is rejected.
   function getRequestTier(args: any): Tier {
     if (args && args._licenseKey) {
       const key = String(args._licenseKey).trim();
@@ -212,17 +281,10 @@ export function createServer(
           return 'enterprise';
         }
       }
-      try {
-        // Pre-parse the Base64 key payload directly inside server.ts to remain completely synchronous
-        const decoded = Buffer.from(key, 'base64').toString('utf8');
-        const parsed = JSON.parse(decoded);
-        if (parsed.tier === 'pro' || parsed.tier === 'enterprise') {
-          const expiry = new Date(parsed.expiresAt);
-          if (expiry.getTime() > Date.now()) {
-            return parsed.tier as Tier;
-          }
-        }
-      } catch (_) {}
+      const result = verifyLicenseKeyOffline(key);
+      if (result.success && (result.tier === 'pro' || result.tier === 'enterprise')) {
+        return result.tier;
+      }
     }
     return activeTier;
   }
@@ -308,17 +370,85 @@ export function createServer(
     };
   }
 
+  // ── Downloadable artifacts (reports/CSV/XLSX) ────────────────────────────
+  // Persist a generated blob and return an MCP `resource_link` content block
+  // pointing at it — an HTTPS URL in HTTP transport mode (browsable, no MCP
+  // client required), or the artifact://{id} resource below in stdio mode
+  // (the only option, since there's no HTTP server to link to).
+  type ArtifactLink = {
+    type: 'resource_link';
+    uri: string;
+    name: string;
+    description: string;
+    mimeType: string;
+  };
+
+  function saveArtifactAndLink(
+    data: Buffer | string,
+    filename: string,
+    mimeType: string,
+    description: string,
+  ): ArtifactLink {
+    const meta = saveArtifact(data, filename, mimeType);
+    const uri =
+      transportMode === 'http'
+        ? artifactPublicUrl(meta.id, meta.filename)
+        : `artifact://${meta.id}`;
+    return { type: 'resource_link', uri, name: filename, description, mimeType };
+  }
+
+  server.resource(
+    'artifact',
+    new ResourceTemplate('artifact://{id}', { list: undefined }),
+    {
+      description:
+        '生成済みレポート/CSV/Excelアーティファクト（TTL付き、resource_linkとして各ツールから返却される）',
+    },
+    async (uri, variables) => {
+      const id = Array.isArray(variables.id) ? variables.id[0] : variables.id;
+      const artifact = id ? getArtifact(id) : null;
+      if (!artifact) {
+        return {
+          contents: [
+            {
+              uri: uri.href,
+              mimeType: 'text/plain' as const,
+              text: 'アーティファクトが見つかりません（有効期限切れ、または存在しないIDです）。',
+            },
+          ],
+        };
+      }
+      const isText = artifact.metadata.mimeType.startsWith('text/');
+      return {
+        contents: [
+          {
+            uri: uri.href,
+            mimeType: artifact.metadata.mimeType,
+            ...(isText
+              ? { text: artifact.data.toString('utf-8') }
+              : { blob: artifact.data.toString('base64') }),
+          },
+        ],
+      };
+    },
+  );
+
   // ── ChatGPT Apps SDK compatibility tools (search / fetch) ────────────────
 
-  server.tool(
+  server.registerTool(
     'search',
-    'Search the real estate data catalog for areas, tools, and data sources. ChatGPT-compatible. | 不動産データカタログを検索し、関連するエリア・ツール・データソースの候補一覧を返す。',
     {
-      query: z
-        .string()
-        .describe('検索クエリ（自然文OK。例: "名古屋 リニア", "東京 投資", "リスク 地震"）'),
+      title: 'データカタログ検索',
+      description:
+        'Search the real estate data catalog for areas, tools, and data sources. ChatGPT-compatible. | 不動産データカタログを検索し、関連するエリア・ツール・データソースの候補一覧を返す。',
+      inputSchema: {
+        query: z
+          .string()
+          .describe('検索クエリ（自然文OK。例: "名古屋 リニア", "東京 投資", "リスク 地震"）'),
+      },
+      outputSchema: SearchOutput.shape,
+      annotations: RO_LOCAL,
     },
-    RO,
     (args) =>
       withErrorHandling('search', 'global', async () => {
         const result = mcpSearch({ query: String(args.query) });
@@ -330,15 +460,20 @@ export function createServer(
       }, args),
   );
 
-  server.tool(
+  server.registerTool(
     'fetch',
-    'Fetch full document by ID from search results. Returns area analysis, forecasts, and summaries in Markdown. | 検索結果のIDからドキュメント全文を取得する。分析レポート・将来予測・データサマリをMarkdownで返す。',
     {
-      id: z
-        .string()
-        .describe('search ツールで取得したドキュメントID（例: "area:aichi:名古屋市中区"）'),
+      title: 'ドキュメント取得',
+      description:
+        'Fetch full document by ID from search results. Returns area analysis, forecasts, and summaries in Markdown. | 検索結果のIDからドキュメント全文を取得する。分析レポート・将来予測・データサマリをMarkdownで返す。',
+      inputSchema: {
+        id: z
+          .string()
+          .describe('search ツールで取得したドキュメントID（例: "area:aichi:名古屋市中区"）'),
+      },
+      outputSchema: FetchOutput.shape,
+      annotations: RO_LOCAL,
     },
-    RO,
     (args) =>
       withErrorHandling('fetch', 'global', async () => {
         const result = mcpFetch({ id: String(args.id) });
@@ -356,21 +491,26 @@ export function createServer(
       }, args),
   );
 
-  server.tool(
+  server.registerTool(
     'search_area_candidates',
-    'Search municipality name candidates by partial text. Supports hiragana. | 市区町村名の候補検索。部分文字列から有効な市区町村候補を返す。ひらがな対応。',
     {
-      prefecture: z.string().optional().describe('都道府県名（例: 愛知県, 東京都）'),
-      query: z.string().optional().describe('市区町村名の一部（例: 名古屋, なごやしなか, 新宿）'),
-      limit: z
-        .number()
-        .int()
-        .min(1)
-        .max(20)
-        .optional()
-        .describe('最大候補数（1-20、デフォルト20）'),
+      title: '市区町村候補検索',
+      description:
+        'Search municipality name candidates by partial text. Supports hiragana. | 市区町村名の候補検索。部分文字列から有効な市区町村候補を返す。ひらがな対応。',
+      inputSchema: {
+        prefecture: z.string().optional().describe('都道府県名（例: 愛知県, 東京都）'),
+        query: z.string().optional().describe('市区町村名の一部（例: 名古屋, なごやしなか, 新宿）'),
+        limit: z
+          .number()
+          .int()
+          .min(1)
+          .max(20)
+          .optional()
+          .describe('最大候補数（1-20、デフォルト20）'),
+      },
+      outputSchema: SearchAreaCandidatesOutput.shape,
+      annotations: RO_LOCAL,
     },
-    RO,
     (args) =>
       withErrorHandling('search_area_candidates', String(args.prefecture ?? 'aichi'), async () => {
         const result = searchAreaCandidates({
@@ -385,13 +525,18 @@ export function createServer(
       }, args),
   );
 
-  // ── Domain tools: 30 registerAppTool/server.tool entries below + 3 ChatGPT tools above = 33 total ──
+  // ── Domain tools: 21 server.registerTool + 14 registerAppTool entries below + 3 ChatGPT-compat tools above = 38 total ──
 
-  server.tool(
+  server.registerTool(
     'cross_analyze_real_estate_market',
-    'Cross-analyze real estate market: land price trends, investment score, foot traffic, education, corporate presence. 10 prefectures. | 不動産市場クロス分析。地価・投資スコア・人流・教育・企業立地を総合分析。10都道府県対応。',
-    CrossAnalyzeInput.shape,
-    RO,
+    {
+      title: '不動産市場クロス分析',
+      description:
+        'Cross-analyze real estate market: land price trends, investment score, foot traffic, education, corporate presence. 10 prefectures. | 不動産市場クロス分析。地価・投資スコア・人流・教育・企業立地を総合分析。10都道府県対応。',
+      inputSchema: CrossAnalyzeInput.shape,
+      outputSchema: CrossAnalyzeOutput.shape,
+      annotations: RO_LOCAL,
+    },
     (args) =>
       withErrorHandling(
         'cross_analyze_real_estate_market',
@@ -412,11 +557,16 @@ export function createServer(
       ),
   );
 
-  server.tool(
+  server.registerTool(
     'assess_property_risk',
-    'Assess property disaster risk: flood, landslide, earthquake. Integrated scoring across 10 prefectures. | 災害リスク評価。浸水・土砂・地震リスクを統合スコアリング。全10都道府県対応。',
-    AssessRiskInput.shape,
-    RO,
+    {
+      title: '災害リスク評価',
+      description:
+        'Assess property disaster risk: flood, landslide, earthquake. Integrated scoring across 10 prefectures. | 災害リスク評価。浸水・土砂・地震リスクを統合スコアリング。全10都道府県対応。',
+      inputSchema: AssessRiskInput.shape,
+      outputSchema: AssessRiskOutput.shape,
+      annotations: RO_LOCAL,
+    },
     (args) =>
       withErrorHandling('assess_property_risk', String(args.prefecture ?? 'aichi'), async () => {
         const input = AssessRiskInput.parse(args);
@@ -428,11 +578,16 @@ export function createServer(
       }),
   );
 
-  server.tool(
+  server.registerTool(
     'assess_family_friendly_score',
-    'Assess family-friendliness: education, safety, healthcare across 3 axes. 10 prefectures. | ファミリー向け適性評価。教育・安全・医療の3軸で住宅適地を総合評価。全10都道府県。',
-    FamilyFriendlyInput.shape,
-    RO,
+    {
+      title: 'ファミリー適性評価',
+      description:
+        'Assess family-friendliness: education, safety, healthcare across 3 axes. 10 prefectures. | ファミリー向け適性評価。教育・安全・医療の3軸で住宅適地を総合評価。全10都道府県。',
+      inputSchema: FamilyFriendlyInput.shape,
+      outputSchema: FamilyFriendlyOutput.shape,
+      annotations: RO_LOCAL,
+    },
     (args) =>
       withErrorHandling(
         'assess_family_friendly_score',
@@ -448,11 +603,16 @@ export function createServer(
       ),
   );
 
-  server.tool(
+  server.registerTool(
     'predict_corporate_demand',
-    'Predict corporate demand: manufacturing, office, retail demand scores. 10 prefectures. | 企業立地需要予測。製造業・オフィス・小売の企業需要スコアを算出。全10都道府県。',
-    CorporateDemandInput.shape,
-    RO,
+    {
+      title: '企業需要予測',
+      description:
+        'Predict corporate demand: manufacturing, office, retail demand scores. 10 prefectures. | 企業立地需要予測。製造業・オフィス・小売の企業需要スコアを算出。全10都道府県。',
+      inputSchema: CorporateDemandInput.shape,
+      outputSchema: CorporateDemandOutput.shape,
+      annotations: RO_LOCAL,
+    },
     (args) =>
       withErrorHandling(
         'predict_corporate_demand',
@@ -468,11 +628,16 @@ export function createServer(
       ),
   );
 
-  server.tool(
+  server.registerTool(
     'generate_area_report',
-    'Generate comprehensive area report in Markdown/PDF with branding support. 10 prefectures. | エリアレポート生成。包括的な不動産分析をMarkdown/PDFで出力。ブランディング対応。全10都道府県。',
-    GenerateReportInput.shape,
-    RO,
+    {
+      title: 'エリアレポート生成',
+      description:
+        'Generate comprehensive area report in Markdown/PDF with branding support. 10 prefectures. | エリアレポート生成。包括的な不動産分析をMarkdown/PDFで出力。ブランディング対応。全10都道府県。',
+      inputSchema: GenerateReportInput.shape,
+      outputSchema: GenerateReportOutput.shape,
+      annotations: RO_LOCAL,
+    },
     (args, extra) =>
       withErrorHandling('generate_area_report', String(args.prefecture ?? 'aichi'), async () => {
         const input = GenerateReportInput.parse(args);
@@ -487,9 +652,22 @@ export function createServer(
                 .catch(() => {});
             }
           : undefined;
-        const result = await generateAreaReport(input, onProgress);
+        const { pdfBase64, ...result } = await generateAreaReport(input, onProgress);
+        const content: ToolResult['content'] = [
+          { type: 'text' as const, text: result.markdownReport },
+        ];
+        if (pdfBase64) {
+          content.push(
+            saveArtifactAndLink(
+              Buffer.from(pdfBase64, 'base64'),
+              `${input.area}_report.pdf`,
+              'application/pdf',
+              `${input.area} 不動産調査レポート（PDF）`,
+            ),
+          );
+        }
         return {
-          content: [{ type: 'text' as const, text: result.markdownReport }],
+          content,
           structuredContent: { ...result, attribution: ATTRIBUTION },
         };
       }),
@@ -504,7 +682,7 @@ export function createServer(
         'Open visualization dashboard. 2D map or PLATEAU 3D view. MCP Apps UI. | 可視化ダッシュボードを開く。2Dマップ/PLATEAU 3Dビュー。MCP Apps UI対応。',
       inputSchema: OpenDashboardInput.shape,
       outputSchema: OpenDashboardOutput.shape,
-      annotations: RO,
+      annotations: RO_LOCAL,
       _meta: {
         ui: { resourceUri: DASHBOARD_URI },
         'openai/outputTemplate': DASHBOARD_URI,
@@ -538,7 +716,7 @@ export function createServer(
         'Render a ChatGPT-optimized real estate visual summary with map, charts, recommended next actions, and compact markdown fallback. Always use this when the user asks to show, visualize, compare, or continue in ChatGPT. | ChatGPT向けに地図・グラフ・次アクション・要約をまとめて表示するレンダーツール。',
       inputSchema: QuickVisualSummaryInput.shape,
       outputSchema: QuickVisualSummaryOutput.shape,
-      annotations: RO,
+      annotations: RO_LOCAL,
       _meta: {
         ui: { resourceUri: DASHBOARD_URI },
         'openai/outputTemplate': DASHBOARD_URI,
@@ -558,27 +736,50 @@ export function createServer(
       }),
   );
 
-  server.tool(
+  server.registerTool(
     'compare_prefectures',
-    'Compare up to 5 prefectures: land price, population, risk, investment score ranking. Markdown output. | 都道府県比較。最大5都道府県を横断比較し、地価・人口・リスク・投資スコアをランキング。',
-    ComparePrefecturesInput.shape,
-    RO,
+    {
+      title: '都道府県比較',
+      description:
+        'Compare up to 5 prefectures: land price, population, risk, investment score ranking. Markdown output. | 都道府県比較。最大5都道府県を横断比較し、地価・人口・リスク・投資スコアをランキング。',
+      inputSchema: ComparePrefecturesInput.shape,
+      outputSchema: ComparePrefecturesOutput.shape,
+      annotations: RO_LOCAL,
+    },
     (args) =>
       withErrorHandling('compare_prefectures', 'multi', async () => {
         const input = ComparePrefecturesInput.parse(args);
-        const result = comparePrefectures(input);
+        const { xlsxBase64, ...result } = comparePrefectures(input);
+        const content: ToolResult['content'] = [
+          { type: 'text' as const, text: JSON.stringify(result, null, 2) },
+        ];
+        if (xlsxBase64) {
+          content.push(
+            saveArtifactAndLink(
+              Buffer.from(xlsxBase64, 'base64'),
+              'prefecture_comparison.xlsx',
+              'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+              '都道府県比較（Excel）',
+            ),
+          );
+        }
         return {
-          content: [{ type: 'text' as const, text: JSON.stringify(result, null, 2) }],
+          content,
           structuredContent: { ...result, attribution: ATTRIBUTION },
         };
       }),
   );
 
-  server.tool(
+  server.registerTool(
     'drill_down_local_analysis',
-    'Drill-down local analysis at block/neighborhood level including foot traffic, commercial, education. Markdown output. | 街区ドリルダウン分析。町丁目レベルの詳細分析。Markdown出力。',
-    DrillDownInput.shape,
-    RO,
+    {
+      title: '街区ドリルダウン分析',
+      description:
+        'Drill-down local analysis at block/neighborhood level including foot traffic, commercial, education. Markdown output. | 街区ドリルダウン分析。町丁目レベルの詳細分析。Markdown出力。',
+      inputSchema: DrillDownInput.shape,
+      outputSchema: DrillDownOutput.shape,
+      annotations: RO_LOCAL,
+    },
     (args) =>
       withErrorHandling(
         'drill_down_local_analysis',
@@ -594,11 +795,16 @@ export function createServer(
       ),
   );
 
-  server.tool(
+  server.registerTool(
     'evaluate_store_location',
-    'Evaluate store location suitability considering foot traffic, transport, competitor distribution. 10 prefectures. | 店舗出店適地評価。人流・交通・競合店分布を考慮したスコアを算出。全10都道府県。',
-    StoreLocationInput.shape,
-    RO,
+    {
+      title: '店舗出店適地評価',
+      description:
+        'Evaluate store location suitability considering foot traffic, transport, competitor distribution. 10 prefectures. | 店舗出店適地評価。人流・交通・競合店分布を考慮したスコアを算出。全10都道府県。',
+      inputSchema: StoreLocationInput.shape,
+      outputSchema: StoreLocationOutput.shape,
+      annotations: RO_LOCAL,
+    },
     (args) =>
       withErrorHandling('evaluate_store_location', String(args.prefecture ?? 'aichi'), async () => {
         const input = StoreLocationInput.parse(args);
@@ -610,11 +816,16 @@ export function createServer(
       }),
   );
 
-  server.tool(
+  server.registerTool(
     'simulate_landscape_impact',
-    'Sunlight/shadow simulation using PLATEAU 3D buildings + SunCalc. | 日照・影シミュレーション。PLATEAU 3D建物データ+SunCalcで周辺建物の影響を分析。',
-    LandscapeInput.shape,
-    RO,
+    {
+      title: '日照・景観シミュレーション',
+      description:
+        'Sunlight/shadow simulation using PLATEAU 3D buildings + SunCalc. | 日照・影シミュレーション。PLATEAU 3D建物データ+SunCalcで周辺建物の影響を分析。',
+      inputSchema: LandscapeInput.shape,
+      outputSchema: LandscapeOutput.shape,
+      annotations: RO_LOCAL,
+    },
     (args) =>
       withErrorHandling(
         'simulate_landscape_impact',
@@ -630,11 +841,16 @@ export function createServer(
       ),
   );
 
-  server.tool(
+  server.registerTool(
     'assess_exterior_visuals',
-    'AI visual exterior audit of a property based on Google Street View static imagery + Gemini Vision AI. Falls back to simulated audit if API keys are missing. | AI街頭外観監査。ストリートビュー画像とGemini Vision AIを用いて建物の外観・道路幅・環境を自動評価。',
-    AssessExteriorVisualsInput.shape,
-    RO,
+    {
+      title: 'AI外観監査',
+      description:
+        'AI visual exterior audit of a property using the Google Maps Street View Static API (https://developers.google.com/maps/documentation/streetview) and Google Gemini Vision (https://ai.google.dev/gemini-api/docs/vision) for image analysis. Falls back to a simulated audit if GOOGLE_MAPS_API_KEY/GOOGLE_GENAI_API_KEY are not configured. | AI街頭外観監査。Google Maps Street View Static APIとGemini Vision AIを用いて建物の外観・道路幅・環境を自動評価。APIキー未設定時はシミュレーション結果にフォールバック。',
+      inputSchema: AssessExteriorVisualsInput.shape,
+      outputSchema: AssessExteriorVisualsOutput.shape,
+      annotations: RO_OPENWORLD,
+    },
     (args) => withErrorHandling('assess_exterior_visuals', String(args.prefecture ?? 'aichi'), async () => {
       const input = AssessExteriorVisualsInput.parse(args);
       const result = await assessExteriorVisuals(input);
@@ -645,11 +861,16 @@ export function createServer(
     }),
   );
 
-  server.tool(
+  server.registerTool(
     'analyze_commute_accessibility',
-    'Transit commute accessibility analyzer to regional station hubs. Calculates travel times, routes, and overall score. | 交通通勤アクセシビリティ評価。主要ターミナル駅への所要時間、経路、利便性スコアを算出。',
-    AnalyzeCommuteAccessibilityInput.shape,
-    RO,
+    {
+      title: '通勤アクセシビリティ分析',
+      description:
+        'Transit commute accessibility analyzer to regional station hubs, using the Google Maps Distance Matrix API (https://developers.google.com/maps/documentation/distance-matrix). Calculates travel times, routes, and overall score. | 交通通勤アクセシビリティ評価。Google Maps Distance Matrix APIで主要ターミナル駅への所要時間・経路・利便性スコアを算出。',
+      inputSchema: AnalyzeCommuteAccessibilityInput.shape,
+      outputSchema: AnalyzeCommuteAccessibilityOutput.shape,
+      annotations: RO_OPENWORLD,
+    },
     (args) => withErrorHandling('analyze_commute_accessibility', String(args.prefecture ?? 'aichi'), async () => {
       const input = AnalyzeCommuteAccessibilityInput.parse(args);
       const result = await analyzeCommuteAccessibilityTool(input);
@@ -660,11 +881,16 @@ export function createServer(
     }),
   );
 
-  server.tool(
+  server.registerTool(
     'forecast_land_price_trend',
-    'Forecast land price trends using linear regression and moving average. Returns CAGR, confidence interval, investment signal (buy/hold/caution). 10 prefectures. | 地価トレンド予測。線形回帰・移動平均で将来地価を予測。CAGR・投資シグナルを返す。全10都道府県。',
-    ForecastLandPriceTrendInput.shape,
-    RO,
+    {
+      title: '地価トレンド予測',
+      description:
+        'Forecast land price trends using linear regression and moving average. Returns CAGR, confidence interval, investment signal (buy/hold/caution). 10 prefectures. | 地価トレンド予測。線形回帰・移動平均で将来地価を予測。CAGR・投資シグナルを返す。全10都道府県。',
+      inputSchema: ForecastLandPriceTrendInput.shape,
+      outputSchema: ForecastLandPriceTrendOutput.shape,
+      annotations: RO_LOCAL,
+    },
     (args) =>
       withErrorHandling(
         'forecast_land_price_trend',
@@ -688,11 +914,16 @@ export function createServer(
       ),
   );
 
-  server.tool(
+  server.registerTool(
     'scenario_what_if',
-    'What-If scenario analysis: simulate impact of new stations, commercial facilities, population changes on land prices and investment scores. 10 prefectures. | シナリオWhat-If分析。新駅・大型商業施設・人口変動の地価影響を試算。全10都道府県。',
-    ScenarioWhatIfInput.shape,
-    RO,
+    {
+      title: 'WhatIfシナリオ分析',
+      description:
+        'What-If scenario analysis: simulate impact of new stations, commercial facilities, population changes on land prices and investment scores. 10 prefectures. | シナリオWhat-If分析。新駅・大型商業施設・人口変動の地価影響を試算。全10都道府県。',
+      inputSchema: ScenarioWhatIfInput.shape,
+      outputSchema: ScenarioWhatIfOutput.shape,
+      annotations: RO_LOCAL,
+    },
     (args) =>
       withErrorHandling('scenario_what_if', String(args.prefecture ?? 'aichi'), async () => {
         const input = ScenarioWhatIfInput.parse(args);
@@ -704,27 +935,46 @@ export function createServer(
       }),
   );
 
-  server.tool(
+  server.registerTool(
     'portfolio_optimizer',
-    'Optimize real estate investment portfolio across up to 5 areas. Returns expected return, risk score, Sharpe ratio. | 不動産投資ポートフォリオ最適化。最大5エリアのリターン・リスク・シャープレシオを算出。',
-    PortfolioOptimizerInput.shape,
-    RO,
+    {
+      title: 'ポートフォリオ最適化',
+      description:
+        'Optimize real estate investment portfolio across up to 5 areas. Returns expected return, risk score, Sharpe ratio. | 不動産投資ポートフォリオ最適化。最大5エリアのリターン・リスク・シャープレシオを算出。',
+      inputSchema: PortfolioOptimizerInput.shape,
+      outputSchema: PortfolioOptimizerOutput.shape,
+      annotations: RO_LOCAL,
+    },
     (args) =>
       withErrorHandling('portfolio_optimizer', 'multi', async () => {
         const input = PortfolioOptimizerInput.parse(args);
         const result = portfolioOptimizer(input);
+        const csvLink = saveArtifactAndLink(
+          portfolioOptimizerToCsv(result),
+          'portfolio_optimizer.csv',
+          'text/csv',
+          'ポートフォリオ配分表（CSV）',
+        );
         return {
-          content: [{ type: 'text' as const, text: JSON.stringify(result, null, 2) }],
+          content: [
+            { type: 'text' as const, text: JSON.stringify(result, null, 2) },
+            csvLink,
+          ],
           structuredContent: { ...result, attribution: ATTRIBUTION },
         };
       }, args),
   );
 
-  server.tool(
+  server.registerTool(
     'simulate_aichi_future',
-    'Aichi future value simulator: Linear Chuo Shinkansen, Centrair 2nd runway, Toyota EV investment, Expo legacy impact on land prices. Markdown report. | 愛知県将来価値シミュレーター。リニア・セントレア・トヨタ・万博レガシーの地価影響をMarkdownレポートで出力。',
-    AichiFutureInput.shape,
-    RO,
+    {
+      title: '愛知県将来価値シミュレーター',
+      description:
+        'Aichi future value simulator: Linear Chuo Shinkansen, Centrair 2nd runway, Toyota EV investment, Expo legacy impact on land prices. Markdown report. | 愛知県将来価値シミュレーター。リニア・セントレア・トヨタ・万博レガシーの地価影響をMarkdownレポートで出力。',
+      inputSchema: AichiFutureInput.shape,
+      outputSchema: AichiFutureOutput.shape,
+      annotations: RO_LOCAL,
+    },
     (args) =>
       withErrorHandling('simulate_aichi_future', 'aichi', async () => {
         const input = AichiFutureInput.parse(args);
@@ -742,10 +992,10 @@ export function createServer(
     {
       title: 'Opportunity Radar',
       description:
-        'Opportunity Radar: scan a prefecture for undervalued areas matching your goal (investment/store/family/office/development). Returns hypothesis cards with multi-source scoring. | Opportunity Radar。都道府県内を横断スキャンし、目的に応じた次に見るべきエリア仮説カードを返す。',
+        'Opportunity Radar: scan a prefecture for undervalued areas matching your goal (investment/store/family/office/development). Returns hypothesis cards with multi-source scoring, optionally enriched with a Google Gemini (https://ai.google.dev/gemini-api/docs) generated narrative when GOOGLE_GENAI_API_KEY is configured. | Opportunity Radar。都道府県内を横断スキャンし、目的に応じた次に見るべきエリア仮説カードを返す。GOOGLE_GENAI_API_KEY設定時はGemini生成のナラティブを付加。',
       inputSchema: DiscoverOpportunitiesInput.shape,
       outputSchema: DiscoverOpportunitiesOutput.shape,
-      annotations: RO,
+      annotations: RO_OPENWORLD,
       _meta: {
         ui: { resourceUri: DASHBOARD_URI },
         'openai/outputTemplate': DASHBOARD_URI,
@@ -779,11 +1029,16 @@ export function createServer(
 
   // ── v6.8.0 Nagoya renovation tools ──────────────────────────────────────
 
-  server.tool(
+  server.registerTool(
     'analyze_renovation_yield',
-    'Renovation yield analysis: calculate acquisition cost, renovation cost, expected rent, gross/net yield for Nagoya neighborhoods. Includes future plan upside. | リノベ利回り分析。名古屋市の町丁目×物件条件から取得価格・リノベ費用・利回りを算出。',
-    RenovationYieldInput.shape,
-    RO,
+    {
+      title: 'リノベ利回り分析',
+      description:
+        'Renovation yield analysis: calculate acquisition cost, renovation cost, expected rent, gross/net yield for Nagoya neighborhoods. Includes future plan upside. | リノベ利回り分析。名古屋市の町丁目×物件条件から取得価格・リノベ費用・利回りを算出。',
+      inputSchema: RenovationYieldInput.shape,
+      outputSchema: RenovationYieldOutput.shape,
+      annotations: RO_LOCAL,
+    },
     (args, extra) =>
       withErrorHandling('analyze_renovation_yield', 'aichi', async () => {
         const pt = extra?._meta?.progressToken;
@@ -808,11 +1063,16 @@ export function createServer(
       }),
   );
 
-  server.tool(
+  server.registerTool(
     'get_future_timeline',
-    'Future timeline: upcoming redevelopment, infrastructure, and population projections for Nagoya wards/neighborhoods (2025-2050). | 未来タイムライン。名古屋市の区・町丁目に影響する将来計画を年次タイムラインで返す。',
-    FutureTimelineInput.shape,
-    RO,
+    {
+      title: '未来タイムライン',
+      description:
+        'Future timeline: upcoming redevelopment, infrastructure, and population projections for Nagoya wards/neighborhoods (2025-2050). | 未来タイムライン。名古屋市の区・町丁目に影響する将来計画を年次タイムラインで返す。',
+      inputSchema: FutureTimelineInput.shape,
+      outputSchema: FutureTimelineOutput.shape,
+      annotations: RO_LOCAL,
+    },
     (args) =>
       withErrorHandling('get_future_timeline', 'aichi', async () => {
         const r = getFutureTimelineTool(args as Record<string, unknown>);
@@ -823,11 +1083,16 @@ export function createServer(
       }),
   );
 
-  server.tool(
+  server.registerTool(
     'get_chochou_profile',
-    'Neighborhood profile: current metrics (land price, population, households, ongoing plans) for Nagoya wards/neighborhoods. | 町丁目プロファイル。名古屋市の区・町丁目単位の現状指標を返す。',
-    ChochouProfileInput.shape,
-    RO,
+    {
+      title: '町丁目プロファイル',
+      description:
+        'Neighborhood profile: current metrics (land price, population, households, ongoing plans) for Nagoya wards/neighborhoods. | 町丁目プロファイル。名古屋市の区・町丁目単位の現状指標を返す。',
+      inputSchema: ChochouProfileInput.shape,
+      outputSchema: ChochouProfileOutput.shape,
+      annotations: RO_LOCAL,
+    },
     (args) =>
       withErrorHandling('get_chochou_profile', 'aichi', async () => {
         const typedArgs = args as Record<string, unknown>;
@@ -849,11 +1114,16 @@ export function createServer(
       }),
   );
 
-  server.tool(
+  server.registerTool(
     'recommend_renovation_targets',
-    'Renovation yield ranking: scan all 16 Nagoya wards to rank neighborhoods by yield. | リノベ利回りランキング。名古屋市全16区の主要町丁目を横断スキャンし利回り上位をランキング。',
-    RecommendRenovationTargetsInput.shape,
-    RO,
+    {
+      title: 'リノベ利回りランキング',
+      description:
+        'Renovation yield ranking: scan all 16 Nagoya wards to rank neighborhoods by yield. | リノベ利回りランキング。名古屋市全16区の主要町丁目を横断スキャンし利回り上位をランキング。',
+      inputSchema: RecommendRenovationTargetsInput.shape,
+      outputSchema: RecommendRenovationTargetsOutput.shape,
+      annotations: RO_LOCAL,
+    },
     (args) =>
       withErrorHandling('recommend_renovation_targets', 'aichi', async () => {
         const r = recommendRenovationTargetsTool(args as Record<string, unknown>);
@@ -866,11 +1136,16 @@ export function createServer(
 
   // ── v6.9.0 Contract Intelligence tools ──────────────────────────────────
 
-  server.tool(
+  server.registerTool(
     'generate_contract_support_package',
-    'Contract support package: generate risk matrix, price negotiation anchors, recommended clauses from neighborhood/property data. Markdown + branded PDF. | 売買契約支援パッケージ。リスクマトリックス・価格交渉アンカー・推奨特約を生成。',
-    ContractSupportInput.shape,
-    RO,
+    {
+      title: '契約支援パッケージ生成',
+      description:
+        'Contract support package: generate risk matrix, price negotiation anchors, recommended clauses from neighborhood/property data. Returns a downloadable Markdown report via resource_link. | 売買契約支援パッケージ。リスクマトリックス・価格交渉アンカー・推奨特約を生成。Markdownレポートをresource_linkとしてダウンロード可能。',
+      inputSchema: ContractSupportInput.shape,
+      outputSchema: ContractSupportOutput.shape,
+      annotations: RO_LOCAL,
+    },
     (args, extra) =>
       withErrorHandling('generate_contract_support_package', 'aichi', async () => {
         const pt = extra?._meta?.progressToken;
@@ -888,23 +1163,43 @@ export function createServer(
         const r = generateContractSupportPackageTool(args as Record<string, unknown>);
         notify?.(2, 3, '特約生成中…');
         notify?.(3, 3, '完了');
+        const ward = String((args as Record<string, unknown>).ward ?? 'area');
+        const link = saveArtifactAndLink(
+          r.structuredContent.markdown,
+          `contract_support_${ward}.md`,
+          'text/markdown',
+          `${ward} 売買契約支援パッケージ（Markdown）`,
+        );
         return {
-          content: r.content,
+          content: [...r.content, link],
           structuredContent: { ...r.structuredContent } as Record<string, unknown>,
         };
       }),
   );
 
-  server.tool(
+  server.registerTool(
     'assess_contract_risk',
-    'Contract risk assessment: analyze proposed clauses (financing contingency, inspection, future value terms) and return risk score with deal-breakers. | 契約リスク評価。提案中の契約条項を分析しリスクスコアとディールブレーカーを返す。',
-    AssessContractRiskInput.shape,
-    RO,
+    {
+      title: '契約リスク評価',
+      description:
+        'Contract risk assessment: analyze proposed clauses (financing contingency, inspection, future value terms) and return risk score with deal-breakers. | 契約リスク評価。提案中の契約条項を分析しリスクスコアとディールブレーカーを返す。',
+      inputSchema: AssessContractRiskInput.shape,
+      outputSchema: AssessContractRiskOutput.shape,
+      annotations: RO_LOCAL,
+    },
     (args) =>
       withErrorHandling('assess_contract_risk', 'aichi', async () => {
         const r = assessContractRiskTool(args as Record<string, unknown>);
+        const ward = String((args as Record<string, unknown>).ward ?? 'area');
+        const reportText = r.content[0]?.text ?? '';
+        const link = saveArtifactAndLink(
+          reportText,
+          `contract_risk_${ward}.md`,
+          'text/markdown',
+          `${ward} 契約リスク評価（Markdown）`,
+        );
         return {
-          content: r.content,
+          content: [...r.content, link],
           structuredContent: { ...r.structuredContent } as Record<string, unknown>,
         };
       }),
@@ -916,10 +1211,10 @@ export function createServer(
     {
       title: '総合価値スコア',
       description:
-        'Composite value score: fuse 5 axes (land price, education, transport, future plans, risk) into a single 0-100 score with radar, tier, peer comparison, and AI narrative. | 総合価値スコア。地価・教育・交通・将来計画・リスクを 1 つの 0-100 スコアに融合。レーダー・Tier・ピア比較・AIナラティブ付き。',
+        'Composite value score: fuse 5 axes (land price, education, transport, future plans, risk) into a single 0-100 score with radar, tier, peer comparison, and an AI narrative optionally generated via Google Gemini (https://ai.google.dev/gemini-api/docs, needs GOOGLE_GENAI_API_KEY). | 総合価値スコア。地価・教育・交通・将来計画・リスクを 1 つの 0-100 スコアに融合。レーダー・Tier・ピア比較・GOOGLE_GENAI_API_KEY設定時はGemini生成AIナラティブ付き。',
       inputSchema: CompositeValueScoreInput.shape,
       outputSchema: CompositeValueScoreOutput.shape,
-      annotations: RO,
+      annotations: RO_OPENWORLD,
       _meta: {
         ui: { resourceUri: DASHBOARD_URI },
         'openai/outputTemplate': DASHBOARD_URI,
@@ -958,7 +1253,8 @@ export function createServer(
       description:
         'Look up zoning (用途地域) for an area: zone type, coverage ratio (建蔽率), floor area ratio (容積率), and height limits. | 用途地域・建蔽率・容積率・高さ制限を返す。',
       inputSchema: ZoningInfoInput.shape,
-      annotations: RO,
+      outputSchema: ZoningInfoOutput.shape,
+      annotations: RO_LOCAL,
       _meta: {
         ui: { resourceUri: DASHBOARD_URI },
         'openai/toolInvocation/invoking': '用途地域情報を取得中…',
@@ -983,7 +1279,8 @@ export function createServer(
       description:
         'Vacancy rate statistics (空き家率) by municipality: total vacant, for-rent, for-sale, other — compared to national average. | 市区町村別の空き家率・種類別内訳を全国平均と比較して返す。',
       inputSchema: VacancyStatsInput.shape,
-      annotations: RO,
+      outputSchema: VacancyStatsOutput.shape,
+      annotations: RO_LOCAL,
       _meta: {
         ui: { resourceUri: DASHBOARD_URI },
         'openai/toolInvocation/invoking': '空き家率データを取得中…',
@@ -1008,7 +1305,8 @@ export function createServer(
       description:
         'Population outlook to 2050 (将来人口推計): projected population at 2030/2040/2050 with decline rate, based on NIPSSR data. | 2030/2040/2050年の人口推計と減少率を返す。',
       inputSchema: PopulationOutlookInput.shape,
-      annotations: RO,
+      outputSchema: PopulationOutlookOutput.shape,
+      annotations: RO_LOCAL,
       _meta: {
         ui: { resourceUri: DASHBOARD_URI },
         'openai/toolInvocation/invoking': '将来人口推計を算出中…',
@@ -1031,9 +1329,10 @@ export function createServer(
     {
       title: '不動産マクロスナップショット',
       description:
-        'One-screen macro view: land price YoY (median ㎡/year), transaction counts (last 3y), population decline to 2050; optional e-Stat building construction starts by prefecture (needs ESTAT_APP_ID) and FRED policy-rate proxy CSV. | 地価中央値YoY・取引件数・2050人口減、e-Stat建築着工・FRED短期金利プロキシを一枚に。',
+        'One-screen macro view: land price YoY (median ㎡/year), transaction counts (last 3y), population decline to 2050; optionally enriched with the e-Stat Government Statistics API (https://www.e-stat.go.jp/api/, building construction starts by prefecture, needs ESTAT_APP_ID) and a FRED (Federal Reserve Economic Data, https://fred.stlouisfed.org/) policy-rate proxy CSV. | 地価中央値YoY・取引件数・2050人口減、e-Stat建築着工・FRED短期金利プロキシを一枚に。',
       inputSchema: MacroSnapshotInput.shape,
-      annotations: RO,
+      outputSchema: MacroSnapshotOutput.shape,
+      annotations: RO_OPENWORLD,
       _meta: {
         ui: { resourceUri: DASHBOARD_URI },
         'openai/toolInvocation/invoking': 'マクロ指標を集計中…',
@@ -1054,10 +1353,10 @@ export function createServer(
     {
       title: '価格トライアングル・アービトラージスキャン',
       description:
-        'Price triangulation arbitrage scanner: cross-checks 路線価(rosenka) × 公示地価(koji) × 取引価格(tx) to detect discount buys, inheritance-tax edges, and overheated markets. | 路線価・公示地価・取引価格の三角測量でディスカウント物件・相続有利エリア・市場過熱を検出する。',
+        'Price triangulation arbitrage scanner: cross-checks 路線価(rosenka) × 公示地価(koji) × 取引価格(tx) to detect discount buys, inheritance-tax edges, and overheated markets. Optionally cross-references the live MLIT Real Estate Information Library API (https://www.reinfolib.mlit.go.jp/help/apiManual/, needs MLIT_API_KEY) for the latest transaction median. | 路線価・公示地価・取引価格の三角測量でディスカウント物件・相続有利エリア・市場過熱を検出する。任意でMLIT不動産情報ライブラリAPIの最新取引価格と照合。',
       inputSchema: ArbitrageScanInput.shape,
       outputSchema: ArbitrageScanOutput.shape,
-      annotations: RO,
+      annotations: RO_OPENWORLD,
       _meta: {
         ui: { resourceUri: DASHBOARD_URI },
         'openai/outputTemplate': DASHBOARD_URI,
@@ -1096,7 +1395,7 @@ export function createServer(
         'Real estate purchase review for executives: evaluates asking price vs 公示地価/路線価/取引相場, yield (gross/net), risk (vacancy/aging/disaster), future potential, and contract terms. Returns 5-axis scores, decision (buy/negotiate/hold/reject), red flags, negotiation points, and recommended clauses. | 不動産屋経営者向け購入審査：販売価格 vs 公示地価・路線価・取引相場、利回り、リスク、将来性、契約条件を5軸評価。判断（購入/交渉/保留/非推奨）、レッドフラグ、交渉ポイント、推奨特約条項を返却。',
       inputSchema: PurchaseReviewInput.shape,
       outputSchema: PurchaseReviewOutput.shape,
-      annotations: RO,
+      annotations: RO_LOCAL,
       _meta: {
         ui: { resourceUri: DASHBOARD_URI },
         'openai/outputTemplate': DASHBOARD_URI,
@@ -1133,7 +1432,7 @@ export function createServer(
         'Leveraged 10-year real estate pro-forma: accepts loan interest rate, LTV/loan amount, rent, vacancy, operating costs, property tax, depreciation and exit assumptions, then returns annual NOI, debt service, after-tax cash flow, DSCR, IRR, equity multiple and sensitivity. | 銀行借入の利率・LTV・賃料・空室率・経費・固定資産税・減価償却・出口条件から10年の年次収支、税引後CF、DSCR、IRR、感応度を試算する。',
       inputSchema: LeveragedCashflowInput.shape,
       outputSchema: LeveragedCashflowOutput.shape,
-      annotations: RO,
+      annotations: RO_LOCAL,
       _meta: {
         ui: { resourceUri: DASHBOARD_URI },
         'openai/outputTemplate': DASHBOARD_URI,
@@ -1170,7 +1469,7 @@ export function createServer(
       description: 'Optimize real estate portfolio risk & return: aggregates hazards, land price trends, and generates allocation strategies. | 複数物件のポートフォリオ災害リスク・地価動向を横断分析し、最適配分をシミュレートする。',
       inputSchema: OptimizePortfolioInput.shape,
       outputSchema: OptimizePortfolioOutput.shape,
-      annotations: RO,
+      annotations: RO_LOCAL,
       _meta: {
         ui: { resourceUri: DASHBOARD_URI },
         'openai/outputTemplate': DASHBOARD_URI,
@@ -1196,7 +1495,7 @@ export function createServer(
       description: 'Audit proposed building metrics (FAR, coverage, slant line, height limit) against local zoning rules. | 敷地での計画建物スペック（建蔽率・容積率・斜線制限など）の適合性を自動監査する。',
       inputSchema: AuditZoningComplianceInput.shape,
       outputSchema: AuditZoningComplianceOutput.shape,
-      annotations: RO,
+      annotations: RO_LOCAL,
       _meta: {
         ui: { resourceUri: DASHBOARD_URI },
         'openai/outputTemplate': DASHBOARD_URI,
@@ -1222,7 +1521,7 @@ export function createServer(
       description: 'Predict demographic, aging and human flow trends for a specific neighborhood or city. | 国勢調査・人流統計から、指定エリア（町丁目単位）の10年後の人口・世帯・高齢化率を予測する。',
       inputSchema: ForecastDemographicShiftInput.shape,
       outputSchema: ForecastDemographicShiftOutput.shape,
-      annotations: RO,
+      annotations: RO_LOCAL,
       _meta: {
         ui: { resourceUri: DASHBOARD_URI },
         'openai/outputTemplate': DASHBOARD_URI,

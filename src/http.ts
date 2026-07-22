@@ -8,10 +8,9 @@ import { StreamableHTTPServerTransport } from '@modelcontextprotocol/sdk/server/
 import { createServer } from './server.js';
 import { moduleLogger } from './logger.js';
 import { randomUUID } from 'node:crypto';
-import { registerOAuthRoutes } from './auth/oauth-routes.js';
-import { validateAccessToken } from './auth/oauth-store.js';
 import { registerStripeWebhookRoutes } from './billing/stripe-webhook.js';
-import { getLicenseByEmail } from './billing/license-store.js';
+import { getLicenseBySessionId } from './billing/license-store.js';
+import { getArtifact } from './artifacts.js';
 import { collectDefaultMetrics, register, Counter, Histogram, Gauge } from 'prom-client';
 import * as Sentry from '@sentry/node';
 import type { Tier } from './tiers.js';
@@ -122,8 +121,8 @@ if (RATE_LIMIT_ENABLED) {
     },
   });
   app.use('/mcp', apiLimiter);
-  app.use('/oauth', apiLimiter);
-  log.info({ windowMs: RATE_LIMIT_WINDOW_MS, max: RATE_LIMIT_MAX }, 'Rate limiting enabled on API and OAuth endpoints');
+  app.use('/api', apiLimiter);
+  log.info({ windowMs: RATE_LIMIT_WINDOW_MS, max: RATE_LIMIT_MAX }, 'Rate limiting enabled on API endpoints');
 }
 
 // ── Stripe Webhook (raw body — must come BEFORE express.json()) ────────────
@@ -146,19 +145,15 @@ app.get('/', (_req, res) => res.redirect('/dashboard.html'));
 
 // Optional API key authentication (applied AFTER static files so dashboard is public)
 function isPublicPath(p: string): boolean {
-  if (
-    p === '/health' ||
-    p === '/metrics' ||
-    p === '/' ||
-    p === '/sw.js' ||
-    p === '/manifest.webmanifest'
-  )
-    return true;
+  if (p === '/health' || p === '/' || p === '/sw.js' || p === '/manifest.webmanifest') return true;
   if (
     p.startsWith('/dashboard') ||
     p.startsWith('/icons/') ||
     p.startsWith('/data/') ||
-    p.startsWith('/assets/')
+    p.startsWith('/assets/') ||
+    // Unguessable UUID is the access-control boundary here (like a Stripe
+    // Checkout session link) — same rationale as /api/license below.
+    p.startsWith('/artifacts/')
   )
     return true;
   if (p === '/privacy-policy.html' || p === '/terms.html') return true;
@@ -190,30 +185,43 @@ app.use((req, res, next) => {
 
 app.use('/data', express.static(path.join(ROOT, 'data')));
 
-// ── OAuth 2.1 + PKCE endpoints ────────────────────────────────────────────
-registerOAuthRoutes(app);
-
 // ── License Lookup API ────────────────────────────────────────────────────
+// Looked up by the opaque Stripe Checkout `session_id` (returned to the buyer's
+// browser only, on the success redirect) rather than by email. Email-based
+// lookup was removed: it allowed license-key disclosure via email enumeration.
 app.get('/api/license', (req: Request, res: Response) => {
-  const email = req.query.email as string | undefined;
-  if (!email) {
-    res.status(400).json({ error: 'email query parameter is required' });
+  const sessionId = req.query.session_id as string | undefined;
+  if (!sessionId) {
+    res.status(400).json({ error: 'session_id query parameter is required' });
     return;
   }
-  const license = getLicenseByEmail(email);
+  const license = getLicenseBySessionId(sessionId);
   if (!license) {
-    res.status(404).json({ error: 'No active license found for this email' });
+    res.status(404).json({ error: 'No license found for this checkout session' });
     return;
   }
-  // Return license info (key included so customer can copy it)
   res.json({
     clientName: license.client_name,
-    email: license.email,
     tier: license.tier,
     licenseKey: license.license_key,
     expiresAt: license.expires_at,
     createdAt: license.created_at,
   });
+});
+
+// ── Generated artifact downloads (reports/CSV/XLSX; src/artifacts.ts) ──────
+// :id must be a bare UUID (enforced inside getArtifact) and :filename is only
+// used for the Content-Disposition header — the ID alone resolves the file,
+// so a mismatched/missing filename can't be used to read anything else.
+app.get('/artifacts/:id/:filename', (req: Request, res: Response) => {
+  const artifact = getArtifact(String(req.params.id));
+  if (!artifact) {
+    res.status(404).json({ error: 'Artifact not found or expired' });
+    return;
+  }
+  res.set('Content-Type', artifact.metadata.mimeType);
+  res.set('Content-Disposition', `attachment; filename="${artifact.metadata.filename}"`);
+  res.send(artifact.data);
 });
 
 // ── Session management ─────────────────────────────────────────────────────
@@ -253,10 +261,6 @@ app.post('/mcp', async (req, res) => {
   const callStart = Date.now();
   res.on('finish', () => mcpToolDuration.observe((Date.now() - callStart) / 1000));
   
-  // Set Client IP into environment variable context dynamically for database quota tracking
-  const clientIp = req.ip || req.socket.remoteAddress || 'unknown-client';
-  process.env.USAGE_CLIENT_ID = clientIp;
-
   // Extract real-time license key from HTTP headers
   const reqLicenseKey = req.headers['x-license-key'] as string | undefined;
   let clientTierOverride: Tier = 'free';
@@ -304,23 +308,26 @@ app.post('/mcp', async (req, res) => {
     if (API_KEY && (bearer === API_KEY || xApi === API_KEY)) {
       tier = (process.env.DEFAULT_TIER as Tier) ?? 'pro';
       clientId = 'api_key_owner';
-    } else if (bearer) {
-      const tokenInfo = validateAccessToken(bearer);
-      if (tokenInfo) {
-        tier = tokenInfo.tier as Tier;
-        clientId = tokenInfo.clientId;
-      }
     }
 
     if (!clientId) {
-      clientId = 'anon:' + (req.ip || 'default');
+      // Keyed by MCP session ID rather than req.ip: when this server runs as a
+      // hosted Claude directory connector, Claude's backend proxies every
+      // end user's request through a shared egress IP, which would otherwise
+      // collapse every anonymous user (including reviewers) into a single
+      // Free-tier quota bucket keyed on that one IP.
+      clientId = 'session:' + newId;
     }
 
     entry = { transport, lastActivity: Date.now(), timer };
     sessions.set(newId, entry);
 
     const activeTier = reqLicenseKey ? clientTierOverride : (tier ?? 'free');
-    const mcpServer = createServer({ activeTierOverride: activeTier, clientId });
+    const mcpServer = createServer({
+      activeTierOverride: activeTier,
+      clientId,
+      transportMode: 'http',
+    });
     await mcpServer.connect(transport);
     log.info({ sessionId: newId, tier: activeTier, clientId }, 'New MCP session created');
 
@@ -379,8 +386,25 @@ app.get('/health', (_req, res) => {
 });
 
 // ── Prometheus metrics ─────────────────────────────────────────────────────
+// Always requires a key (independent of the general API_KEY gate above, which
+// is skipped entirely when API_KEY is unset for authless public deployments).
+// Returns 404 rather than 401 when no key is configured, so the endpoint's
+// existence isn't advertised on fully public instances.
 
-app.get('/metrics', async (_req, res) => {
+const METRICS_KEY = process.env.METRICS_KEY ?? API_KEY;
+
+app.get('/metrics', async (req: Request, res: Response) => {
+  if (!METRICS_KEY) {
+    res.status(404).end();
+    return;
+  }
+  const xApi = req.headers['x-api-key'];
+  const auth = req.headers['authorization'];
+  const bearer = typeof auth === 'string' && auth.startsWith('Bearer ') ? auth.slice(7) : undefined;
+  if (xApi !== METRICS_KEY && bearer !== METRICS_KEY) {
+    res.status(401).json({ error: 'Unauthorized' });
+    return;
+  }
   try {
     mcpActiveSessions.set(sessions.size);
     res.set('Content-Type', register.contentType);

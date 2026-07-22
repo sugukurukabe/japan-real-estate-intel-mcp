@@ -25,6 +25,7 @@ export function recommendRenovationTargetsTool(rawArgs: Record<string, unknown>)
           text: '町丁目データが読み込めません。data/aichi/chochou.json を確認してください。',
         },
       ],
+      structuredContent: { rankings: [], conditions: input },
     };
   }
 

@@ -31,16 +31,17 @@
   </div>
 
   <div id="en" class="section active">
-    <p class="effective">Effective: 2026-05-11 &mdash; Last updated: 2026-05-11</p>
+    <p class="effective">Effective: 2026-07-22 &mdash; Last updated: 2026-07-22</p>
 
     <h2>1. Operator</h2>
     <p>Japan Real Estate Intel MCP ("Service") is operated by sugukuru ("we").<br>
-    Contact: via GitHub Issues at <a href="https://github.com/sugukuru/japan-real-estate-intel-mcp/issues">github.com/sugukuru/japan-real-estate-intel-mcp</a></p>
+    Contact: via GitHub Issues at <a href="https://github.com/sugukurukabe/japan-real-estate-intel-mcp/issues">github.com/sugukurukabe/japan-real-estate-intel-mcp</a></p>
 
     <h2>2. Data We Collect</h2>
     <ul>
+      <li><strong>No authentication required:</strong> This is a public, authless connector. We do not use OAuth and do not require an account.</li>
       <li><strong>MCP Session Data:</strong> A random UUID per session. No persistent user accounts.</li>
-      <li><strong>OAuth 2.1 Tokens (if enabled):</strong> Authorization codes and access tokens stored in a local SQLite database. Tokens expire after the configured lifetime.</li>
+      <li><strong>License Keys (Pro/Enterprise, optional):</strong> If you supply a license key for paid tiers, it is verified by cryptographic signature and not stored server-side beyond the record created at purchase time (linked to your Stripe checkout session, not your MCP usage).</li>
       <li><strong>Server Logs:</strong> IP address (via reverse proxy), request path, user-agent, timestamps. Retained for 30 days for operational purposes.</li>
       <li><strong>API Keys:</strong> If you provide an API_KEY for authentication, it is compared in-memory. We do not log API key values.</li>
     </ul>
@@ -69,13 +70,13 @@
     </ul>
 
     <h2>6. Data Retention</h2>
-    <p>MCP sessions expire after 30 minutes of inactivity. OAuth tokens expire per configuration (default: 1 hour). Server logs are retained for 30 days.</p>
+    <p>MCP sessions expire after 30 minutes of inactivity. Server logs are retained for 30 days.</p>
 
     <h2>7. Your Rights (GDPR / APPI)</h2>
     <p>Since we collect minimal personal data, most GDPR/APPI rights are satisfied by default. You may request deletion of server logs referencing your IP address by contacting us via GitHub Issues. We will respond within 30 days.</p>
 
     <h2>8. Security</h2>
-    <p>We use HTTPS (TLS 1.3 via Caddy), helmet security headers, rate limiting, and optional API key authentication. See our <a href="https://github.com/sugukuru/japan-real-estate-intel-mcp/blob/main/SECURITY.md">Security Policy</a>.</p>
+    <p>We use HTTPS (TLS 1.3 via Caddy), helmet security headers, rate limiting, and optional API key authentication. See our <a href="https://github.com/sugukurukabe/japan-real-estate-intel-mcp/blob/main/SECURITY.md">Security Policy</a>.</p>
 
     <h2>9. Children</h2>
     <p>This Service is not directed to children under 16. We do not knowingly collect data from minors.</p>
@@ -85,16 +86,17 @@
   </div>
 
   <div id="ja" class="section">
-    <p class="effective">発効日: 2026-05-11 &mdash; 最終更新: 2026-05-11</p>
+    <p class="effective">発効日: 2026-07-22 &mdash; 最終更新: 2026-07-22</p>
 
     <h2>1. 運営者</h2>
     <p>Japan Real Estate Intel MCP（以下「本サービス」）は sugukuru（以下「当方」）が運営しています。<br>
-    連絡先: <a href="https://github.com/sugukuru/japan-real-estate-intel-mcp/issues">GitHub Issues</a></p>
+    連絡先: <a href="https://github.com/sugukurukabe/japan-real-estate-intel-mcp/issues">GitHub Issues</a></p>
 
     <h2>2. 収集するデータ</h2>
     <ul>
+      <li><strong>認証不要:</strong> 本サービスは認証不要（authless）の公開コネクタです。OAuthは使用せず、アカウント登録も不要です。</li>
       <li><strong>MCPセッションデータ:</strong> セッションごとのランダムUUID。永続的なユーザーアカウントはありません。</li>
-      <li><strong>OAuth 2.1トークン（有効時）:</strong> 認可コードとアクセストークンをローカルSQLiteデータベースに保存。設定された有効期限で失効します。</li>
+      <li><strong>ライセンスキー（Pro/Enterprise、任意）:</strong> 有料プランのライセンスキーは署名検証のみを行い、購入時にStripeチェックアウトセッションに紐づけて記録される以外、MCP利用状況とは連携しません。</li>
       <li><strong>サーバーログ:</strong> IPアドレス（リバースプロキシ経由）、リクエストパス、ユーザーエージェント、タイムスタンプ。運用目的で30日間保持。</li>
       <li><strong>APIキー:</strong> 認証用APIキーはメモリ内で比較されます。APIキーの値はログに記録しません。</li>
     </ul>
@@ -123,13 +125,13 @@
     </ul>
 
     <h2>6. データの保持期間</h2>
-    <p>MCPセッションは30分間の非アクティブ後に失効します。OAuthトークンは設定に従い失効（デフォルト: 1時間）。サーバーログは30日間保持されます。</p>
+    <p>MCPセッションは30分間の非アクティブ後に失効します。サーバーログは30日間保持されます。</p>
 
     <h2>7. あなたの権利（GDPR / 個人情報保護法）</h2>
     <p>収集する個人データは最小限であるため、GDPR/個人情報保護法上の権利は原則として満たされています。IPアドレスを含むサーバーログの削除をGitHub Issuesを通じてご請求いただけます。30日以内に対応いたします。</p>
 
     <h2>8. セキュリティ</h2>
-    <p>HTTPS（Caddy経由のTLS 1.3）、helmetセキュリティヘッダー、レート制限、オプションのAPIキー認証を使用しています。詳細は<a href="https://github.com/sugukuru/japan-real-estate-intel-mcp/blob/main/SECURITY.md">セキュリティポリシー</a>をご覧ください。</p>
+    <p>HTTPS（Caddy経由のTLS 1.3）、helmetセキュリティヘッダー、レート制限、オプションのAPIキー認証を使用しています。詳細は<a href="https://github.com/sugukurukabe/japan-real-estate-intel-mcp/blob/main/SECURITY.md">セキュリティポリシー</a>をご覧ください。</p>
 
     <h2>9. 未成年者</h2>
     <p>本サービスは16歳未満の方を対象としていません。未成年者のデータを故意に収集することはありません。</p>

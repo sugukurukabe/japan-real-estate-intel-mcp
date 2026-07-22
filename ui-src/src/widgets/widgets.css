@@ -30,6 +30,7 @@
   top: 0;
   display: flex;
   justify-content: flex-end;
+  flex-wrap: wrap;
   gap: 4px;
   padding: 6px 8px 0;
   background: inherit;
@@ -44,12 +45,18 @@
   font-size: 12px;
   padding: 4px 8px;
   border-radius: 8px;
+  white-space: nowrap;
   transition: background 0.15s, color 0.15s;
 }
 
 .rei-widget-overlay-controls button:hover {
   background: color-mix(in srgb, var(--accent, #3b82f6) 18%, transparent);
   color: var(--text, #e4e8f1);
+}
+
+.rei-widget-overlay-controls button:disabled {
+  opacity: 0.5;
+  cursor: wait;
 }
 
 .rei-widget {

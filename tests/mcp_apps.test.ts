@@ -174,6 +174,26 @@ describe('MCP Apps integration', () => {
     );
   });
 
+  it('widget cards expose a CSV/PNG export toolbar (client-side, no new CSP domain)', () => {
+    const html = getDashboardHtml();
+    expect(html).toContain('rei-widget-overlay-controls');
+    expect(html).toContain('CSVでダウンロード');
+    expect(html).toContain('画像(PNG)でダウンロード');
+  });
+
+  it('export toolbar does not require any new external domain in the dashboard CSP', () => {
+    // html-to-image rasterizes the DOM entirely client-side; CSV export only
+    // touches structuredContent already in memory. Neither should have added
+    // a new resourceDomains/connectDomains entry.
+    const { _registeredResources: resources } = getPrivateRegistries();
+    const dashboard = resources['ui://japan-real-estate-intel/dashboard'];
+    const csp = dashboard.metadata?._meta?.ui?.csp;
+    expect(csp?.resourceDomains ?? []).not.toContain('html-to-image');
+    for (const domain of [...(csp?.resourceDomains ?? []), ...(csp?.connectDomains ?? [])]) {
+      expect(domain).not.toMatch(/html-to-image|htmltoimage/i);
+    }
+  });
+
   it('dashboard action payloads are valid tool inputs', () => {
     CrossAnalyzeInput.parse({
       prefecture: 'aichi',

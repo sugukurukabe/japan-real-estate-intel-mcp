@@ -103,17 +103,18 @@ export function issueLicense(params: {
 }
 
 /**
- * Retrieves the most recent active license for an email address.
+ * Retrieves the license issued for a specific Stripe Checkout session.
+ *
+ * `stripe_session_id` is an opaque, single-use identifier that Stripe only
+ * ever returns to the buyer's own browser on the checkout success redirect
+ * (`?session_id={CHECKOUT_SESSION_ID}`), so — unlike an email address — it
+ * cannot be guessed or enumerated by a third party.
  */
-export function getLicenseByEmail(email: string): StoredLicense | null {
+export function getLicenseBySessionId(stripeSessionId: string): StoredLicense | null {
   const db = getDb();
   const row = db
-    .prepare(
-      `SELECT * FROM licenses
-       WHERE email = ? AND revoked = 0
-       ORDER BY created_at DESC LIMIT 1`,
-    )
-    .get(email) as StoredLicense | undefined;
+    .prepare(`SELECT * FROM licenses WHERE stripe_session_id = ? AND revoked = 0`)
+    .get(stripeSessionId) as StoredLicense | undefined;
   return row ?? null;
 }
 

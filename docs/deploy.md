@@ -101,10 +101,12 @@ docker compose restart mcp
 docker compose exec mcp npm run data:fetch:all
 ```
 
-**OAuth SQLite** (`rei_sqlite:/app/db`):
-- `oauth.sqlite` は初回アクセス時に自動生成されます
-- バックアップ: `docker compose cp mcp:/app/db/oauth.sqlite ./backup/`
-- 復元: `docker compose cp ./backup/oauth.sqlite mcp:/app/db/`
+**Usage / License SQLite** (`rei_sqlite:/app/db`):
+- `usage.sqlite`（Free プランの月間クォータ）と `licenses.sqlite`（Stripe 発行ライセンス）は初回アクセス時に自動生成されます
+- バックアップ: `docker compose cp mcp:/app/db/usage.sqlite ./backup/` / `docker compose cp mcp:/app/db/licenses.sqlite ./backup/`
+- 復元: `docker compose cp ./backup/usage.sqlite mcp:/app/db/` / `docker compose cp ./backup/licenses.sqlite mcp:/app/db/`
+
+> 本サーバーは Claude 公式ディレクトリ向けに **認証不要（authless）の公開コネクタ** として動作します。OAuth は実装していません。Pro/Enterprise 機能はライセンスキー（`X-License-Key` ヘッダー、ECDSA署名オフライン検証）で解放します。
 
 ## アップデート
 

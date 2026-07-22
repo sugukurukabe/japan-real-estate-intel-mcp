@@ -9,7 +9,24 @@ const pkgVersion: string = JSON.parse(
   readFileSync(join(__dirname, '..', 'package.json'), 'utf-8'),
 ).version;
 
-type RegisteredTool = { annotations?: Record<string, unknown>; description?: string };
+type RegisteredTool = {
+  title?: string;
+  annotations?: Record<string, unknown>;
+  description?: string;
+};
+
+// Tools that legitimately cross the trust boundary to third-party/government
+// services (Google Maps, Gemini, MLIT, e-Stat, FRED) and must therefore
+// declare openWorldHint: true. Every other tool operates only on the bundled
+// local dataset and must declare openWorldHint: false.
+const OPEN_WORLD_TOOLS = new Set([
+  'assess_exterior_visuals',
+  'analyze_commute_accessibility',
+  'discover_opportunities',
+  'composite_value_score',
+  'get_real_estate_macro_snapshot',
+  'detect_arbitrage_signals',
+]);
 
 function registeredToolEntries(
   reg: Map<string, RegisteredTool> | Record<string, RegisteredTool>,
@@ -55,7 +72,25 @@ describe('tool annotations', () => {
     }
   });
 
-  it('all tools have openWorldHint: false', async () => {
+  it('openWorldHint is true only for tools that call third-party/government APIs', async () => {
+    const server = createServer();
+
+    const listResult = (
+      server as unknown as {
+        _registeredTools: Map<string, RegisteredTool> | Record<string, RegisteredTool>;
+      }
+    )._registeredTools;
+
+    for (const [name, tool] of registeredToolEntries(listResult)) {
+      const expected = OPEN_WORLD_TOOLS.has(name);
+      expect(
+        (tool.annotations as Record<string, unknown>)?.openWorldHint,
+        `Tool "${name}" should have openWorldHint: ${expected}`,
+      ).toBe(expected);
+    }
+  });
+
+  it('all tools have idempotentHint: true (safe to retry with the same arguments)', async () => {
     const server = createServer();
 
     const listResult = (
@@ -66,9 +101,26 @@ describe('tool annotations', () => {
 
     for (const [name, tool] of registeredToolEntries(listResult)) {
       expect(
-        (tool.annotations as Record<string, unknown>)?.openWorldHint,
-        `Tool "${name}" should have openWorldHint: false`,
-      ).toBe(false);
+        (tool.annotations as Record<string, unknown>)?.idempotentHint,
+        `Tool "${name}" should have idempotentHint: true`,
+      ).toBe(true);
+    }
+  });
+
+  it('every tool has a human-readable title (required for the Claude directory)', async () => {
+    const server = createServer();
+
+    const listResult = (
+      server as unknown as {
+        _registeredTools: Map<string, RegisteredTool> | Record<string, RegisteredTool>;
+      }
+    )._registeredTools;
+
+    const entries = registeredToolEntries(listResult);
+    expect(entries.length).toBeGreaterThanOrEqual(16);
+    for (const [name, tool] of entries) {
+      expect(typeof tool.title, `Tool "${name}" should have a string title`).toBe('string');
+      expect(tool.title!.length, `Tool "${name}" title should be non-empty`).toBeGreaterThan(0);
     }
   });
 

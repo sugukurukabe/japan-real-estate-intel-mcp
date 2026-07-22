@@ -84,7 +84,11 @@ export function AppShell() {
     <>
       <MapView hidden={mode === '3d'} onSwitchTo3d={() => setMode('3d')} />
       <PlateauView hidden={mode !== '3d'} onExit={() => setMode('2d')} />
-      <WidgetOverlay tool={activeTool} onDismiss={() => setActiveTool((prev) => ({ ...prev, result: null }))} />
+      <WidgetOverlay
+        tool={activeTool}
+        app={app}
+        onDismiss={() => setActiveTool((prev) => ({ ...prev, result: null }))}
+      />
     </>
   );
 }
