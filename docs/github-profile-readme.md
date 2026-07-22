@@ -17,9 +17,10 @@
 
 #### Featured
 
-- 🗾 10 prefectures bundled data + 33 MCP tools
+- 🗾 10 prefectures bundled data + 38 MCP tools
 - 📊 PWA dashboard + PLATEAU 3D shadow view
-- 🔺 Price triangulation (`detect_arbitrage_signals`) in v6.15.x
+- 🔓 Authless public connector (v8.0.0) — no login required, Pro/Enterprise via license key
+- 🔺 Price triangulation (`detect_arbitrage_signals`)
 
 #### Writing
 
@@ -28,7 +29,7 @@
 
 #### Stack
 
-`TypeScript` · `MCP` · `Node 20+` · MIT
+`TypeScript` · `MCP` · `Node 20+` · AGPL-3.0
 
 ---
 
@@ -42,4 +43,4 @@
 | Field | Value |
 |-------|-------|
 | Website | https://realestate-mcp.jp |
-| Bio | Maintainer of Japan Real Estate Intel MCP — 33 tools, 10 prefectures, MCP Registry |
+| Bio | Maintainer of Japan Real Estate Intel MCP — 38 tools, 10 prefectures, authless, MCP Registry |

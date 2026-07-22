@@ -13,7 +13,7 @@
 ## 本文（英・短）
 
 ```
-Hi — I maintain Japan Real Estate Intel MCP (33 tools, 10 prefectures bundled CSV + dashboard).
+Hi — I maintain Japan Real Estate Intel MCP (38 tools, 10 prefectures bundled CSV + dashboard, authless).
 
 It is meant to complement MLIT-API-focused servers like yours: we use includeLive / MLIT when keys are set, but the focus is broker workflows (reports, Nagoya timelines, contract support, arbitrage triangulation).
 
@@ -31,7 +31,7 @@ Thanks,
 ## 本文（日）
 
 ```
-お世話になっております。日本不動産向けワークフロー MCP（33ツール・10都道府県同梱データ）を公開しています。
+お世話になっております。日本不動産向けワークフロー MCP（38ツール・10都道府県同梱データ・認証不要）を公開しています。
 
 貴方の MLIT API ラッパー系 MCP と競合ではなく、**併用** 前提です（ライブ取引は API キー設定時に当方も利用可能）。差別化は仲介・投資の業務フロー（PDF、名古屋タイムライン、契約支援、三角測量）です。
 

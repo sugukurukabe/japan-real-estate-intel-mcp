@@ -5,8 +5,7 @@ Japan Real Estate Intel MCP は ChatGPT Apps (MCP Apps) に対応しています
 ## 前提条件
 
 - ChatGPT Plus / Team / Enterprise アカウント
-- MCP サーバーが `https://realestate-mcp.jp` で稼働中
-- API Key を取得済み（`Authorization: Bearer <key>` ヘッダーで認証）
+- **アカウント登録・API Key は不要** — `https://realestate-mcp.jp` は認証不要（authless）の公開コネクタです
 
 ## App 登録手順
 
@@ -15,9 +14,11 @@ Japan Real Estate Intel MCP は ChatGPT Apps (MCP Apps) に対応しています
 3. 以下を入力:
    - **Name**: Japan Real Estate Intel
    - **Server URL**: `https://realestate-mcp.jp/mcp`
-   - **Authentication**: Bearer Token → API Key を入力
+   - **Authentication**: None（認証不要のまま。何も入力しない）
 4. **Connect** をクリック
-5. ツール一覧に `search`・`fetch`・`search_area_candidates` および分析系ツールなど **合計 33 本** が表示されれば成功（クライアントの UI では折りたたみ表示のこともあります）
+5. ツール一覧に `search`・`fetch`・`search_area_candidates` および分析系ツールなど **合計 38 本** が表示されれば成功（クライアントの UI では折りたたみ表示のこともあります）
+
+> **Pro/Enterprise限定ツールを試す場合のみ**: ツール引数 `_licenseKey`（またはHTTPヘッダー `X-License-Key`）にStripe決済後発行のライセンスキーを渡してください。ChatGPT Appsの「Authentication」欄はこの仕組みとは無関係です。
 
 ## 埋め込みダッシュボード（MCP Apps）
 
@@ -153,7 +154,8 @@ ChatGPT: ユーザーに結果を要約して回答
 | 症状 | 原因 | 対処 |
 |---|---|---|
 | ツールが表示されない | App 未登録 or URL 誤り | Server URL が `/mcp` で終わっているか確認 |
-| 401 Unauthorized | API Key 誤り | Bearer Token を再設定 |
+| 401 Unauthorized | 自己ホストで `API_KEY` を設定している場合のみ発生 | 公開インスタンス（`https://realestate-mcp.jp`）は認証不要のため通常は起きない。自己ホストならAuthenticationヘッダーを再確認 |
+| Pro/Enterprise限定ツールが拒否される | Free ティアの上限 | `_licenseKey` 引数またはツール呼び出しにライセンスキーを渡す |
 | ダッシュボードが表示されない | ChatGPT の MCP Apps が無効 | 最新の ChatGPT を使用しているか確認 |
 | search が空を返す | クエリが短すぎる | 2文字以上の具体的なキーワードを使用 |
 | タイムアウト | サーバー負荷 | 時間をおいて再試行 |
