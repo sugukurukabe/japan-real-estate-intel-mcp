@@ -41,6 +41,7 @@
     "fonts:download": "node scripts/download-fonts.js",
     "screenshots": "node scripts/capture-dashboard-screenshots.mjs",
     "verify:ui": "node scripts/verify-dashboard-smoke.mjs",
+    "license:generate": "node scripts/generate-license.js",
     "demo:record": "node scripts/record-demo-video.mjs",
     "prepublishOnly": "npm run build"
   },

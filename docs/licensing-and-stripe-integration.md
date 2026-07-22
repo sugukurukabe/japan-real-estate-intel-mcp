@@ -8,89 +8,33 @@ These keys can be verified offline by the MCP server or the Web UI dashboard wit
 
 ## 🛠️ Requirements
 
-- **Node.js**: v18 or later
+- **Node.js**: v20 or later
+- `pnpm build` has been run at least once (the generator imports the compiled `dist/auth/generate-license.js`, which wraps `src/auth/generate-license.ts`)
 
 ---
 
 ## 🚀 How to Generate a Key
 
-You can run the script below using `node` to generate a new valid signed license key.
+The signing logic lives in `src/auth/generate-license.ts` and is exercised by `scripts/generate-license.js` (a thin CLI wrapper) and `pnpm test` (`tests/generate-license.test.ts`). Both **always** load the private key from the `LICENSE_PRIVATE_KEY_PEM` environment variable — it is never hardcoded in the repository.
 
-### 1. Save this script as `scripts/generate-license.js`
+⚠️ **SECURITY**: this repository is public. If a private key is ever hardcoded into a committed file (as an earlier revision of `scripts/generate-license.js` briefly did with a test-only key), anyone who clones the repo could mint their own "valid" license keys for any tier. Always keep `LICENSE_PRIVATE_KEY_PEM` out of version control — pass it only via environment variable or secret manager.
 
-```javascript
-import crypto from 'node:crypto';
-import fs from 'node:fs';
+### 1. Generate a key pair (once, store the private half securely)
 
-// ⚠️ SECURITY: NEVER commit the private key to version control.
-// Load it from a secure environment variable or a file outside the repository.
-//
-// To generate a new key pair:
-//   openssl ecparam -genkey -name prime256v1 -noout -out private.pem
-//   openssl ec -in private.pem -pubout -out public.pem
-//
-// Then update `src/auth/license.ts` PUBLIC_KEY_PEM with the contents of public.pem.
-//
-// Set the environment variable:
-//   export LICENSE_PRIVATE_KEY_PATH=/secure/path/to/private.pem
-// Or:
-//   export LICENSE_PRIVATE_KEY_PEM="-----BEGIN PRIVATE KEY-----\n...\n-----END PRIVATE KEY-----"
-
-function loadPrivateKey() {
-  if (process.env.LICENSE_PRIVATE_KEY_PEM) {
-    return process.env.LICENSE_PRIVATE_KEY_PEM;
-  }
-  const keyPath = process.env.LICENSE_PRIVATE_KEY_PATH;
-  if (!keyPath) {
-    console.error('❌ LICENSE_PRIVATE_KEY_PATH or LICENSE_PRIVATE_KEY_PEM must be set.');
-    console.error('   See docs/licensing-and-stripe-integration.md for key generation instructions.');
-    process.exit(1);
-  }
-  return fs.readFileSync(keyPath, 'utf8');
-}
-
-const PRIVATE_KEY_PEM = loadPrivateKey();
-
-/**
- * Generates a signed, Base64-encoded license key
- * @param {string} clientName - Name of the license holder (e.g. "Acme Corp")
- * @param {'pro'|'enterprise'} tier - The active plan tier
- * @param {string} expiresAt - ISO string expiration date (e.g., "2027-12-31T23:59:59Z")
- */
-function generateSignedKey(clientName, tier, expiresAt) {
-  const validationString = `${clientName}:${tier}:${expiresAt}`;
-  
-  const signer = crypto.createSign('SHA256');
-  signer.update(validationString);
-  const signature = signer.sign(PRIVATE_KEY_PEM, 'hex');
-
-  const payload = {
-    clientName,
-    tier,
-    expiresAt,
-    signature
-  };
-
-  const payloadStr = JSON.stringify(payload);
-  const base64Key = Buffer.from(payloadStr, 'utf8').toString('base64');
-  
-  console.log('----------------------------------------------------');
-  console.log(`🔑 NEW SIGNED LICENSE KEY FOR: ${clientName} (${tier.toUpperCase()})`);
-  console.log('----------------------------------------------------');
-  console.log(base64Key);
-  console.log('----------------------------------------------------');
-  return base64Key;
-}
-
-// Example usage: Create a Pro key valid for 1 year
-const nextYear = new Date();
-nextYear.setFullYear(nextYear.getFullYear() + 1);
-generateSignedKey('Real Estate Partner LLC', 'pro', nextYear.toISOString());
+```bash
+openssl ecparam -genkey -name prime256v1 -noout -out private.pem
+openssl ec -in private.pem -pubout -out public.pem
 ```
 
-### 2. Run the generator
+Update the **non-test** branch of `PUBLIC_KEY_PEM` in `src/auth/license.ts` with the contents of `public.pem`, then rebuild and redeploy.
+
+### 2. Build once, then run the generator
+
 ```bash
-node scripts/generate-license.js
+pnpm build:server
+LICENSE_PRIVATE_KEY_PEM="$(cat private.pem)" \
+  node scripts/generate-license.js "Real Estate Partner LLC" pro 12
+# args: clientName tier(pro|enterprise) durationMonths — all optional, defaults shown
 ```
 
 ---
