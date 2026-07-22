@@ -1,4 +1,65 @@
 # Changelog
+## [8.0.0] - 2026-07-22
+
+Directory-readiness pass: fixes every blocker identified in an audit against the
+Claude Connectors Directory / MCP spec review guidelines, plus artifact
+portability and dashboard export UX improvements.
+
+### Added
+
+- **Downloadable artifacts** (`src/artifacts.ts`): `generate_area_report` (PDF),
+  `compare_prefectures` (Excel), `portfolio_optimizer` (CSV),
+  `generate_contract_support_package` and `assess_contract_risk` (Markdown) now
+  persist their generated file to a TTL-cleaned store and return an MCP
+  `resource_link` content block instead of embedding raw Base64 in
+  `structuredContent`. Served via `GET /artifacts/:id/:filename` (HTTP
+  transport) or the new `artifact://{id}` MCP resource (stdio transport).
+- **Dashboard CSV/PNG export**: every tool-result widget card now has an export
+  toolbar. Uses the official `@modelcontextprotocol/ext-apps` `app.downloadFile()`
+  (host-mediated, works inside the sandboxed MCP Apps iframe) with a
+  Blob+`<a>` fallback for standalone use; PNG capture via `html-to-image`
+  (fully client-side, no new CSP domain).
+- `outputSchema` declared for all 28 tools that previously returned
+  `structuredContent` without one, closing a class of silent output-validation
+  gaps; verified end-to-end against the real MCP dispatch path in
+  `tests/output_schemas.test.ts`.
+- `idempotentHint: true` and a human-readable `title` on all 38 tools
+  (required for the Claude Connectors Directory listing).
+
+### Changed
+
+- **BREAKING: OAuth removed.** This server is now an authless public connector
+  — no account, token, or client registration required for any tool. The
+  previous OAuth 2.1 implementation had an auto-approving authorization
+  endpoint and no real Dynamic Client Registration, which would not have
+  passed directory review; rather than finishing it, we removed it in favor
+  of the model the directory actually recommends for a public data connector.
+  Pro/Enterprise tiers are unlocked exclusively via ECDSA-signed license keys
+  (`X-License-Key` header / `_licenseKey` tool argument), verified offline.
+- `getRequestTier()` no longer trusts an unsigned Base64 JSON `_licenseKey`
+  payload — every key now goes through `verifyLicenseKeyOffline()`.
+- `GET /api/license` now looks up a license by the opaque, single-use Stripe
+  Checkout `session_id` instead of email, closing a license-key-disclosure-via-
+  email-enumeration path.
+- `GET /metrics` is gated by its own `METRICS_KEY` (or `API_KEY`) independent
+  of the general auth middleware, and 404s (rather than 401s) when no key is
+  configured, so a public instance doesn't advertise the endpoint's existence.
+- Free-tier monthly quota is now keyed by MCP session ID instead of client IP —
+  avoids collapsing every anonymous user behind a hosted connector's shared
+  egress IP into one quota bucket.
+- Free tier tool list realigned with the 3 demo prompts in
+  `docs/free-demo-prompts.md` / the README quickstart, so a directory reviewer
+  running the advertised examples doesn't hit a tier wall.
+
+### Removed
+
+- `src/auth/oauth-routes.ts`, `src/auth/oauth-store.ts`, `tests/oauth.test.ts`,
+  and the `auth` block in `server.json`. Client-usage/quota tracking (the only
+  non-OAuth logic in `oauth-store.ts`) moved to `src/usage-store.ts`.
+- `pdfBase64` / `xlsxBase64` fields from `GenerateReportOutput` /
+  `ContractSupportOutput` / `ComparePrefecturesOutput` — superseded by the
+  `resource_link` artifacts above.
+
 ## [7.0.0] - 2026-07-06
 
 ### Added

@@ -97,6 +97,8 @@ npx @sugukuru/japan-real-estate-intel-mcp
 
 日本の不動産投資・仲介・開発・管理向けに、**地価・取引価格・路線価・人口統計・災害リスク・人流・教育環境・企業立地・交通・商業施設・医療福祉・3D 日照シミュレーション・町丁目実データ** をクロス分析する MCP サーバー。
 
+**v8.0.0** — Claude公式ディレクトリ審査対応。**OAuth撤去、認証不要（authless）の公開コネクタに単純化**（Pro/Enterprise はECDSA署名ライセンスキーのみで解放）。`getRequestTier`の署名なしバイパス除去・`/api/license`のStripeセッションID化・`/metrics`鍵保護など各種セキュリティ修正。全38ツールにtitle・`idempotentHint`を付与。生成レポート/CSV/Excelを`resource_link`（HTTP: `/artifacts/:id`、stdio: `artifact://`）でダウンロード可能に。ダッシュボードのウィジェットカードにCSV/PNGエクスポートツールバーを追加。
+
 **v7.0.0** — MCP Apps 公式SDK(`@modelcontextprotocol/ext-apps`)へ移行。2D地図・3D PLATEAUビューア・ツール別ウィジェットを React + Vite の単一ダッシュボードに統合。
 
 **v6.15.4** — セキュリティ強化（秘密鍵除去・デモキー本番ガード・`/metrics` 認証保護）、Tier 設定補完、MCP 仕様準拠監査合格（4プリミティブ + MCP Apps + OAuth 2.1）、Glama 掲載。

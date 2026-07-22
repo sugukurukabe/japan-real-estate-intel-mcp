@@ -215,7 +215,7 @@ export function createServer(
 ): McpServer {
   const server = new McpServer({
     name: 'japan-real-estate-intel-mcp',
-    version: '7.0.0',
+    version: '8.0.0',
   });
 
   let activeTier: Tier = 'free';

@@ -6,7 +6,7 @@ import { MapView } from '../views/MapView';
 import { PlateauView } from '../views/PlateauView';
 import { WidgetOverlay } from '../widgets/WidgetOverlay';
 
-const APP_INFO = { name: 'japan-real-estate-intel', version: '7.0.0' };
+const APP_INFO = { name: 'japan-real-estate-intel', version: '8.0.0' };
 
 export interface ActiveTool {
   name: string | undefined;
