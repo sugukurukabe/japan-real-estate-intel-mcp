@@ -110,6 +110,47 @@ portability and dashboard export UX improvements.
   asynchronously). `renovation-mode.png`/`comparison-mode.png` had silently
   been duplicating other screenshots since that rewrite. Fixed and
   regenerated all 5 screenshots.
+- The regenerated screenshots exposed a second, longer-standing bug: two files
+  were captured correctly but named for features they don't show —
+  `renovation-mode.png` was actually the default 不動産投資 (investment) mode
+  with an area selected (no renovation-yield UI exists), and
+  `contract-mode.png` was actually 融資CF (leveraged-cashflow) mode, not the
+  contract support package. Renamed to `investment-mode.png` /
+  `cashflow-mode.png` (and updated every doc reference) so the filenames match
+  what a directory reviewer will actually see. Also removed 5 unreferenced,
+  stale duplicate screenshots under `assets/` (dead weight with the same
+  wrong names, kept `docs/screenshots/` as the single source of truth).
+- `scripts/generate-license.js` had a private ECDSA key hardcoded directly in
+  the file — harmless in practice (it only validated against the
+  `NODE_ENV=test` public key in `src/auth/license.ts`, not the production
+  key), but still a bad pattern in a public repository and a functional trap:
+  following the (correct) instructions in
+  `docs/claude-connectors-submission.md` / `docs/listing-checklist.md` to run
+  this script for a reviewer demo key would have produced a key that fails
+  verification against the real production server. Rewrote it as a thin CLI
+  over the existing, already-correct `generateSignedLicenseKey()`
+  (`src/auth/generate-license.ts`), which has always loaded the key
+  exclusively from `LICENSE_PRIVATE_KEY_PEM` at runtime. Added
+  `pnpm license:generate` and corrected `docs/licensing-and-stripe-integration.md`'s
+  example, which had already documented the env-var-only pattern correctly.
+- The "はじめての方へ" README section's 6 chat-paste examples included 5
+  Pro-only tools (`predict_corporate_demand`, `assess_family_friendly_score`,
+  `portfolio_optimizer`, `scenario_what_if`, `evaluate_store_location`)
+  presented as if they ran on Free — the same class of bug already fixed in
+  `quick_start_examples` (`src/server.ts`) earlier in this release. Replaced
+  with the 3 tools that are actually on Free
+  (`discover_opportunities`/`forecast_land_price_trend`/`detect_arbitrage_signals`),
+  with Pro/Enterprise examples clearly labeled as needing a license key.
+- Legal/marketing docs still said "MIT" or referenced OAuth/33-tools after the
+  v8.0.0 AGPL-3.0-only + authless changes: `ui/terms.html`,
+  `ui/privacy-policy.html` (also added the missing Google Maps Platform
+  disclosure and artifact-retention period), `SECURITY.md` (supported-versions
+  table), and `docs/competitive-positioning.md`.
+- README's ~500-line block of superseded per-version "What's New" sections
+  (v2.0–v5.1) contained a wrong, single-prefecture capability matrix that
+  contradicted the current 10-prefecture Key Features section above it.
+  Condensed into one historical-context paragraph pointing to
+  `docs/implementation-story.md` and `CHANGELOG.md`.
 
 ## [7.0.0] - 2026-07-06
 

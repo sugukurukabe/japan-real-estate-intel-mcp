@@ -71,8 +71,8 @@ MCP Apps のカルーセルスクリーンショット仕様（PNG, 幅1000px以
 
 - `docs/screenshots/dashboard-overview.png`
 - `docs/screenshots/comparison-mode.png`
-- `docs/screenshots/contract-mode.png`
-- `docs/screenshots/renovation-mode.png`
+- `docs/screenshots/cashflow-mode.png`
+- `docs/screenshots/investment-mode.png`
 - `docs/screenshots/3d-view.png`
 
 再生成: `pnpm run build:ui && pnpm run screenshots`（Playwright Chromiumが必要、初回のみ `pnpm exec playwright install chromium`）。各画像に対応するプロンプト文言は [free-demo-prompts.md](./free-demo-prompts.md) を参照して個別に用意する。
@@ -116,7 +116,12 @@ MCP Apps のカルーセルスクリーンショット仕様（PNG, 幅1000px以
 ## 7. Test & launch
 
 - **テストアカウント**: 不要（無認証）。レビュアーはURLをそのまま custom connector として追加し、[free-demo-prompts.md](./free-demo-prompts.md) の3プロンプトをそのまま実行できる。
-- **Proティア機能の確認用**: レビュアーがPro/Enterprise限定ツール（PDF生成・契約支援・ゾーニング監査等）も試したい場合に備えて、期限付きのデモライセンスキーを1つ発行し、レビュー用メモ欄に記載する（`scripts/generate-license.js` で発行、有効期限は審査完了予想日+マージン）。
+- **Freeティアの上限に注意**: 無認証の公開接続はデフォルトで`free`ティア扱いとなり、`TIER_MONTHLY_TOOL_CALLS`（既定50）でMCPセッションごとに月間ツール呼び出し数がソフト制限される。レビュアーが多数のツールを連続で試す場合、上限に到達すると一部ツールが「アップグレードをご検討ください」エラーを返す — これは既知の挙動であり不具合ではないが、レビュー用メモ欄で「Freeティアの月間上限に達した場合は下記デモキーの`X-License-Key`ヘッダーで再試行可能」と案内しておく。
+- **Pro/Enterprise機能の確認用**: レビュアーが全38ツール（PDF生成・契約支援・ゾーニング監査等のPro限定ツールを含む）を試したい場合に備えて、期限付きのデモライセンスキーを1つ発行し、レビュー用メモ欄に記載する。`enterprise`ティアは`isToolAllowed()`が無条件でtrueを返すため、tier別のツールリスト差分を気にせず全ツールを保証できる — `pro`ではなく`enterprise`を指定する。本番の `LICENSE_PRIVATE_KEY_PEM`（本番サーバーの環境変数。リポジトリには存在しない）を使い次のように発行する（詳細は[docs/licensing-and-stripe-integration.md](./licensing-and-stripe-integration.md)）:
+  ```bash
+  LICENSE_PRIVATE_KEY_PEM="$(...)" node scripts/generate-license.js "Claude Reviewer" enterprise 3
+  ```
+  有効期限（上記コマンドの月数、既定3ヶ月）は審査完了予想日+マージンに調整する。発行したキーはレビュー用メモ欄に「`X-License-Key`ヘッダーまたはツール引数`_licenseKey`に以下を設定すると全機能を確認できます」と添えて記載する。
 - 申請前に必須: 全ツールをMCP Inspectorおよび実際のCustom Connector（Claude.ai > Settings > Connectors > Add custom connector）で一度実行して動作確認する（[Testing your connector](https://claude.com/docs/connectors/building/testing)）。ローカル開発サーバーをテストする場合は Cloudflare Tunnel / ngrok 等で公開URLを用意する。
 
 ---
@@ -127,9 +132,22 @@ MCP Apps のカルーセルスクリーンショット仕様（PNG, 幅1000px以
 
 ---
 
+## 申請前チェックリスト（人手作業・壁のアカウントが必要）
+
+CI/スクリプトでは代行不可な最終手動確認。上から順に実施する:
+
+- [ ] **本番URLの動作確認**: `https://realestate-mcp.jp` に `API_KEY` が設定されていないことを確認（設定済みだと401で全接続が失敗する）。`curl https://realestate-mcp.jp/health` が `{"status":"ok","version":"8.0.0",...}` を返すことを確認。
+- [ ] **実際のCustom Connectorとして接続**: Claude.ai > Settings > Connectors > Add custom connector に `https://realestate-mcp.jp/mcp` を追加し、[free-demo-prompts.md](./free-demo-prompts.md) の3プロンプトを実行して結果とダッシュボードウィジェットが正しく表示されることを確認する。
+- [ ] **Pro/Enterpriseデモキーの発行**: 上記「7. Test & launch」の手順で`enterprise`ティアの期限付きキーを発行し、`X-License-Key`ヘッダー経由で `generate_area_report`（PDFアーティファクト）など最低1つのPro限定ツールが実際に解放されることを本番URLに対して確認する。
+- [ ] **カルーセルスクリーンショット最終確認**: `pnpm run build:ui && pnpm run screenshots` を実行し、`docs/screenshots/` の5枚（`dashboard-overview` / `comparison-mode` / `investment-mode` / `cashflow-mode` / `3d-view`）が実際のUIと一致していることを目視確認する。
+- [ ] **npm公開の確認**: `npm view @sugukuru/japan-real-estate-intel-mcp version` が `8.0.0` を返すこと（`.github/workflows/release.yml` の `NPM_TOKEN` シークレットが設定されタグpush済みであること。未公開なら [docs/publish-secrets-setup.md](./publish-secrets-setup.md) を参照して先に公開する）。
+- [ ] **MCP Registry公開の確認**: https://registry.modelcontextprotocol.io/v0.1/servers?search=japan-real-estate-intel の `version` が `8.0.0` であること（`.github/workflows/registry-publish.yml` の `MCP_REGISTRY_TOKEN` シークレット必須）。
+- [ ] **GHCR (Docker) 公開の確認**: `docker pull ghcr.io/sugukurukabe/japan-real-estate-intel-mcp:8.0.0` が成功すること（`.github/workflows/docker.yml`、`test`ジョブ成功後に`build-push`が実行される）。
+- [ ] **Team/Enterprise submission portalから申請**: Claude.ai の Directory management 権限を持つ壁のアカウントで submission portal を開き、本ドキュメントの1〜8節の内容を転記して申請する。
+
 ## 申請後
 
-- [listing-checklist.md](./listing-checklist.md) に `Claude Connectors Directory` セクションを追加しチェックを入れる
+- [listing-checklist.md](./listing-checklist.md) の `Claude Connectors Directory` セクションにチェックを入れる
 - レビュー結果・フィードバックは Claude.ai の submissions dashboard で確認（[Managing your listing](https://claude.com/docs/connectors/directory)）
 - エスカレーションが必要な場合: `mcp-review@anthropic.com`
 

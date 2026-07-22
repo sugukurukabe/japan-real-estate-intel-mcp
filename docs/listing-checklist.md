@@ -8,8 +8,11 @@
 
 - [x] コード側の審査対応完了（authless化・title/annotations・outputSchema・resource_linkアーティファクト、v8.0.0） — [claude-connectors-submission.md](claude-connectors-submission.md)
 - [ ] Claude.ai Team/Enterprise organization の Directory management 権限で submission portal から申請（壁の手動操作が必要、CI/スクリプトでは代行不可）
+- [ ] `https://realestate-mcp.jp` に `API_KEY` を設定していないことを確認（設定済みだとディレクトリ経由の接続が全て401で失敗する）
 - [ ] カルーセルスクリーンショット5枚を再確認（`pnpm run build:ui && pnpm run screenshots`）
-- [ ] Pro/Enterprise確認用デモライセンスキーをレビュー用メモに記載（`node scripts/generate-license.js`）
+- [ ] Pro/Enterprise確認用の期限付きデモライセンスキー（`enterprise`ティア — 全ツールを無条件解放）をレビュー用メモに記載（本番の`LICENSE_PRIVATE_KEY_PEM`で`node scripts/generate-license.js "Claude Reviewer" enterprise 3`を実行。詳細は[licensing-and-stripe-integration.md](licensing-and-stripe-integration.md)、有効期限は審査完了予想日+マージン）
+- [ ] npm (`npm view @sugukuru/japan-real-estate-intel-mcp version`) / MCP Registry / GHCR (`docker pull ghcr.io/sugukurukabe/japan-real-estate-intel-mcp:8.0.0`) が全て `8.0.0` で公開済みであることを確認（未公開なら [publish-secrets-setup.md](publish-secrets-setup.md) 参照）
+- [ ] レビュアーへの注記にFreeティアの月間ツール呼び出し上限（`TIER_MONTHLY_TOOL_CALLS`、既定50）を明記し、上限に達した場合は上記デモキーで再試行できることを案内
 
 ## 2. Anthropic MCP Registry (Official)
 
