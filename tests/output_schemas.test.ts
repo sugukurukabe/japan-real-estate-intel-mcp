@@ -66,9 +66,46 @@ const TOOL_ARGS: Record<string, Record<string, unknown>> = {
   get_vacancy_stats: {},
   get_population_outlook: {},
   get_real_estate_macro_snapshot: { includeExternalSeries: false },
+  // UI-rendering-only tools (registerAppTool) — still declare an outputSchema
+  // and must be verified like every other tool, not skipped.
+  open_dashboard: {},
+  quick_visual_summary: {},
+  discover_opportunities: {},
+  composite_value_score: { area: '名古屋市中区' },
+  detect_arbitrage_signals: {},
+  review_purchase_recommendation: { city: '名古屋市中区', askingPrice: 30000000 },
+  simulate_leveraged_cashflow: {
+    city: '名古屋市中区',
+    askingPrice: 30000000,
+    annualRent: 1800000,
+    loan: { interestRatePct: 1.5 },
+  },
+  optimize_portfolio_allocation: {
+    properties: [
+      {
+        name: 'テスト物件A',
+        prefecture: '愛知県',
+        city: '名古屋市中区',
+        purchasePriceJpy: 30000000,
+        annualRentJpy: 1800000,
+        propertyType: 'residential',
+      },
+    ],
+  },
+  audit_zoning_compliance: {
+    city: '名古屋市中区',
+    proposedUse: 'residential',
+    proposedHeightM: 10,
+    proposedFloors: 3,
+    proposedBuildingAreaSqm: 100,
+    proposedTotalFloorAreaSqm: 300,
+    siteAreaSqm: 150,
+    frontRoadWidthM: 6,
+  },
+  forecast_demographic_shift: { city: '名古屋市中区' },
 };
 
-describe('outputSchema end-to-end validation (real MCP dispatch)', () => {
+describe('outputSchema end-to-end validation (real MCP dispatch, all 38 tools)', () => {
   for (const [name, args] of Object.entries(TOOL_ARGS)) {
     it(`${name}: structuredContent matches its declared outputSchema`, async () => {
       const result = await client.callTool({ name, arguments: args });

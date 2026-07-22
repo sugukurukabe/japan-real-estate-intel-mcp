@@ -184,6 +184,18 @@ const RO_OPENWORLD = {
   idempotentHint: true,
   openWorldHint: true,
 } as const;
+// Same read-only/non-destructive contract as RO_LOCAL, but idempotentHint is
+// false: these tools call saveArtifactAndLink(), which mints a fresh
+// artifact ID/file on every call via src/artifacts.ts — identical arguments
+// do NOT produce an identical resource_link, so idempotentHint: true would
+// misrepresent this side effect to a client that might otherwise dedupe or
+// cache repeat calls.
+const RO_LOCAL_ARTIFACT = {
+  readOnlyHint: true,
+  destructiveHint: false,
+  idempotentHint: false,
+  openWorldHint: false,
+} as const;
 const WIDGET_DOMAIN = 'https://realestate-mcp.jp';
 
 /**
@@ -636,7 +648,7 @@ export function createServer(
         'Generate comprehensive area report in Markdown/PDF with branding support. 10 prefectures. | エリアレポート生成。包括的な不動産分析をMarkdown/PDFで出力。ブランディング対応。全10都道府県。',
       inputSchema: GenerateReportInput.shape,
       outputSchema: GenerateReportOutput.shape,
-      annotations: RO_LOCAL,
+      annotations: RO_LOCAL_ARTIFACT,
     },
     (args, extra) =>
       withErrorHandling('generate_area_report', String(args.prefecture ?? 'aichi'), async () => {
@@ -744,7 +756,7 @@ export function createServer(
         'Compare up to 5 prefectures: land price, population, risk, investment score ranking. Markdown output. | 都道府県比較。最大5都道府県を横断比較し、地価・人口・リスク・投資スコアをランキング。',
       inputSchema: ComparePrefecturesInput.shape,
       outputSchema: ComparePrefecturesOutput.shape,
-      annotations: RO_LOCAL,
+      annotations: RO_LOCAL_ARTIFACT,
     },
     (args) =>
       withErrorHandling('compare_prefectures', 'multi', async () => {
@@ -943,7 +955,7 @@ export function createServer(
         'Optimize real estate investment portfolio across up to 5 areas. Returns expected return, risk score, Sharpe ratio. | 不動産投資ポートフォリオ最適化。最大5エリアのリターン・リスク・シャープレシオを算出。',
       inputSchema: PortfolioOptimizerInput.shape,
       outputSchema: PortfolioOptimizerOutput.shape,
-      annotations: RO_LOCAL,
+      annotations: RO_LOCAL_ARTIFACT,
     },
     (args) =>
       withErrorHandling('portfolio_optimizer', 'multi', async () => {
@@ -1144,7 +1156,7 @@ export function createServer(
         'Contract support package: generate risk matrix, price negotiation anchors, recommended clauses from neighborhood/property data. Returns a downloadable Markdown report via resource_link. | 売買契約支援パッケージ。リスクマトリックス・価格交渉アンカー・推奨特約を生成。Markdownレポートをresource_linkとしてダウンロード可能。',
       inputSchema: ContractSupportInput.shape,
       outputSchema: ContractSupportOutput.shape,
-      annotations: RO_LOCAL,
+      annotations: RO_LOCAL_ARTIFACT,
     },
     (args, extra) =>
       withErrorHandling('generate_contract_support_package', 'aichi', async () => {
@@ -1185,7 +1197,7 @@ export function createServer(
         'Contract risk assessment: analyze proposed clauses (financing contingency, inspection, future value terms) and return risk score with deal-breakers. | 契約リスク評価。提案中の契約条項を分析しリスクスコアとディールブレーカーを返す。',
       inputSchema: AssessContractRiskInput.shape,
       outputSchema: AssessContractRiskOutput.shape,
-      annotations: RO_LOCAL,
+      annotations: RO_LOCAL_ARTIFACT,
     },
     (args) =>
       withErrorHandling('assess_contract_risk', 'aichi', async () => {
@@ -1808,7 +1820,7 @@ export function createServer(
 
   server.prompt(
     'quick_start_examples',
-    '初回ユーザー向けクイックスタートガイド。6つの具体的な使用例をコール例付きでMarkdown返却する',
+    '初回ユーザー向けクイックスタートガイド。Freeで即動く例とPro/Enterprise限定の例を分けてコール例付きでMarkdown返却する',
     {
       goal: z
         .string()
@@ -1826,9 +1838,19 @@ export function createServer(
               '',
               '以下の例をそのままチャットに貼り付けて実行できます。',
               '',
+              '## 🆓 Free（アカウント登録・ライセンスキー不要ですぐ動きます）',
+              '',
               '---',
               '',
-              '### 1. 地価トレンド予測（投資判断）',
+              '### 1. Opportunity Radar（次に見るべきエリア発見）',
+              '```',
+              'discover_opportunities({ "prefecture": "愛知県", "goal": "investment", "horizon": "3y", "limit": 5 })',
+              '```',
+              '> **用途**: 地価・人口・人流・教育・法人・交通・リスクを横断スキャンし、投資/出店/居住/オフィス/開発に適したエリア仮説カードを返す。',
+              '',
+              '---',
+              '',
+              '### 2. 地価トレンド予測（投資判断）',
               '```',
               'forecast_land_price_trend({ "prefecture": "東京都", "city": "新宿区", "horizon": "5y" })',
               '```',
@@ -1836,7 +1858,31 @@ export function createServer(
               '',
               '---',
               '',
-              '### 2. 企業立地需要分析',
+              '### 3. 価格の歪み検出（路線価×公示地価×取引価格）',
+              '```',
+              'detect_arbitrage_signals({ "prefecture": "愛知県", "signalType": "discount" })',
+              '```',
+              '> **用途**: 割安・相続税有利・市場過熱シグナルを都道府県全市区町村スキャンで検出。',
+              '',
+              '---',
+              '',
+              '### 4. 不動産市場クロス分析',
+              '```',
+              'cross_analyze_real_estate_market({ "area": "名古屋市中区", "propertyType": "mixed", "timeRange": "3y" })',
+              '```',
+              '> **用途**: 地価・人流・災害リスクを一括分析。',
+              '',
+              '---',
+              '',
+              '> 他のFree対応ツールは [docs/free-demo-prompts.md](https://github.com/sugukurukabe/japan-real-estate-intel-mcp/blob/main/docs/free-demo-prompts.md) 参照。',
+              '',
+              '## 🔒 Pro / Enterprise（ライセンスキーが必要 — `_licenseKey`引数 または `X-License-Key`ヘッダー）',
+              '',
+              '以下はFreeでは`isToolAllowed`により拒否されます。試すには`_licenseKey`にライセンスキーを渡してください。',
+              '',
+              '---',
+              '',
+              '### 5. 企業立地需要分析',
               '```',
               'predict_corporate_demand({ "prefecture": "愛知県", "city": "名古屋市中区", "industryType": "manufacturing" })',
               '```',
@@ -1844,7 +1890,7 @@ export function createServer(
               '',
               '---',
               '',
-              '### 3. ファミリー向け適性評価',
+              '### 6. ファミリー向け適性評価',
               '```',
               'assess_family_friendly_score({ "prefecture": "神奈川県", "city": "横浜市西区" })',
               '```',
@@ -1852,7 +1898,7 @@ export function createServer(
               '',
               '---',
               '',
-              '### 4. ポートフォリオ最適化',
+              '### 7. ポートフォリオ最適化',
               '```',
               'portfolio_optimizer({',
               '  "targets": [',
@@ -1867,7 +1913,7 @@ export function createServer(
               '',
               '---',
               '',
-              '### 5. What-If シナリオ分析',
+              '### 8. What-If シナリオ分析',
               '```',
               'scenario_what_if({ "prefecture": "大阪府", "city": "大阪市中央区", "scenario": "new_station", "scale": "large" })',
               '```',
@@ -1875,23 +1921,11 @@ export function createServer(
               '',
               '---',
               '',
-              '### 6. 店舗出店適地評価',
+              '### 9. 店舗出店適地評価',
               '```',
               'evaluate_store_location({ "city": "福岡市博多区", "storeType": "cafe", "targetCustomer": "office_worker" })',
               '```',
               '> **用途**: 人流・交通・競合店分布を考慮した出店適地スコアを算出。',
-              '',
-              '---',
-              '',
-              '### 7. Opportunity Radar（次に見るべきエリア発見）',
-              '```',
-              'discover_opportunities({ "prefecture": "愛知県", "goal": "investment", "horizon": "3y", "limit": 5 })',
-              '```',
-              '> **用途**: 地価・人口・人流・教育・法人・交通・リスクを横断スキャンし、投資/出店/居住/オフィス/開発に適したエリア仮説カードを返す。',
-              '',
-              '---',
-              '',
-              '> **ヒント**: cross_analyze_real_estate_market で地価・人流・教育・企業・家族スコアを一括分析できます。',
             ].join('\n'),
           },
         },

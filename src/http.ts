@@ -289,6 +289,24 @@ app.post('/mcp', async (req, res) => {
   const sessionId = req.headers['mcp-session-id'] as string | undefined;
   let entry: SessionEntry | undefined = sessionId ? sessions.get(sessionId) : undefined;
 
+  // Per the Streamable HTTP spec, a session ID is only minted in response to
+  // an `initialize` request that carries no `mcp-session-id` header. A
+  // client that sends an unknown or expired session ID must get an explicit
+  // error, not a silently-created replacement session under the same
+  // header — the latter looks like success while actually discarding all of
+  // that client's prior MCP state (subscriptions, elicitation, etc.).
+  if (sessionId && !entry) {
+    res.status(404).json({
+      jsonrpc: '2.0',
+      error: {
+        code: -32001,
+        message: 'Session not found or expired. Re-initialize the MCP session (omit mcp-session-id).',
+      },
+      id: null,
+    });
+    return;
+  }
+
   if (!entry) {
     const newId = randomUUID();
     const transport = new StreamableHTTPServerTransport({

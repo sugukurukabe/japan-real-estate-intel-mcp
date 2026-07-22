@@ -70,6 +70,25 @@ describe('POST /mcp', () => {
       .send({ invalid: true });
     expect(res.status).toBeLessThan(500);
   });
+
+  it('rejects an unknown/expired mcp-session-id instead of silently starting a new session', async () => {
+    const res = await request(app)
+      .post('/mcp')
+      .set('Content-Type', 'application/json')
+      .set('Accept', 'application/json, text/event-stream')
+      .set('mcp-session-id', 'nonexistent-session-id')
+      .send({
+        jsonrpc: '2.0',
+        method: 'tools/list',
+        id: 1,
+        params: {},
+      });
+    expect(res.status).toBe(404);
+    expect(res.body.error).toBeDefined();
+    // The response must not carry a fresh session ID — that would mean a
+    // new session was silently created under the client's stale header.
+    expect(res.headers['mcp-session-id']).toBeUndefined();
+  });
 });
 
 describe('GET /mcp without session', () => {

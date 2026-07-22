@@ -28,6 +28,17 @@ const OPEN_WORLD_TOOLS = new Set([
   'detect_arbitrage_signals',
 ]);
 
+// Tools that persist a generated file via saveArtifactAndLink() (src/artifacts.ts)
+// mint a fresh artifact ID/resource_link on every call, even with identical
+// arguments — so idempotentHint must be false rather than the default true.
+const NON_IDEMPOTENT_ARTIFACT_TOOLS = new Set([
+  'generate_area_report',
+  'compare_prefectures',
+  'portfolio_optimizer',
+  'generate_contract_support_package',
+  'assess_contract_risk',
+]);
+
 function registeredToolEntries(
   reg: Map<string, RegisteredTool> | Record<string, RegisteredTool>,
 ): [string, RegisteredTool][] {
@@ -90,7 +101,7 @@ describe('tool annotations', () => {
     }
   });
 
-  it('all tools have idempotentHint: true (safe to retry with the same arguments)', async () => {
+  it('idempotentHint is false only for tools that persist a new artifact on every call', async () => {
     const server = createServer();
 
     const listResult = (
@@ -100,10 +111,11 @@ describe('tool annotations', () => {
     )._registeredTools;
 
     for (const [name, tool] of registeredToolEntries(listResult)) {
+      const expected = !NON_IDEMPOTENT_ARTIFACT_TOOLS.has(name);
       expect(
         (tool.annotations as Record<string, unknown>)?.idempotentHint,
-        `Tool "${name}" should have idempotentHint: true`,
-      ).toBe(true);
+        `Tool "${name}" should have idempotentHint: ${expected}`,
+      ).toBe(expected);
     }
   });
 
