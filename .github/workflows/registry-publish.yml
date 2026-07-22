@@ -36,12 +36,28 @@ jobs:
           test "$TAG" = "$VER" || { echo "Tag v$TAG != server.json version $VER"; exit 1; }
 
       - name: Publish to MCP Registry
+        id: registry_publish
         env:
           MCP_REGISTRY_TOKEN: ${{ secrets.MCP_REGISTRY_TOKEN }}
         run: |
           if [ -z "$MCP_REGISTRY_TOKEN" ]; then
-            echo "::warning::MCP_REGISTRY_TOKEN not set — skip publish"
+            echo "::warning::MCP_REGISTRY_TOKEN not set — skip publish. See docs/registry-ci.md"
+            echo "status=skipped" >> "$GITHUB_OUTPUT"
             exit 0
           fi
           export MCP_REGISTRY_TOKEN
           mcp-publisher publish --file server.json
+          echo "status=published" >> "$GITHUB_OUTPUT"
+
+      - name: Publish summary
+        if: always()
+        run: |
+          {
+            echo "## MCP Registry publish summary"
+            echo
+            if [ "${{ steps.registry_publish.outputs.status }}" = "published" ]; then
+              echo "✅ Published \`server.json\` to the MCP Registry."
+            else
+              echo "⚠️ **Skipped** — \`MCP_REGISTRY_TOKEN\` secret not set. See [docs/registry-ci.md](https://github.com/${{ github.repository }}/blob/main/docs/registry-ci.md)."
+            fi
+          } >> "$GITHUB_STEP_SUMMARY"

@@ -1,11 +1,19 @@
 # Glama.ai listing — stdio MCP for introspection checks (upload this file on submit).
+#
+# Not --ignore-scripts: same reason as the production Dockerfile. pnpm already
+# blocks build scripts by default except for pnpm-workspace.yaml's
+# onlyBuiltDependencies allowlist (better-sqlite3, esbuild, sharp);
+# --ignore-scripts would override that allowlist too and leave
+# better-sqlite3's native binding unbuilt, breaking usage-quota/license/
+# artifact storage even in this stdio-only introspection image.
 FROM node:22-alpine
 
 WORKDIR /app
 
-COPY package.json pnpm-lock.yaml ./
-RUN corepack enable && corepack prepare pnpm@latest --activate \
-  && pnpm install --frozen-lockfile --ignore-scripts
+RUN apk add --no-cache python3 make g++
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml .npmrc ./
+RUN corepack enable && corepack prepare --activate \
+  && pnpm install --frozen-lockfile
 
 COPY tsconfig.json ./
 COPY src ./src
@@ -13,7 +21,9 @@ COPY data ./data
 COPY config ./config
 RUN pnpm run build:server
 
-RUN addgroup -S rei && adduser -S rei -G rei
+RUN addgroup -S rei && adduser -S rei -G rei \
+  && mkdir -p /app/db /app/artifacts \
+  && chown -R rei:rei /app/db /app/artifacts
 USER rei
 
 ENV NODE_ENV=production

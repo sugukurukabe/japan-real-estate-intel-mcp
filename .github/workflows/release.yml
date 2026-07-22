@@ -28,6 +28,26 @@ jobs:
 
       - run: pnpm install --frozen-lockfile
 
+      - name: Verify tag matches package.json and server.json versions
+        run: |
+          TAG="${GITHUB_REF_NAME#v}"
+          PKG_VER=$(node -p "require('./package.json').version")
+          SRV_VER=$(node -p "require('./server.json').version")
+          SRV_PKG_VER=$(node -p "require('./server.json').packages[0].version")
+          FAIL=0
+          for pair in "package.json:$PKG_VER" "server.json:$SRV_VER" "server.json#packages[0]:$SRV_PKG_VER"; do
+            name="${pair%%:*}"; ver="${pair##*:}"
+            if [ "$ver" != "$TAG" ]; then
+              echo "::error::Tag v$TAG does not match $name version ($ver)"
+              FAIL=1
+            fi
+          done
+          if [ "$FAIL" = "1" ]; then
+            echo "Fix the mismatched version(s) and re-tag before releasing." >&2
+            exit 1
+          fi
+          echo "✓ Tag v$TAG matches package.json and server.json"
+
       - name: Build
         run: pnpm build
 
@@ -66,11 +86,35 @@ jobs:
           generate_release_notes: true
 
       - name: Publish to npm
+        id: npm_publish
         run: |
           if [ -z "${{ secrets.NPM_TOKEN }}" ]; then
             echo "::warning::NPM_TOKEN not set — skip npm publish. See docs/publish-secrets-setup.md"
+            echo "status=skipped" >> "$GITHUB_OUTPUT"
             exit 0
           fi
           npm publish --access public
+          echo "status=published" >> "$GITHUB_OUTPUT"
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      # registry-publish.yml runs on `release: published` (triggered by the
+      # gh-release step above) and self-reports the same way for MCP Registry.
+      # This step gives a single glanceable summary so a skipped publish is
+      # never discovered only by "why isn't the new version on npm" later.
+      - name: Publish summary
+        if: always()
+        run: |
+          {
+            echo "## Release v${GITHUB_REF_NAME#v} publish summary"
+            echo
+            echo "| Target | Status |"
+            echo "|---|---|"
+            echo "| GitHub Release | ✅ published (tarball attached) |"
+            if [ "${{ steps.npm_publish.outputs.status }}" = "published" ]; then
+              echo "| npm | ✅ published |"
+            else
+              echo "| npm | ⚠️ **skipped** — \`NPM_TOKEN\` secret not set, see [docs/publish-secrets-setup.md](https://github.com/${{ github.repository }}/blob/main/docs/publish-secrets-setup.md) |"
+            fi
+            echo "| MCP Registry | ⏳ handled by a separate workflow triggered by this release — check its run log for skip warnings |"
+          } >> "$GITHUB_STEP_SUMMARY"

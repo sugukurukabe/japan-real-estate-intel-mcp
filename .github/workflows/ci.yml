@@ -88,9 +88,14 @@ jobs:
       - name: Run container as a non-root user with a real named volume
         run: |
           docker volume create rei_sqlite_ci
+          # ARTIFACT_DIR matches docker-compose.yml's production setting — without
+          # it this smoke test would exercise the *default* /app/artifacts path
+          # (not a mounted volume) and could pass even if the real production
+          # config's artifact persistence were broken.
           docker run -d --name rei-mcp-ci \
             -v rei_sqlite_ci:/app/db \
             -e METRICS_KEY=ci-smoke-key \
+            -e ARTIFACT_DIR=/app/db/artifacts \
             japan-re-intel-mcp:ci
           for i in $(seq 1 20); do
             docker exec rei-mcp-ci wget -qO- http://127.0.0.1:3100/health && break

@@ -10,7 +10,30 @@ permissions:
   packages: write
 
 jobs:
+  # Gate: this workflow triggers independently of release.yml on the same tag
+  # push, so without this job a tag whose tests fail in release.yml could
+  # still get a Docker image pushed to GHCR. Run the same test suite here
+  # before build-push depends on it.
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: pnpm/action-setup@v6
+        with:
+          version: 10
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm build
+      - run: pnpm test
+
   build-push:
+    needs: test
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
